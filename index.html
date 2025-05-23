@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit this template
+-->
+<html>
+    <meta charset="UTF-8">
+  <title>Order & Expert Management</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    section { margin-bottom: 40px; border: 1px solid #ccc; padding: 20px; border-radius: 8px; }
+    h2 { color: #2a4d9b; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { padding: 8px 12px; border: 1px solid #ccc; text-align: left; }
+    .form-group { margin-bottom: 10px; }
+    .form-group label { display: block; margin-bottom: 5px; }
+    .form-group input, .form-group select { width: 100%; padding: 6px; }
+    button { padding: 6px 12px; margin-right: 5px; }
+  </style>
+    <body>
+        <section id="order-management">
+    <h2>Order Management - View Order List</h2>
+    <div class="form-group">
+      <label for="search-order">Tìm kiếm đơn hàng:</label>
+      <input type="text" id="search-order" placeholder="Nhập mã đơn hàng hoặc tên khách hàng...">
+    </div>
+    <div class="form-group">
+      <label for="filter-status">Lọc theo trạng thái:</label>
+      <select id="filter-status">
+        <option value="">Tất cả</option>
+        <option value="pending">Chờ xử lý</option>
+        <option value="completed">Đã hoàn thành</option>
+        <option value="cancelled">Đã hủy</option>
+      </select>
+    </div>
+    <table>
+        
+     <thead>
+    <tr>
+      <th>Mã đơn</th>
+      <th>Khách hàng</th>
+      <th>Ngày tạo</th>
+      <th>Trạng thái</th>
+      <th>Hành động</th>
+    </tr>
+  </thead>
+  <tbody>
+    <c:forEach var="order" items="${orderList}">
+      <tr>
+        <td>${order.id}</td>
+        <td>${order.customerName}</td>
+        <td>${order.createdDate}</td>
+        <td>${order.status}</td>
+        <td><a href="deleteOrder?id=${order.id}">Delete</a></td>
+      </tr>
+    </c:forEach>
+  </tbody>
+  
+        </table>
+    <!-- Phân trang giả -->
+    <div style="margin-top: 10px;">
+      <button>&laquo; Trước</button>
+      <button>Sau &raquo;</button>
+    </div>
+    </body>
+</html>
