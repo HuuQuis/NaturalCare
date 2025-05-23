@@ -47,10 +47,15 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
   <tbody>
     <c:forEach var="order" items="${orderList}">
       <tr>
-        <td>${order.id}</td>
+<!--        <td>${order.id}</td>
         <td>${order.customerName}</td>
         <td>${order.createdDate}</td>
         <td>${order.status}</td>
+        <td><a href="deleteOrder?id=${order.id}">Delete</a></td>-->
+        <td>123</td>
+        <td>abcd</td>
+        <td>12/23</td>
+        <td>Đã Hoàn Thành</td>
         <td><a href="deleteOrder?id=${order.id}">Delete</a></td>
       </tr>
     </c:forEach>
@@ -62,5 +67,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
       <button>&laquo; Trước</button>
       <button>Sau &raquo;</button>
     </div>
+    
+    
     </body>
 </html>
