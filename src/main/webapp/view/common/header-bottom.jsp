@@ -38,6 +38,7 @@
                         </li>
                         <li><a href="404.html">404</a></li>
                         <li><a href="contact-us.html" class="active">Contact</a></li>
+                        <li><a href="about-us.html" class="active">About Us</a></li>
                     </ul>
                 </div>
             </div>
