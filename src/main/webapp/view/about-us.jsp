@@ -14,7 +14,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>Contact | E-Shopper</title>
+    <title>About Us | Natural Care</title>
     <link href="${pageContext.request.contextPath}/css/bootstrap.min.css" rel="stylesheet">
     <link href="${pageContext.request.contextPath}/css/font-awesome.min.css" rel="stylesheet">
     <link href="${pageContext.request.contextPath}/css/prettyPhoto.css" rel="stylesheet">
@@ -31,6 +31,24 @@
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="${pageContext.request.contextPath}/images/ico/apple-touch-icon-114-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="${pageContext.request.contextPath}/images/ico/apple-touch-icon-72-precomposed.png">
     <link rel="apple-touch-icon-precomposed" href="${pageContext.request.contextPath}/images/ico/apple-touch-icon-57-precomposed.png">
+
+    <style>
+        .about-content section {
+            margin-bottom: 25px;
+        }
+        .about-content h3 {
+            color: #FE980F;
+            margin-bottom: 15px;
+        }
+        .about-content ul {
+            list-style: disc;
+            padding-left: 20px;
+        }
+        .about-content ul ul {
+            list-style: circle;
+        }
+    </style>
+
 </head><!--/head-->
 
 <body>
@@ -52,51 +70,66 @@
     <div class="bg">
         <div class="row">
             <div class="col-sm-12">
-                <h2 class="title text-center">Contact <strong>Us</strong></h2>
-                <div id="gmap" class="contact-map">
+                <h2 class="title text-center">About <strong>Us</strong></h2>
+                <div class="about-content">
+                    <section>
+                        <h3>Giới thiệu về Natural Care</h3>
+                        <p>Chào mừng bạn đến với Natural Care, nơi chúng tôi cam kết mang đến những sản phẩm mỹ phẩm tự nhiên chất lượng cao, được thiết kế để nâng niu làn da và tôn vinh vẻ đẹp tự nhiên của bạn. Được thành lập với sứ mệnh cung cấp giải pháp chăm sóc da an toàn và bền vững, Natural Care tự hào là điểm đến yêu thích của những ai tìm kiếm sự tinh tế và thân thiện với môi trường.</p>
+                    </section>
+
+                    <section>
+                        <h3>Sứ mệnh và Giá trị</h3>
+                        <ul>
+                            <li><strong style="color:#FE980F;">Sứ mệnh:</strong> Cung cấp các sản phẩm mỹ phẩm từ thiên nhiên, không hóa chất độc hại, giúp khách hàng tự tin với làn da khỏe mạnh.</li>
+                            <li><strong style="color:#FE980F;">Giá trị cốt lõi:</strong>
+                                <ul>
+                                    <li><strong style="color:#FE980F;">Tự nhiên:</strong> Sử dụng nguyên liệu hữu cơ, an toàn cho da và môi trường.</li>
+                                    <li><strong style="color:#FE980F;">Chất lượng:</strong> Đảm bảo từng sản phẩm được kiểm định nghiêm ngặt.</li>
+                                    <li><strong style="color:#FE980F;">Dịch vụ tận tâm:</strong> Đội ngũ chuyên gia và nhân viên luôn sẵn sàng hỗ trợ khách hàng.</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </section>
+
+                    <section>
+                        <h3>Đội ngũ của chúng tôi</h3>
+                        <p>Tại Natural Care, chúng tôi có một đội ngũ chuyên nghiệp và tận tâm, bao gồm:</p>
+                        <ul>
+                            <li><strong style="color:#FE980F;">Quản lý:</strong> Đảm bảo vận hành trơn tru, quản lý sản phẩm, nhân viên và quy trình giao hàng.</li>
+                            <li><strong style="color:#FE980F;">Chuyên gia tư vấn:</strong> Cung cấp lời khuyên cá nhân hóa để khách hàng chọn sản phẩm phù hợp.</li>
+                            <li><strong style="color:#FE980F;">Nhân viên giao hàng:</strong> Đảm bảo sản phẩm đến tay bạn một cách nhanh chóng và an toàn, đồng thời hỗ trợ quy trình hoàn hàng nếu cần.</li>
+                            <li><strong style="color:#FE980F;">Đội ngũ marketing:</strong> Tạo ra các chiến dịch sáng tạo để lan tỏa thông điệp của chúng tôi.</li>
+                        </ul>
+                    </section>
+
+                    <section>
+                        <h3>Hành trình của chúng tôi</h3>
+                        <p>Natural Care bắt đầu như một ý tưởng nhỏ, với mong muốn kết nối thiên nhiên và sắc đẹp. Qua thời gian, chúng tôi đã phát triển thành một thương hiệu đáng tin cậy, cung cấp đa dạng sản phẩm từ kem dưỡng, serum đến các dòng mỹ phẩm trang điểm. Blog của chúng tôi là nơi chia sẻ kiến thức chăm sóc da, giúp khách hàng hiểu rõ hơn về cách sử dụng sản phẩm hiệu quả. Với đội ngũ chuyên gia và quy trình hoàn hàng minh bạch, chúng tôi cam kết đồng hành cùng bạn trên hành trình làm đẹp.</p>
+                    </section>
+
                 </div>
+
             </div>
         </div>
         <div class="row">
-            <div class="col-sm-8">
-                <div class="contact-form">
-                    <h2 class="title text-center">Get In Touch</h2>
-                    <div class="status alert alert-success" style="display: none"></div>
-                    <form id="main-contact-form" class="contact-form row" name="contact-form" method="post">
-                        <div class="form-group col-md-6">
-                            <input type="text" name="name" class="form-control" required="required" placeholder="Name">
-                        </div>
-                        <div class="form-group col-md-6">
-                            <input type="email" name="email" class="form-control" required="required" placeholder="Email">
-                        </div>
-                        <div class="form-group col-md-12">
-                            <input type="text" name="subject" class="form-control" required="required" placeholder="Subject">
-                        </div>
-                        <div class="form-group col-md-12">
-                            <textarea name="message" id="message" required="required" class="form-control" rows="8" placeholder="Your Message Here"></textarea>
-                        </div>
-                        <div class="form-group col-md-12">
-                            <input type="submit" name="submit" class="btn btn-primary pull-right" value="Submit">
-                        </div>
-                    </form>
-                </div>
-            </div>
-            <div class="col-sm-4">
+
+            <div>
                 <div class="contact-info">
                     <h2 class="title text-center">Contact Info</h2>
                     <address>
-                        <p>E-Shopper Inc.</p>
-                        <p>935 W. Webster Ave New Streets Chicago, IL 60614, NY</p>
-                        <p>Newyork USA</p>
-                        <p>Mobile: +2346 17 38 93</p>
-                        <p>Fax: 1-714-252-0026</p>
-                        <p>Email: info@e-shopper.com</p>
+                        <p>Nếu bạn muốn biết thêm về sản phẩm hoặc cần hỗ trợ, hãy liên hệ:</p>
+                        <ul>
+                            <li><strong>Email:</strong> info@naturalcare.com</li>
+                            <li><strong>Điện thoại:</strong> +84 123 456 789</li>
+                            <li><strong>Địa chỉ:</strong> Hola Park, Hoa Lac Hi-tech Park, Lm29, Thang Long Highway, Hanoi, Vietnam</li>
+                        </ul>
+                        <p>Hãy theo dõi blog của chúng tôi để cập nhật các mẹo làm đẹp và ưu đãi mới nhất!</p>
                     </address>
                     <div class="social-networks">
                         <h2 class="title text-center">Social Networking</h2>
                         <ul>
                             <li>
-                                <a href="#"><i class="fa fa-facebook"></i></a>
+                                <a href="https://www.facebook.com/tung.lam.375757"><i class="fa fa-facebook"></i></a>
                             </li>
                             <li>
                                 <a href="#"><i class="fa fa-twitter"></i></a>
@@ -105,7 +138,7 @@
                                 <a href="#"><i class="fa fa-google-plus"></i></a>
                             </li>
                             <li>
-                                <a href="#"><i class="fa fa-youtube"></i></a>
+                                <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"><i class="fa fa-youtube"></i></a>
                             </li>
                         </ul>
                     </div>
