@@ -119,7 +119,7 @@
                     <address>
                         <p>Nếu bạn muốn biết thêm về sản phẩm hoặc cần hỗ trợ, hãy liên hệ:</p>
                         <ul>
-                            <li><strong>Email:</strong> info@naturalcare.com</li>
+                            <li><strong>Email:</strong> naturalcare@info.com</li>
                             <li><strong>Điện thoại:</strong> +84 123 456 789</li>
                             <li><strong>Địa chỉ:</strong> Hola Park, Hoa Lac Hi-tech Park, Lm29, Thang Long Highway, Hanoi, Vietnam</li>
                         </ul>

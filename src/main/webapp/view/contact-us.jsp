@@ -67,7 +67,7 @@
                     </form>
                 </div>
             </div>
-            <div class="col-sm-4">
+            <div class="col-sm-5">
                 <div class="contact-info">
                     <h2 class="title text-center">Our Contact Info</h2>
                     <address>
@@ -77,15 +77,7 @@
                         <p>Email: support@naturalcare.vn</p>
                         <p>Working hours: 9:00 AM – 6:00 PM (Mon–Fri)</p>
                     </address>
-                    <div class="social-networks">
-                        <h2 class="title text-center">Follow Us</h2>
-                        <ul>
-                            <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                            <li><a href="#"><i class="fa fa-instagram"></i></a></li>
-                            <li><a href="#"><i class="fa fa-pinterest"></i></a></li>
-                            <li><a href="#"><i class="fa fa-youtube"></i></a></li>
-                        </ul>
-                    </div>
+
                 </div>
             </div>
         </div>
