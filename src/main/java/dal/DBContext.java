@@ -31,7 +31,7 @@ public class DBContext {
         try {
             String user = "root";
             String pass = "1234";
-            String url = "jdbc:mysql://localhost:3306/natural_care?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true&useSSL=false";
+            String url = "jdbc:mysql://localhost:3306/natural_care?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
             Class.forName("com.mysql.cj.jdbc.Driver");
             connection = DriverManager.getConnection(url, user, pass);
         } catch (ClassNotFoundException | SQLException ex) {
