@@ -37,8 +37,8 @@
                             </ul>
                         </li>
                         <li><a href="404.html">404</a></li>
-                        <li><a href="contact-us.html" class="active">Contact</a></li>
-                        <li><a href="about-us.html" class="active">About Us</a></li>
+                        <li><a href="contact-us.jsp" class="active">Contact</a></li>
+                        <li><a href="about-us.jsp" class="active">About Us</a></li>
                     </ul>
                 </div>
             </div>
