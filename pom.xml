@@ -46,13 +46,6 @@
             <version>2.0.0</version>
         </dependency>
 
-        <!-- JDBC driver cho SQL Server -->
-        <dependency>
-            <groupId>com.microsoft.sqlserver</groupId>
-            <artifactId>mssql-jdbc</artifactId>
-            <version>12.4.2.jre11</version>
-        </dependency>
-
         <!-- MySQL Driver -->
         <dependency>
             <groupId>mysql</groupId>

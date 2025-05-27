@@ -6,11 +6,10 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="model.Skill" %>
 <%@ page import="java.util.List" %>
+<%@ page import="model.Skill" %>
 <%
     List<Skill> skills = (List<Skill>) request.getAttribute("skills");
-    Skill editing = (Skill) request.getAttribute("skill");
 %>
 <html>
 <head>
@@ -18,15 +17,21 @@
 </head>
 <body>
 <h2>Skill Management</h2>
-<form action="view/skill" method="post">
-    <input type="hidden" name="id" value="<%= editing != null ? editing.getSkillId() : "" %>"/>
-    <input type="text" name="name" placeholder="Skill name" value="<%= editing != null ? editing.getSkillName() : "" %>" required/>
-    <button type="submit"><%= editing != null ? "Update" : "Add" %></button>
+
+<form method="get" action="skill">
+    Search: <input type="text" name="search" />
+    Sort:
+    <select name="sort">
+        <option value="asc">ASC</option>
+        <option value="desc">DESC</option>
+    </select>
+    <button type="submit">Filter</button>
 </form>
 
-<form method="get" action="view/skill">
-    <input type="text" name="search" placeholder="Search by name"/>
-    <button type="submit">Search</button>
+<form method="post" action="skill">
+    <input type="text" name="skillName" placeholder="New skill name"/>
+    <input type="hidden" name="action" value="add"/>
+    <button type="submit">Add Skill</button>
 </form>
 
 <table border="1">
@@ -35,16 +40,24 @@
         <th>Name</th>
         <th>Actions</th>
     </tr>
-    <% for (Skill s : skills) { %>
+    <%
+        for (Skill s : skills) {
+    %>
     <tr>
-        <td><%= s.getSkillId() %></td>
-        <td><%= s.getSkillName() %></td>
-        <td>
-            <a href="view/skill?action=edit&id=<%= s.getSkillId() %>">Edit</a> |
-            <a href="view/skill?action=delete&id=<%= s.getSkillId() %>">Delete</a>
-        </td>
+        <form method="post" action="skill">
+            <td><%= s.getSkillId() %></td>
+            <td>
+                <input type="text" name="skillName" value="<%= s.getSkillName() %>"/>
+            </td>
+            <td>
+                <input type="hidden" name="skillId" value="<%= s.getSkillId() %>"/>
+                <button name="action" value="update">Update</button>
+                <button name="action" value="delete">Delete</button>
+            </td>
+        </form>
     </tr>
     <% } %>
 </table>
+
 </body>
 </html>
