@@ -12,75 +12,55 @@
             <div class="row">
                 <div class="col-sm-2">
                     <div class="companyinfo">
-                        <h2><span>e</span>-shopper</h2>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit,sed do eiusmod tempor</p>
+                        <h2><span>Nature</span>-Care</h2>
+                        <p>
+                            At Naturals, we believe you’re already beautiful. Skincare is about caring for your skin,
+                            embracing your uniqueness, and feeling confident in your natural beauty at any age.
+                        </p>
                     </div>
                 </div>
                 <div class="col-sm-7">
-                    <div class="col-sm-3">
+                    <div class="col-sm-4">
                         <div class="video-gallery text-center">
                             <a href="#">
                                 <div class="iframe-img">
-                                    <img src="${pageContext.request.contextPath}/images/home/iframe1.png" alt="" />
-                                </div>
-                                <div class="overlay-icon">
-                                    <i class="fa fa-play-circle-o"></i>
+                                    <img src="${pageContext.request.contextPath}/images/home/lipstick_footer.jpg" alt="" />
                                 </div>
                             </a>
-                            <p>Circle of Hands</p>
-                            <h2>24 DEC 2014</h2>
+                            <p>Natural Lipstick</p>
+                            <h2>24 MAY 2025</h2>
                         </div>
                     </div>
 
-                    <div class="col-sm-3">
+                    <div class="col-sm-4">
                         <div class="video-gallery text-center">
                             <a href="#">
                                 <div class="iframe-img">
-                                    <img src="${pageContext.request.contextPath}/images/home/iframe2.png" alt="" />
-                                </div>
-                                <div class="overlay-icon">
-                                    <i class="fa fa-play-circle-o"></i>
+                                    <img src="${pageContext.request.contextPath}/images/home/perfume_footer.jpg" alt="" />
                                 </div>
                             </a>
-                            <p>Circle of Hands</p>
-                            <h2>24 DEC 2014</h2>
+                            <p>Handmade Perfume</p>
+                            <h2>24 MAY 2025</h2>
                         </div>
                     </div>
 
-                    <div class="col-sm-3">
+                    <div class="col-sm-4">
                         <div class="video-gallery text-center">
                             <a href="#">
                                 <div class="iframe-img">
-                                    <img src="${pageContext.request.contextPath}/images/home/iframe3.png" alt="" />
-                                </div>
-                                <div class="overlay-icon">
-                                    <i class="fa fa-play-circle-o"></i>
+                                    <img src="${pageContext.request.contextPath}/images/home/shampoo_footer.jpg" alt="" />
                                 </div>
                             </a>
-                            <p>Circle of Hands</p>
-                            <h2>24 DEC 2014</h2>
-                        </div>
-                    </div>
-
-                    <div class="col-sm-3">
-                        <div class="video-gallery text-center">
-                            <a href="#">
-                                <div class="iframe-img">
-                                    <img src="${pageContext.request.contextPath}/images/home/iframe4.png" alt="" />
-                                </div>
-                                <div class="overlay-icon">
-                                    <i class="fa fa-play-circle-o"></i>
-                                </div>
-                            </a>
-                            <p>Circle of Hands</p>
-                            <h2>24 DEC 2014</h2>
+                            <p>Organic Shampoo</p>
+                            <h2>24 MAY 2025</h2>
                         </div>
                     </div>
                 </div>
+
                 <div class="col-sm-3">
                     <div class="address">
                         <img src="${pageContext.request.contextPath}/images/home/map.png" alt="" />
-                        <p>505 S Atlantic Ave Virginia Beach, VA(Virginia)</p>
+                        <p>Nature Care - Only Sell Online</p>
                     </div>
                 </div>
             </div>
@@ -104,7 +84,7 @@
                 </div>
                 <div class="col-sm-2">
                     <div class="single-widget">
-                        <h2>Quock Shop</h2>
+                        <h2>Quick Shop</h2>
                         <ul class="nav nav-pills nav-stacked">
                             <li><a href="">T-Shirt</a></li>
                             <li><a href="">Mens</a></li>
@@ -119,7 +99,7 @@
                         <h2>Policies</h2>
                         <ul class="nav nav-pills nav-stacked">
                             <li><a href="">Terms of Use</a></li>
-                            <li><a href="">Privecy Policy</a></li>
+                            <li><a href="">Privacy Policy</a></li>
                             <li><a href="">Refund Policy</a></li>
                             <li><a href="">Billing System</a></li>
                             <li><a href="">Ticket System</a></li>
@@ -133,7 +113,7 @@
                             <li><a href="">Company Information</a></li>
                             <li><a href="">Careers</a></li>
                             <li><a href="">Store Location</a></li>
-                            <li><a href="">Affillate Program</a></li>
+                            <li><a href="">Affiliate Program</a></li>
                             <li><a href="">Copyright</a></li>
                         </ul>
                     </div>
