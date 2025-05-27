@@ -9,7 +9,7 @@ import jakarta.servlet.annotation.*;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet("/skill")
+@WebServlet(name = "SkillController", urlPatterns = {"/skill"})
 public class SkillController extends HttpServlet {
     SkillDAO dao = new SkillDAO();
 
@@ -18,7 +18,7 @@ public class SkillController extends HttpServlet {
         String keyword = request.getParameter("search");
         String sort = request.getParameter("sort");
 
-        List<Skill> skills = dao.getAllSkills();
+        List<Skill> skills = dao.getAllSkills(keyword);
         request.setAttribute("skills", skills);
         request.getRequestDispatcher("skill.jsp").forward(request, response);
 
