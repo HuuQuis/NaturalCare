@@ -26,7 +26,6 @@ public class DBContext {
             String user = props.getProperty("db.user");
             String pass = props.getProperty("db.password");
             String url = props.getProperty("db.url");
-
             Class.forName("com.mysql.cj.jdbc.Driver");
             connection = DriverManager.getConnection(url, user, pass);
         } catch (ClassNotFoundException | SQLException | RuntimeException ex) {
