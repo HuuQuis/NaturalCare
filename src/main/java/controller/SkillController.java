@@ -21,21 +21,7 @@ public class SkillController extends HttpServlet {
         List<Skill> skills = dao.getAllSkills(keyword, sort);
         request.setAttribute("skills", skills);
         request.getRequestDispatcher("skill.jsp").forward(request, response);
-    }
 
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String action = request.getParameter("action");
-
-        if ("add".equals(action)) {
-            dao.addSkill(request.getParameter("skillName"));
-        } else if ("update".equals(action)) {
-            int id = Integer.parseInt(request.getParameter("skillId"));
-            dao.updateSkill(id, request.getParameter("skillName"));
-        } else if ("delete".equals(action)) {
-            int id = Integer.parseInt(request.getParameter("skillId"));
-            dao.deleteSkill(id);
-        }
 
         response.sendRedirect("skill");
     }
