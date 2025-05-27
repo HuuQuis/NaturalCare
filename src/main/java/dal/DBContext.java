@@ -1,41 +1,37 @@
 package dal;
 
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.*;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- * @author FPT University - PRJ30X
- */
 public class DBContext {
 
-    protected Connection connection; //dung de ket noi den CSDL
-    protected PreparedStatement stm;//thuc hien cac cau lenh SQL
-    protected ResultSet rs;//dung de luu tru va xu li du lieu lay ve tu select
-    protected String sql; //luu tru cau lenh SQL
+    protected Connection connection;
+    protected PreparedStatement stm;
+    protected ResultSet rs;
+    protected String sql;
 
     public DBContext() {
-        //@Students: You are allowed to edit user, pass, url variables to fit 
-        //your system configuration
-        //You can also add more methods for Database Interaction tasks. 
-        //But we recommend you to do it in another class
-        // For example : StudentDBContext extends DBContext , 
-        //where StudentDBContext is located in dal package, 
         try {
-            String user = "root";
-            String pass = "1234";
-            String url = "jdbc:mysql://localhost:3306/natural_care?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
+            Properties props = new Properties();
+            InputStream input = getClass().getClassLoader().getResourceAsStream("db.properties");
+            if (input == null) {
+                throw new RuntimeException("Unable to find db.properties");
+            }
+            props.load(input);
+
+            String user = props.getProperty("db.user");
+            String pass = props.getProperty("db.password");
+            String url = props.getProperty("db.url");
             Class.forName("com.mysql.cj.jdbc.Driver");
             connection = DriverManager.getConnection(url, user, pass);
-        } catch (ClassNotFoundException | SQLException ex) {
+        } catch (ClassNotFoundException | SQLException | RuntimeException ex) {
             Logger.getLogger(DBContext.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -52,12 +48,11 @@ public class DBContext {
     }
 
     public static void main(String[] args) {
-    //test connection
         DBContext db = new DBContext();
         if (db.testConnection()) {
-            System.out.println("Kết nối thành công!");
+            System.out.println("Connection successful!");
         } else {
-            System.out.println("Kết nối thất bại!");
+            System.out.println("Connection failed!");
         }
     }
 }
