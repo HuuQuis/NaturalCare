@@ -2,17 +2,24 @@ package dal;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class DBContext {
 
-    protected Connection connection;
-    protected PreparedStatement stm;
-    protected ResultSet rs;
-    protected String sql;
+    protected Connection connection; //dung de ket noi den CSDL
+    protected PreparedStatement stm;//thuc hien cac cau lenh SQL
+    protected ResultSet rs;//dung de luu tru va xu li du lieu lay ve tu select
+    protected String sql; //luu tru cau lenh SQL
 
     public DBContext() {
         try {
@@ -28,10 +35,8 @@ public class DBContext {
             String url = props.getProperty("db.url");
             Class.forName("com.mysql.cj.jdbc.Driver");
             connection = DriverManager.getConnection(url, user, pass);
-        } catch (ClassNotFoundException | SQLException | RuntimeException ex) {
+        } catch (ClassNotFoundException | SQLException | IOException ex) {
             Logger.getLogger(DBContext.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
     }
 
@@ -48,11 +53,12 @@ public class DBContext {
     }
 
     public static void main(String[] args) {
+    //test connection
         DBContext db = new DBContext();
         if (db.testConnection()) {
-            System.out.println("Connection successful!");
+            System.out.println("Kết nối thành công!");
         } else {
-            System.out.println("Connection failed!");
+            System.out.println("Kết nối thất bại!");
         }
     }
 }
