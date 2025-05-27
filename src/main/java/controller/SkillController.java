@@ -18,7 +18,7 @@ public class SkillController extends HttpServlet {
         String keyword = request.getParameter("search");
         String sort = request.getParameter("sort");
 
-        List<Skill> skills = dao.getAllSkills(keyword, sort);
+        List<Skill> skills = dao.getAllSkills();
         request.setAttribute("skills", skills);
         request.getRequestDispatcher("skill.jsp").forward(request, response);
 

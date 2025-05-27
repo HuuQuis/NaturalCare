@@ -18,7 +18,7 @@
 <body>
 <h2>Skill Management</h2>
 
-<form method="get" action="skill">
+<form method="get" action="">
     Search: <input type="text" name="search" />
     Sort:
     <select name="sort">
@@ -28,7 +28,7 @@
     <button type="submit">Filter</button>
 </form>
 
-<form method="post" action="skill">
+<form method="post" action="">
     <input type="text" name="skillName" placeholder="New skill name"/>
     <input type="hidden" name="action" value="add"/>
     <button type="submit">Add Skill</button>
@@ -44,7 +44,7 @@
         for (Skill s : skills) {
     %>
     <tr>
-        <form method="post" action="skill">
+        <form method="post" action="">
             <td><%= s.getSkillId() %></td>
             <td>
                 <input type="text" name="skillName" value="<%= s.getSkillName() %>"/>
