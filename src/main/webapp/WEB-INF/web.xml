@@ -3,4 +3,13 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
          version="6.0">
+    <servlet>
+        <servlet-name>SkillController</servlet-name>
+        <servlet-class>controller.SkillController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>SkillController</servlet-name>
+        <url-pattern>/skill</url-pattern>
+    </servlet-mapping>
+
 </web-app>
