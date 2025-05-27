@@ -11,31 +11,9 @@
         <div class="row">
             <div class="col-sm-4">
                 <div class="logo pull-left">
-                    <a href="index.html"><img src="${pageContext.request.contextPath}/images/home/logo.png" alt="" /></a>
+                    <a href="index.html"><img src="https://naturalcare.vercel.app/naturalcare/NLC-Logo.png" alt="" style="max-height: 70px"/></a>
                 </div>
-                <div class="btn-group pull-right">
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-default dropdown-toggle usa" data-toggle="dropdown">
-                            USA
-                            <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li><a href="">Canada</a></li>
-                            <li><a href="">UK</a></li>
-                        </ul>
-                    </div>
 
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-default dropdown-toggle usa" data-toggle="dropdown">
-                            DOLLAR
-                            <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li><a href="">Canadian Dollar</a></li>
-                            <li><a href="">Pound</a></li>
-                        </ul>
-                    </div>
-                </div>
             </div>
             <div class="col-sm-8">
                 <div class="shop-menu pull-right">
