@@ -35,43 +35,7 @@
         <artifactId>junit-jupiter-engine</artifactId>
         <version>${junit.version}</version>
         <scope>test</scope>
-      </dependency>
-
-      <!-- JDBC driver cho SQL Server -->
-      <dependency>
-          <groupId>com.microsoft.sqlserver</groupId>
-          <artifactId>mssql-jdbc</artifactId>
-          <version>12.4.2.jre11</version>
-      </dependency>
-
-      <!-- JSTL -->
-      <dependency>
-          <groupId>jakarta.servlet.jsp.jstl</groupId>
-          <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
-          <version>2.0.0</version>
-      </dependency>
-      <dependency>
-          <groupId>org.glassfish.web</groupId>
-          <artifactId>jakarta.servlet.jsp.jstl</artifactId>
-          <version>2.0.0</version>
-      </dependency>
-
-      <!-- JAXB API -->
-      <dependency>
-          <groupId>jakarta.xml.bind</groupId>
-          <artifactId>jakarta.xml.bind-api</artifactId>
-          <version>2.3.3</version>
-      </dependency>
-
-      <!-- mysql-connector-java -->
-      <dependency>
-          <groupId>mysql</groupId>
-          <artifactId>mysql-connector-java</artifactId>
-          <version>8.0.32</version>
-      </dependency>
-
-
-  </dependencies>
+      </dependency>  </dependencies>
 
   <build>
     <plugins>

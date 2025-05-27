@@ -1,88 +1,90 @@
-package dao;
+package dal;
 
 import model.Skill;
 import java.sql.*;
 import java.util.*;
 
-public class SkillDAO {
+public class SkillDAO extends DBContext {
     private final String jdbcURL = "jdbc:mysql://localhost:3306/natural_care";
     private final String jdbcUsername = "root";
-    private final String jdbcPassword = "";
+    private final String jdbcPassword = "your_mysql_password_here";
 
-    private static final String SELECT_ALL = "SELECT * FROM skill";
-    private static final String INSERT = "INSERT INTO skill (skill_name) VALUES (?)";
-    private static final String UPDATE = "UPDATE skill SET skill_name=? WHERE skill_id=?";
-    private static final String DELETE = "DELETE FROM skill WHERE skill_id=?";
-    private static final String SELECT_BY_ID = "SELECT * FROM skill WHERE skill_id=?";
-
-    protected Connection getConnection() throws SQLException {
+    private Connection getConnection() throws SQLException {
         return DriverManager.getConnection(jdbcURL, jdbcUsername, jdbcPassword);
     }
 
     public List<Skill> getAllSkills(String keyword) {
-        List<Skill> skills = new ArrayList<>();
-        String sql = (keyword != null && !keyword.trim().isEmpty()) ?
-                "SELECT * FROM skill WHERE skill_name LIKE ?" : SELECT_ALL;
+        List<Skill> list = new ArrayList<>();
+        String sql = "SELECT * FROM skill WHERE skill_name LIKE ? ORDER BY skill_id";
 
         try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            if (keyword != null && !keyword.trim().isEmpty()) {
-                stmt.setString(1, "%" + keyword + "%");
-            }
+             PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ResultSet rs = stmt.executeQuery();
+            ps.setString(1, "%" + keyword + "%");
+            ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                skills.add(new Skill(rs.getInt("skill_id"), rs.getString("skill_name")));
+                Skill skill = new Skill(
+                        rs.getInt("skill_id"),
+                        rs.getString("skill_name")
+                );
+                list.add(skill);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return skills;
+        return list;
     }
 
-    public void insertSkill(Skill skill) {
+    public Skill getSkillById(int id) {
+        String sql = "SELECT * FROM skill WHERE skill_id = ?";
         try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(INSERT)) {
-            stmt.setString(1, skill.getSkillName());
-            stmt.executeUpdate();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return new Skill(rs.getInt("skill_id"), rs.getString("skill_name"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public void addSkill(String name) {
+        String sql = "INSERT INTO skill (skill_name) VALUES (?)";
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, name);
+            ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public void updateSkill(Skill skill) {
+    public void updateSkill(int id, String name) {
+        String sql = "UPDATE skill SET skill_name = ? WHERE skill_id = ?";
         try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(UPDATE)) {
-            stmt.setString(1, skill.getSkillName());
-            stmt.setInt(2, skill.getSkillId());
-            stmt.executeUpdate();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, name);
+            ps.setInt(2, id);
+            ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     public void deleteSkill(int id) {
+        String sql = "DELETE FROM skill WHERE skill_id = ?";
         try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(DELETE)) {
-            stmt.setInt(1, id);
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
+             PreparedStatement ps = conn.prepareStatement(sql)) {
 
-    public Skill getSkillById(int id) {
-        Skill skill = null;
-        try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(SELECT_BY_ID)) {
-            stmt.setInt(1, id);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                skill = new Skill(rs.getInt("skill_id"), rs.getString("skill_name"));
-            }
+            ps.setInt(1, id);
+            ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return skill;
     }
 }
