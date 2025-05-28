@@ -280,3 +280,21 @@ CREATE TABLE return_request (
                                     REFERENCES user (user_id)
 );
 
+INSERT INTO `natural_care`.`user`
+(`user_id`,
+ `username`,
+ `password`,
+ `first_name`,
+ `last_name`,
+ `email`,
+ `phone_number`,
+ `role_id`)
+VALUES
+    (1,
+     'test',
+     'test',
+     'test',
+     'admin',
+     'test@gmail.com',
+     0123456789,
+     3);
