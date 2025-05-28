@@ -1,2 +1,3 @@
-package dal;public class productCategoryDal {
+package dal;
+public class productCategoryDal {
 }
