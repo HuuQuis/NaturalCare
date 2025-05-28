@@ -1,11 +1,11 @@
-package model;public class productCategory {
+package model;public class ProductCategory {
     private  int id;
     private String name;
 
-    public productCategory() {
+    public ProductCategory() {
     }
 
-    public productCategory(int id, String name) {
+    public ProductCategory(int id, String name) {
         this.id = id;
         this.name = name;
     }
