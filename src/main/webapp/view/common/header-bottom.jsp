@@ -21,17 +21,36 @@
                 </div>
                 <div class="mainmenu pull-left">
                     <ul class="nav navbar-nav collapse navbar-collapse">
-                        <li><a href="#" class="active" >Home</a></li>
-
-                            <c:forEach items="${categories}" var="category">
-                        <li><a href="${pageContext.request.contextPath}/products?category=${category.id}">${category.name}</a></li>
-                            </c:forEach>
-                        <li><a href="contact-us.jsp" >Contact</a></li>
-                        <li><a href="about-us.jsp">About Us</a></li>
+                        <li><a href="home" class="active" >Home</a></li>
+                        <c:forEach items="${categories}" var="category">
+                            <li class="dropdown">
+                                <a href="#">
+                                    ${category.name}<i class="fa fa-angle-down"></i>
+                                </a>
+                                <ul role="menu" class="sub-menu">
+                                    <c:forEach items="${subCategories}" var="sub">
+                                        <c:if test="${sub.productCategoryId == category.id}">
+                                            <li>
+                                                <a href="${pageContext.request.contextPath}/products?subcategory=${sub.id}">
+                                                        ${sub.name}
+                                                </a>
+                                            </li>
+                                        </c:if>
+                                    </c:forEach>
+                                </ul>
+                            </li>
+                        </c:forEach>
+                        <li><a href="#" >Contact</a></li>
+                        <li><a href="#">About Us</a></li>
                         <li class="dropdown"><a href="#">Blog<i class="fa fa-angle-down"></i></a>
                             <ul role="menu" class="sub-menu">
-                                <li><a href="blog.html">Blog List</a></li>
-                                <li><a href="blog-single.html">Blog Single</a></li>
+                                <c:forEach items="${blogCategories}" var="blogCategory">
+                                    <li>
+                                        <a href="${pageContext.request.contextPath}/products?category=${blogCategory.id}">
+                                                ${blogCategory.name}
+                                        </a>
+                                    </li>
+                                </c:forEach>
                             </ul>
                         </li>
                     </ul>
