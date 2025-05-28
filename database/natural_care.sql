@@ -6,7 +6,7 @@ use natural_care;
 
 CREATE TABLE order_status (
                               status_id INT NOT NULL PRIMARY KEY,
-                              status_name VARCHAR(255)user
+                              status_name VARCHAR(255)
 );
 
 INSERT INTO order_status (status_id, status_name) VALUES
