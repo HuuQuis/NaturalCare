@@ -6,10 +6,11 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <div class="header-bottom">
     <div class="container">
         <div class="row">
-            <div class="col-sm-9">
+            <div class="col-sm-12">
                 <div class="navbar-header">
                     <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
                         <span class="sr-only">Toggle navigation</span>
@@ -20,31 +21,39 @@
                 </div>
                 <div class="mainmenu pull-left">
                     <ul class="nav navbar-nav collapse navbar-collapse">
-                        <li><a href="index.html">Home</a></li>
-                        <li class="dropdown"><a href="#">Shop<i class="fa fa-angle-down"></i></a>
-                            <ul role="menu" class="sub-menu">
-                                <li><a href="shop.html">Products</a></li>
-                                <li><a href="product-details.html">Product Details</a></li>
-                                <li><a href="checkout.html">Checkout</a></li>
-                                <li><a href="cart.html">Cart</a></li>
-                                <li><a href="login.html">Login</a></li>
-                            </ul>
-                        </li>
+                        <li><a href="home" class="active" >Home</a></li>
+                        <c:forEach items="${categories}" var="category">
+                            <li class="dropdown">
+                                <a href="#">
+                                    ${category.name}<i class="fa fa-angle-down"></i>
+                                </a>
+                                <ul role="menu" class="sub-menu">
+                                    <c:forEach items="${subCategories}" var="sub">
+                                        <c:if test="${sub.productCategoryId == category.id}">
+                                            <li>
+                                                <a href="${pageContext.request.contextPath}/products?subcategory=${sub.id}">
+                                                        ${sub.name}
+                                                </a>
+                                            </li>
+                                        </c:if>
+                                    </c:forEach>
+                                </ul>
+                            </li>
+                        </c:forEach>
+                        <li><a href="#" >Contact</a></li>
+                        <li><a href="#">About Us</a></li>
                         <li class="dropdown"><a href="#">Blog<i class="fa fa-angle-down"></i></a>
                             <ul role="menu" class="sub-menu">
-                                <li><a href="blog.html">Blog List</a></li>
-                                <li><a href="blog-single.html">Blog Single</a></li>
+                                <c:forEach items="${blogCategories}" var="blogCategory">
+                                    <li>
+                                        <a href="${pageContext.request.contextPath}/products?category=${blogCategory.id}">
+                                                ${blogCategory.name}
+                                        </a>
+                                    </li>
+                                </c:forEach>
                             </ul>
                         </li>
-                        <li><a href="404.html">404</a></li>
-                        <li><a href="contact-us.html" class="active">Contact</a></li>
-                        <li><a href="about-us.html" class="active">About Us</a></li>
                     </ul>
-                </div>
-            </div>
-            <div class="col-sm-3">
-                <div class="search_box pull-right">
-                    <input type="text" placeholder="Search"/>
                 </div>
             </div>
         </div>

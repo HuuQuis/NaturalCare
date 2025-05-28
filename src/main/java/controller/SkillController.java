@@ -1,57 +1,28 @@
 package controller;
 
-import dao.SkillDAO;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import dal.SkillDAO;
 import model.Skill;
 import jakarta.servlet.ServletException;
-
-
+import jakarta.servlet.*;
+import jakarta.servlet.http.*;
+import jakarta.servlet.annotation.*;
 import java.io.IOException;
 import java.util.List;
 
+@WebServlet(name = "SkillController", urlPatterns = {"/skill"})
 public class SkillController extends HttpServlet {
-    private SkillDAO skillDAO;
+    SkillDAO dao = new SkillDAO();
 
     @Override
-    public void init() {
-        skillDAO = new SkillDAO();
-    }
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String keyword = request.getParameter("search");
+        String sort = request.getParameter("sort");
 
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String action = req.getParameter("action");
-        String keyword = req.getParameter("search");
+        List<Skill> skills = dao.getAllSkills(keyword);
+        request.setAttribute("skills", skills);
+        request.getRequestDispatcher("skill.jsp").forward(request, response);
 
-        if ("delete".equals(action)) {
-            int id = Integer.parseInt(req.getParameter("id"));
-            skillDAO.deleteSkill(id);
-            resp.sendRedirect("skill");
-            return;
-        } else if ("edit".equals(action)) {
-            int id = Integer.parseInt(req.getParameter("id"));
-            Skill skill = skillDAO.getSkillById(id);
-            req.setAttribute("skill", skill);
-        }
 
-        List<Skill> skillList = skillDAO.getAllSkills(keyword);
-        req.setAttribute("skills", skillList);
-        req.getRequestDispatcher("skill-management.jsp").forward(req, resp);
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String idStr = req.getParameter("id");
-        String name = req.getParameter("name");
-
-        if (idStr != null && !idStr.isEmpty()) {
-            Skill s = new Skill(Integer.parseInt(idStr), name);
-            skillDAO.updateSkill(s);
-        } else {
-            skillDAO.insertSkill(new Skill(0, name));
-        }
-
-        resp.sendRedirect("skill");
+        response.sendRedirect("skill");
     }
 }
