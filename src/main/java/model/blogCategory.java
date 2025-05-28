@@ -1,18 +1,18 @@
-package model;public class productCategory {
-    private  int id;
+package model;
+
+public class blogCategory {
+    private int id;
     private String name;
 
-    public productCategory() {
+    public blogCategory() {
     }
-
-    public productCategory(int id, String name) {
+    public blogCategory(int id, String name) {
         this.id = id;
         this.name = name;
     }
     public int getId() {
         return id;
     }
-
     public void setId(int id) {
         this.id = id;
     }
