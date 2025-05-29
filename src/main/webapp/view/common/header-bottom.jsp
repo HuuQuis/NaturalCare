@@ -24,7 +24,7 @@
                         <li><a href="home" class="active" >Home</a></li>
                         <c:forEach items="${categories}" var="category">
                             <li class="dropdown">
-                                <a href="#">
+                                <a href="${pageContext.request.contextPath}/products?category=${category.id}">
                                     ${category.name}<i class="fa fa-angle-down"></i>
                                 </a>
                                 <ul role="menu" class="sub-menu">
@@ -32,7 +32,7 @@
                                         <c:if test="${sub.productCategoryId == category.id}">
                                             <li>
                                                 <a href="${pageContext.request.contextPath}/products?subcategory=${sub.id}">
-                                                        ${sub.name}
+                                                    ${sub.name}
                                                 </a>
                                             </li>
                                         </c:if>

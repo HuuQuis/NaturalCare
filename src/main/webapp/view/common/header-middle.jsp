@@ -16,7 +16,7 @@
                 </div>
             </div>
             <div class="col-sm-4">
-                <div class="search_box">
+                <div class="search-box center-block">
                     <input oninput="searchByName(this)" value="${txt}" id="searchInput" type="text" name="txt" autocomplete="off" placeholder="Search products..."/>
                     <div id="searchList" class="search-list"></div>
                 </div>

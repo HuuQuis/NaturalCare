@@ -253,7 +253,7 @@ a#scrollUp i{
 
 /* Search box */
 
-.search-box input  {
+.search-box input{
   border: medium none;
   color: #B2B2B2;
   font-family: 'roboto', serif;
@@ -262,8 +262,8 @@ a#scrollUp i{
   height: 35px;
   outline: medium none;
   padding-left: 10px;
-  width: 200px;
-  background: #F0F0E9 url(../images/home/searchicon.png) no-repeat 175px;
+  width: 300px;
+  background: #F0F0E9 url(../images/home/searchicon.png) no-repeat 270px;
 }
 
 .search-list {
