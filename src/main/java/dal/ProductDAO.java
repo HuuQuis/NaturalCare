@@ -48,5 +48,21 @@ public class ProductDAO extends DBContext {
         }
         return products;
     }
+
+    public List<Product> searchProductsByText(String keyword) {
+        List<Product> products = new ArrayList<>();
+        String sql = "SELECT * FROM product WHERE product_name LIKE ?";
+
+        try {
+            stm = connection.prepareStatement(sql);
+            String searchPattern = "%" + keyword + "%";
+            stm.setString(1, searchPattern);
+            rs = stm.executeQuery();
+            products = extractProductsFromResultSet(rs);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return products;
+    }
 }
 

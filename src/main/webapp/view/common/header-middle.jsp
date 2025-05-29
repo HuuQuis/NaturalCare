@@ -6,6 +6,7 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <div class="header-middle">
     <div class="container">
         <div class="row">
@@ -13,9 +14,14 @@
                 <div class="logo pull-left">
                     <a href=home><img src="https://naturalcare.vercel.app/naturalcare/NLC-Logo.png" alt="" style="max-height: 70px"/></a>
                 </div>
-
             </div>
-            <div class="col-sm-8">
+            <div class="col-sm-4">
+                <div class="search_box">
+                    <input oninput="searchByName(this)" value="${txt}" id="searchInput" type="text" name="txt" autocomplete="off" placeholder="Search products..."/>
+                    <div id="searchList" class="search-list"></div>
+                </div>
+            </div>
+            <div class="col-sm-4">
                 <div class="shop-menu pull-right">
                     <ul class="nav navbar-nav">
                         <li><a href=""><i class="fa fa-user"></i> Account</a></li>

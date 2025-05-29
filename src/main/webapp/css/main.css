@@ -251,22 +251,53 @@ a#scrollUp i{
 	color:#fdb45e;
 }
 
-.search_box input {
-  background: #F0F0E9;
+/* Search box */
+
+.search-box input  {
   border: medium none;
   color: #B2B2B2;
-  font-family: 'roboto';
+  font-family: 'roboto', serif;
   font-size: 12px;
   font-weight: 300;
   height: 35px;
   outline: medium none;
   padding-left: 10px;
-  width: 155px;
-  background-image: url(../images/home/searchicon.png);
-  background-repeat: no-repeat;
-  background-position: 130px;
+  width: 200px;
+  background: #F0F0E9 url(../images/home/searchicon.png) no-repeat 175px;
 }
 
+.search-list {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-top: none;
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 1000;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.search-item {
+  padding: 10px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+}
+
+.search-item:hover {
+  background-color: #f8f9fa;
+}
+
+.product-name {
+  font-weight: bold;
+}
+
+.product-desc {
+  color: #666;
+}
 
 /*  Dropdown menu*/
 
@@ -274,7 +305,6 @@ a#scrollUp i{
 .navbar-toggle .icon-bar {
     background-color: #fff;
 }
-
 
 .nav.navbar-nav > li:hover > ul.sub-menu{
   display: block;
