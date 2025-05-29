@@ -10,9 +10,9 @@ import dal.SubProductCategoryDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
-import model.blogCategory;
-import model.productCategory;
-import model.subProductCategory;
+import model.BlogCategory;
+import model.ProductCategory;
+import model.SubProductCategory;
 
 @WebServlet(name = "HomeServlet", value = "/home")
 public class HomeServlet extends  HttpServlet{
@@ -30,10 +30,10 @@ public class HomeServlet extends  HttpServlet{
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        List<productCategory> categories = categoryDAO.getAllProductCategories();
-        List<blogCategory> blogCategories = blogCategoryDAO.getAllBlogCategories();
-        List<subProductCategory> subCategories = new ArrayList<>();
-        for (productCategory category : categories) {
+        List<ProductCategory> categories = categoryDAO.getAllProductCategories();
+        List<BlogCategory> blogCategories = blogCategoryDAO.getAllBlogCategories();
+        List<SubProductCategory> subCategories = new ArrayList<>();
+        for (ProductCategory category : categories) {
             subCategories.addAll(subProductCategoryDAO.getSubCategoriesByProductId(category.getId()));
         }
 

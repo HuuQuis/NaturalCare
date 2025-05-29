@@ -1,12 +1,12 @@
 package dal;
 
-import model.subProductCategory;
+import model.SubProductCategory;
 import java.sql.*;
 import java.util.*;
 
 public class SubProductCategoryDAO extends DBContext {
-    public List<subProductCategory> getSubCategoriesByProductId(int productCategoryId) {
-        List<subProductCategory> list = new ArrayList<>();
+    public List<SubProductCategory> getSubCategoriesByProductId(int productCategoryId) {
+        List<SubProductCategory> list = new ArrayList<>();
         sql = "SELECT * FROM sub_product_category WHERE product_category_id = ?";
 
         try {
@@ -15,7 +15,7 @@ public class SubProductCategoryDAO extends DBContext {
             rs = stm.executeQuery();
 
             while (rs.next()) {
-                subProductCategory subCategory = new subProductCategory(
+                SubProductCategory subCategory = new SubProductCategory(
                         rs.getInt("sub_product_category_id"),
                         rs.getString("sub_product_category_name"),
                         rs.getInt("product_category_id")

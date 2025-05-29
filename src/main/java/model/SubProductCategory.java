@@ -1,11 +1,11 @@
 package model;
 
-public class subProductCategory {
+public class SubProductCategory {
     private int id;
     private String name;
     private int productCategoryId;
 
-    public subProductCategory(int id, String name, int productCategoryId) {
+    public SubProductCategory(int id, String name, int productCategoryId) {
         this.id = id;
         this.name = name;
         this.productCategoryId = productCategoryId;

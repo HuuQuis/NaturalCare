@@ -1,21 +1,21 @@
 package dal;
 
-import model.blogCategory;
+import model.BlogCategory;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class BlogCategoryDAO extends DBContext{
-    public List<blogCategory> getAllBlogCategories() {
-        List<blogCategory> list = new ArrayList<>();
+    public List<BlogCategory> getAllBlogCategories() {
+        List<BlogCategory> list = new ArrayList<>();
         sql = "SELECT * FROM blog_category";
 
         try {
             stm = connection.prepareStatement(sql);
             rs = stm.executeQuery();
             while (rs.next()) {
-                blogCategory category = new blogCategory(
+                BlogCategory category = new BlogCategory(
                         rs.getInt("blog_category_id"),
                         rs.getString("blog_category_name")
                 );
