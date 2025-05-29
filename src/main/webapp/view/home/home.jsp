@@ -55,7 +55,7 @@
                                 <button type="button" class="btn btn-default get">Get it now</button>
                             </div>
                             <div class="col-sm-6">
-                                <img style="width: 500px; height: 500px; object-fit: cover; !important"
+                                <img style="width: 400px; height: 400px; object-fit: cover;border-radius: 10% !important"
                                         src="${pageContext.request.contextPath}/images/product/lipstick-red.jpg" class="img-responsive" alt="" />
                             </div>
                         </div>
@@ -67,7 +67,7 @@
                                 <button type="button" class="btn btn-default get">Get it now</button>
                             </div>
                             <div class="col-sm-6">
-                                <img style="width: 500px; height: 500px; object-fit: cover; !important"
+                                <img style="width: 400px; height: 400px; object-fit: cover; border-radius: 10% !important"
                                         src="${pageContext.request.contextPath}/images/product/giftset.jpg" class="img-responsive" alt="" />
                             </div>
                         </div>
@@ -80,7 +80,7 @@
                                 <button type="button" class="btn btn-default get">Get it now</button>
                             </div>
                             <div class="col-sm-6">
-                                <img style="width: 500px; height: 500px; object-fit: cover; !important"
+                                <img style="width: 400px; height: 400px; object-fit: cover;border-radius: 10% !important"
                                         src="${pageContext.request.contextPath}/images/product/shampoo.jpg" class="img-responsive" alt="" />
                             </div>
                         </div>
@@ -370,8 +370,11 @@
 <script src="${pageContext.request.contextPath}/js/jquery.js"></script>
 <script src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>
 <script src="${pageContext.request.contextPath}/js/jquery.scrollUp.min.js"></script>
-<script src="${pageContext.request.contextPath}/js/price-range.js"></script>
 <script src="${pageContext.request.contextPath}/js/jquery.prettyPhoto.js"></script>
 <script src="${pageContext.request.contextPath}/js/main.js"></script>
+<script>
+    const contextPath = "${pageContext.request.contextPath}";
+</script>
+<script src="${pageContext.request.contextPath}/js/search.js"></script>
 </body>
 </html>

@@ -9,14 +9,32 @@ public class ProductDAO extends DBContext {
 
     public List<Product> getProductsByCategoryId(int categoryId) {
         String sql = "SELECT p.* FROM product p " +
-                "INNER JOIN sub_product_category s ON p.sub_product_category_id = s.sub_product_category_id " +
-                "WHERE s.product_category_id = ?";
+                    "INNER JOIN sub_product_category s ON p.sub_product_category_id = s.sub_product_category_id " +
+                    "INNER JOIN product_category pc ON s.product_category_id = pc.product_category_id " +
+                    "WHERE pc.product_category_id = ?";
         return getProductsByQuery(sql, categoryId);
     }
 
     public List<Product> getProductsBySubCategoryId(int subCategoryId) {
         String sql = "SELECT * FROM product WHERE sub_product_category_id = ?";
         return getProductsByQuery(sql, subCategoryId);
+    }
+
+
+    public List<Product> searchProductsByText(String keyword) {
+        List<Product> products = new ArrayList<>();
+        String sql = "SELECT * FROM product WHERE product_name LIKE ?";
+
+        try {
+            stm = connection.prepareStatement(sql);
+            String searchPattern = "%" + keyword + "%";
+            stm.setString(1, searchPattern);
+            rs = stm.executeQuery();
+            products = extractProductsFromResultSet(rs);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return products;
     }
 
     // This method retrieves all products without any filtering.
@@ -49,4 +67,3 @@ public class ProductDAO extends DBContext {
         return products;
     }
 }
-
