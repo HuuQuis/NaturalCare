@@ -1,5 +1,4 @@
-﻿
-/*************************
+﻿/*************************
 *******Typography******
 **************************/
 @import url(http://fonts.googleapis.com/css?family=Roboto:400,300,400italic,500,700,100);
@@ -609,9 +608,9 @@ ul.sub-menu {
 	  background: #FE980F;
 }
 
-.item {
-  padding-left: 100px;
-}
+/*.item {*/
+/*  !*padding-left: 100px;*!*/
+/*}*/
 
 
 .pricing {
@@ -870,20 +869,16 @@ h2.title {
   position: relative;
 }
 
-.product-image-wrapper{
-	border:1px solid #F7F7F5;
-	overflow: hidden;
-	margin-bottom:30px;
+.product-image-wrapper {
+  border: 1px solid #F7F7F5;
+  overflow: hidden;
+  margin-bottom: 30px;
+  padding: 0;
 }
 
 .single-products {
   position: relative;
-}
-
-.new, .sale {
-  position: absolute;
-  top: 0;
-  right: 0;
+  padding: 0;
 }
 
 .productinfo h2{
@@ -907,8 +902,13 @@ h2.title {
   color: #696763;
 }
 
-.productinfo img{
-  width: 100%;
+.productinfo .carousel .carousel-inner .item img,
+.productinfo img {
+  width: 250px !important;
+  height: 250px !important;
+  object-fit: fill ;
+  padding: 0;
+  margin: 0 auto;
 }
 
 .productinfo{
@@ -1184,12 +1184,9 @@ h2.title {
 }
 
 .product-details {
-  margin-bottom: 40px;
+  margin-bottom: 25px;
   overflow: hidden;
-  margin-top: 10px;
 }
-
-
 
 .view-product {
   position: relative;
@@ -2543,5 +2540,3 @@ h2.title {
 .contact-info .social-networks ul li a:hover{
   color: #FE980F;
 }
-
-

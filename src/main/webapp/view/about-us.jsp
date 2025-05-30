@@ -60,10 +60,6 @@
     <!--header-middle-->
     <jsp:include page="common/header-middle.jsp"></jsp:include>
     <!--/header-middle-->
-
-    <!--header-bottom-->
-    <jsp:include page="common/header-bottom.jsp"></jsp:include>
-    <!--/header-bottom-->
 </header><!--/header-->
 
 <div id="contact-page" class="container">

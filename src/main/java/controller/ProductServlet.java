@@ -37,7 +37,6 @@ public class ProductServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
             String categoryId = request.getParameter("category");
-            String subCategoryId = request.getParameter("subcategory");
             List<Product> products;
 
             if (categoryId != null) {
@@ -46,23 +45,16 @@ public class ProductServlet extends HttpServlet {
                 request.setAttribute("products", products);
             }
 
-            if (subCategoryId != null) {
-                products = productDAO.getProductsBySubCategoryId(Integer.parseInt(subCategoryId));
-                request.setAttribute("selectedSubCategoryId", subCategoryId);
-                request.setAttribute("products", products);
+            List<ProductCategory> categories = categoryDAO.getAllProductCategories();
+            List<BlogCategory> blogCategories = blogCategoryDAO.getAllBlogCategories();
+            List<SubProductCategory> subCategories = new ArrayList<>();
+            for (ProductCategory category : categories) {
+                subCategories.addAll(subProductCategoryDAO.getSubCategoriesByProductId(category.getId()));
             }
 
-
-//            List<ProductCategory> categories = categoryDAO.getAllProductCategories();
-//            List<BlogCategory> blogCategories = blogCategoryDAO.getAllBlogCategories();
-//            List<SubProductCategory> subCategories = new ArrayList<>();
-//            for (ProductCategory category : categories) {
-//                subCategories.addAll(subProductCategoryDAO.getSubCategoriesByProductId(category.getId()));
-//            }
-//
-//        request.setAttribute("categories", categories);
-//        request.setAttribute("blogCategories", blogCategories);
-//        request.setAttribute("subCategories", subCategories);
+        request.setAttribute("categories", categories);
+        request.setAttribute("blogCategories", blogCategories);
+        request.setAttribute("subCategories", subCategories);
 
         request.getRequestDispatcher("/view/product/product.jsp").forward(request, response);
     }
