@@ -53,16 +53,16 @@ public class ProductServlet extends HttpServlet {
             }
 
 
-//            List<ProductCategory> categories = categoryDAO.getAllProductCategories();
-//            List<BlogCategory> blogCategories = blogCategoryDAO.getAllBlogCategories();
-//            List<SubProductCategory> subCategories = new ArrayList<>();
-//            for (ProductCategory category : categories) {
-//                subCategories.addAll(subProductCategoryDAO.getSubCategoriesByProductId(category.getId()));
-//            }
-//
-//        request.setAttribute("categories", categories);
-//        request.setAttribute("blogCategories", blogCategories);
-//        request.setAttribute("subCategories", subCategories);
+            List<ProductCategory> categories = categoryDAO.getAllProductCategories();
+            List<BlogCategory> blogCategories = blogCategoryDAO.getAllBlogCategories();
+            List<SubProductCategory> subCategories = new ArrayList<>();
+            for (ProductCategory category : categories) {
+                subCategories.addAll(subProductCategoryDAO.getSubCategoriesByProductId(category.getId()));
+            }
+
+        request.setAttribute("categories", categories);
+        request.setAttribute("blogCategories", blogCategories);
+        request.setAttribute("subCategories", subCategories);
 
         request.getRequestDispatcher("/view/product/product.jsp").forward(request, response);
     }
