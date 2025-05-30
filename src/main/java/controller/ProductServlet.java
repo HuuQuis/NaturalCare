@@ -46,13 +46,6 @@ public class ProductServlet extends HttpServlet {
                 request.setAttribute("products", products);
             }
 
-            if (subCategoryId != null) {
-                products = productDAO.getProductsBySubCategoryId(Integer.parseInt(subCategoryId));
-                request.setAttribute("selectedSubCategoryId", subCategoryId);
-                request.setAttribute("products", products);
-            }
-
-
             List<ProductCategory> categories = categoryDAO.getAllProductCategories();
             List<BlogCategory> blogCategories = blogCategoryDAO.getAllBlogCategories();
             List<SubProductCategory> subCategories = new ArrayList<>();

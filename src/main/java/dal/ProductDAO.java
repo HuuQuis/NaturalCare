@@ -8,13 +8,12 @@ public class ProductDAO extends DBContext {
 
     public List<Product> getProductsByCategoryId(int categoryId) {
         Map<Integer, Product> productMap = new HashMap<>();
-        String sql = "SELECT p.*, pv.product_image " +
+        sql = "SELECT p.*, pv.product_image " +
                 "FROM product p " +
                 "INNER JOIN sub_product_category s ON p.sub_product_category_id = s.sub_product_category_id " +
                 "INNER JOIN product_category pc ON s.product_category_id = pc.product_category_id " +
                 "LEFT JOIN product_variation pv ON pv.product_id = p.product_id " +
                 "WHERE pc.product_category_id = ?";
-
         try {
             stm = connection.prepareStatement(sql);
             stm.setInt(1, categoryId);
@@ -31,7 +30,6 @@ public class ProductDAO extends DBContext {
                         rs.getString("product_short_description"),
                         rs.getString("product_information"),
                         rs.getString("product_guideline"),
-                        null,
                         rs.getInt("sub_product_category_id")
                     );
                     productMap.put(productId, product);
@@ -44,7 +42,6 @@ public class ProductDAO extends DBContext {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         return new ArrayList<>(productMap.values());
     }
 
@@ -93,7 +90,6 @@ public class ProductDAO extends DBContext {
                     rs.getString("product_short_description"),
                     rs.getString("product_information"),
                     rs.getString("product_guideline"),
-                    rs.getString("product_image"),
                     rs.getInt("sub_product_category_id")
             ));
         }

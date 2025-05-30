@@ -17,7 +17,7 @@ public class Product {
         this.imageUrls = new ArrayList<>();
     }
 
-    public Product(int id, String name, String description, String information, String guideline, String imageUrl, int subProductCategoryId) {
+    public Product(int id, String name, String description, String information, String guideline,String ImageUrl, int subProductCategoryId) {
         this();
         this.id = id;
         this.name = name;
@@ -25,6 +25,17 @@ public class Product {
         this.information = information;
         this.guideline = guideline;
         this.imageUrl = imageUrl;
+        this.subProductCategoryId = subProductCategoryId;
+
+    }
+
+    public Product(int id, String name, String description, String information, String guideline, int subProductCategoryId) {
+        this();
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.information = information;
+        this.guideline = guideline;
         this.subProductCategoryId = subProductCategoryId;
         if (imageUrl != null) {
             this.imageUrls.add(imageUrl);
