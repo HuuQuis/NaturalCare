@@ -24,17 +24,7 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
-        if (request.getSession().getAttribute("user") != null) {
-            User user = (User) request.getSession().getAttribute("user");
-            request.setAttribute("username", user.getUsername());
-            request.setAttribute("password", user.getPassword());
-        }
         request.getRequestDispatcher("view/login/login.jsp").forward(request, response);
-        boolean inValid = "".equals(request.getSession().getAttribute("validate"));
-        if (!inValid) {
-            // If the session attribute "validate" is not empty, it means there was a validation error
-            request.getSession().setAttribute("validate", "");
-        }
     }
 
     @Override
@@ -68,7 +58,7 @@ public class LoginServlet extends HttpServlet {
             }
             if (userDAO.checkAdmin(username, password)) {
                 //send user name to homepage
-                request.getSession().setAttribute("username", username);
+                request.getSession().setAttribute("user", username);
                 response.sendRedirect("home");
                 return;
             }

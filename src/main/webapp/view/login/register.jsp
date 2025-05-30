@@ -53,11 +53,18 @@
                 <!--sign up form-->
                 <div class="signup-form">
                     <h2>New User Signup!</h2>
-                    <form action="#">
-                        <input type="text" placeholder="Name"/>
-                        <input type="email" placeholder="Email Address"/>
-                        <input type="password" placeholder="Password"/>
+                    <form action="register" method="POST">
+                        <input type="text" name="username" placeholder="Username" required minlength="6"/>
+                        <input type="password" name="password" placeholder="Password" required minlength="6"/>
+                        <input type="password" name="password-confirm" placeholder="Re-enter your password" required/>
+                        <input type="text" name="firstName" placeholder="First Name" required/>
+                        <input type="text" name="lastName" placeholder="Last Name" required/>
+                        <input type="email" name="email" placeholder="Email Address" required/>
+                        <input type="text" name="phone" placeholder="Phone Number" pattern="[0-9]{10}" required/>
                         <button type="submit" class="btn btn-default">Signup</button>
+                        ${error}
+                        <hr>
+                        <p class="message">Already registered? <a href="${pageContext.request.contextPath}/login">Login</a></p>
                     </form>
                 </div>
                 <!--/sign up form-->
@@ -70,7 +77,17 @@
 <!--/Footer-->
 <jsp:include page="../common/footer.jsp"></jsp:include>
 
+</section><!--/Footer-->
+<script>
+    document.querySelector('form').addEventListener('submit', function (event) {
+        const password = document.querySelector('input[name="password"]').value;
+        const confirmPassword = document.querySelector('input[name="password-confirm"]').value;
 
+        if (password !== confirmPassword) {
+            event.preventDefault();
+            alert("Passwords do not match!");
+        }
+    });
 
 <script src="${pageContext.request.contextPath}/js/jquery.js"></script>
 <script src="${pageContext.request.contextPath}/js/price-range.js"></script>
