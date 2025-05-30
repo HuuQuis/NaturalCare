@@ -30,6 +30,7 @@ public class ProductDAO extends DBContext {
                         rs.getString("product_short_description"),
                         rs.getString("product_information"),
                         rs.getString("product_guideline"),
+                        null,
                         rs.getInt("sub_product_category_id")
                     );
                     productMap.put(productId, product);
@@ -90,6 +91,7 @@ public class ProductDAO extends DBContext {
                     rs.getString("product_short_description"),
                     rs.getString("product_information"),
                     rs.getString("product_guideline"),
+                    rs.getString("product_image"),
                     rs.getInt("sub_product_category_id")
             ));
         }

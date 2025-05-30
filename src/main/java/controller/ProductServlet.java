@@ -37,7 +37,6 @@ public class ProductServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
             String categoryId = request.getParameter("category");
-            String subCategoryId = request.getParameter("subcategory");
             List<Product> products;
 
             if (categoryId != null) {

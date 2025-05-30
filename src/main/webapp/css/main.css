@@ -1184,12 +1184,9 @@ h2.title {
 }
 
 .product-details {
-  margin-bottom: 40px;
+  margin-bottom: 25px;
   overflow: hidden;
-  margin-top: 10px;
 }
-
-
 
 .view-product {
   position: relative;

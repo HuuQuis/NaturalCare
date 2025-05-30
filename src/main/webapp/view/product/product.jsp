@@ -69,7 +69,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div><!--/category-productsr-->
+                    </div><!--/category-products-->
 
                 </div>
             </div>
@@ -106,6 +106,9 @@
                                             <p>${product.description}</p>
                                             <a href="#" class="btn btn-default add-to-cart">
                                                 <i class="fa fa-shopping-cart"></i>Add to cart
+                                            </a>
+                                            <a href="#" class="btn btn-default product-details">
+                                                <i class="fa fa-shopping-cart"></i>Product details
                                             </a>
                                         </div>
                                     </div>
