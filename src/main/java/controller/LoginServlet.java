@@ -67,8 +67,7 @@ public class LoginServlet extends HttpServlet {
                 response.addCookie(cPassword);
             }
             if (userDAO.checkAdmin(username, password)) {
-                request.getSession().setAttribute("user", "Hello Admin!");
-                response.sendRedirect("index.jsp");
+                response.sendRedirect("home");
                 return;
             }
             request.getSession().setAttribute("validate", "");
