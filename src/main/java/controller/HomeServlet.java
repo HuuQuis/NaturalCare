@@ -20,6 +20,7 @@ public class HomeServlet extends  HttpServlet{
     private BlogCategoryDAO blogCategoryDAO;
     private SubProductCategoryDAO subProductCategoryDAO;
 
+
     @Override
     public void init() {
         categoryDAO = new ProductCategoryDAO();

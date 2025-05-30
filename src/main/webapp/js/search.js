@@ -24,7 +24,7 @@ function searchByName(input) {
 }
 
 function selectProduct(productId) {
-    window.location.href = contextPath + "/product?id=" + productId;
+    window.location.href = contextPath + "/productDetail?product_id=" + productId;
 }
 
 // Close search list when clicking outside

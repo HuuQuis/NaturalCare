@@ -33,7 +33,6 @@
 <header id="header">
     <jsp:include page="common/header-top.jsp"></jsp:include>
     <jsp:include page="common/header-middle.jsp"></jsp:include>
-    <jsp:include page="common/header-bottom.jsp"></jsp:include>
 </header>
 
 <div id="contact-page" class="container">
