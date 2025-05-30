@@ -67,7 +67,7 @@
                     </form>
                 </div>
             </div>
-            <div class="col-sm-5">
+            <div class="col-sm-4">
                 <div class="contact-info">
                     <h2 class="title text-center">Our Contact Info</h2>
                     <address>

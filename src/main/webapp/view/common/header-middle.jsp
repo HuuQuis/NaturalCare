@@ -24,9 +24,17 @@
             <div class="col-sm-4">
                 <div class="shop-menu pull-right">
                     <ul class="nav navbar-nav">
-                        <li><a href=""><i class="fa fa-user"></i> Account</a></li>
+<%--                        if dont have username then show login--%>
+                        <c:choose>
+                            <c:when test="${not empty username}">
+                                <li><a href=""><i class="fa fa-user"></i> ${username}</a></li>
+                            </c:when>
+                            <c:otherwise>
+                                <li><a href="login"><i class="fa fa-lock"></i> Login</a></li>
+                            </c:otherwise>
+                        </c:choose>
                         <li><a href=""><i class="fa fa-shopping-cart"></i> Cart</a></li>
-                        <li><a href=""><i class="fa fa-lock"></i> Login</a></li>
+<%--                        <li><a href=""><i class="fa fa-lock"></i> Login</a></li>--%>
                     </ul>
                 </div>
             </div>
