@@ -54,8 +54,8 @@
                 <div class="login-form">
                     <h2>Login to your account</h2>
                     <form action="login" method="POST">
-                        <input name="username" type="text" placeholder="Username" />
-                        <input name="password" type="password" placeholder="Password" />
+                        <input name="username" type="text" placeholder="Username" required/>
+                        <input name="password" type="password" placeholder="Password" required/>
                         <span>
 								<input type="checkbox" class="checkbox">
 								Keep me signed in
@@ -66,14 +66,13 @@
 
                         <div style="display: flex; gap: 10px; margin-top: 10px;">
                             <button type="submit" class="btn btn-default">Login</button>
-                            <button href="#" class="btn btn-default">Forgot Password?</button>
-                            <button href="#" class="btn btn-default">Change Password</button>
+                            <button type="button" class="btn btn-default">Forgot Password</button>
+                            <button type="button" class="btn btn-default">Change Password</button>
                         </div>
 
-                        <hr />
-
-                        <p>Don’t have an account?</p>
-                        <button href="#" class="btn btn-default">Register</button>
+                        <hr>
+                        <p class="message">Don’t have an account? <a href="${pageContext.request.contextPath}/register">Register</a>
+                        </p>
 
                     </form>
                 </div>
@@ -86,7 +85,6 @@
 
 <!--/Footer-->
 <jsp:include page="../common/footer.jsp"></jsp:include>
-
 
 
 <script src="${pageContext.request.contextPath}/js/jquery.js"></script>
