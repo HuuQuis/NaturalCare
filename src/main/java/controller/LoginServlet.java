@@ -67,6 +67,8 @@ public class LoginServlet extends HttpServlet {
                 response.addCookie(cPassword);
             }
             if (userDAO.checkAdmin(username, password)) {
+                //send user name to homepage
+                request.getSession().setAttribute("username", username);
                 response.sendRedirect("home");
                 return;
             }

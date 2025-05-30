@@ -1,0 +1,4 @@
+# src/main/resources/db.properties
+db.user="your username"
+db.password="your password"
+db.url=jdbc:mysql://localhost:3306/natural_care?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
