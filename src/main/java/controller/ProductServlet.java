@@ -37,13 +37,25 @@ public class ProductServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
             String categoryId = request.getParameter("category");
+            String subCategoryId = request.getParameter("subcategory");
             List<Product> products;
 
-            if (categoryId != null) {
+        if (categoryId != null) {
+            if (subCategoryId != null) {
+                products = productDAO.getProductsBySubCategoryId(Integer.parseInt(subCategoryId));
+                request.setAttribute("selectedCategoryId", categoryId);
+                request.setAttribute("selectedSubCategoryId", subCategoryId);
+            } else {
                 products = productDAO.getProductsByCategoryId(Integer.parseInt(categoryId));
                 request.setAttribute("selectedCategoryId", categoryId);
-                request.setAttribute("products", products);
             }
+            request.setAttribute("products", products);
+        } else if (subCategoryId != null) {
+            products = productDAO.getProductsBySubCategoryId(Integer.parseInt(subCategoryId));
+            request.setAttribute("selectedSubCategoryId", subCategoryId);
+            request.setAttribute("products", products);
+        }
+
 
             List<ProductCategory> categories = categoryDAO.getAllProductCategories();
             List<BlogCategory> blogCategories = blogCategoryDAO.getAllBlogCategories();

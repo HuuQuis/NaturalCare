@@ -17,6 +17,16 @@ public class Product {
         this.imageUrls = new ArrayList<>();
     }
 
+    public Product(int id, String name, String description, String information, String guideline, int subProductCategoryId) {
+        this();
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.information = information;
+        this.guideline = guideline;
+        this.subProductCategoryId = subProductCategoryId;
+    }
+
     public Product(int id, String name, String description, String information, String guideline,String ImageUrl, int subProductCategoryId) {
         this();
         this.id = id;
@@ -29,7 +39,7 @@ public class Product {
 
     }
 
-    public Product(int id, String name, String description, String information, String guideline, int subProductCategoryId) {
+    public Product(int id, String name, String description, String information, String guideline, int subProductCategoryId, String imageUrl) {
         this();
         this.id = id;
         this.name = name;
