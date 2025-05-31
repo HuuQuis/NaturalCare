@@ -107,8 +107,8 @@
                                             <a href="#" class="btn btn-default add-to-cart">
                                                 <i class="fa fa-shopping-cart"></i>Add to cart
                                             </a>
-                                            <a href="#" class="btn btn-default product-details">
-                                                <i class="fa fa-shopping-cart"></i>Product details
+                                            <a href="productDetail?product_id=${product.id}" class="btn btn-default product-details">
+                                                <i class="fa fa-info"></i>Product details
                                             </a>
                                         </div>
                                     </div>
