@@ -337,6 +337,25 @@ CREATE TABLE return_request (
 );
 
 INSERT INTO `natural_care`.`user`
+(
+ `username`,
+ `password`,
+ `first_name`,
+ `last_name`,
+ `email`,
+ `phone_number`,
+ `role_id`)
+VALUES
+    (
+     'test',
+     'test',
+     'test',
+     'admin',
+     'test@gmail.com',
+     0123456789,
+     3);
+
+INSERT INTO `natural_care`.`user`
 (`user_id`,
  `username`,
  `password`,
