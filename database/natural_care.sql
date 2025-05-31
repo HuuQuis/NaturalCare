@@ -147,13 +147,16 @@ CREATE TABLE product_category (
 );
 
 insert into product_category ( product_category_name) values
-                                                          ('Make Up'),
-                                                          ('Skin'),
-                                                          ('Hair'),
-                                                          ('Oral Beauty'),
-                                                          ('Body'),
-                                                          ('Organic Perfume'),
-                                                          ('Gift Set');
+														('Sale'),
+														('Makeup'),
+														('Skin'),
+														('Hair'),
+														('Beauty Drink'),
+														('Body Care'),
+														('Baby Care'),
+														('Fragrance'),
+														('Gifts'),
+														('Product Sets');
 
 
 CREATE TABLE sub_product_category (
@@ -163,6 +166,59 @@ CREATE TABLE sub_product_category (
                                       FOREIGN KEY (product_category_id)
                                           REFERENCES product_category (product_category_id)
 );
+
+INSERT INTO sub_product_category (sub_product_category_id, sub_product_category_name, product_category_id) VALUES
+-- Sale
+(1, 'Skin Care Combo', 1),
+(2, 'Hair Care Combo', 1),
+(3, 'Lip Care Combo', 1),
+(4, 'Other Combos', 1),
+(5, 'Black Green Day', 1),
+
+-- Makeup
+(6, 'Lip Balm', 2),
+(7, 'Colored Lipstick', 2),
+(8, 'Lip Scrub', 2),
+(9, 'Foundation', 2),
+(10, 'Blush', 2),
+
+-- Hair
+(11, 'Shampoo', 4),
+(12, 'Hair Conditioner', 4),
+
+-- Beauty Drink
+(13, 'Beauty Drink', 5),
+
+-- Body Care
+(14, 'Natural Soap', 6),
+(15, 'Natural Shower Gel', 6),
+(16, 'Body Lotion', 6),
+(17, 'Body Scrub', 6),
+(18, 'Feminine Hygiene', 6),
+(19, 'Oral Care', 6),
+
+-- Baby Care
+(20, 'Baby Bath', 7),
+(21, 'Baby Care', 7),
+
+-- Fragrance
+(22, 'Pure Essential Oil', 8),
+(23, 'Therapeutic Essential Oil', 8),
+(24, 'Smart Hanging Oil', 8),
+(25, 'Solid Perfume', 8),
+(26, 'Spray Perfume', 8),
+
+-- Gifts
+(27, 'Under 300k', 9),
+(28, 'Under 500k', 9),
+(29, 'Under 800k', 9),
+
+-- Product Sets
+(30, 'Anti-aging Ginseng Skin Care Set', 10),
+(31, 'Centella Skin Care Set', 10),
+(32, 'Silkworm Skin Care Set', 10),
+(33, 'Acerola Skin Care Set', 10);
+
 
 
 CREATE TABLE product (
@@ -290,11 +346,11 @@ INSERT INTO `natural_care`.`user`
  `phone_number`,
  `role_id`)
 VALUES
-    (1,
+    (4,
      'test',
      'test',
      'test',
-     'admin',
+     'manager',
      'test@gmail.com',
      0123456789,
-     3);
+     4);
