@@ -1,6 +1,8 @@
 package dal;
 
 import model.Product;
+import model.ProductVariation;
+
 import java.sql.SQLException;
 import java.util.*;
 
@@ -25,6 +27,53 @@ public class ProductDAO extends DBContext {
                 "WHERE p.sub_product_category_id = ?";
         return fetchProductsByQuery(sql, subCategoryId);
     }
+
+    public Product getProductById(int productId) {
+         sql = "SELECT p.*, pv.product_image, pv.color, pv.size, pv.price, pv.qty_in_stock, pv.solded\n" +
+                 "                FROM product p\n" +
+                 "                LEFT JOIN product_variation pv ON pv.product_id = p.product_id\n" +
+                 "                WHERE p.product_id = ?";
+
+        Product product = null;
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setInt(1, productId);
+            rs = stm.executeQuery();
+
+            while (rs.next()) {
+                if (product == null) {
+                    product = new Product(
+                        rs.getInt("product_id"),
+                        rs.getString("product_name"),
+                        rs.getString("product_short_description"),
+                        rs.getString("product_information"),
+                        rs.getString("product_guideline"),
+                        rs.getString("product_image"),
+                        rs.getInt("sub_product_category_id")
+                    );
+                }
+
+                // Add variation if exists
+                String imageUrl = rs.getString("product_image");
+                if (imageUrl != null) {
+                    ProductVariation variation = new ProductVariation(
+                        imageUrl,
+                        rs.getString("color"),
+                        rs.getString("size"),
+                        rs.getInt("price"),
+                        rs.getInt("qty_in_stock"),
+                        rs.getInt("solded")
+                    );
+                    product.addVariation(variation);
+                    product.addImageUrl(imageUrl);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return product;
+    }
+
 
     private List<Product> fetchProductsByQuery(String sql, int id) {
         Map<Integer, Product> productMap = new HashMap<>();
@@ -76,7 +125,6 @@ public class ProductDAO extends DBContext {
         }
         return products;
     }
-
 
     // This method extracts products from the ResultSet and returns a list of Product objects.
     private List<Product> extractProductsFromResultSet(java.sql.ResultSet rs) throws SQLException {

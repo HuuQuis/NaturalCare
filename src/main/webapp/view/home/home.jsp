@@ -48,38 +48,38 @@
 
                     <div class="carousel-inner">
                         <div class="item active">
-                            <div class="col-sm-6">
+                            <div class="col-sm-6" style="padding-left: 90px">
                                 <h1><span>Nature</span>-Care</h1>
                                 <h2>New Arrive!</h2>
                                 <p>Our natural lipstick is made from plant-based ingredients, offering beautiful color with gentle care for your lips.</p>
                                 <button type="button" class="btn btn-default get">Get it now</button>
                             </div>
-                            <div class="col-sm-6">
+                            <div class="col-sm-6" style="padding-left: 90px">
                                 <img style="width: 400px; height: 400px; object-fit: cover;border-radius: 10% !important"
                                         src="${pageContext.request.contextPath}/images/product/lipstick-red.jpg" class="img-responsive" alt="" />
                             </div>
                         </div>
                         <div class="item">
-                            <div class="col-sm-6">
+                            <div class="col-sm-6" style="padding-left: 90px">
                                 <h1><span>Nature</span>-Care</h1>
                                 <h2>Buy 2 Get 1 Free</h2>
                                 <p>Our Natural Lipstick Gift Set combines beauty and care, featuring plant-based lipsticks in a beautifully packaged box—perfect for any occasion.</p>
                                 <button type="button" class="btn btn-default get">Get it now</button>
                             </div>
-                            <div class="col-sm-6">
+                            <div class="col-sm-6" style="padding-left: 90px">
                                 <img style="width: 400px; height: 400px; object-fit: cover; border-radius: 10% !important"
                                         src="${pageContext.request.contextPath}/images/product/giftset.jpg" class="img-responsive" alt="" />
                             </div>
                         </div>
 
                         <div class="item">
-                            <div class="col-sm-6">
+                            <div class="col-sm-6" style="padding-left: 90px">
                                 <h1><span>Nature</span>-Care</h1>
                                 <h2>Hot Deal</h2>
                                 <p>Our natural shampoo is crafted with herbal extracts to gently cleanse your hair while nourishing the scalp—free from sulfates and harsh chemicals.</p>
                                 <button type="button" class="btn btn-default get">Get it now</button>
                             </div>
-                            <div class="col-sm-6">
+                            <div class="col-sm-6" style="padding-left: 90px">
                                 <img style="width: 400px; height: 400px; object-fit: cover;border-radius: 10% !important"
                                         src="${pageContext.request.contextPath}/images/product/shampoo.jpg" class="img-responsive" alt="" />
                             </div>

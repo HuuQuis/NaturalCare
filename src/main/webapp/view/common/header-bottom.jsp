@@ -46,7 +46,7 @@
                             <ul role="menu" class="sub-menu">
                                 <c:forEach items="${blogCategories}" var="blogCategory">
                                     <li>
-                                        <a href="${pageContext.request.contextPath}/products?category=${blogCategory.id}">
+                                        <a href="${pageContext.request.contextPath}/blogs?blogCategory=${blogCategory.id}">
                                                 ${blogCategory.name}
                                         </a>
                                     </li>
