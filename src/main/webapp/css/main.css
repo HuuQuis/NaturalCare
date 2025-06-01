@@ -904,7 +904,7 @@ h2.title {
 
 .productinfo .carousel .carousel-inner .item img,
 .productinfo img {
-  width: 250px !important;
+  width: 330px !important;
   height: 250px !important;
   object-fit: fill ;
   padding: 0;

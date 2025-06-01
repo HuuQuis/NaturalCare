@@ -28,11 +28,11 @@
                                     ${category.name}<i class="fa fa-angle-down"></i>
                                 </a>
                                 <ul role="menu" class="sub-menu">
-                                    <c:forEach items="${subCategories}" var="sub">
-                                        <c:if test="${sub.productCategoryId == category.id}">
+                                    <c:forEach items="${subCategories}" var="subcategory">
+                                        <c:if test="${subcategory.productCategoryId == category.id}">
                                             <li>
-                                                <a href="${pageContext.request.contextPath}/products?subcategory=${sub.id}">
-                                                    ${sub.name}
+                                                <a href="${pageContext.request.contextPath}/products?subcategory=${subcategory.id}">
+                                                    ${subcategory.name}
                                                 </a>
                                             </li>
                                         </c:if>
@@ -46,7 +46,7 @@
                             <ul role="menu" class="sub-menu">
                                 <c:forEach items="${blogCategories}" var="blogCategory">
                                     <li>
-                                        <a href="${pageContext.request.contextPath}/products?category=${blogCategory.id}">
+                                        <a href="${pageContext.request.contextPath}/blogs?blogCategory=${blogCategory.id}">
                                                 ${blogCategory.name}
                                         </a>
                                     </li>
