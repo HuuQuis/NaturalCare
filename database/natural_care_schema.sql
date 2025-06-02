@@ -139,7 +139,7 @@ CREATE TABLE product
     product_name              VARCHAR(255) NOT NULL,
     product_short_description VARCHAR(255),
     product_information       MEDIUMTEXT,
-    product_guildline         TEXT,
+    product_guideline         TEXT,
     sub_product_category_id   INT          NOT NULL,
     FOREIGN KEY (sub_product_category_id)
         REFERENCES sub_product_category (sub_product_category_id)
@@ -154,7 +154,7 @@ CREATE TABLE product_variation
     size          VARCHAR(50),
     price         BIGINT NOT NULL,
     qty_in_stock  INT    NOT NULL,
-    solded        INT DEFAULT 0,
+    sold        INT DEFAULT 0,
     FOREIGN KEY (product_id)
         REFERENCES product (product_id)
 );

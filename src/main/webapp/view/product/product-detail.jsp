@@ -157,7 +157,7 @@
                                                  data-image="${variation.imageUrl}">
                                                 <span class="price-data">${variation.price}</span>
                                                 <span class="stock-data">${variation.qtyInStock}</span>
-                                                <span class="sold-data">${variation.solded}</span>
+                                                <span class="sold-data">${variation.sold}</span>
                                                 <span class="image-data">${variation.imageUrl}</span>
                                             </div>
                                         </c:forEach>

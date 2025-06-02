@@ -29,7 +29,7 @@ public class ProductDAO extends DBContext {
     }
 
     public Product getProductById(int productId) {
-         sql = "SELECT p.*, pv.product_image, pv.color, pv.size, pv.price, pv.qty_in_stock, pv.solded\n" +
+         sql = "SELECT p.*, pv.product_image, pv.color, pv.size, pv.price, pv.qty_in_stock, pv.sold\n" +
                  "                FROM product p\n" +
                  "                LEFT JOIN product_variation pv ON pv.product_id = p.product_id\n" +
                  "                WHERE p.product_id = ?";
@@ -62,7 +62,7 @@ public class ProductDAO extends DBContext {
                         rs.getString("size"),
                         rs.getInt("price"),
                         rs.getInt("qty_in_stock"),
-                        rs.getInt("solded")
+                        rs.getInt("sold")
                     );
                     product.addVariation(variation);
                     product.addImageUrl(imageUrl);
@@ -72,6 +72,20 @@ public class ProductDAO extends DBContext {
             e.printStackTrace();
         }
         return product;
+    }
+
+    public List<Product> getAllProducts() {
+        sql = "SELECT * FROM product";
+        List<Product> products = new ArrayList<>();
+        try {
+            stm = connection.prepareStatement(sql);
+            rs = stm.executeQuery();
+            products = extractProductsFromResultSet(rs);
+        } catch (SQLException e) {
+            e.printStackTrace();
+
+        }
+        return products;
     }
 
 
