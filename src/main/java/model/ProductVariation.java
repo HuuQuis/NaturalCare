@@ -7,15 +7,15 @@ public class ProductVariation {
     private String size;
     private int price;
     private int qtyInStock;
-    private int solded;
+    private int sold;
 
-    public ProductVariation(String imageUrl, String color, String size, int price, int qtyInStock, int solded) {
+    public ProductVariation(String imageUrl, String color, String size, int price, int qtyInStock, int sold) {
         this.imageUrl = imageUrl;
         this.color = color;
         this.size = size;
         this.price = price;
         this.qtyInStock = qtyInStock;
-        this.solded = solded;
+        this.sold = sold;
     }
 
     public String getImageUrl() { return imageUrl; }
@@ -28,6 +28,6 @@ public class ProductVariation {
     public void setPrice(int price) { this.price = price; }
     public int getQtyInStock() { return qtyInStock; }
     public void setQtyInStock(int qtyInStock) { this.qtyInStock = qtyInStock; }
-    public int getSolded() { return solded; }
-    public void setSolded(int solded) { this.solded = solded; }
+    public int getSold() { return sold; }
+    public void setSold(int sold) { this.sold = sold; }
 }

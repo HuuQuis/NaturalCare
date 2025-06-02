@@ -84,7 +84,7 @@ VALUES ('test', 'test', 'test', 'admin', 'test@gmail.com', '0123456789', 3);
 INSERT INTO user (user_id, username, password, first_name, last_name, email, phone_number, role_id)
 VALUES (4, 'test', 'test', 'test', 'manager', 'test@gmail.com', '0123456789', 4);
 
-INSERT INTO product (product_name, product_short_description, product_information, product_guildline,
+INSERT INTO product (product_name, product_short_description, product_information, product_guideline,
                      sub_product_category_id)
 VALUES ('Ginseng Skin Care Combo', 'A luxurious set for radiant skin',
         'This combo includes cleanser, toner, and moisturizer infused with ginseng extract.',
