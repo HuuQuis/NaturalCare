@@ -19,18 +19,6 @@ public class Product {
         this.variations = new ArrayList<>();
     }
 
-    public Product(int id, String name, String description, String information, String guideline, String imageUrl, String color, String size, int price, int qtyInStock, int solded, int subProductCategoryId, List<String> imageUrls) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.information = information;
-        this.guideline = guideline;
-        this.imageUrl = imageUrl;
-        this.subProductCategoryId = subProductCategoryId;
-        this.imageUrls = imageUrls;
-        this.variations = new ArrayList<>();
-    }
-
     public Product(int id, String name, String description, String information, String guideline, int subProductCategoryId) {
         this();
         this.id = id;
@@ -53,18 +41,6 @@ public class Product {
 
     }
 
-    public Product(int id, String name, String description, String information, String guideline, int subProductCategoryId, String imageUrl) {
-        this();
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.information = information;
-        this.guideline = guideline;
-        this.subProductCategoryId = subProductCategoryId;
-        if (imageUrl != null) {
-            this.imageUrls.add(imageUrl);
-        }
-    }
 
     public int getId() {
         return id;

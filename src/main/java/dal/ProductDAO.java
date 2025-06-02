@@ -29,7 +29,7 @@ public class ProductDAO extends DBContext {
     }
 
     public Product getProductById(int productId) {
-         sql = "SELECT p.*, pv.product_image, pv.color, pv.size, pv.price, pv.qty_in_stock, pv.solded\n" +
+         sql = "SELECT p.*, pv.product_image, pv.color, pv.size, pv.price, pv.qty_in_stock, pv.sold\n" +
                  "                FROM product p\n" +
                  "                LEFT JOIN product_variation pv ON pv.product_id = p.product_id\n" +
                  "                WHERE p.product_id = ?";
@@ -62,7 +62,7 @@ public class ProductDAO extends DBContext {
                         rs.getString("size"),
                         rs.getInt("price"),
                         rs.getInt("qty_in_stock"),
-                        rs.getInt("solded")
+                        rs.getInt("sold")
                     );
                     product.addVariation(variation);
                     product.addImageUrl(imageUrl);
@@ -74,6 +74,129 @@ public class ProductDAO extends DBContext {
         return product;
     }
 
+    public List<Product> getAllProducts() {
+        sql = "SELECT * FROM product";
+        List<Product> products = new ArrayList<>();
+        try {
+            stm = connection.prepareStatement(sql);
+            rs = stm.executeQuery();
+            products = extractProductsFromResultSet(rs);
+        } catch (SQLException e) {
+            e.printStackTrace();
+
+        }
+        return products;
+    }
+
+    //get all variations of a product by product ID
+    public List<ProductVariation> getProductVariationsByProductId(int productId) {
+        String sql = "SELECT * FROM product_variation WHERE product_id = ?";
+        List<ProductVariation> variations = new ArrayList<>();
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setInt(1, productId);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                variations.add(new ProductVariation(
+                        rs.getInt("variation_id"),
+                        rs.getString("product_image"),
+                        rs.getString("color"),
+                        rs.getString("size"),
+                        rs.getInt("price"),
+                        rs.getInt("qty_in_stock"),
+                        rs.getInt("sold")
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return variations;
+    }
+
+    public void addProduct(Product product) {
+        sql = "INSERT INTO product (product_name, product_short_description, product_information, product_guideline, sub_product_category_id) VALUES (?, ?, ?, ?, ?)";
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setString(1, product.getName());
+            stm.setString(2, product.getDescription());
+            stm.setString(3, product.getInformation());
+            stm.setString(4, product.getGuideline());
+            stm.setInt(5, product.getSubProductCategoryId());
+            stm.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deleteProduct(int id) {
+        sql = "DELETE FROM product WHERE product_id = ?";
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setInt(1, id);
+            stm.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateProduct(Product product) {
+        sql = "UPDATE product SET product_name = ?, product_short_description = ?, product_information = ?, product_guideline = ?, sub_product_category_id = ? WHERE product_id = ?";
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setString(1, product.getName());
+            stm.setString(2, product.getDescription());
+            stm.setString(3, product.getInformation());
+            stm.setString(4, product.getGuideline());
+            stm.setInt(5, product.getSubProductCategoryId());
+            stm.setInt(6, product.getId());
+            stm.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void addProductVariation(ProductVariation variation, int productId) {
+        sql = "INSERT INTO product_variation (product_id, product_image, color, size, price, qty_in_stock) VALUES (?, ?, ?, ?, ?, ?)";
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setInt(1, productId);
+            stm.setString(2, variation.getImageUrl());
+            stm.setString(3, variation.getColor());
+            stm.setString(4, variation.getSize());
+            stm.setInt(5, variation.getPrice());
+            stm.setInt(6, variation.getQtyInStock());
+            stm.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateProductVariation(ProductVariation variation, int variationId) {
+        sql = "UPDATE product_variation SET product_image = ?, color = ?, size = ?, price = ?, qty_in_stock = ? WHERE variation_id = ?";
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setString(1, variation.getImageUrl());
+            stm.setString(2, variation.getColor());
+            stm.setString(3, variation.getSize());
+            stm.setInt(4, variation.getPrice());
+            stm.setInt(5, variation.getQtyInStock());
+            stm.setInt(6, variationId);
+            stm.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deleteProductVariation(int variationId) {
+        sql = "DELETE FROM product_variation WHERE variation_id = ?";
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setInt(1, variationId);
+            stm.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     private List<Product> fetchProductsByQuery(String sql, int id) {
         Map<Integer, Product> productMap = new HashMap<>();

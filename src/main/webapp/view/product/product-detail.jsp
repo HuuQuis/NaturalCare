@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>Product Details | E-Shopper</title>
+    <title>Product Details | Nature-Care</title>
     <link href="${pageContext.request.contextPath}/css/bootstrap.min.css" rel="stylesheet">
     <link href="${pageContext.request.contextPath}/css/font-awesome.min.css" rel="stylesheet">
     <link href="${pageContext.request.contextPath}/css/prettyPhoto.css" rel="stylesheet">
@@ -18,6 +18,41 @@
     <!--[if lt IE 9]>
     <script src="${pageContext.request.contextPath}/js/html5shiv.js"></script>
     <![endif]-->
+    <style>
+        .color-option, .size-option {
+            margin: 5px;
+            padding: 8px 12px;
+            border: 2px solid #ddd;
+            background: #fff;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .color-option.selected, .size-option.selected {
+            border-color: #007bff;
+            background-color: #007bff;
+            color: white;
+        }
+        .variation-info {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .variation-info h4 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .variation-info p {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .carousel-inner .item img {
+            max-width: 100%;
+            height: auto;
+            transition: opacity 0.3s ease;
+        }
+    </style>
 </head><!--/head-->
 
 <body>
@@ -40,60 +75,54 @@
         <div class="row">
             <div class="col-sm-3">
                 <div class="left-sidebar">
-
-
                     <div class="shipping text-center"><!--shipping-->
                         <img src="images/home/shipping.jpg" alt="" />
                     </div><!--/shipping-->
-
                 </div>
             </div>
 
             <div class="col-sm-9 padding-right">
                 <div class="product-details"><!--product-details-->
-                    <div class="col-sm-5">
+                    <div class="col-sm-5" style="padding-top: 70px">
                         <div class="view-product">
                             <div class="productinfo text-center">
-                                     <!-- Carousel for product images -->
+                                <!-- Carousel for product images -->
                                 <div id="carousel-${product.id}" class="carousel slide" data-ride="carousel" data-interval="false">
                                     <div class="carousel-inner">
-                                        <c:forEach items="${product.imageUrls}" var="imageUrl" varStatus="status">
-                                            <div class="item ${status.index == 0 ? 'active' : ''}">
-                                                <img src="${pageContext.request.contextPath}/${imageUrl}" alt="${product.name}" />
+                                        <!-- Display first variation image as default -->
+                                        <c:if test="${not empty product.variations}">
+                                            <div class="item active">
+                                                <img src="${pageContext.request.contextPath}/${product.variations[0].imageUrl}" alt="${product.name}" />
                                             </div>
-                                        </c:forEach>
+                                        </c:if>
                                     </div>
-                                    <c:if test="${product.imageUrls.size() > 1}">
-                                        <a class="left carousel-control" href="#carousel-${product.id}" data-slide="prev">
-                                        </a>
-                                        <a class="right carousel-control" href="#carousel-${product.id}" data-slide="next">
-                                        </a>
-                                    </c:if>
                                 </div>
-                                <p>${product.name}</p>
+                                <h3>${product.name}</h3>
                             </div>
                         </div>
                     </div>
                     <div class="col-sm-7">
                         <div class="product-information"><!--/product-information-->
                             <c:if test="${not empty product}">
-                                <h2>${product.name}</h2>
-                                
                                 <!-- Product Variations -->
                                 <div class="product-variations">
                                     <h3>Available Options</h3>
-                                    
+
                                     <!-- Colors -->
-                                    <div class="colors">
-                                        <h4>Colors:</h4>
-                                        <div class="color-options">
-                                            <c:forEach items="${product.variations}" var="variation">
-                                                <button class="color-option" data-color="${variation.color}">
-                                                    ${variation.color}
-                                                </button>
-                                            </c:forEach>
+                                    <c:if test="${not empty product.variations[0].color}">
+                                        <div class="colors">
+                                            <h4>Colors:</h4>
+                                            <div class="color-options">
+                                                <c:forEach items="${product.variations}" var="variation">
+                                                    <c:if test="${not empty variation.color}">
+                                                        <button class="color-option" data-color="${variation.color}">
+                                                                ${variation.color}
+                                                        </button>
+                                                    </c:if>
+                                                </c:forEach>
+                                            </div>
                                         </div>
-                                    </div>
+                                    </c:if>
 
                                     <!-- Sizes -->
                                     <c:if test="${not empty product.variations[0].size}">
@@ -103,7 +132,7 @@
                                                 <c:forEach items="${product.variations}" var="variation">
                                                     <c:if test="${not empty variation.size}">
                                                         <button class="size-option" data-size="${variation.size}">
-                                                            ${variation.size}
+                                                                ${variation.size}
                                                         </button>
                                                     </c:if>
                                                 </c:forEach>
@@ -111,13 +140,25 @@
                                         </div>
                                     </c:if>
 
-                                    <!-- Variation Details -->
-                                    <div class="variation-details">
+                                    <!-- Variation Information Display -->
+                                    <div id="variation-info" class="variation-info" style="display: none;">
+                                        <h4>Selected Option Details:</h4>
+                                        <p>Price: <span id="price">N/A</span></p>
+                                        <p>In Stock: <span id="stock">N/A</span></p>
+                                        <p>Sold: <span id="sold">N/A</span></p>
+                                    </div>
+
+                                    <!-- Hidden variation data with image URLs -->
+                                    <div class="variation-details" style="display: none;">
                                         <c:forEach items="${product.variations}" var="variation">
-                                            <div class="variation-item" data-color="${variation.color}" data-size="${variation.size}">
-                                                <p>Price: $${variation.price}</p>
-                                                <p>In Stock: ${variation.qtyInStock}</p>
-                                                <p>Sold: ${variation.solded}</p>
+                                            <div class="variation-item"
+                                                 data-color="${variation.color}"
+                                                 data-size="${variation.size}"
+                                                 data-image="${variation.imageUrl}">
+                                                <span class="price-data">${variation.price}</span>
+                                                <span class="stock-data">${variation.qtyInStock}</span>
+                                                <span class="sold-data">${variation.sold}</span>
+                                                <span class="image-data">${variation.imageUrl}</span>
                                             </div>
                                         </c:forEach>
                                     </div>
@@ -183,7 +224,7 @@
 
 <!--Footer-->
 <jsp:include page="/view/common/footer.jsp"></jsp:include>
-<!--/Footer--><!--/Footer-->
+<!--/Footer-->
 
 <script src="${pageContext.request.contextPath}/js/jquery.js"></script>
 <script src="${pageContext.request.contextPath}/js/jquery.scrollUp.min.js"></script>
@@ -194,5 +235,144 @@
     const contextPath = "${pageContext.request.contextPath}";
 </script>
 <script src="${pageContext.request.contextPath}/js/search.js"></script>
+<script>
+    let selectedColor = null;
+    let selectedSize = null;
+    const defaultImageUrl = '${not empty product.variations ? product.variations[0].imageUrl : ""}';
+
+    // No need to store original images since product doesn't have original images
+
+    // Handle color selection
+    document.querySelectorAll('.color-option').forEach(button => {
+        button.addEventListener('click', function() {
+            // Remove selected class from all color buttons
+            document.querySelectorAll('.color-option').forEach(btn => btn.classList.remove('selected'));
+            // Add selected class to clicked button
+            this.classList.add('selected');
+
+            selectedColor = this.getAttribute('data-color');
+            updateVariationInfo();
+            updateProductImages();
+        });
+    });
+
+    // Handle size selection
+    document.querySelectorAll('.size-option').forEach(button => {
+        button.addEventListener('click', function() {
+            // Remove selected class from all size buttons
+            document.querySelectorAll('.size-option').forEach(btn => btn.classList.remove('selected'));
+            // Add selected class to clicked button
+            this.classList.add('selected');
+
+            selectedSize = this.getAttribute('data-size');
+            updateVariationInfo();
+            updateProductImages();
+        });
+    });
+
+    // Function to format number with commas
+    function formatNumber(num) {
+        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
+    // Function to format price in VND
+    function formatPrice(price) {
+        const numPrice = parseFloat(price);
+        if (isNaN(numPrice)) return 'N/A';
+        return formatNumber(numPrice) + ' VND';
+    }
+
+    function updateVariationInfo() {
+        const variationInfo = document.getElementById('variation-info');
+
+        // Show variation info section
+        variationInfo.style.display = 'block';
+
+        const variationItems = document.querySelectorAll('.variation-item');
+        let found = false;
+
+        variationItems.forEach(item => {
+            const color = item.getAttribute('data-color');
+            const size = item.getAttribute('data-size');
+
+            // Check if this variation matches the selected options
+            const colorMatch = !selectedColor || color === selectedColor;
+            const sizeMatch = !selectedSize || size === selectedSize;
+
+            if (colorMatch && sizeMatch) {
+                const price = item.querySelector('.price-data').textContent;
+                const stock = item.querySelector('.stock-data').textContent;
+                const sold = item.querySelector('.sold-data').textContent;
+
+                document.getElementById('price').textContent = formatPrice(price);
+                document.getElementById('stock').textContent = formatNumber(stock);
+                document.getElementById('sold').textContent = formatNumber(sold);
+                found = true;
+            }
+        });
+
+        if (!found) {
+            document.getElementById('price').textContent = 'N/A';
+            document.getElementById('stock').textContent = 'N/A';
+            document.getElementById('sold').textContent = 'N/A';
+        }
+    }
+
+    function updateProductImages() {
+        const variationItems = document.querySelectorAll('.variation-item');
+        let newImageUrl = null;
+        let found = false;
+
+        // Find matching variation and get its image
+        variationItems.forEach(item => {
+            const color = item.getAttribute('data-color');
+            const size = item.getAttribute('data-size');
+
+            // Check if this variation matches the selected options
+            const colorMatch = !selectedColor || color === selectedColor;
+            const sizeMatch = !selectedSize || size === selectedSize;
+
+            if (colorMatch && sizeMatch && !found) {
+                const imageElement = item.querySelector('.image-data');
+                if (imageElement && imageElement.textContent.trim()) {
+                    newImageUrl = imageElement.textContent.trim();
+                    found = true;
+                }
+            }
+        });
+
+        // Update the carousel image
+        const carouselImg = document.querySelector('#carousel-${product.id} .carousel-inner .item img');
+
+        if (found && newImageUrl && carouselImg) {
+            // Update with variation image
+            carouselImg.src = contextPath + newImageUrl;
+        } else if (!found && defaultImageUrl && carouselImg) {
+            // Reset to default image (first variation) if no specific match found
+            carouselImg.src = contextPath + defaultImageUrl;
+        }
+    }
+
+    // Add reset functionality (optional)
+    function resetSelection() {
+        selectedColor = null;
+        selectedSize = null;
+
+        // Remove all selected classes
+        document.querySelectorAll('.color-option.selected, .size-option.selected').forEach(btn => {
+            btn.classList.remove('selected');
+        });
+
+        // Hide variation info
+        document.getElementById('variation-info').style.display = 'none';
+
+        // Reset to default image (first variation)
+        const carouselImg = document.querySelector('#carousel-${product.id} .carousel-inner .item img');
+        if (defaultImageUrl && carouselImg) {
+            carouselImg.src = contextPath + defaultImageUrl;
+        }
+    }
+</script>
+
 </body>
 </html>

@@ -139,7 +139,7 @@ CREATE TABLE product
     product_name              VARCHAR(255) NOT NULL,
     product_short_description VARCHAR(255),
     product_information       MEDIUMTEXT,
-    product_guideline        TEXT,
+    product_guideline         TEXT,
     sub_product_category_id   INT          NOT NULL,
     FOREIGN KEY (sub_product_category_id)
         REFERENCES sub_product_category (sub_product_category_id)

@@ -162,3 +162,6 @@ VALUES ('Ginseng Skin Care Combo', 'A luxurious set for radiant skin',
         'Apply during diaper changes.', 21),
        ('Peppermint Essential Oil', 'Invigorating scent', 'Pure oil for aromatherapy and massage.',
         'Dilute before use.', 22);
+INSERT INTO product_variation (product_id, product_image, color, size, price, qty_in_stock) VALUES
+(7,'/images/product/lipstick-pink.jpg', 'Pink', null, 200000, 100),
+(7,'/images/product/lipstick-red.jpg', 'Red', null, 190000, 100)
