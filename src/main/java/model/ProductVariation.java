@@ -9,6 +9,16 @@ public class ProductVariation {
     private int qtyInStock;
     private int sold;
 
+    public ProductVariation(int variationId, String imageUrl, String color, String size, int price, int qtyInStock, int sold) {
+        this.variationId = variationId;
+        this.imageUrl = imageUrl;
+        this.color = color;
+        this.size = size;
+        this.price = price;
+        this.qtyInStock = qtyInStock;
+        this.sold = sold;
+    }
+
     public ProductVariation(String imageUrl, String color, String size, int price, int qtyInStock, int sold) {
         this.imageUrl = imageUrl;
         this.color = color;

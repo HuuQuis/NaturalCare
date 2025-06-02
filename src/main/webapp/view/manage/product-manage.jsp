@@ -6,6 +6,7 @@
     <title>Product Management</title>
     <link href="${pageContext.request.contextPath}/css/bootstrap.min.css" rel="stylesheet">
     <link href="${pageContext.request.contextPath}/css/font-awesome.min.css" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/css/responsive.css" rel="stylesheet">
     <style>
         body {
             background-color: #f0fdf4;
@@ -59,6 +60,17 @@
         .btn-add i {
             margin-right: 6px;
         }
+        .variant-row {
+            background: #f9f9f9;
+        }
+        .variant-toggle {
+            cursor: pointer;
+            color: #43a047;
+            font-weight: bold;
+        }
+        .variant-toggle:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -87,7 +99,14 @@
         <c:forEach var="c" items="${products}" varStatus="loop">
             <tr>
                 <td>${loop.index + 1}</td>
-                <td>${c.name}</td>
+                <td>
+                    ${c.name}
+                    <c:if test="${not empty productVariantsMap[c.id]}">
+                        <span class="variant-toggle" onclick="toggleVariants('${c.id}')">
+                            <i class="fa fa-caret-down"></i> Variants
+                        </span>
+                    </c:if>
+                </td>
                 <td>${c.description}</td>
                 <td>${c.information}</td>
                 <td>${c.guideline}</td>
@@ -95,18 +114,75 @@
                     <a class="btn btn-edit" href="productManage?action=edit&id=${c.id}">
                         <i class="fa fa-pencil"></i> Edit
                     </a>
-                    <form action="productManage" method="post" style="display:inline;" onsubmit="return confirm('Are you sure to delete this category?');">
+                    <form action="productManage" method="post" style="display:inline;" onsubmit="return confirm('Are you sure to delete this product?');">
                         <input type="hidden" name="action" value="delete"/>
                         <input type="hidden" name="id" value="${c.id}"/>
                         <button type="submit" class="btn btn-delete">
-                            <i class="fa fa-trash"></i> Delete
+                            <i class="fa fa-trash-o"></i> Delete
                         </button>
                     </form>
                 </td>
             </tr>
+            <c:if test="${not empty productVariantsMap[c.id]}">
+                <tr id="variants-${c.id}" class="variant-row" style="display:none;">
+                    <td colspan="6" style="padding:0;">
+                        <table class="table table-sm mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Image</th>
+                                    <th>Color</th>
+                                    <th>Size</th>
+                                    <th>Price</th>
+                                    <th>Qty In Stock</th>
+                                    <th>Sold</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <c:forEach var="v" items="${productVariantsMap[c.id]}">
+                                    <tr>
+                                        <td>
+                                            <c:if test="${not empty v.imageUrl}">
+                                                <img src="${v.imageUrl}" alt="Variant Image" style="width:100px;height:100px;object-fit:cover;">
+                                            </c:if>
+                                        </td>
+                                        <td>${v.color}</td>
+                                        <td>${v.size}</td>
+                                        <td>${v.price}</td>
+                                        <td>${v.qtyInStock}</td>
+                                        <td>${v.sold}</td>
+
+<%--                                    <td>--%>
+<%--                                        <a class="btn btn-edit" href="?action=edit&id=${v.id}">--%>
+<%--                                            <i class="fa fa-pencil"></i> Edit--%>
+<%--                                        </a>--%>
+<%--                                        <form action="" method="post" style="display:inline;" onsubmit="return confirm('Are you sure to delete this product variant?');">--%>
+<%--                                            <input type="hidden" name="action" value="delete"/>--%>
+<%--                                            <input type="hidden" name="id" value="${v.id}"/>--%>
+<%--                                            <button type="submit" class="btn btn-delete">--%>
+<%--                                                <i class="fa fa-trash"></i> Delete--%>
+<%--                                            </button>--%>
+<%--                                        </form>--%>
+<%--                                    </td>--%>
+                                    </tr>
+                                </c:forEach>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+            </c:if>
         </c:forEach>
         </tbody>
     </table>
 </div>
 </body>
+<script>
+    function toggleVariants(productId) {
+        var row = document.getElementById('variants-' + productId);
+        if (row.style.display === 'none' || row.style.display === '') {
+            row.style.display = 'table-row';
+        } else {
+            row.style.display = 'none';
+        }
+    }
+</script>
 </html>

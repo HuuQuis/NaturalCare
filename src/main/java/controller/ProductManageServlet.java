@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.Product;
+import model.ProductVariation;
 import model.SubProductCategory;
 import java.io.IOException;
 import java.util.List;
@@ -32,7 +33,13 @@ public class ProductManageServlet extends HttpServlet {
             request.getRequestDispatcher("/view/manage/product-add.jsp").forward(request, response);
         } else {
             List<Product> products = productDAO.getAllProducts();
+
+            java.util.Map<Integer, List<ProductVariation>> productVariantsMap = new java.util.HashMap<>();
+            for (Product p : products) {
+                productVariantsMap.put(p.getId(), productDAO.getProductVariationsByProductId(p.getId()));
+            }
             request.setAttribute("products", products);
+            request.setAttribute("productVariantsMap", productVariantsMap);
             request.getRequestDispatcher("/view/manage/product-manage.jsp").forward(request, response);
         }
     }
