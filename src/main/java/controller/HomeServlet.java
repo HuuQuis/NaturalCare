@@ -35,7 +35,7 @@ public class HomeServlet extends  HttpServlet{
         List<BlogCategory> blogCategories = blogCategoryDAO.getAllBlogCategories();
         List<SubProductCategory> subCategories = new ArrayList<>();
         for (ProductCategory category : categories) {
-            subCategories.addAll(subProductCategoryDAO.getSubCategoriesByProductId(category.getId()));
+            subCategories.addAll(subProductCategoryDAO.getSubCategoriesByCategoryId(category.getId()));
         }
 
         request.setAttribute("categories", categories);

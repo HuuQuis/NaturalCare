@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Category Management</title>
+    <title>Product Management</title>
     <link href="${pageContext.request.contextPath}/css/bootstrap.min.css" rel="stylesheet">
     <link href="${pageContext.request.contextPath}/css/font-awesome.min.css" rel="stylesheet">
     <style>
@@ -64,15 +64,22 @@
 <body>
 <div class="container">
     <h2>Product Management</h2>
-    <a href="view/product/product-edit.jsp" class="btn btn-add">
+    <a href="productManage?action=add" class="btn btn-add">
         <i class="fa fa-plus"></i> Add New Product
+    </a>
+
+    <a href="" class="btn btn-add">
+        <i class="fa fa-plus"></i> Add New Product Variant
     </a>
 
     <table class="table table-bordered table-hover">
         <thead class="table-light">
         <tr>
             <th>#</th>
-            <th>Category Name</th>
+            <th>Product Name</th>
+            <th>Description</th>
+            <th>Information</th>
+            <th>Guideline</th>
             <th>Actions</th>
         </tr>
         </thead>
@@ -81,6 +88,9 @@
             <tr>
                 <td>${loop.index + 1}</td>
                 <td>${c.name}</td>
+                <td>${c.description}</td>
+                <td>${c.information}</td>
+                <td>${c.guideline}</td>
                 <td>
                     <a class="btn btn-edit" href="productManage?action=edit&id=${c.id}">
                         <i class="fa fa-pencil"></i> Edit

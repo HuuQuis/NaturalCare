@@ -88,6 +88,47 @@ public class ProductDAO extends DBContext {
         return products;
     }
 
+    public void addProduct(Product product) {
+        sql = "INSERT INTO product (product_name, product_short_description, product_information, product_guideline, sub_product_category_id) VALUES (?, ?, ?, ?, ?)";
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setString(1, product.getName());
+            stm.setString(2, product.getDescription());
+            stm.setString(3, product.getInformation());
+            stm.setString(4, product.getGuideline());
+            stm.setInt(5, product.getSubProductCategoryId());
+            stm.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deleteProduct(int id) {
+        sql = "DELETE FROM product WHERE product_id = ?";
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setInt(1, id);
+            stm.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateProduct(Product product) {
+        sql = "UPDATE product SET product_name = ?, product_short_description = ?, product_information = ?, product_guideline = ?, sub_product_category_id = ? WHERE product_id = ?";
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setString(1, product.getName());
+            stm.setString(2, product.getDescription());
+            stm.setString(3, product.getInformation());
+            stm.setString(4, product.getGuideline());
+            stm.setInt(5, product.getSubProductCategoryId());
+            stm.setInt(6, product.getId());
+            stm.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     private List<Product> fetchProductsByQuery(String sql, int id) {
         Map<Integer, Product> productMap = new HashMap<>();
