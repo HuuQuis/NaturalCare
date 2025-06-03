@@ -34,12 +34,9 @@ public class DBContext {
             }
 
             props.load(input);
-
-            String user = "telamon";
-            String pass = "123456";
-            String url = "jdbc:mysql://localhost:3306/natural_care?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true";
-
-
+            String user = props.getProperty("db.user");
+            String pass = props.getProperty("db.password");
+            String url = props.getProperty("db.url");
 
             Class.forName("com.mysql.cj.jdbc.Driver"); // Nạp driver MySQL
             connection = DriverManager.getConnection(url, user, pass); // Kết nối đến CSDL
