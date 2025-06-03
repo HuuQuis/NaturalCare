@@ -1,112 +1,189 @@
-<%@ page contentType="text/html;charset=UTF-8" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@page contentType="text/html" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-    <title>Edit Product</title>
-    <link href="${pageContext.request.contextPath}/css/bootstrap.min.css" rel="stylesheet">
-    <link href="${pageContext.request.contextPath}/css/font-awesome.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #f0fdf4;
-            font-family: 'Segoe UI', sans-serif;
-        }
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+    <meta name="description" content="POS - Bootstrap Admin Template">
+    <meta name="keywords"
+          content="admin, estimates, bootstrap, business, corporate, creative, invoice, html5, responsive, Projects">
+    <meta name="author" content="Dreamguys - Bootstrap Admin Template">
+    <meta name="robots" content="noindex, nofollow">
+    <title>News Admin</title>
 
-        .container {
-            max-width: 500px;
-            margin: 60px auto;
-            background-color: white;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 128, 0, 0.1);
-        }
+    <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/adminassets/img/favicon.png">
 
-        h2 {
-            text-align: center;
-            color: #2e7d32;
-            margin-bottom: 30px;
-        }
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/adminassets/css/bootstrap.min.css">
 
-        label {
-            font-weight: 600;
-            color: #333;
-        }
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/adminassets/css/animate.css">
 
-        input[type="text"] {
-            width: 100%;
-            padding: 10px;
-            margin-top: 8px;
-            margin-bottom: 20px;
-            border: 1px solid #c5e1a5;
-            border-radius: 6px;
-        }
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/adminassets/plugins/select2/css/select2.min.css">
 
-        button {
-            background-color: #43a047;
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 6px;
-            width: 100%;
-            font-size: 16px;
-        }
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/adminassets/css/dataTables.bootstrap4.min.css">
 
-        button:hover {
-            background-color: #388e3c;
-        }
+    <link rel="stylesheet"
+          href="${pageContext.request.contextPath}/adminassets/plugins/fontawesome/css/fontawesome.min.css">
 
-        .back-link {
-            display: block;
-            text-align: center;
-            margin-top: 15px;
-            color: #388e3c;
-            text-decoration: none;
-        }
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/adminassets/plugins/fontawesome/css/all.min.css">
 
-        textarea {
-            width: 100%;
-            padding: 10px;
-            margin-top: 8px;
-            margin-bottom: 20px;
-            border: 1px solid #c5e1a5;
-            border-radius: 6px;
-        }
-    </style>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/adminassets/css/style.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/adminStyle.css">
 </head>
+
 <body>
-<div class="container">
-    <h2>Add Product</h2>
-    <form action="productManage" method="post">
-        <input type="hidden" name="action" value="add">
-
-        <label for="name">Product Name:</label>
-        <input type="text" name="name" id="name" value="" required>
-
-        <label for="description">Description:</label>
-        <textarea name="description" id="description" rows="3" required></textarea>
-
-        <label for="information">Information:</label>
-        <textarea name="information" id="information" rows="3" required></textarea>
-
-        <label for="guideline">Guideline:</label>
-        <textarea name="guideline" id="guideline" rows="3" required></textarea>
-
-        <label for="subProductCategoryId">Sub Product Category:</label>
-        <select name="subProductCategoryId" id="subProductCategoryId">
-            <c:forEach var="sub" items="${subCategories}">
-                <option value="${sub.id}">
-                        ${sub.name}
-                </option>
-            </c:forEach>
-        </select>
-
-        <button type="submit">
-            <i class="fa fa-save"></i> Add
-        </button>
-    </form>
-    <a class="back-link" href="${pageContext.request.contextPath}/productManage">
-        <i class="fa fa-arrow-left"></i> Back to list
-    </a>
+<div id="global-loader">
+    <div class="whirly-loader"></div>
 </div>
+
+<div class="main-wrapper">
+
+    <div class="header">
+        <div class="header-left active">
+            <a href="" class="logo">
+            </a>
+            <a href="" class="logo-small">
+                <img src="${pageContext.request.contextPath}/adminassets/img/logo-small.png" alt="">
+            </a>
+        </div>
+        <ul class="nav user-menu">
+            <li class="nav-item dropdown has-arrow main-drop">
+                <a href="javascript:void(0);" class="dropdown-toggle nav-link userset" data-bs-toggle="dropdown">
+                            <span class="user-img"><img
+                                    src="${pageContext.request.contextPath}/adminassets/img/profiles/avator1.jpg"
+                                    alt="">
+                                <span class="status online"></span></span>
+                </a>
+                <div class="dropdown-menu menu-drop-user">
+                    <div class="profilename">
+                        <div class="profileset">
+                                    <span class="user-img"><img
+                                            src="${pageContext.request.contextPath}/adminassets/img/profiles/avator1.jpg"
+                                            alt="">
+                                        <span class="status online"></span></span>
+                            <div class="profilesets">
+                                <h5>Admin</h5>
+                            </div>
+                        </div>
+                        <hr class="m-0">
+                        <a class="dropdown-item logout pb-0" href=""><img
+                                src="${pageContext.request.contextPath}/adminassets/img/icons/log-out.svg" class="me-2"
+                                alt="img">Logout</a>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+
+
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-inner slimscroll">
+            <div id="sidebar-menu" class="sidebar-menu">
+                <ul>
+                    <li class="submenu">
+                        <a href="javascript:void(0);"><img
+                                src="${pageContext.request.contextPath}/adminassets/img/icons/product.svg"
+                                alt="img"><span>
+                                        Edit</span> <span class="menu-arrow"></span></a>
+                        <ul>
+                            <li><a href="">DashBoard</a></li>
+                            <li><a href="${pageContext.request.contextPath}/productManage" class="active">Product List</a></li>
+                            <li><a href="">Category List</a></li>
+                            <li><a href="">Expert List</a></li>
+                            <li><a href="">Staff List</a></li>
+                            <li><a href="">Shipper List</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-wrapper">
+        <div class="content">
+            <div class="page-header">
+                <div class="page-title">
+                    <h4>Manage Product</h4>
+                    <h6>Add New Product</h6>
+                </div>
+            </div>
+
+            <form action="productManage" method="post">
+                <input type="hidden" name="action" value="add">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <c:if test="${not empty error}">
+                                <div class="alert alert-danger" role="alert">
+                                        ${error}
+                                </div>
+                            </c:if>
+                            <div class="col-lg-12 col-sm-6 col-12">
+                                <div class="form-group">
+                                    <label>Product Name</label>
+                                    <input name="name" type="text">
+                                </div>
+                            </div>
+                            <div class="col-lg-12 col-sm-6 col-12">
+                                <div class="form-group">
+                                    <label>Short Description</label>
+                                    <textarea rows="10" cols="50" name="description"></textarea>
+                                </div>
+                            </div>
+                            <div class="col-lg-12 col-sm-6 col-12">
+                                <div class="form-group">
+                                    <label>Product Information</label>
+                                    <textarea rows="10" cols="50" name="information"></textarea>
+                                </div>
+                            </div>
+                            <div class="col-lg-12 col-sm-6 col-12">
+                                <div class="form-group">
+                                    <label>Product Guideline</label>
+                                    <textarea rows="10" cols="50" name="guideline"></textarea>
+                                </div>
+                            </div>
+                            <div class="col-lg-12 col-sm-6 col-12">
+                                <div class="form-group">
+                                    <label>Sub Product Category</label>
+                                    <select name="subProductCategoryId" class="select">
+                                        <option>Choose Category</option>
+                                        <c:forEach var="sub" items="${subCategories}">
+                                            <option value="${sub.id}">${sub.name}</option>
+                                        </c:forEach>
+
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <button type="submit" class="btn btn-submit me-2">Post</button>
+                                <a href="${pageContext.request.contextPath}/productManage" class="btn btn-cancel">Cancel</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="${pageContext.request.contextPath}/adminassets/js/jquery-3.6.0.min.js"></script>
+
+<script src="${pageContext.request.contextPath}/adminassets/js/feather.min.js"></script>
+
+<script src="${pageContext.request.contextPath}/adminassets/js/jquery.slimscroll.min.js"></script>
+
+<script src="${pageContext.request.contextPath}/adminassets/js/jquery.dataTables.min.js"></script>
+<script src="${pageContext.request.contextPath}/adminassets/js/dataTables.bootstrap4.min.js"></script>
+
+<script src="${pageContext.request.contextPath}/adminassets/js/bootstrap.bundle.min.js"></script>
+
+<script src="${pageContext.request.contextPath}/adminassets/plugins/select2/js/select2.min.js"></script>
+
+<script src="${pageContext.request.contextPath}/adminassets/plugins/sweetalert/sweetalert2.all.min.js"></script>
+<script src="${pageContext.request.contextPath}/adminassets/plugins/sweetalert/sweetalerts.min.js"></script>
+
+<script src="${pageContext.request.contextPath}/adminassets/js/script.js"></script>
 </body>
+
 </html>

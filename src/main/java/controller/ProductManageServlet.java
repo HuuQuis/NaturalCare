@@ -48,16 +48,43 @@ public class ProductManageServlet extends HttpServlet {
         String action = request.getParameter("action");
 
         if ("add".equals(action)) {
-            String name = request.getParameter("name");
-            String description = request.getParameter("description");
-            String information = request.getParameter("information");
-            String guideline = request.getParameter("guideline");
+            String name = request.getParameter("name").trim();
+            String description = request.getParameter("description").trim();
+            String information = request.getParameter("information").trim();
+            String guideline = request.getParameter("guideline").trim();
             int subProductCategoryId = 0;
+            if (name == null || name.isEmpty()) {
+                request.setAttribute("error", "Product name cannot be empty");
+                request.getRequestDispatcher("/view/manage/product-add.jsp").forward(request, response);
+                return;
+            }
+            if (description == null || description.isEmpty()) {
+                request.setAttribute("error", "Product description cannot be empty");
+                request.getRequestDispatcher("/view/manage/product-add.jsp").forward(request, response);
+                return;
+            }
+            if (information == null || information.isEmpty()) {
+
+                request.setAttribute("error", "Product information cannot be empty");
+                request.getRequestDispatcher("/view/manage/product-add.jsp").forward(request, response);
+                return;
+            }
+            if (guideline == null || guideline.isEmpty()) {
+                request.setAttribute("error", "Product guideline cannot be empty");
+                request.getRequestDispatcher("/view/manage/product-add.jsp").forward(request, response);
+                return;
+            }
             try {
                 subProductCategoryId = Integer.parseInt(request.getParameter("subProductCategoryId"));
+                if (subProductCategoryId <= 0) {
+                    throw new NumberFormatException();
+                }
             } catch (Exception e) {
-                // ignore, keep as 0
+                request.setAttribute("error", "Please select a valid category");
+                request.getRequestDispatcher("/view/manage/product-add.jsp").forward(request, response);
+                return;
             }
+
             Product product = new Product();
             product.setName(name);
             product.setDescription(description);
