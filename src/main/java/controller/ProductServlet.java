@@ -36,22 +36,27 @@ public class ProductServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
+            String indexPage = request.getParameter("index");
+            if (indexPage == null || indexPage.isEmpty()) {
+                indexPage = "1"; // Default to the first page if not specified
+            }
+            int index = Integer.parseInt(indexPage);
             String categoryId = request.getParameter("category");
             String subCategoryId = request.getParameter("subcategory");
             List<Product> products;
 
         if (categoryId != null) {
             if (subCategoryId != null) {
-                products = productDAO.getProductsBySubCategoryId(Integer.parseInt(subCategoryId));
+                products = productDAO.getProductsBySubCategoryId(Integer.parseInt(subCategoryId),index);
                 request.setAttribute("selectedCategoryId", categoryId);
                 request.setAttribute("selectedSubCategoryId", subCategoryId);
             } else {
-                products = productDAO.getProductsByCategoryId(Integer.parseInt(categoryId));
+                products = productDAO.getProductsByCategoryId(Integer.parseInt(categoryId),index);
                 request.setAttribute("selectedCategoryId", categoryId);
             }
             request.setAttribute("products", products);
         } else if (subCategoryId != null) {
-            products = productDAO.getProductsBySubCategoryId(Integer.parseInt(subCategoryId));
+            products = productDAO.getProductsBySubCategoryId(Integer.parseInt(subCategoryId),index);
             request.setAttribute("selectedSubCategoryId", subCategoryId);
             request.setAttribute("products", products);
         }
@@ -64,6 +69,12 @@ public class ProductServlet extends HttpServlet {
                 subCategories.addAll(subProductCategoryDAO.getSubCategoriesByCategoryId(category.getId()));
             }
 
+        int count = productDAO.getTotalProductsCount();
+        int endPage = count / 6;
+        if( count / 6 != 0) {
+            endPage++;
+        }
+        request.setAttribute("endPage", endPage);
         request.setAttribute("categories", categories);
         request.setAttribute("blogCategories", blogCategories);
         request.setAttribute("subCategories", subCategories);

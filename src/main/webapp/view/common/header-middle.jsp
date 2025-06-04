@@ -35,7 +35,6 @@
                                 <li><a href="logout" aria-label="Logout"><i class="fa fa-lock"></i> Logout</a></li>
                             </c:when>
                             <c:otherwise>
-                                <li><a href="productManage" aria-label="Product Manage"><i class="fa fa-edit"></i>Product Manage</a></li>
                                 <li><a href="login" aria-label="Login"><i class="fa fa-lock"></i> Login</a></li>
                                 <li><a href="#" aria-label="Shopping Cart"><i class="fa fa-shopping-cart"></i>
                                     Cart</a></li>

@@ -8,24 +8,32 @@ import java.util.*;
 
 public class ProductDAO extends DBContext {
 
-    public List<Product> getProductsByCategoryId(int categoryId) {
-        String sql = "SELECT p.*, pv.product_image " +
+    public List<Product> getProductsByCategoryId(int categoryId, int pageIndex) {
+        int offset = (pageIndex - 1) * 6;
+        int limit = 6;
+         sql = "SELECT p.*, pv.product_image " +
                 "FROM product p " +
                 "INNER JOIN sub_product_category s ON p.sub_product_category_id = s.sub_product_category_id " +
                 "INNER JOIN product_category pc ON s.product_category_id = pc.product_category_id " +
                 "LEFT JOIN product_variation pv ON pv.product_id = p.product_id " +
-                "WHERE pc.product_category_id = ?";
-        return fetchProductsByQuery(sql, categoryId);
+                "WHERE pc.product_category_id = ? " +
+                "ORDER BY p.product_id " +
+                "LIMIT ?, ?";
+        return fetchProductsByQuery(sql, categoryId, offset, limit);
     }
 
-    public List<Product> getProductsBySubCategoryId(int subCategoryId) {
-        String sql = "SELECT p.*, pv.product_image " +
+    public List<Product> getProductsBySubCategoryId(int subCategoryId, int pageIndex) {
+        int offset = (pageIndex - 1) * 6;
+        int limit = 6;
+         sql = "SELECT p.*, pv.product_image " +
                 "FROM product p " +
                 "INNER JOIN sub_product_category s ON p.sub_product_category_id = s.sub_product_category_id " +
                 "INNER JOIN product_category pc ON s.product_category_id = pc.product_category_id " +
                 "LEFT JOIN product_variation pv ON pv.product_id = p.product_id " +
-                "WHERE p.sub_product_category_id = ?";
-        return fetchProductsByQuery(sql, subCategoryId);
+                "WHERE p.sub_product_category_id = ? " +
+                "ORDER BY p.product_id " +
+                "LIMIT ?, ?";
+        return fetchProductsByQuery(sql, subCategoryId, offset, limit);
     }
 
     public Product getProductById(int productId) {
@@ -155,6 +163,20 @@ public class ProductDAO extends DBContext {
         }
     }
 
+    public int getTotalProductsCount() {
+        sql = "SELECT COUNT(*) FROM product";
+        try {
+            stm = connection.prepareStatement(sql);
+            rs = stm.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
     public void addProductVariation(ProductVariation variation, int productId) {
         sql = "INSERT INTO product_variation (product_id, product_image, color, size, price, qty_in_stock) VALUES (?, ?, ?, ?, ?, ?)";
         try {
@@ -198,11 +220,13 @@ public class ProductDAO extends DBContext {
         }
     }
 
-    private List<Product> fetchProductsByQuery(String sql, int id) {
+    private List<Product> fetchProductsByQuery(String sql, int id, int offset, int limit) {
         Map<Integer, Product> productMap = new HashMap<>();
         try {
             stm = connection.prepareStatement(sql);
             stm.setInt(1, id);
+            stm.setInt(2, offset);
+            stm.setInt(3, limit);
             rs = stm.executeQuery();
 
             while (rs.next()) {
