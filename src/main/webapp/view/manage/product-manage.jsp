@@ -11,7 +11,7 @@
           content="admin, estimates, bootstrap, business, corporate, creative, invoice, html5, responsive, Projects">
     <meta name="author" content="Dreamguys - Bootstrap Admin Template">
     <meta name="robots" content="noindex, nofollow">
-    <title>News Admin</title>
+    <title>Product Management</title>
 
     <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/adminassets/img/favicon.png">
 
@@ -105,8 +105,7 @@
         <div class="content">
             <div class="page-header">
                 <div class="page-title">
-                    <h4>News List</h4>
-                    <h6>Manage News</h6>
+                    <h4>Product List</h4>
                 </div>
                 <div class="page-btn">
                     <a href="${pageContext.request.contextPath}/productManage?action=add" class="btn btn-added"><img
@@ -139,7 +138,7 @@
                         <table class="table datanew">
                             <thead>
                             <tr>
-                                <th>#</th>
+                                <th>No.</th>
                                 <th>Product Name</th>
                                 <th>Description</th>
                                 <th>Information</th>
@@ -152,9 +151,9 @@
                             <tr>
                                 <td>${loop.index + 1}</td>
                                 <td>${c.name}</td>
-                                <td>${c.description}</td>
-                                <td>${c.information}</td>
-                                <td>${c.guideline}</td>
+                                <td>${c.description.length() > 10 ? c.description.substring(0,10).concat('...') : c.description}</td>
+                                <td>${c.information.length() > 10 ? c.information.substring(0,10).concat('...') : c.information}</td>
+                                <td>${c.guideline.length() > 10 ? c.guideline.substring(0,10).concat('...') : c.guideline}</td>
                                 <td>
                                     <a class="me-3" href="productManage?action=edit&id=${c.id}">
                                         <img src="${pageContext.request.contextPath}/adminassets/img/icons/edit.svg" alt="img">

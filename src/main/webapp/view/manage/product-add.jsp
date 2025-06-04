@@ -122,25 +122,40 @@
                             <div class="col-lg-12 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label>Product Name</label>
-                                    <input name="name" type="text">
+                                    <input name="name" type="text"  value="${product.name}" placeholder="Enter Product Name..." >
                                 </div>
                             </div>
                             <div class="col-lg-12 col-sm-6 col-12">
                                 <div class="form-group">
-                                    <label>Short Description</label>
-                                    <textarea rows="10" cols="50" name="description"></textarea>
+                                    <label class="description-label">Short Description</label>
+                                    <textarea
+                                            rows="10"
+                                            cols="50"
+                                            name="description"
+                                            placeholder="Enter product description..."
+                                            onfocus="this.style.borderColor='#28a745';"
+                                            onblur="this.style.borderColor='';"
+                                    >${product.description}</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-12 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label>Product Information</label>
-                                    <textarea rows="10" cols="50" name="information"></textarea>
+                                    <textarea rows="10" cols="50" name="information"
+                                                placeholder="Enter product information..."
+                                              onfocus="this.style.borderColor='#28a745';"
+                                              onblur="this.style.borderColor='';"
+                                    >${product.information}</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-12 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label>Product Guideline</label>
-                                    <textarea rows="10" cols="50" name="guideline"></textarea>
+                                    <textarea rows="10" cols="50" name="guideline"
+                                              placeholder="Enter product guideline..."
+                                              onfocus="this.style.borderColor='#28a745';"
+                                              onblur="this.style.borderColor='';"
+                                    >${product.guideline}</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-12 col-sm-6 col-12">
@@ -151,7 +166,6 @@
                                         <c:forEach var="sub" items="${subCategories}">
                                             <option value="${sub.id}">${sub.name}</option>
                                         </c:forEach>
-
                                     </select>
                                 </div>
                             </div>
