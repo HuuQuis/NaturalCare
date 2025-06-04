@@ -81,7 +81,7 @@
                         <ul>
                             <li><a href="" class="active">DashBoard</a></li>
                             <li><a href="${pageContext.request.contextPath}/productManage">Product List</a></li>
-                            <li><a href="">Category List</a></li>
+                            <li><a href="${pageContext.request.contextPath}/category">Manage Category</a></li>
                             <li><a href="">Expert List</a></li>
                             <li><a href="">Staff List</a></li>
                             <li><a href="">Shipper List</a></li>
@@ -92,6 +92,17 @@
         </div>
     </div>
 </div>
+
+<%
+    String view = (String) request.getAttribute("view");
+%>
+
+<div class="main-content">
+    <% if ("category".equals(view)) { %>
+    <jsp:include page="../category/list.jsp" />
+    <% } %>
+</div>
+
 
 <script>
     function mess(id){

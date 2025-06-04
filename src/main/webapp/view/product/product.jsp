@@ -46,7 +46,7 @@
         <div class="row">
             <div class="col-sm-3">
                 <div class="left-sidebar">
-                    <jsp:include page="/view/product/category-sidebar.jsp" />
+                    <jsp:include page="/view/category/category-sidebar.jsp" />
                 </div>
             </div>
 
