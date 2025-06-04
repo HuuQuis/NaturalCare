@@ -63,11 +63,11 @@
                                             alt="">
                                         <span class="status online"></span></span>
                             <div class="profilesets">
-                                <h5>Admin</h5>
+                                <h5>${user}</h5>
                             </div>
                         </div>
                         <hr class="m-0">
-                        <a class="dropdown-item logout pb-0" href=""><img
+                        <a class="dropdown-item logout pb-0" href="logout"><img
                                 src="${pageContext.request.contextPath}/adminassets/img/icons/log-out.svg" class="me-2"
                                 alt="img">Logout</a>
                     </div>

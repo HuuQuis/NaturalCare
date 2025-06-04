@@ -62,6 +62,15 @@ public class LoginServlet extends HttpServlet {
                 response.sendRedirect("home");
                 return;
             }
+
+            // huuquy test manager
+            if (userDAO.checkManager(username, password)) {
+                //send user name to homepage
+                request.getSession().setAttribute("user", username);
+                response.sendRedirect(request.getContextPath() + "/productManage");
+                return;
+            }
+
             request.getSession().setAttribute("validate", "");
             response.sendRedirect(request.getContextPath() +"/");
         } else {
