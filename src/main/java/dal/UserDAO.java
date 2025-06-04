@@ -77,6 +77,20 @@ public class UserDAO extends DBContext{
         return false; // User is not manager
     }
 
+    //this method checks if the user is a manager
+    public boolean checkStaff(String username, String password) {
+        try {
+            sql = "SELECT * FROM natural_care.user WHERE username = ? AND password = ? AND role_id = 2";
+            stm = connection.prepareStatement(sql);
+            stm.setString(1, username);
+            stm.setString(2, password);
+            rs = stm.executeQuery();
+            return rs.next(); // Returns true if user is staff
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false; // User is not staff
+    }
 
     public boolean checkEmail(String email) {
         try {
