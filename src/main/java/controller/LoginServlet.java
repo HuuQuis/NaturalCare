@@ -71,6 +71,14 @@ public class LoginServlet extends HttpServlet {
                 return;
             }
 
+            // haianh test staff
+            if (userDAO.checkStaff(username, password)) {
+                //send user name to homepage
+                request.getSession().setAttribute("user", username);
+                response.sendRedirect(request.getContextPath() + "/staffHome");
+                return;
+            }
+
             request.getSession().setAttribute("validate", "");
             response.sendRedirect(request.getContextPath() +"/");
         } else {
