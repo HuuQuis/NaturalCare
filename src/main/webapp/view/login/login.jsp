@@ -57,7 +57,7 @@
                         <input name="username" type="text" placeholder="Username" required/>
                         <input name="password" type="password" placeholder="Password" required/>
                         <span>
-								<input type="checkbox" class="checkbox">
+								<input name="remember-account" type="checkbox" class="checkbox" checked value="on">
 								Keep me signed in
 							</span>
 
@@ -66,8 +66,7 @@
 
                         <div style="display: flex; gap: 10px; margin-top: 10px;">
                             <button type="submit" class="btn btn-default">Login</button>
-                            <button type="button" class="btn btn-default">Forgot Password</button>
-                            <button type="button" class="btn btn-default">Change Password</button>
+                            <button type="button" class="btn btn-default" onclick="window.location.href='${pageContext.request.contextPath}/login'">Forgot Password</button>
                         </div>
 
                         <hr>

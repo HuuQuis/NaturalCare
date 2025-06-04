@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserDAO extends DBContext{
+public class UserDAO extends DBContext {
 
     public User getUser(String username, String pass) throws SQLException {
         User user = null;
@@ -41,7 +41,7 @@ public class UserDAO extends DBContext{
                 user.setPassword(rs.getString("password"));
                 users.add(user);
             }
-        }catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return users;
@@ -93,4 +93,17 @@ public class UserDAO extends DBContext{
         }
     }
 
+    public boolean checkManager(String username, String password) {
+        try {
+            sql = "SELECT * FROM natural_care.user WHERE username = ? AND password = ? AND role_id = 4";
+            stm = connection.prepareStatement(sql);
+            stm.setString(1, username);
+            stm.setString(2, password);
+            rs = stm.executeQuery();
+            return rs.next(); // Returns true if user is admin
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false; // User is not admin
+    }
 }
