@@ -52,13 +52,19 @@ public class ExpertDetailServlet extends HttpServlet {
 
             request.setAttribute("message", "Cập nhật kỹ năng thành công.");
         } else if ("add".equals(action)) {
-            // Thêm expert mới, lấy dữ liệu từ form
-            String userName = request.getParameter("user_name");
+            String username = request.getParameter("username");
+            String password = request.getParameter("password");
+            String firstName = request.getParameter("first_name");
+            String lastName = request.getParameter("last_name");
+            String email = request.getParameter("email");
+            String phoneNumber = request.getParameter("phone_number");
             int skillId = Integer.parseInt(request.getParameter("skill_id"));
 
-            expertDAO.addExpert(userName, skillId);
+            expertDAO.addExpert(username, password, firstName, lastName, email, phoneNumber, skillId);
+
             request.setAttribute("message", "Thêm chuyên gia mới thành công.");
         }
+
 
         doGet(request, response);
     }

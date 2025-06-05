@@ -163,17 +163,24 @@ public class ExpertDAO extends DBContext {
         }
     }
 
-    // Thêm expert mới: 1) Thêm user, 2) Thêm expertSkill
-    public void addExpert(String userName, int skillId) {
-        // 1. Thêm user
-        String insertUserSql = "INSERT INTO user (username) VALUES (?)";
+    public void addExpert(String username, String password, String firstName, String lastName,
+                          String email, String phoneNumber, int skillId) {
+        String insertUserSql = "INSERT INTO user (username, password, first_name, last_name, email, phone_number, role_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
+
         try {
             connection.setAutoCommit(false);
 
             int userId;
             try (PreparedStatement psUser = connection.prepareStatement(insertUserSql, Statement.RETURN_GENERATED_KEYS)) {
-                psUser.setString(1, userName);
+                psUser.setString(1, username);
+                psUser.setString(2, password); // Lưu password: nên hash trước khi lưu để bảo mật
+                psUser.setString(3, firstName);
+                psUser.setString(4, lastName);
+                psUser.setString(5, email);
+                psUser.setString(6, phoneNumber);
+                psUser.setInt(7, 6); // role_id = 6 (Expert)
                 psUser.executeUpdate();
+
                 ResultSet rs = psUser.getGeneratedKeys();
                 if (rs.next()) {
                     userId = rs.getInt(1);
@@ -183,7 +190,7 @@ public class ExpertDAO extends DBContext {
                 }
             }
 
-            // 2. Thêm expertSkill
+            // Thêm kỹ năng cho chuyên gia
             String insertExpertSkillSql = "INSERT INTO expertSkill (user_id, skill_id) VALUES (?, ?)";
             try (PreparedStatement psExpertSkill = connection.prepareStatement(insertExpertSkillSql)) {
                 psExpertSkill.setInt(1, userId);
