@@ -66,7 +66,7 @@
 
                         <div style="display: flex; gap: 10px; margin-top: 10px;">
                             <button type="submit" class="btn btn-default">Login</button>
-                            <button type="button" class="btn btn-default" onclick="window.location.href='${pageContext.request.contextPath}/login'">Forgot Password</button>
+                            <button type="button" class="btn btn-default" onclick="window.location.href='${pageContext.request.contextPath}/forgot'">Forgot Password</button>
                         </div>
 
                         <hr>
