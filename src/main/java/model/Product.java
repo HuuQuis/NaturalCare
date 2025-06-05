@@ -11,6 +11,7 @@ public class Product {
     private String guideline;
     private String imageUrl;
     private int subProductCategoryId;
+    private int minPrice;
     private List<String> imageUrls;
     private List<ProductVariation> variations;
 
@@ -29,19 +30,31 @@ public class Product {
         this.subProductCategoryId = subProductCategoryId;
     }
 
-    public Product(int id, String name, String description, String information, String guideline,String ImageUrl, int subProductCategoryId) {
+    public Product(int id, String name, String description, String information, String guideline, String imageUrl, int subProductCategoryId) {
         this();
         this.id = id;
         this.name = name;
         this.description = description;
         this.information = information;
         this.guideline = guideline;
-        this.imageUrl = imageUrl;
+        this.imageUrl = imageUrl; // Fixed: was ImageUrl parameter but imageUrl field
         this.subProductCategoryId = subProductCategoryId;
-
     }
 
+    // Fixed constructor with correct parameter order matching your usage
+    public Product(int id, String name, String description, String information, String guideline, String imageUrl, int subProductCategoryId, int minPrice) {
+        this();
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.information = information;
+        this.guideline = guideline;
+        this.imageUrl = imageUrl; // Fixed: parameter name consistency
+        this.subProductCategoryId = subProductCategoryId;
+        this.minPrice = minPrice;
+    }
 
+    // All getters and setters
     public int getId() {
         return id;
     }
@@ -96,6 +109,14 @@ public class Product {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public int getMinPrice() {
+        return minPrice;
+    }
+
+    public void setMinPrice(int minPrice) {
+        this.minPrice = minPrice;
     }
 
     public List<String> getImageUrls() {

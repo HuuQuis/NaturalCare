@@ -11,12 +11,13 @@ public class ProductDAO extends DBContext {
     public List<Product> getProductsByCategoryId(int categoryId, int pageIndex) {
         int offset = (pageIndex - 1) * 6;
         int limit = 6;
-         sql = "SELECT p.*, pv.product_image " +
+        sql = "SELECT p.*, MIN(pv.product_image) AS product_image, MIN(pv.price) AS min_price " +
                 "FROM product p " +
                 "INNER JOIN sub_product_category s ON p.sub_product_category_id = s.sub_product_category_id " +
                 "INNER JOIN product_category pc ON s.product_category_id = pc.product_category_id " +
                 "LEFT JOIN product_variation pv ON pv.product_id = p.product_id " +
                 "WHERE pc.product_category_id = ? " +
+                "GROUP BY p.product_id " +
                 "ORDER BY p.product_id " +
                 "LIMIT ?, ?";
         return fetchProductsByQuery(sql, categoryId, offset, limit);
@@ -25,12 +26,13 @@ public class ProductDAO extends DBContext {
     public List<Product> getProductsBySubCategoryId(int subCategoryId, int pageIndex) {
         int offset = (pageIndex - 1) * 6;
         int limit = 6;
-         sql = "SELECT p.*, pv.product_image " +
+        sql = "SELECT p.*, MIN(pv.product_image) AS product_image, MIN(pv.price) AS min_price " +
                 "FROM product p " +
                 "INNER JOIN sub_product_category s ON p.sub_product_category_id = s.sub_product_category_id " +
                 "INNER JOIN product_category pc ON s.product_category_id = pc.product_category_id " +
                 "LEFT JOIN product_variation pv ON pv.product_id = p.product_id " +
                 "WHERE p.sub_product_category_id = ? " +
+                "GROUP BY p.product_id " +
                 "ORDER BY p.product_id " +
                 "LIMIT ?, ?";
         return fetchProductsByQuery(sql, subCategoryId, offset, limit);
@@ -241,7 +243,8 @@ public class ProductDAO extends DBContext {
                             rs.getString("product_information"),
                             rs.getString("product_guideline"),
                             null,
-                            rs.getInt("sub_product_category_id")
+                            rs.getInt("sub_product_category_id"),
+                            rs.getInt("min_price")
                     );
                     productMap.put(productId, product);
                 }
