@@ -36,6 +36,13 @@ public class LoginServlet extends HttpServlet {
         String validate = "Username or password is incorrect.";
         UserDAO userDAO = new UserDAO();
 
+        if (userDAO.checkStaff(username, password)) {
+            request.getSession().setAttribute("user", username);
+            response.sendRedirect(request.getContextPath() + "/staffHome");
+            return;
+        }
+
+
         User user = (User) userDAO.checkUser(username, password);
         if (user != null) {
             // Thiết lập session
