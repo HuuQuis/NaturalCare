@@ -144,9 +144,26 @@
     <hr/>
 
     <h3>Thêm chuyên gia mới</h3>
-    <form method="post" action="expertDetail">
-        <label for="user_name_new">Tên chuyên gia:</label>
-        <input type="text" id="user_name_new" name="user_name" required/>
+    <form method="post" action="expertDetail" style="max-width:600px;">
+        <input type="hidden" name="action" value="add" />
+
+        <label for="username_new">Tên đăng nhập (username):</label>
+        <input type="text" id="username_new" name="username" required/>
+
+        <label for="password_new">Mật khẩu:</label>
+        <input type="password" id="password_new" name="password" required/>
+
+        <label for="first_name_new">Họ:</label>
+        <input type="text" id="first_name_new" name="first_name" required/>
+
+        <label for="last_name_new">Tên:</label>
+        <input type="text" id="last_name_new" name="last_name" required/>
+
+        <label for="email_new">Email:</label>
+        <input type="email" id="email_new" name="email" required/>
+
+        <label for="phone_number_new">Số điện thoại:</label>
+        <input type="tel" id="phone_number_new" name="phone_number" required/>
 
         <label for="skill_id_new">Chọn kỹ năng:</label>
         <select name="skill_id" id="skill_id_new" required>
@@ -157,6 +174,7 @@
 
         <button type="submit" style="margin-top: 15px;">Thêm chuyên gia</button>
     </form>
+
 
     <p><a href="expertListManage">Quay lại danh sách chuyên gia</a></p>
 
