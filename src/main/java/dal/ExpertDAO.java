@@ -173,7 +173,7 @@ public class ExpertDAO extends DBContext {
             int userId;
             try (PreparedStatement psUser = connection.prepareStatement(insertUserSql, Statement.RETURN_GENERATED_KEYS)) {
                 psUser.setString(1, username);
-                psUser.setString(2, password); // Lưu password: nên hash trước khi lưu để bảo mật
+                psUser.setString(2, password);
                 psUser.setString(3, firstName);
                 psUser.setString(4, lastName);
                 psUser.setString(5, email);
