@@ -30,8 +30,8 @@
                             <c:when test="${not empty user}">
                                 <li><a href="#" aria-label="Shopping Cart"><i class="fa fa-shopping-cart"></i>
                                     Cart</a></li>
-                                <li><a href="#" aria-label="User Profile"><i class="fa fa-user"></i> <c:out
-                                        value="${user}"/></a></li>
+                                <li><a href="#" aria-label="User Profile"><i class="fa fa-user"></i>
+                                    Profile ${user}</a></li>
                                 <li><a href="logout" aria-label="Logout"><i class="fa fa-lock"></i> Logout</a></li>
                             </c:when>
                             <c:otherwise>

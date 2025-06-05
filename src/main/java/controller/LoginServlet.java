@@ -32,57 +32,36 @@ public class LoginServlet extends HttpServlet {
             throws IOException, ServletException {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
-        boolean remember = "".equals(request.getParameter("remember-account"));
+        boolean remember = "on".equals(request.getParameter("remember-account"));
         String validate = "Username or password is incorrect.";
         UserDAO userDAO = new UserDAO();
-        List<User> isUser = userDAO.checkUser(username, password);
-        // Check if the user exists in the database
-        if (!isUser.isEmpty()) {
-            // If the user exists, set the session attribute and redirect
-            try {
-                // Retrieve user details from the database
-                User user = userDAO.getUser(username, password);
-                // Set the user in the session
-                request.getSession().setAttribute("user", user);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            // If the "remember me" option is selected, set cookies for username and password
-            if (!remember) {
-                Cookie cUsername = new Cookie("username", username);
-                Cookie cPassword = new Cookie("password", password);
-                cUsername.setMaxAge(60 * 60 * 24);
-                cPassword.setMaxAge(60 * 60 * 24);
-                response.addCookie(cUsername);
-                response.addCookie(cPassword);
-            }
-            if (userDAO.checkAdmin(username, password)) {
-                //send user name to homepage
-                request.getSession().setAttribute("user", username);
-                response.sendRedirect("home");
-                return;
-            }
 
-            // huuquy test manager
-            if (userDAO.checkManager(username, password)) {
-                //send user name to homepage
-                request.getSession().setAttribute("user", username);
-                response.sendRedirect(request.getContextPath() + "/productManage");
-                return;
-            }
+        User user = (User) userDAO.checkUser(username, password);
+        if (user != null) {
+            // Thiết lập session
+            HttpSession session = request.getSession();
+            session.setAttribute("user", user);
+            session.setMaxInactiveInterval(30 * 60); // 30 phút
 
-            // haianh test staff
-            if (userDAO.checkStaff(username, password)) {
-                //send user name to homepage
-                request.getSession().setAttribute("user", username);
-                response.sendRedirect(request.getContextPath() + "/staffHome");
-                return;
+            // Xử lý "remember me"
+            if (remember) {
+                //implement remember me functionality
             }
-
-            request.getSession().setAttribute("validate", "");
-            response.sendRedirect(request.getContextPath() +"/");
+            // Chuyển hướng theo vai trò
+            switch (user.getRole()) {
+                case 3:
+                    response.sendRedirect("admin");
+                    break;
+                case 4:
+                    response.sendRedirect("manager");
+                    break;
+                default:
+                    session.setAttribute("validate", "");
+                    response.sendRedirect("home");
+                    break;
+            }
         } else {
-            request.getSession().setAttribute("validate", validate);
+            request.getSession().setAttribute("validate", "Username or password is incorrect.");
             response.sendRedirect("login");
         }
     }

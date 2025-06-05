@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserDAO extends DBContext{
+public class UserDAO extends DBContext {
 
     public User getUser(String username, String pass) throws SQLException {
         User user = null;
@@ -41,7 +41,7 @@ public class UserDAO extends DBContext{
                 user.setPassword(rs.getString("password"));
                 users.add(user);
             }
-        }catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return users;
@@ -62,7 +62,6 @@ public class UserDAO extends DBContext{
         return false; // User is not admin
     }
 
-    //this method checks if the user is a manager
     public boolean checkManager(String username, String password) {
         try {
             sql = "SELECT * FROM natural_care.user WHERE username = ? AND password = ? AND role_id = 4";
@@ -74,10 +73,9 @@ public class UserDAO extends DBContext{
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return false; // User is not manager
+        return false; // User is not admin
     }
 
-    //this method checks if the user is a manager
     public boolean checkStaff(String username, String password) {
         try {
             sql = "SELECT * FROM natural_care.user WHERE username = ? AND password = ? AND role_id = 2";
@@ -122,4 +120,57 @@ public class UserDAO extends DBContext{
         }
     }
 
+    public boolean checkEmailExists(String email) {
+        // Check if the email exists in the database
+        try {
+            sql = "SELECT * FROM natural_care.user WHERE email = ?";
+            stm = connection.prepareStatement(sql);
+            stm.setString(1, email);
+            rs = stm.executeQuery();
+            return rs.next(); // Returns true if email exists
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public void saveResetToken(String email, String token) {
+        // Save the reset token + token expiry for the user
+        try {
+            sql = "UPDATE natural_care.user SET reset_token = ?, reset_token_expiry = DATE_ADD(NOW(), INTERVAL 1 HOUR) WHERE email = ?";
+            stm = connection.prepareStatement(sql);
+            stm.setString(1, token);
+            stm.setString(2, email);
+            stm.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean isValidResetToken(String token) {
+        // Check if the reset token is valid and not expired
+        try {
+            sql = "SELECT * FROM natural_care.user WHERE reset_token = ? AND reset_token_expiry > NOW()";
+            stm = connection.prepareStatement(sql);
+            stm.setString(1, token);
+            rs = stm.executeQuery();
+            return rs.next(); // Returns true if token is valid
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false; // Token is invalid or expired
+    }
+
+    public void updatePassword(String token, String newPassword) {
+        // Update the user's password using the reset token
+        try {
+            sql = "UPDATE natural_care.user SET password = ?, reset_token = NULL, reset_token_expiry = NULL WHERE reset_token = ?";
+            stm = connection.prepareStatement(sql);
+            stm.setString(1, newPassword);
+            stm.setString(2, token);
+            stm.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

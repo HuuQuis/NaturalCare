@@ -39,5 +39,4 @@ build/
 
 ### Database ###
 src/main/resources/db.properties
-
-.smarttomcat/
+/src/main/resources/config.properties

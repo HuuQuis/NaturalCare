@@ -63,17 +63,19 @@ CREATE TABLE skill
 
 CREATE TABLE user
 (
-    user_id      INT          NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    username     VARCHAR(255) NOT NULL,
-    password     VARCHAR(255) NOT NULL,
-    first_name   VARCHAR(255) NOT NULL,
-    last_name    VARCHAR(255) NOT NULL,
-    email        VARCHAR(255) NOT NULL,
-    phone_number VARCHAR(20)  NOT NULL,
-    role_id      INT          NOT NULL,
-    address_id   INT,
-    skill_id     INT,
-    user_image   TEXT,
+    user_id            INT          NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    username           VARCHAR(255) NOT NULL,
+    password           VARCHAR(255) NOT NULL,
+    first_name         VARCHAR(255) NOT NULL,
+    last_name          VARCHAR(255) NOT NULL,
+    email              VARCHAR(255) NOT NULL,
+    phone_number       VARCHAR(20)  NOT NULL,
+    role_id            INT          NOT NULL,
+    address_id         INT,
+    skill_id           INT,
+    user_image         TEXT,
+    reset_token        VARCHAR(255),
+    reset_token_expiry DATETIME,
     FOREIGN KEY (role_id)
         REFERENCES role (role_id),
     FOREIGN KEY (address_id)
@@ -154,7 +156,7 @@ CREATE TABLE product_variation
     size          VARCHAR(50),
     price         BIGINT NOT NULL,
     qty_in_stock  INT    NOT NULL,
-    sold        INT DEFAULT 0,
+    sold          INT DEFAULT 0,
     FOREIGN KEY (product_id)
         REFERENCES product (product_id)
 );

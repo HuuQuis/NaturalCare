@@ -14,7 +14,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>Login | Natural Care</title>
+    <title>Forgot Password | Natural Care</title>
     <link href="${pageContext.request.contextPath}/css/bootstrap.min.css" rel="stylesheet">
     <link href="${pageContext.request.contextPath}/css/font-awesome.min.css" rel="stylesheet">
     <link href="${pageContext.request.contextPath}/css/prettyPhoto.css" rel="stylesheet">
@@ -50,41 +50,42 @@
     <div class="container">
         <div class="row">
             <div class="col-sm-offset-3 col-sm-6">
-                <!--login form-->
+                <!--forgot password form-->
                 <div class="login-form">
-                    <h2>Login to your account</h2>
-                    <form action="login" method="POST">
-                        <input name="username" type="text" placeholder="Username" required/>
-                        <input name="password" type="password" placeholder="Password" required/>
-                        <span>
-								<input name="remember-account" type="checkbox" class="checkbox" checked value="on">
-								Keep me signed in
-							</span>
+                    <h2>Forgot Password</h2>
+                    <form action="${pageContext.request.contextPath}/forgot" method="POST">
+                        <input type="hidden" name="action" value="send">
+                        <input name="email" type="email" placeholder="Submit your email for recovery!" required/>
 
                         <br>
-                        <span class="validate-message">${validate}</span>
+                        <c:if test="${not empty message}">
+                            <div class="alert alert-success">${message}</div>
+                        </c:if>
+                        <c:if test="${not empty error}">
+                            <div class="alert alert-danger">${error}</div>
+                        </c:if>
 
                         <div style="display: flex; gap: 10px; margin-top: 10px;">
-                            <button type="submit" class="btn btn-default">Login</button>
-                            <button type="button" class="btn btn-default" onclick="window.location.href='${pageContext.request.contextPath}/forgot'">Forgot Password</button>
+                            <button type="submit" class="btn btn-default">Reset Password</button>
+                            <button type="button" class="btn btn-default"
+                                    onclick="window.location.href='${pageContext.request.contextPath}/login'">Back to
+                                Login
+                            </button>
                         </div>
 
                         <hr>
-                        <p class="message">Don’t have an account? <a href="${pageContext.request.contextPath}/register">Register</a>
+                        <p class="message">Don't have an account? <a href="${pageContext.request.contextPath}/register">Register</a>
                         </p>
-
                     </form>
                 </div>
-                <!--/login form-->
+                <!--/forgot password form-->
             </div>
         </div>
     </div>
 </section><!--/form-->
 
-
 <!--/Footer-->
 <jsp:include page="../common/footer.jsp"></jsp:include>
-
 
 <script src="${pageContext.request.contextPath}/js/jquery.js"></script>
 <script src="${pageContext.request.contextPath}/js/price-range.js"></script>
