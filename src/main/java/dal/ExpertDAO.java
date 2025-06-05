@@ -197,6 +197,7 @@ public class ExpertDAO extends DBContext {
                 psExpertSkill.setInt(2, skillId);
                 psExpertSkill.executeUpdate();
             }
+            
 
             connection.commit();
 
