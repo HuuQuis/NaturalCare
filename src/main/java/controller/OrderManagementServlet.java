@@ -18,22 +18,29 @@ public class OrderManagementServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
         String search = request.getParameter("search");
+        String status = request.getParameter("status");
+        String fromDate = request.getParameter("fromDate");
+        String toDate = request.getParameter("toDate");
         String pageStr = request.getParameter("page");
         int page = pageStr != null ? Integer.parseInt(pageStr) : 1;
 
         ProductOrderDAO orderDAO = new ProductOrderDAO();
-        int totalOrders = orderDAO.countOrders(search);
+
+        int totalOrders = orderDAO.countOrders(search, status, fromDate, toDate);
         int totalPages = (int) Math.ceil((double) totalOrders / PAGE_SIZE);
 
-        List<ProductOrder> orders = orderDAO.getOrdersWithPagination(search, page, PAGE_SIZE);
-
-        System.out.println(orders + search + " " + page);
+        List<ProductOrder> orders = orderDAO.getOrdersWithPagination(search, status, fromDate, toDate, page, PAGE_SIZE);
 
         request.setAttribute("orders", orders);
         request.setAttribute("totalPages", totalPages);
         request.setAttribute("currentPage", page);
         request.setAttribute("search", search);
+        request.setAttribute("status", status);
+        request.setAttribute("fromDate", fromDate);
+        request.setAttribute("toDate", toDate);
+
         request.getRequestDispatcher("/view/staff/order-management.jsp").forward(request, response);
     }
 
