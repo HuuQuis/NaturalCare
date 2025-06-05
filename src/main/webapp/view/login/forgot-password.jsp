@@ -55,8 +55,15 @@
                     <h2>Forgot Password</h2>
                     <form action="${pageContext.request.contextPath}/forgot" method="POST">
                         <input type="hidden" name="action" value="send">
+                        <input name="email" type="email" placeholder="Submit your email for recovery!" required/>
 
                         <br>
+                        <c:if test="${not empty message}">
+                            <div class="alert alert-success">${message}</div>
+                        </c:if>
+                        <c:if test="${not empty error}">
+                            <div class="alert alert-danger">${error}</div>
+                        </c:if>
 
                         <div style="display: flex; gap: 10px; margin-top: 10px;">
                             <button type="submit" class="btn btn-default">Reset Password</button>

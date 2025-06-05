@@ -39,3 +39,4 @@ build/
 
 ### Database ###
 src/main/resources/db.properties
+/src/main/resources/config.properties
