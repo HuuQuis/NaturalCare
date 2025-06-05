@@ -54,7 +54,6 @@
                 <div class="login-form">
                     <h2>Forgot Password</h2>
                     <form action="${pageContext.request.contextPath}/forgot" method="POST">
-                        <input type="hidden" name="action" value="send">
                         <input name="email" type="email" placeholder="Submit your email for recovery!" required/>
 
                         <br>

@@ -30,58 +30,30 @@ public class ForgotPasswordServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
-        String action = request.getParameter("action");
-        if ("reset".equals(action)) {
-            request.setAttribute("token", request.getParameter("token"));
-            request.getRequestDispatcher("view/login/reset-password.jsp").forward(request, response);
-        } else {
-            request.getRequestDispatcher("view/login/forgot-password.jsp").forward(request, response);
-        }
+        request.getRequestDispatcher("view/login/forgot-password.jsp").forward(request, response);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
-        String action = request.getParameter("action");
+        String email = request.getParameter("email");
         UserDAO userDAO = new UserDAO();
 
-        if ("send".equals(action)) {
-            String email = request.getParameter("email");
-
-            try {
-                if (userDAO.checkEmailExists(email)) {
-                    String token = UUID.randomUUID().toString();
-                    userDAO.saveResetToken(email, token);
-                    sendResetEmail(email, token);
-                    request.setAttribute("message", "Reset link has been sent to your email");
-                } else {
-                    request.setAttribute("error", "Email not found");
-                }
-                request.getRequestDispatcher("view/login/forgot-password.jsp").forward(request, response);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                request.setAttribute("error", "An error occurred");
-                request.getRequestDispatcher("view/login/forgot-password.jsp").forward(request, response);
+        try {
+            if (userDAO.checkEmailExists(email)) {
+                String token = UUID.randomUUID().toString();
+                userDAO.saveResetToken(email, token);
+                sendResetEmail(email, token);
+                request.setAttribute("message", "Reset link has been sent to your email");
+            } else {
+                request.setAttribute("error", "Email not found");
             }
-        } else if ("reset".equals(action)) {
-            String token = request.getParameter("token");
-            String newPassword = request.getParameter("password");
+            request.getRequestDispatcher("view/login/forgot-password.jsp").forward(request, response);
 
-            try {
-                if (userDAO.isValidResetToken(token)) {
-                    userDAO.updatePassword(token, newPassword);
-                    request.setAttribute("message", "Password reset successfully");
-                    request.getRequestDispatcher("view/login/login.jsp").forward(request, response);
-                } else {
-                    request.setAttribute("error", "Invalid or expired token");
-                    request.getRequestDispatcher("view/login/forgot-password.jsp").forward(request, response);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                request.setAttribute("error", "An error occurred");
-                request.getRequestDispatcher("view/login/forgot-password.jsp").forward(request, response);
-            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("error", "An error occurred");
+            request.getRequestDispatcher("view/login/forgot-password.jsp").forward(request, response);
         }
     }
 
@@ -107,7 +79,7 @@ public class ForgotPasswordServlet extends HttpServlet {
         message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email));
         message.setSubject("Password Reset Request");
 
-        String resetLink = baseUrl + "/forgot?action=reset&token=" + token;
+        String resetLink = baseUrl + "/reset?token=" + token;
         message.setText("Click this link to reset your password: " + resetLink);
 
         Transport.send(message);
