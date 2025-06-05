@@ -1,6 +1,6 @@
 package dal;
 
-import model.ExpertSkill;
+import model.*;
 import model.ProductOrder;
 import java.sql.*;
 import java.util.ArrayList;
@@ -110,4 +110,102 @@ public class ExpertDAO extends DBContext {
         return list;
     }
 
+    public ExpertSkill getExpertDetailByUserId(int userId) {
+        String sql = "SELECT es.user_id, u.username, es.skill_id, s.skill_name " +
+                "FROM expertSkill es " +
+                "JOIN user u ON es.user_id = u.user_id " +
+                "JOIN skill s ON es.skill_id = s.skill_id " +
+                "WHERE es.user_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                ExpertSkill expertSkill = new ExpertSkill();
+                expertSkill.setUser_id(rs.getInt("user_id"));
+                expertSkill.setUser_name(rs.getString("username"));
+                expertSkill.setSkill_id(rs.getInt("skill_id"));
+                expertSkill.setSkill_name(rs.getString("skill_name"));
+                return expertSkill;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    // Lấy danh sách tất cả kỹ năng để hiển thị dropdown
+    public List<Skill> getAllSkills() {
+        List<Skill> skills = new ArrayList<>();
+        String sql = "SELECT skill_id, skill_name FROM skill";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Skill skill = new Skill();
+                skill.setSkillId(rs.getInt("skill_id"));
+                skill.setSkillName(rs.getString("skill_name"));
+                skills.add(skill);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return skills;
+    }
+
+    // Cập nhật skill cho expert (user_id)
+    public void updateExpertSkill(int userId, int skillId) {
+        String sql = "UPDATE expertSkill SET skill_id = ? WHERE user_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, skillId);
+            ps.setInt(2, userId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Thêm expert mới: 1) Thêm user, 2) Thêm expertSkill
+    public void addExpert(String userName, int skillId) {
+        // 1. Thêm user
+        String insertUserSql = "INSERT INTO user (username) VALUES (?)";
+        try {
+            connection.setAutoCommit(false);
+
+            int userId;
+            try (PreparedStatement psUser = connection.prepareStatement(insertUserSql, Statement.RETURN_GENERATED_KEYS)) {
+                psUser.setString(1, userName);
+                psUser.executeUpdate();
+                ResultSet rs = psUser.getGeneratedKeys();
+                if (rs.next()) {
+                    userId = rs.getInt(1);
+                } else {
+                    connection.rollback();
+                    throw new SQLException("Failed to insert user, no ID obtained.");
+                }
+            }
+
+            // 2. Thêm expertSkill
+            String insertExpertSkillSql = "INSERT INTO expertSkill (user_id, skill_id) VALUES (?, ?)";
+            try (PreparedStatement psExpertSkill = connection.prepareStatement(insertExpertSkillSql)) {
+                psExpertSkill.setInt(1, userId);
+                psExpertSkill.setInt(2, skillId);
+                psExpertSkill.executeUpdate();
+            }
+
+            connection.commit();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        } finally {
+            try {
+                connection.setAutoCommit(true);
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
 }
