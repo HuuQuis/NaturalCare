@@ -32,29 +32,24 @@ public class LoginServlet extends HttpServlet {
             throws IOException, ServletException {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
-        boolean remember = "on".equals(request.getParameter("remember-account"));
-        String validate = "Username or password is incorrect.";
-        UserDAO userDAO = new UserDAO();
-
-        if (userDAO.checkStaff(username, password)) {
-            request.getSession().setAttribute("user", username);
-            response.sendRedirect(request.getContextPath() + "/staffHome");
+        
+        // Basic validation
+        if (username == null || username.trim().isEmpty() || password == null || password.trim().isEmpty()) {
+            request.getSession().setAttribute("validate", "Username and password are required.");
+            response.sendRedirect("login");
             return;
         }
 
-
-        User user = (User) userDAO.checkUser(username, password);
+        UserDAO userDAO = new UserDAO();
+        User user = userDAO.checkUser(username, password);
+        
         if (user != null) {
-            // Thiết lập session
+            // Set up session
             HttpSession session = request.getSession();
             session.setAttribute("user", user);
-            session.setMaxInactiveInterval(30 * 60); // 30 phút
+            session.setMaxInactiveInterval(10 * 60); // 10 minutes
 
-            // Xử lý "remember me"
-            if (remember) {
-                //implement remember me functionality
-            }
-            // Chuyển hướng theo vai trò
+            // Redirect based on role
             switch (user.getRole()) {
                 case 3:
                     response.sendRedirect("admin");
@@ -68,7 +63,7 @@ public class LoginServlet extends HttpServlet {
                     break;
             }
         } else {
-            request.getSession().setAttribute("validate", "Username or password is incorrect.");
+            request.getSession().setAttribute("validate", "Invalid username or password.");
             response.sendRedirect("login");
         }
     }

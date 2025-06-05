@@ -10,8 +10,6 @@ public class LogoutServlet extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
-        //invalidate là gì?
-
         request.getSession().invalidate();
         response.sendRedirect(request.getContextPath() + "/");
     }
