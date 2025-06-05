@@ -46,7 +46,7 @@
         <div class="row">
             <div class="col-sm-3">
                 <div class="left-sidebar">
-                    <jsp:include page="/view/product/category-sidebar.jsp" />
+                    <jsp:include page="/view/category/category-sidebar.jsp" />
                 </div>
             </div>
 
@@ -98,6 +98,20 @@
                         </div>
                     </c:forEach>
                 </div><!--features_items-->
+                <c:forEach begin="1" end="${endPage}" var="page">
+                    <c:choose>
+                        <c:when test="${not empty selectedSubCategoryId}">
+                            <a href="products?index=${page}&subcategory=${selectedSubCategoryId}">${page}</a>
+                        </c:when>
+                        <c:when test="${not empty selectedCategoryId}">
+                            <a href="products?index=${page}&category=${selectedCategoryId}">${page}</a>
+                        </c:when>
+<%--                        <c:otherwise>--%>
+<%--                            <a href="products?index=${page}">${page}</a>--%>
+<%--                        </c:otherwise>--%>
+                    </c:choose>
+                </c:forEach>
+
             </div>
         </div>
     </div>

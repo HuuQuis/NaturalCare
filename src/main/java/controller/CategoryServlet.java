@@ -24,8 +24,9 @@ public class CategoryServlet extends HttpServlet {
             request.getRequestDispatcher("view/category/form.jsp").forward(request, response);
         } else {
             List<ProductCategory> list = dao.getAllProductCategories();
+            request.setAttribute("view", "category");
             request.setAttribute("list", list);
-            request.getRequestDispatcher("view/category/list.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/home/manager.jsp").forward(request, response);
         }
     }
 
