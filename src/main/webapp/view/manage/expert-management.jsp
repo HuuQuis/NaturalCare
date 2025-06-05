@@ -110,7 +110,7 @@
     <c:forEach var="expert" items="${experts}" varStatus="loop">
       <tr>
         <td>${loop.index + 1}</td>
-        <td>#${expert.getUser_id()}</td>
+        <td><a href="expertDetail?user_id=${expert.getUser_id()}">#${expert.getUser_id()}</a></td>
         <td>${expert.getUser_name()}</td>
         <td>${expert.getSkill_id()}</td>
         <td>${expert.getSkill_name()}</td>
