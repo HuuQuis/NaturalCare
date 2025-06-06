@@ -39,7 +39,7 @@
     <jsp:include page="../common/header-top.jsp"></jsp:include>
 
     <!--/header-middle-->
-    <jsp:include page="../common/header-middle.jsp"></jsp:include>
+<%--    <jsp:include page="../common/header-middle.jsp"></jsp:include>--%>
 
     <!--/header-bottom-->
     <jsp:include page="../common/header-bottom.jsp"></jsp:include>

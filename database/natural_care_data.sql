@@ -79,10 +79,10 @@ VALUES (1, 'Skin Care Combo', 1),
        (33, 'Acerola Skin Care Set', 10);
 
 INSERT INTO user (username, password, first_name, last_name, email, phone_number, role_id)
-VALUES ('test', 'test', 'test', 'admin', 'test@gmail.com', '0123456789', 3);
+VALUES ('admin', 'admin', 'test', 'admin', 'test@gmail.com', '0123456789', 3);
 
 INSERT INTO user (user_id, username, password, first_name, last_name, email, phone_number, role_id)
-VALUES (4, 'test', 'test', 'test', 'manager', 'test@gmail.com', '0123456789', 4);
+VALUES (2, 'manager', 'manager', 'test', 'manager', 'test@gmail.com', '0123456789', 4);
 
 INSERT INTO product (product_name, product_short_description, product_information, product_guideline,
                      sub_product_category_id)
