@@ -63,7 +63,7 @@ public class LoginServlet extends HttpServlet {
                     response.sendRedirect("admin");
                     break;
                 case 4:
-                    response.sendRedirect(request.getContextPath() + "/productManage");
+                    request.getRequestDispatcher("view/home/manager.jsp").forward(request, response);
                     break;
                 default:
                     session.setAttribute("validate", "");

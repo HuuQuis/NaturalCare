@@ -198,15 +198,15 @@
         const name = document.getElementById('categoryName').value.trim();
         const isOnlyDigits = /^\d+$/.test(name);
         if (name === "") {
-            alert("⚠️ Category name cannot be empty.");
+            alert("Category name cannot be empty.");
             return false;
         }
         if (isOnlyDigits) {
-            alert("⚠️ Category name cannot be only numbers.");
+            alert("Category name cannot be only numbers.");
             return false;
         }
         if (name.length > 15) {
-            alert("⚠️ Category name must be 15 characters or fewer.");
+            alert("Category name must be 15 characters or fewer.");
             return false;
         }
         return true;
@@ -237,15 +237,15 @@
         const name = document.getElementById('subName').value.trim();
         const isOnlyDigits = /^\d+$/.test(name);
         if (name === '') {
-            alert("⚠️ Subcategory name cannot be empty.");
+            alert("Subcategory name cannot be empty.");
             return false;
         }
         if (isOnlyDigits) {
-            alert("⚠️ Subcategory name cannot be only numbers.");
+            alert("Subcategory name cannot be only numbers.");
             return false;
         }
         if (name.length > 15) {
-            alert("⚠️ Subcategory name must be 15 characters or fewer.");
+            alert("Subcategory name must be 15 characters or fewer.");
             return false;
         }
         return true;
