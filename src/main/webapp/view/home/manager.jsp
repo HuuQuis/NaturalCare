@@ -79,7 +79,7 @@
                         <a href="javascript:void(0);"><img src="${pageContext.request.contextPath}/adminassets/img/icons/product.svg" alt="img"><span>
                                         Edit</span> <span class="menu-arrow"></span></a>
                         <ul>
-                            <li><a href="" class="active">DashBoard</a></li>
+                            <li><a href="" >DashBoard</a></li>
                             <li><a href="${pageContext.request.contextPath}/productManage">Product List</a></li>
                             <li>
                                 <a href="${pageContext.request.contextPath}/category"

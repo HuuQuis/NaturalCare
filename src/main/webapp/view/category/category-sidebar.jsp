@@ -8,7 +8,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <div class="left-sidebar" style="border-right: 1px solid #eee; padding-right: 15px;">
-    <h2 style="font-size: 20px; border-bottom: 2px solid #a8d08d; padding-bottom: 10px;">DANH MỤC SẢN PHẨM</h2>
+    <h2 style="font-size: 20px; border-bottom: 2px solid #a8d08d; padding-bottom: 10px;">CATEGORY</h2>
 
     <div class="panel-group category-products" id="category-accordion">
         <c:forEach var="cat" items="${categories}">
