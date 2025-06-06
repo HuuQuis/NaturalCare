@@ -63,7 +63,7 @@
                                             alt="">
                                         <span class="status online"></span></span>
                             <div class="profilesets">
-                                <h5>Admin</h5>
+                                <h5>Manager</h5>
                             </div>
                         </div>
                         <hr class="m-0">
