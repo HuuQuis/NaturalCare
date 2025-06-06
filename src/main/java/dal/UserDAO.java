@@ -27,24 +27,24 @@ public class UserDAO extends DBContext {
         return user;
     }
 
-    public List<User> checkUser(String username, String password) {
-        List<User> users = new ArrayList<>();
+    public User checkUser(String username, String password) {
         try {
             sql = "SELECT * FROM natural_care.user WHERE username = ? AND password = ?";
             stm = connection.prepareStatement(sql);
             stm.setString(1, username);
             stm.setString(2, password);
             rs = stm.executeQuery();
-            while (rs.next()) {
+            if (rs.next()) {
                 User user = new User();
                 user.setUsername(rs.getString("username"));
                 user.setPassword(rs.getString("password"));
-                users.add(user);
+                user.setRole(rs.getInt("role_id"));
+                return user;
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return users;
+        return null;
     }
 
     // This method checks if the user is an admin

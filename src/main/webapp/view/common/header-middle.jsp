@@ -12,8 +12,9 @@
         <div class="row">
             <div class="col-sm-4">
                 <div class="logo pull-left">
-                    <a href=${pageContext.request.contextPath}/home><img src="https://naturalcare.vercel.app/naturalcare/NLC-Logo.png" alt=""
-                                      style="max-height: 70px"/></a>
+                    <a href=${pageContext.request.contextPath}/home><img
+                            src="https://naturalcare.vercel.app/naturalcare/NLC-Logo.png" alt=""
+                            style="max-height: 70px"/></a>
                 </div>
             </div>
             <div class="col-sm-4">
@@ -31,7 +32,7 @@
                                 <li><a href="#" aria-label="Shopping Cart"><i class="fa fa-shopping-cart"></i>
                                     Cart</a></li>
                                 <li><a href="#" aria-label="User Profile"><i class="fa fa-user"></i>
-                                    Profile ${user}</a></li>
+                                    Profile</a></li>
                                 <li><a href="logout" aria-label="Logout"><i class="fa fa-lock"></i> Logout</a></li>
                             </c:when>
                             <c:otherwise>
