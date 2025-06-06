@@ -81,7 +81,10 @@
                         <ul>
                             <li><a href="" class="active">DashBoard</a></li>
                             <li><a href="${pageContext.request.contextPath}/productManage">Product List</a></li>
-                            <li><a href="${pageContext.request.contextPath}/category">Manage Category</a></li>
+                            <li>
+                                <a href="${pageContext.request.contextPath}/category"
+                                   class="${view eq 'category' ? 'active' : ''}">Manage Category</a>
+                            </li>
                             <li><a href="">Expert List</a></li>
                             <li><a href="">Staff List</a></li>
                             <li><a href="">Shipper List</a></li>
