@@ -75,6 +75,9 @@
                                             </c:if>
                                         </div>
                                         <p>${product.name}</p>
+                                        <c:if test="${product.minPrice > 0}">
+                                            <p>Start from: <span class="price">${product.minPrice}</span></p>
+                                        </c:if>
                                     </div>
                                     <div class="product-overlay">
                                         <div class="overlay-content">
@@ -98,20 +101,21 @@
                         </div>
                     </c:forEach>
                 </div><!--features_items-->
-                <c:forEach begin="1" end="${endPage}" var="page">
-                    <c:choose>
-                        <c:when test="${not empty selectedSubCategoryId}">
-                            <a href="products?index=${page}&subcategory=${selectedSubCategoryId}">${page}</a>
-                        </c:when>
-                        <c:when test="${not empty selectedCategoryId}">
-                            <a href="products?index=${page}&category=${selectedCategoryId}">${page}</a>
-                        </c:when>
-<%--                        <c:otherwise>--%>
-<%--                            <a href="products?index=${page}">${page}</a>--%>
-<%--                        </c:otherwise>--%>
-                    </c:choose>
-                </c:forEach>
 
+                <div class="col-sm-12 text-center">
+                    <ul class="pagination">
+                        <c:forEach begin="1" end="${endPage}" var="page">
+                            <c:choose>
+                                <c:when test="${not empty selectedSubCategoryId}">
+                                    <li><a href="products?index=${page}&subcategory=${selectedSubCategoryId}">${page}</a></li>
+                                </c:when>
+                                <c:when test="${not empty selectedCategoryId}">
+                                    <li><a href="products?index=${page}&category=${selectedCategoryId}">${page}</a></li>
+                                </c:when>
+                            </c:choose>
+                        </c:forEach>
+                    </ul>
+                </div><!--/pagination-->
             </div>
         </div>
     </div>
