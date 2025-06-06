@@ -47,8 +47,12 @@ public class SubCategoryServlet extends HttpServlet {
                 }
             } else if ("update".equals(action)) {
                 int id = Integer.parseInt(idRaw);
-                subDao.updateSubCategory(id, name);
-                req.getSession().setAttribute("message", " Subcategory updated.");
+                if (subDao.isSubNameExistsForOtherId(name, categoryId, id)) {
+                    req.getSession().setAttribute("message", "Subcategory name already exists in this category.");
+                } else {
+                    subDao.updateSubCategory(id, name);
+                    req.getSession().setAttribute("message", "Subcategory updated.");
+                }
             } else if ("delete".equals(action)) {
                 int id = Integer.parseInt(idRaw);
                 subDao.deleteSubCategory(id);

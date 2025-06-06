@@ -70,7 +70,12 @@ public class CategoryServlet extends HttpServlet {
             }
         } else if ("update".equals(action)) {
             int id = Integer.parseInt(idRaw);
-            dao.updateProductCategory(id, name);
+            if (dao.isCategoryNameExistsForOtherId(name, id) || subDao.isSubNameExistsInAnyCategory(name)) {
+                request.getSession().setAttribute("message", "Name already exists in another category or subcategory.");
+            } else {
+                dao.updateProductCategory(id, name);
+                request.getSession().setAttribute("message", "Category updated.");
+            }
         } else if ("delete".equals(action)) {
             int id = Integer.parseInt(idRaw);
             dao.deleteProductCategory(id);
