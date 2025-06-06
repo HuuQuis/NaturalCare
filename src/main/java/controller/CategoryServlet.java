@@ -1,6 +1,7 @@
 package controller;
 
 import dal.ProductCategoryDAO;
+import dal.SubProductCategoryDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import model.ProductCategory;
@@ -15,28 +16,58 @@ import java.util.List;
 public class CategoryServlet extends HttpServlet {
     ProductCategoryDAO dao = new ProductCategoryDAO();
 
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
+
         if ("edit".equals(action)) {
             int id = Integer.parseInt(request.getParameter("id"));
             ProductCategory category = dao.getById(id);
             request.setAttribute("category", category);
-            request.getRequestDispatcher("view/category/form.jsp").forward(request, response);
+            //request.getRequestDispatcher("view/category/formSub.jsp").forward(request, response);
         } else {
-            List<ProductCategory> list = dao.getAllProductCategories();
+            // --- Phân trang ---
+            String pageRaw = request.getParameter("page");
+            int page = (pageRaw == null || pageRaw.isEmpty()) ? 1 : Integer.parseInt(pageRaw);
+            int pageSize = 10;
+
+            List<ProductCategory> list = dao.getCategoriesByPage(page, pageSize);
+
+            // Gán subcategory cho từng category
+            SubProductCategoryDAO subDao = new SubProductCategoryDAO();
+            for (ProductCategory c : list) {
+                c.setSubList(subDao.getSubCategoriesByCategoryId(c.getId()));
+            }
+
+            int total = dao.countTotalCategories();
+            int totalPage = (int) Math.ceil((double) total / pageSize);
+
+            // Set dữ liệu cho JSP
             request.setAttribute("view", "category");
             request.setAttribute("list", list);
+            request.setAttribute("page", page);
+            request.setAttribute("pageSize", pageSize);
+            request.setAttribute("totalPage", totalPage);
+
             request.getRequestDispatcher("/view/home/manager.jsp").forward(request, response);
         }
     }
 
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
         String name = request.getParameter("name");
         String idRaw = request.getParameter("id");
 
+        SubProductCategoryDAO subDao = new SubProductCategoryDAO();
+
         if ("add".equals(action)) {
-            dao.addProductCategory(name);
+            if (dao.isCategoryNameExists(name) || subDao.isSubNameExistsInAnyCategory(name)) {
+                request.getSession().setAttribute("message", "This name already exists in category or subcategory.");
+            } else {
+                dao.addProductCategory(name);
+                request.getSession().setAttribute("message", " Category added successfully.");
+            }
         } else if ("update".equals(action)) {
             int id = Integer.parseInt(idRaw);
             dao.updateProductCategory(id, name);
@@ -44,6 +75,8 @@ public class CategoryServlet extends HttpServlet {
             int id = Integer.parseInt(idRaw);
             dao.deleteProductCategory(id);
         }
+
         response.sendRedirect("category");
     }
+
 }
