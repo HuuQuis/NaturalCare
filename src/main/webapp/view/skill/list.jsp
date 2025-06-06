@@ -2,7 +2,7 @@
   Created by IntelliJ IDEA.
   User: telamon
   Date: 27/5/25
-  Time: 12:44
+  Time: 12:00
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -27,10 +27,10 @@
     <![endif]-->
   <style>
     .animated { animation-duration: 1s; animation-fill-mode: both; }
-    .table tr { animation-delay: 0.2s; }
+    .table tr { animation-delay: 2ms; }
     .btn { transition: transform 0.3s ease, background-color 0.3s ease; }
     .btn:hover { transform: scale(1.1); }
-    .form-control:focus { transition: box-shadow 0.3s ease; box-shadow: 0 0 8px rgba(0, 123, 255, 0.5); }
+    .form-control:focus { transition: box-shadow: 0.3s ease; }
     .modal-content { animation-duration: 0.5s; }
     .pagination li a { transition: transform 0.3s ease; }
     .pagination li a:hover { transform: scale(1.1); }
@@ -38,6 +38,45 @@
     .loading { opacity: 0.6; pointer-events: none; }
     .action-buttons { display: flex; gap: 10px; white-space: nowrap; justify-content: center; align-items: center; }
     .action-buttons .btn { margin: 0; }
+    /* Align search input and button */
+    .search-form {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .search-form .form-group {
+      margin-bottom: 10px;
+      margin-top: 10px;
+    }
+    .search-form .btn {
+      background: #FE980F;
+      color: #fff;
+      border: none;
+      padding: 10px 12px;
+    }
+    .search-form .btn:hover {
+      background: #e68a00;
+    }
+    /* Custom button style for Add New Skill, Edit, Delete */
+    .btn-custom {
+      background: #FE980F;
+      color: #fff;
+      border: none;
+      padding: 6px 12px;
+    }
+    .btn-custom:hover {
+      background: #e68a00;
+      color: #fff;
+    }
+    /* Modal Cancel button */
+    .modal-footer .btn-default {
+      background: #fff;
+      color: #333;
+      border: 1px solid #ccc;
+    }
+    .modal-footer .btn-default:hover {
+      background: #f5f5f5;
+    }
   </style>
 </head>
 <body>
@@ -51,21 +90,21 @@
   <div class="container">
     <div class="row">
       <div class="col-sm-12">
-        <h2 class="title text-center animated fadeInDown">Skills Management</h2>
+        <h2 class="title text-center animated fadeInDown">SKILLS MANAGEMENT</h2>
         <c:if test="${not empty error}">
           <div class="alert alert-danger text-center animated shake">${error}</div>
         </c:if>
         <div class="row">
           <div class="col-md-12">
-            <form action="${pageContext.request.contextPath}/skill" method="GET" class="form-inline pull-left animated slideInLeft" style="margin-bottom: 20px;">
+            <form action="${pageContext.request.contextPath}/skill" method="GET" class="search-form pull-left animated slideInLeft" style="margin-bottom: 20px;">
               <div class="form-group">
-                <input type="text" name="search" class="form-control" placeholder="Search skills..." value="${search}">
+                <input type="text" name="search" class="form-control" placeholder="Search skill..." value="${search}">
               </div>
-              <button type="submit" class="btn btn-default get"><i class="fa fa-search"></i></button>
+              <button type="submit" class="btn btn-custom"><i class="fa fa-search"></i></button>
               <input type="hidden" name="sort" value="${sort}">
               <input type="hidden" name="page" value="${page}">
             </form>
-            <a href="${pageContext.request.contextPath}/skill?action=form" class="btn btn-default get pull-right animated slideInRight">Add New Skill</a>
+            <a href="${pageContext.request.contextPath}/skill?action=form" class="btn btn-custom pull-right animated slideInRight">ADD NEW SKILL</a>
           </div>
         </div>
         <div class="row">
@@ -85,8 +124,8 @@
                   <td>${skill.skillName}</td>
                   <td>
                     <div class="action-buttons">
-                      <a href="${pageContext.request.contextPath}/skill?action=form&id=${skill.skillId}" class="btn btn-default get btn-sm">Edit</a>
-                      <a href="#" class="btn btn-default btn-sm delete-btn" data-id="${skill.skillId}" data-toggle="modal" data-target="#deleteModal">Delete</a>
+                      <a href="${pageContext.request.contextPath}/skill?action=form&id=${skill.skillId}" class="btn btn-custom btn-sm">Edit</a>
+                      <a href="#" class="btn btn-custom btn-sm delete-btn" data-id="${skill.skillId}" data-toggle="modal" data-target="#deleteModal">Delete</a>
                     </div>
                   </td>
                 </tr>
@@ -134,7 +173,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-        <a href="#" id="confirmDelete" class="btn btn-default get">Delete</a>
+        <a href="#" id="confirmDelete" class="btn btn-custom">Delete</a>
       </div>
     </div>
   </div>
