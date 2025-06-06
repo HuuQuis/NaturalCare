@@ -49,4 +49,79 @@ public class SubProductCategoryDAO extends DBContext {
         }
         return list;
     }
+
+    public void addSubCategory(String name, int categoryId) {
+        String sql = "INSERT INTO sub_product_category (sub_product_category_name, product_category_id) VALUES (?, ?)";
+        try (PreparedStatement stm = connection.prepareStatement(sql)) {
+            stm.setString(1, name);
+            stm.setInt(2, categoryId);
+            stm.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateSubCategory(int id, String name) {
+        String sql = "UPDATE sub_product_category SET sub_product_category_name = ? WHERE sub_product_category_id = ?";
+        try (PreparedStatement stm = connection.prepareStatement(sql)) {
+            stm.setString(1, name);
+            stm.setInt(2, id);
+            stm.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deleteSubCategory(int id) {
+        String sql = "DELETE FROM sub_product_category WHERE sub_product_category_id = ?";
+        try (PreparedStatement stm = connection.prepareStatement(sql)) {
+            stm.setInt(1, id);
+            stm.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public SubProductCategory getById(int id) {
+        String sql = "SELECT * FROM sub_product_category WHERE sub_product_category_id = ?";
+        try (PreparedStatement stm = connection.prepareStatement(sql)) {
+            stm.setInt(1, id);
+            ResultSet rs = stm.executeQuery();
+            if (rs.next()) {
+                return new SubProductCategory(
+                        rs.getInt("sub_product_category_id"),
+                        rs.getString("sub_product_category_name"),
+                        rs.getInt("product_category_id")
+                );
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public boolean isSubNameExists(String name, int categoryId) {
+        String sql = "SELECT 1 FROM sub_product_category WHERE sub_product_category_name = ? AND product_category_id = ?";
+        try (PreparedStatement stm = connection.prepareStatement(sql)) {
+            stm.setString(1, name);
+            stm.setInt(2, categoryId);
+            ResultSet rs = stm.executeQuery();
+            return rs.next(); // tồn tại → true
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean isSubNameExistsInAnyCategory(String name) {
+        String sql = "SELECT 1 FROM sub_product_category WHERE LOWER(sub_product_category_name) = LOWER(?)";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, name);
+            ResultSet rs = ps.executeQuery();
+            return rs.next();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }
