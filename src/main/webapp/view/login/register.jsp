@@ -82,12 +82,26 @@
     document.querySelector('form').addEventListener('submit', function (event) {
         const password = document.querySelector('input[name="password"]').value;
         const confirmPassword = document.querySelector('input[name="password-confirm"]').value;
+        const username = document.querySelector('input[name="username"]').value;
+        const firstName = document.querySelector('input[name="firstName"]').value;
+        const lastName = document.querySelector('input[name="lastName"]').value;
+        const email = document.querySelector('input[name="email"]').value;
+        const phone = document.querySelector('input[name="phone"]').value;
+
+        // Check if any field contains only whitespace
+        if (username.trim() === '' || firstName.trim() === '' || lastName.trim() === '' || 
+            email.trim() === '' || phone.trim() === '') {
+            event.preventDefault();
+            alert("Please do not enter only spaces in any field!");
+            return;
+        }
 
         if (password !== confirmPassword) {
             event.preventDefault();
             alert("Passwords do not match!");
         }
     });
+</script>
 
 <script src="${pageContext.request.contextPath}/js/jquery.js"></script>
 <script src="${pageContext.request.contextPath}/js/price-range.js"></script>
