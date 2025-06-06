@@ -44,10 +44,18 @@ public class LoginServlet extends HttpServlet {
         User user = userDAO.checkUser(username, password);
         
         if (user != null) {
-            // Set up session
-            HttpSession session = request.getSession();
+            if (request.getSession(false) != null) {
+                request.getSession(false).invalidate();
+            }
+            HttpSession session = request.getSession(true);
+
+            String userAgent = request.getHeader("User-Agent");
+            String ipAddress = request.getRemoteAddr();
+
             session.setAttribute("user", user);
-            session.setMaxInactiveInterval(10 * 60); // 10 minutes
+            session.setAttribute("ip", ipAddress);
+            session.setAttribute("agent", userAgent);
+            session.setMaxInactiveInterval(10 * 60);
 
             // Redirect based on role
             switch (user.getRole()) {
@@ -55,7 +63,7 @@ public class LoginServlet extends HttpServlet {
                     response.sendRedirect("admin");
                     break;
                 case 4:
-                    response.sendRedirect("manager");
+                    response.sendRedirect(request.getContextPath() + "/productManage");
                     break;
                 default:
                     session.setAttribute("validate", "");
