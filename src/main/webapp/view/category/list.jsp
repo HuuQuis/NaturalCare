@@ -196,8 +196,13 @@
 
     function validateCategoryForm() {
         const name = document.getElementById('categoryName').value.trim();
+        const isOnlyDigits = /^\d+$/.test(name);
         if (name === "") {
             alert("⚠️ Category name cannot be empty.");
+            return false;
+        }
+        if (isOnlyDigits) {
+            alert("⚠️ Category name cannot be only numbers.");
             return false;
         }
         if (name.length > 15) {
@@ -230,8 +235,13 @@
 
     function validateSubForm() {
         const name = document.getElementById('subName').value.trim();
+        const isOnlyDigits = /^\d+$/.test(name);
         if (name === '') {
             alert("⚠️ Subcategory name cannot be empty.");
+            return false;
+        }
+        if (isOnlyDigits) {
+            alert("⚠️ Subcategory name cannot be only numbers.");
             return false;
         }
         if (name.length > 15) {

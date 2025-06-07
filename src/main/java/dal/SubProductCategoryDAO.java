@@ -124,4 +124,18 @@ public class SubProductCategoryDAO extends DBContext {
         }
         return false;
     }
+
+    public boolean isSubNameExistsForOtherId(String name, int categoryId, int excludeId) {
+        String sql = "SELECT 1 FROM sub_product_category WHERE LOWER(sub_product_category_name) = LOWER(?) AND product_category_id = ? AND sub_product_category_id != ?";
+        try (PreparedStatement stm = connection.prepareStatement(sql)) {
+            stm.setString(1, name);
+            stm.setInt(2, categoryId);
+            stm.setInt(3, excludeId);
+            ResultSet rs = stm.executeQuery();
+            return rs.next();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }
