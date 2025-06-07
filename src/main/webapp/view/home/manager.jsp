@@ -57,8 +57,7 @@
                                     <span class="user-img"><img src="${pageContext.request.contextPath}/adminassets/img/profiles/avator1.jpg" alt="">
                                         <span class="status online"></span></span>
                             <div class="profilesets">
-                                <h6>Huu Quy</h6>
-                                <h5>Admin</h5>
+                                <h5>Manager</h5>
                             </div>
                         </div>
                         <hr class="m-0">
@@ -70,30 +69,8 @@
         </ul>
     </div>
 
-
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-inner slimscroll">
-            <div id="sidebar-menu" class="sidebar-menu">
-                <ul>
-                    <li class="submenu">
-                        <a href="javascript:void(0);"><img src="${pageContext.request.contextPath}/adminassets/img/icons/product.svg" alt="img"><span>
-                                        Edit</span> <span class="menu-arrow"></span></a>
-                        <ul>
-                            <li><a href="">DashBoard</a></li>
-                            <li><a href="${pageContext.request.contextPath}/productManage">Product List</a></li>
-                            <li>
-                                <a href="${pageContext.request.contextPath}/category"
-                                   class="${view eq 'category' ? 'active' : ''}">Manage Category</a>
-                            </li>
-                            <li><a href="">Expert List</a></li>
-                            <li><a href="">Staff List</a></li>
-                            <li><a href="">Shipper List</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
+    // Sidebar
+    <jsp:include page="../common/sidebar-manager.jsp" />
 </div>
 
 <%
