@@ -14,7 +14,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>${skill.skillId > 0 ? 'Edit Skill' : 'ADD NEW SKILL'} | Natural Care</title>
+    <title>${skill.skillId > 0 ? 'Edit Skill' : 'Add New Skill'} | Natural Care</title>
     <link href="${pageContext.request.contextPath}/css/bootstrap.min.css" rel="stylesheet">
     <link href="${pageContext.request.contextPath}/css/font-awesome.min.css" rel="stylesheet">
     <link href="${pageContext.request.contextPath}/css/prettyPhoto.css" rel="stylesheet">
@@ -33,34 +33,6 @@
         .error { animation: shake 0.5s; }
         .form-control:focus { transition: box-shadow 0.3s ease; box-shadow: 0 0 8px rgba(0, 123, 255, 0.5); }
         .loading { opacity: 0.6; pointer-events: none; }
-        /* Align Submit and Cancel buttons */
-        .button-group {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-        .button-group .btn {
-            padding: 8px 15px;
-            font-size: 14px;
-            line-height: 1.5;
-            margin: 0;
-            background: #FE980F;
-            color: #fff;
-            border: none;
-        }
-        .button-group .btn-cancel {
-            background: #fff;
-            color: #FE980F;
-            border: 1px solid #FE980F;
-        }
-        .button-group .btn:hover {
-            background: #e68a00;
-            color: #fff;
-        }
-        .button-group .btn-cancel:hover {
-            background: #FE980F;
-            color: #fff;
-        }
     </style>
 </head>
 <body>
@@ -74,7 +46,7 @@
     <div class="container">
         <div class="row">
             <div class="col-sm-12">
-                <h2 class="title text-center animated fadeInDown">${skill.skillId > 0 ? 'Edit Skill' : 'ADD NEW SKILL'}</h2>
+                <h2 class="title text-center animated fadeInDown">${skill.skillId > 0 ? 'Edit Skill' : 'Add New Skill'}</h2>
                 <div class="col-md-6 col-md-offset-3">
                     <c:if test="${not empty error}">
                         <div class="alert alert-danger animated shake">${error}</div>
@@ -89,10 +61,8 @@
                         </div>
                         <div class="form-group animated slideInUp">
                             <div class="col-sm-offset-3 col-sm-9">
-                                <div class="button-group">
-                                    <button type="submit" class="btn btn-default">Submit</button>
-                                    <a href="${pageContext.request.contextPath}/skill" class="btn btn-cancel">Cancel</a>
-                                </div>
+                                <button type="submit" class="btn btn-default get">Submit</button>
+                                <a href="${pageContext.request.contextPath}/skill" class="btn btn-default">Cancel</a>
                             </div>
                         </div>
                     </form>

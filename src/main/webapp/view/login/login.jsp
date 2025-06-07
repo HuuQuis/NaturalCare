@@ -92,18 +92,5 @@
 <script src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>
 <script src="${pageContext.request.contextPath}/js/jquery.prettyPhoto.js"></script>
 <script src="${pageContext.request.contextPath}/js/main.js"></script>
-<script>
-    document.querySelector('form').addEventListener('submit', function (event) {
-        const username = document.querySelector('input[name="username"]').value;
-        const password = document.querySelector('input[name="password"]').value;
-
-        // Check if any field contains only whitespace
-        if (username.trim() === '' || password.trim() === '') {
-            event.preventDefault();
-            alert("Please do not enter only spaces in any field!");
-            return;
-        }
-    });
-</script>
 </body>
 </html>

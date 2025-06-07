@@ -82,7 +82,6 @@
             <div id="sidebar-menu" class="sidebar-menu">
                 <ul>
                     <li class="submenu">
-
                         <a href="javascript:void(0);"><img
                                 src="${pageContext.request.contextPath}/adminassets/img/icons/product.svg"
                                 alt="img"><span>
@@ -91,7 +90,7 @@
                             <li><a href="">DashBoard</a></li>
                             <li><a href="${pageContext.request.contextPath}/productManage" class="active">Product
                                 List</a></li>
-                            <li><a href="${pageContext.request.contextPath}/category">Category List</a></li>
+                            <li><a href="">Category List</a></li>
                             <li><a href="">Expert List</a></li>
                             <li><a href="">Staff List</a></li>
                             <li><a href="">Shipper List</a></li>

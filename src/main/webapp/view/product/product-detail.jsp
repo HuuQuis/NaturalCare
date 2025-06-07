@@ -1,7 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -185,13 +183,7 @@
                                 <h2>Product Description</h2>
                                 <p>
                                     <c:if test="${not empty product}">
-                                        <span class="short-text">
-                                            ${fn:substring(product.description, 0, 100)}...
-                                        </span>
-                                        <span class="full-text" style="display: none;">
-                                                ${product.description}
-                                        </span>
-                                        <a href="javascript:void(0);" class="view-toggle">View More</a>
+                                        ${product.description}
                                     </c:if>
                                 </p>
                             </div>
@@ -202,13 +194,7 @@
                                 <h2>Product Information</h2>
                                 <p>
                                     <c:if test="${not empty product}">
-                                        <span class="short-text">
-                                            ${fn:substring(product.information, 0, 100)}...
-                                        </span>
-                                        <span class="full-text" style="display: none;">
-                                                ${product.information}
-                                        </span>
-                                        <a href="javascript:void(0);" class="view-toggle">View More</a>
+                                        ${product.information}
                                     </c:if>
                                 </p>
                             </div>
@@ -219,18 +205,14 @@
                                 <h2>Product Guideline</h2>
                                 <p>
                                     <c:if test="${not empty product}">
-                                        <span class="short-text">
-                                            ${fn:substring(product.guideline, 0, 100)}...
-                                        </span>
-                                        <span class="full-text" style="display: none;">
-                                                ${product.guideline}
-                                        </span>
-                                        <a href="javascript:void(0);" class="view-toggle">View More</a>
+                                        ${product.guideline}
                                     </c:if>
                                 </p>
                             </div>
                         </div>
+
                         <div class="tab-pane fade" id="feedback" >
+
                         </div>
                     </div>
                 </div><!--/category-tab-->
@@ -390,27 +372,6 @@
             carouselImg.src = contextPath + defaultImageUrl;
         }
     }
-
-    // Add event listener for "View More" link
-    document.addEventListener('DOMContentLoaded', function () {
-        const toggles = document.querySelectorAll('.view-toggle');
-        toggles.forEach(function (toggle) {
-            toggle.addEventListener('click', function () {
-                const parent = toggle.closest('p');
-                const shortText = parent.querySelector('.short-text');
-                const fullText = parent.querySelector('.full-text');
-                if (fullText.style.display === 'none') {
-                    fullText.style.display = 'inline';
-                    shortText.style.display = 'none';
-                    toggle.textContent = 'View Less';
-                } else {
-                    fullText.style.display = 'none';
-                    shortText.style.display = 'inline';
-                    toggle.textContent = 'View More';
-                }
-            });
-        });
-    });
 </script>
 
 </body>

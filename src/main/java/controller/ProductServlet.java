@@ -69,11 +69,9 @@ public class ProductServlet extends HttpServlet {
                 subCategories.addAll(subProductCategoryDAO.getSubCategoriesByCategoryId(category.getId()));
             }
 
-        int count = categoryId != null ? productDAO.getTotalProductsCountByCategory(Integer.parseInt(categoryId))
-                : subCategoryId != null ? productDAO.getTotalProductsCountBySubCategory(Integer.parseInt(subCategoryId))
-                : 0;
+        int count = productDAO.getTotalProductsCount();
         int endPage = count / 6;
-        if( count % 6 != 0) {
+        if( count / 6 != 0) {
             endPage++;
         }
         request.setAttribute("endPage", endPage);

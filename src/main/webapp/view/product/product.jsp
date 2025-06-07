@@ -104,48 +104,16 @@
 
                 <div class="col-sm-12 text-center">
                     <ul class="pagination">
-                        <c:if test="${endPage > 1}">
-                            <!-- First page button -->
-                            <li class="${empty param.index || param.index == 1 ? 'disabled' : ''}">
-                                <c:choose>
-                                    <c:when test="${not empty selectedSubCategoryId}">
-                                        <a href="products?index=1&subcategory=${selectedSubCategoryId}">&laquo;</a>
-                                    </c:when>
-                                    <c:when test="${not empty selectedCategoryId}">
-                                        <a href="products?index=1&category=${selectedCategoryId}">&laquo;</a>
-                                    </c:when>
-                                </c:choose>
-                            </li>
-                        </c:if>
-
                         <c:forEach begin="1" end="${endPage}" var="page">
                             <c:choose>
                                 <c:when test="${not empty selectedSubCategoryId}">
-                                    <li class="${empty param.index && page == 1 || param.index == page ? 'active' : ''}">
-                                        <a href="products?index=${page}&subcategory=${selectedSubCategoryId}">${page}</a>
-                                    </li>
+                                    <li><a href="products?index=${page}&subcategory=${selectedSubCategoryId}">${page}</a></li>
                                 </c:when>
                                 <c:when test="${not empty selectedCategoryId}">
-                                    <li class="${empty param.index && page == 1 || param.index == page ? 'active' : ''}">
-                                        <a href="products?index=${page}&category=${selectedCategoryId}">${page}</a>
-                                    </li>
+                                    <li><a href="products?index=${page}&category=${selectedCategoryId}">${page}</a></li>
                                 </c:when>
                             </c:choose>
                         </c:forEach>
-
-                        <c:if test="${endPage > 1}">
-                            <!-- Last page button -->
-                            <li class="${param.index == endPage ? 'disabled' : ''}">
-                                <c:choose>
-                                    <c:when test="${not empty selectedSubCategoryId}">
-                                        <a href="products?index=${endPage}&subcategory=${selectedSubCategoryId}">&raquo;</a>
-                                    </c:when>
-                                    <c:when test="${not empty selectedCategoryId}">
-                                        <a href="products?index=${endPage}&category=${selectedCategoryId}">&raquo;</a>
-                                    </c:when>
-                                </c:choose>
-                            </li>
-                        </c:if>
                     </ul>
                 </div><!--/pagination-->
             </div>

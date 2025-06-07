@@ -32,6 +32,13 @@ public class LoginServlet extends HttpServlet {
             throws IOException, ServletException {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
+        
+        // Basic validation
+        if (username == null || username.trim().isEmpty() || password == null || password.trim().isEmpty()) {
+            request.getSession().setAttribute("validate", "Username and password are required.");
+            response.sendRedirect("login");
+            return;
+        }
 
         UserDAO userDAO = new UserDAO();
         User user = userDAO.checkUser(username, password);
@@ -56,7 +63,7 @@ public class LoginServlet extends HttpServlet {
                     response.sendRedirect("admin");
                     break;
                 case 4:
-                    request.getRequestDispatcher("view/home/manager.jsp").forward(request, response);
+                    response.sendRedirect(request.getContextPath() + "/productManage");
                     break;
                 default:
                     session.setAttribute("validate", "");
