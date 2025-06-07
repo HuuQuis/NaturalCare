@@ -104,12 +104,12 @@
         <div class="content">
             <div class="page-header">
                 <div class="page-title">
-                    <h4>Manage Product</h4>
-                    <h6>Add New Product</h6>
+                    <h4>Manage Product Variant</h4>
+                    <h6>Add New Product Variant</h6>
                 </div>
             </div>
 
-            <form action="productManage" method="post">
+            <form action="productVariantManage" method="post">
                 <input type="hidden" name="action" value="add">
                 <div class="card">
                     <div class="card-body">
@@ -119,6 +119,17 @@
                                         ${error}
                                 </div>
                             </c:if>
+                            <div class="col-lg-12 col-sm-6 col-12">
+                                <div class="form-group">
+                                    <label>Product Line</label>
+                                    <select name="ProductId" class="select">
+                                        <option>Choose Product Line</option>
+                                        <c:forEach var="pro" items="${products}">
+                                            <option value="${pro.id}">${pro.name}</option>
+                                        </c:forEach>
+                                    </select>
+                                </div>
+                            </div>
                             <div class="col-lg-12 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label>Product Name</label>
@@ -142,7 +153,7 @@
                                 <div class="form-group">
                                     <label>Product Information</label>
                                     <textarea rows="10" cols="50" name="information"
-                                                placeholder="Enter product information..."
+                                              placeholder="Enter product information..."
                                               onfocus="this.style.borderColor='#28a745';"
                                               onblur="this.style.borderColor='';"
                                     >${product.information}</textarea>
