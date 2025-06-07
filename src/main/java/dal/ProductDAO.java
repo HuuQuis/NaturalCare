@@ -165,10 +165,14 @@ public class ProductDAO extends DBContext {
         }
     }
 
-    public int getTotalProductsCount() {
-        sql = "SELECT COUNT(*) FROM product";
+    public int getTotalProductsCountByCategory(int categoryId) {
+        sql = "SELECT COUNT(*) \n" +
+                "        FROM product p\n" +
+                "        JOIN sub_product_category spc ON p.sub_product_category_id = spc.sub_product_category_id\n" +
+                "        WHERE spc.product_category_id = ?" ;
         try {
             stm = connection.prepareStatement(sql);
+            stm.setInt(1, categoryId);
             rs = stm.executeQuery();
             if (rs.next()) {
                 return rs.getInt(1);
@@ -178,6 +182,21 @@ public class ProductDAO extends DBContext {
         }
         return 0;
     }
+    public int getTotalProductsCountBySubCategory(int subCategoryId) {
+        sql = "SELECT COUNT(*) FROM product WHERE sub_product_category_id = ?";
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setInt(1, subCategoryId);
+            rs = stm.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
 
     public void addProductVariation(ProductVariation variation, int productId) {
         sql = "INSERT INTO product_variation (product_id, product_image, color, size, price, qty_in_stock) VALUES (?, ?, ?, ?, ?, ?)";
