@@ -98,9 +98,10 @@
                                             </tbody>
                                         </table>
                                     </div>
-                                    <a href="javascript:void(0);" class="me-2 btn btn-outline-primary btn-sm"
+                                    <a href="javascript:void(0);"
+                                       class="btn btn-success btn-sm ms-4 text-white"
                                        onclick="openAddSubModal(${c.id})">
-                                        + Add
+                                        <i class="fa fa-plus me-1"></i> Add Subcategory
                                     </a>
                                 </td>
                             </tr>
