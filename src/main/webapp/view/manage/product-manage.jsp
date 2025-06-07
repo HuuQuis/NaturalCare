@@ -82,6 +82,7 @@
             <div id="sidebar-menu" class="sidebar-menu">
                 <ul>
                     <li class="submenu">
+
                         <a href="javascript:void(0);"><img
                                 src="${pageContext.request.contextPath}/adminassets/img/icons/product.svg"
                                 alt="img"><span>
