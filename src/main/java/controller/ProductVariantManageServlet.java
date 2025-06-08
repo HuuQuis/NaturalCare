@@ -24,8 +24,10 @@ public class ProductVariantManageServlet extends HttpServlet {
         request.setAttribute("products", products);
         if ("edit".equals(action)) {
 
-        } else if ("add".equals(action)) {
-            request.getRequestDispatcher("/view/manage/productvariant-add.jsp").forward(request, response);
+        }else if ("add".equals(action)) {
+                String productId = request.getParameter("productId");
+                request.setAttribute("productId", productId);
+                request.getRequestDispatcher("/view/manage/productvariant-add.jsp").forward(request, response);
         }else {
 
         }

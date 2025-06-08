@@ -119,70 +119,49 @@
                                         ${error}
                                 </div>
                             </c:if>
+<%--                            Product Variant Information--%>
                             <div class="col-lg-12 col-sm-6 col-12">
                                 <div class="form-group">
-                                    <label>Product Line</label>
-                                    <select name="ProductId" class="select">
-                                        <option>Choose Product Line</option>
+                                    <div class="form-control-plaintext">
                                         <c:forEach var="pro" items="${products}">
-                                            <option value="${pro.id}">${pro.name}</option>
+                                            <c:if test="${pro.id == productId}">
+                                                <label>Product Line: ${pro.name}</label>
+                                                <input type="hidden" name="ProductId" value="${pro.id}" />
+                                            </c:if>
                                         </c:forEach>
-                                    </select>
+                                    </div>
                                 </div>
+                            </div><%-- Product Line Information --%>
+
+                            <div class="col-lg-12 col-sm-6 col-12">
+
+                            </div><%-- Product Variant Image --%>
+
+                            <div class="col-lg-12 col-sm-6 col-12">
+                                <div class="form-group">
+
+                                </div><%-- Product Variant Color --%>
                             </div>
                             <div class="col-lg-12 col-sm-6 col-12">
                                 <div class="form-group">
-                                    <label>Product Name</label>
-                                    <input name="name" type="text"  value="${product.name}" placeholder="Enter Product Name..." >
+
                                 </div>
-                            </div>
+                            </div><%-- Product Variant Size --%>
+
                             <div class="col-lg-12 col-sm-6 col-12">
                                 <div class="form-group">
-                                    <label class="description-label">Short Description</label>
-                                    <textarea
-                                            rows="10"
-                                            cols="50"
-                                            name="description"
-                                            placeholder="Enter product description..."
-                                            onfocus="this.style.borderColor='#28a745';"
-                                            onblur="this.style.borderColor='';"
-                                    >${product.description}</textarea>
+
                                 </div>
-                            </div>
+                            </div><%-- Product Variant Price --%>
+
                             <div class="col-lg-12 col-sm-6 col-12">
                                 <div class="form-group">
-                                    <label>Product Information</label>
-                                    <textarea rows="10" cols="50" name="information"
-                                              placeholder="Enter product information..."
-                                              onfocus="this.style.borderColor='#28a745';"
-                                              onblur="this.style.borderColor='';"
-                                    >${product.information}</textarea>
+
                                 </div>
-                            </div>
-                            <div class="col-lg-12 col-sm-6 col-12">
-                                <div class="form-group">
-                                    <label>Product Guideline</label>
-                                    <textarea rows="10" cols="50" name="guideline"
-                                              placeholder="Enter product guideline..."
-                                              onfocus="this.style.borderColor='#28a745';"
-                                              onblur="this.style.borderColor='';"
-                                    >${product.guideline}</textarea>
-                                </div>
-                            </div>
-                            <div class="col-lg-12 col-sm-6 col-12">
-                                <div class="form-group">
-                                    <label>Sub Product Category</label>
-                                    <select name="subProductCategoryId" class="select">
-                                        <option>Choose Category</option>
-                                        <c:forEach var="sub" items="${subCategories}">
-                                            <option value="${sub.id}">${sub.name}</option>
-                                        </c:forEach>
-                                    </select>
-                                </div>
-                            </div>
+                            </div><%-- Product Variant Quantity --%>
                             <div class="col-lg-12">
                                 <button type="submit" class="btn btn-submit me-2">Post</button>
-                                <a href="${pageContext.request.contextPath}/productManage" class="btn btn-cancel">Cancel</a>
+                                <a href="${pageContext.request.contextPath}/productVariantManage" class="btn btn-cancel">Cancel</a>
                             </div>
                         </div>
                     </div>

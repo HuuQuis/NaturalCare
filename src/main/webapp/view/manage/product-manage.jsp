@@ -21,8 +21,6 @@
 
     <link rel="stylesheet" href="${pageContext.request.contextPath}/adminassets/plugins/select2/css/select2.min.css">
 
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/adminassets/css/dataTables.bootstrap4.min.css">
-
     <link rel="stylesheet"
           href="${pageContext.request.contextPath}/adminassets/plugins/fontawesome/css/fontawesome.min.css">
 
@@ -76,7 +74,8 @@
         </ul>
     </div>
 
-<%--    <jsp:include page="../common/sidebar-manager.jsp" />--%>
+    <jsp:include page="../common/sidebar-manager.jsp"/>
+
     <div class="page-wrapper">
         <div class="content">
             <div class="page-header">
@@ -87,9 +86,7 @@
                     <a href="${pageContext.request.contextPath}/productManage?action=add" class="btn btn-added"><img
                             src="${pageContext.request.contextPath}/adminassets/img/icons/plus.svg" alt="img"
                             class="me-1">Add New Product</a>
-                    <a href="${pageContext.request.contextPath}/productVariantManage?action=add" class="btn btn-added"><img
-                            src="${pageContext.request.contextPath}/adminassets/img/icons/plus.svg" alt="img"
-                            class="me-1">Add New Product Variant</a>
+
                 </div>
             </div>
 
@@ -113,8 +110,7 @@
                         </div>
                     </div>
 
-                    <div class="table-responsive">
-                        <table class="table datanew">
+                        <table class="table">
                             <thead>
                             <tr>
                                 <th>No.</th>
@@ -164,7 +160,6 @@
                             </c:forEach>
                             </tbody>
                         </table>
-                    </div> <!-- Đóng table-responsive -->
                     <div id="variantAccordion">
                         <c:forEach var="c" items="${products}">
                             <div class="collapse mt-2" id="variations${c.id}" data-bs-parent="#variantAccordion">
@@ -186,7 +181,6 @@
                                             <tr>
                                                 <td><img src="${pageContext.request.contextPath}/${variation.imageUrl}" alt="product image"
                                                          style="max-width: 100px; max-height: 100px;"></td>
-<%--                                                <td>${variation.variationId}</td>--%>
                                                 <td>${variation.color}</td>
                                                 <td>${variation.size}</td>
                                                 <td>${variation.price}</td>
@@ -209,11 +203,29 @@
                                                 </td>
                                             </tr>
                                         </c:forEach>
+                                        <div class="page-header">
+                                            <div class="page-btn" >
+                                                <a href="${pageContext.request.contextPath}/productVariantManage?action=add&productId=${c.id}" class="btn btn-added">
+                                                    <img src="${pageContext.request.contextPath}/adminassets/img/icons/plus.svg" alt="img" class="me-1">
+                                                    Add New Product Variant
+                                                </a>
+                                            </div>
+                                        </div>
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
                         </c:forEach>
+                    </div>
+<%--                    pagination--%>
+                    <div class="d-flex justify-content-end mt-3">
+                        <ul class="pagination">
+                            <c:forEach var="i" begin="1" end="${totalPage}">
+                                <li class="page-item ${i == page ? 'active' : ''}">
+                                    <a class="page-link" href="productManage?page=${i}">${i}</a>
+                                </li>
+                            </c:forEach>
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -226,9 +238,6 @@
 <script src="${pageContext.request.contextPath}/adminassets/js/feather.min.js"></script>
 
 <script src="${pageContext.request.contextPath}/adminassets/js/jquery.slimscroll.min.js"></script>
-
-<script src="${pageContext.request.contextPath}/adminassets/js/jquery.dataTables.min.js"></script>
-<script src="${pageContext.request.contextPath}/adminassets/js/dataTables.bootstrap4.min.js"></script>
 
 <script src="${pageContext.request.contextPath}/adminassets/js/bootstrap.bundle.min.js"></script>
 

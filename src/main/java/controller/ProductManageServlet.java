@@ -23,12 +23,7 @@ public class ProductManageServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-//        Object userObj = request.getSession().getAttribute("user");
-//        if (userObj == null || !(userObj instanceof User) || ((User) userObj).getRole() != 4) {
-//            response.sendRedirect(request.getContextPath() + "/login"); // Redirect to login if user is not logged in or not an admin
-//            return;
-//        }
-
+        // Check if user is logged in and is an admin
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("user") == null) {
             response.sendRedirect(request.getContextPath() + "/login"); // Redirect to login if user is not logged in or not an admin
@@ -58,14 +53,26 @@ public class ProductManageServlet extends HttpServlet {
         } else if ("add".equals(action)) {
             request.getRequestDispatcher("/view/manage/product-add.jsp").forward(request, response);
         } else {
-            List<Product> products = productDAO.getAllProducts();
+            // pagination
+            String pageRaw = request.getParameter("page");
+            int page = (pageRaw == null || pageRaw.isEmpty()) ? 1 : Integer.parseInt(pageRaw);
+            int pageSize = 10;
+
+            List<Product> products = productDAO.getProductsByPage(page, pageSize);
 
             java.util.Map<Integer, List<ProductVariation>> productVariantsMap = new java.util.HashMap<>();
             for (Product p : products) {
                 productVariantsMap.put(p.getId(), productDAO.getProductVariationsByProductId(p.getId()));
             }
+            int total = productDAO.countTotalProducts();
+            int totalPage = (int) Math.ceil((double) total / pageSize);
+
+            request.setAttribute("view", "product");
             request.setAttribute("products", products);
             request.setAttribute("productVariantsMap", productVariantsMap);
+            request.setAttribute("page", page);
+            request.setAttribute("pageSize", pageSize);
+            request.setAttribute("totalPage", totalPage);
             request.getRequestDispatcher("/view/manage/product-manage.jsp").forward(request, response);
         }
     }
