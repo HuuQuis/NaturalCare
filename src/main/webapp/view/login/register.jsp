@@ -60,7 +60,7 @@
                         <input type="text" name="firstName" placeholder="First Name" required/>
                         <input type="text" name="lastName" placeholder="Last Name" required/>
                         <input type="email" name="email" placeholder="Email Address" required/>
-                        <input type="text" name="phone" placeholder="Phone Number" pattern="[0-9]{10}" required/>
+                        <input type="text" name="phone" placeholder="Phone Number" pattern="0[0-9]{10}" required/>
                         <button type="submit" class="btn btn-default">Signup</button>
                         ${error}
                         <hr>
