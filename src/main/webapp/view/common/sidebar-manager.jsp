@@ -17,6 +17,10 @@
                             <a href="${pageContext.request.contextPath}/category"
                                class="${view eq 'category' ? 'active' : ''}">Manage Category</a>
                         </li>
+                        <li>
+                            <a href="${pageContext.request.contextPath}/skill"
+                               class="${view eq 'skill' ? 'active' : ''}">Skill list</a>
+                        </li>
                         <li><a href="">Expert List</a></li>
                         <li><a href="">Staff List</a></li>
                         <li><a href="">Shipper List</a></li>
