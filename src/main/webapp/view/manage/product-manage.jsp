@@ -124,7 +124,7 @@
                             <tbody>
                             <c:forEach var="c" items="${products}" varStatus="loop">
                                 <tr>
-                                    <td>${loop.index + 1}</td>
+                                    <td>${(page - 1) * pageSize + loop.index + 1}</td>
                                     <td>
                                             ${c.name}
                                                 <button class="btn btn-link toggle-variant-btn" type="button"
@@ -168,6 +168,7 @@
                                     <table class="table table-bordered">
                                         <thead>
                                         <tr>
+                                            <th>No.</th>
                                             <th>Image</th>
                                             <th>Color</th>
                                             <th>Size</th>
@@ -177,8 +178,9 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        <c:forEach var="variation" items="${productVariantsMap[c.id]}">
+                                        <c:forEach var="variation" items="${productVariantsMap[c.id]}" varStatus="loop">
                                             <tr>
+                                                <td>${loop.index + 1}</td>
                                                 <td><img src="${pageContext.request.contextPath}/${variation.imageUrl}" alt="product image"
                                                          style="max-width: 100px; max-height: 100px;"></td>
                                                 <td>${variation.color}</td>
@@ -194,7 +196,7 @@
                                                     <form action="productVariantManage" method="post" style="display:inline;"
                                                           onsubmit="return confirm('Are you sure to delete this product variant?');">
                                                         <input type="hidden" name="action" value="delete"/>
-                                                        <input type="hidden" name="id" value="${c.id}"/>
+                                                        <input type="hidden" name="variantId" value="${variation.variationId}"/>
                                                         <button type="submit" class="btn btn-delete">
                                                             <img src="${pageContext.request.contextPath}/adminassets/img/icons/delete.svg"
                                                                  alt="img">

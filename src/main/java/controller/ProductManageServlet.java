@@ -103,7 +103,7 @@ public class ProductManageServlet extends HttpServlet {
             Product tempProduct = createProductFromRequest(request, false);
 
             // If validation fails, the method handles the error and forwards to the appropriate page
-            if (validateProductInput(request, response, tempProduct, false)) {
+            if (!validateProductInput(request, response, tempProduct, false)) {
                 return; // Return when validation FAILS (method returns false on failure)
             }
 
@@ -112,7 +112,7 @@ public class ProductManageServlet extends HttpServlet {
             Product tempProduct = createProductFromRequest(request, true);
 
             // If validation fails, the method handles the error and forwards to the appropriate page
-            if (validateProductInput(request, response, tempProduct, true)) {
+            if (!validateProductInput(request, response, tempProduct, true)) {
                 return; // Return when validation FAILS (method returns false on failure)
             }
 

@@ -43,6 +43,8 @@ public class ProductVariation {
         this.sold = sold;
     }
 
+    public int getVariationId() { return variationId; }
+    public void setVariationId(int variationId) { this.variationId = variationId; }
     public String getImageUrl() { return imageUrl; }
     public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
     public String getColor() { return color; }

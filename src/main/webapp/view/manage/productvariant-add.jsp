@@ -76,29 +76,7 @@
         </ul>
     </div>
 
-
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-inner slimscroll">
-            <div id="sidebar-menu" class="sidebar-menu">
-                <ul>
-                    <li class="submenu">
-                        <a href="javascript:void(0);"><img
-                                src="${pageContext.request.contextPath}/adminassets/img/icons/product.svg"
-                                alt="img"><span>
-                                        Edit</span> <span class="menu-arrow"></span></a>
-                        <ul>
-                            <li><a href="">DashBoard</a></li>
-                            <li><a href="${pageContext.request.contextPath}/productManage" class="active">Product List</a></li>
-                            <li><a href="${pageContext.request.contextPath}/category">Category List</a></li>
-                            <li><a href="">Expert List</a></li>
-                            <li><a href="">Staff List</a></li>
-                            <li><a href="">Shipper List</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
+    <jsp:include page="../common/sidebar-manager.jsp"/>
 
     <div class="page-wrapper">
         <div class="content">
@@ -109,8 +87,8 @@
                 </div>
             </div>
 
-            <form action="productVariantManage" method="post" enctype="multipart/form-data">
-                <input type="hidden" name="action" value="add">
+            <form action="${pageContext.request.contextPath}/productVariantManage?action=add&productId=${productId}" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="action" value="add">
                 <div class="card">
                     <div class="card-body">
                         <div class="row">
@@ -136,20 +114,26 @@
                             <div class="col-lg-12 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label>Product Variant Image</label>
-                                    <input type="file" name="image" accept="image/*" required>
+                                    <input type="file" name="image" accept="image/*" ${empty previousImageUrl ? 'required' : ''}>
+                                    <c:if test="${not empty previousImageUrl}">
+                                        <input type="hidden" name="previousImageUrl" value="${previousImageUrl}">
+                                        <div class="mt-2">
+                                            <span>Current image: ${previousImageUrl}</span>
+                                        </div>
+                                    </c:if>
                                 </div>
                             </div><%-- Product Variant Image --%>
 
                             <div class="col-lg-12 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label>Product Variant Color</label>
-                                    <input type="text" class="form-control" name="color" placeholder="Enter Product Variant Color" >
+                                    <input type="text" class="form-control" name="color" value="${tempProductVariation.color}" placeholder="Enter Product Variant Color" >
                                 </div><%-- Product Variant Color --%>
                             </div>
                             <div class="col-lg-12 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label>Product Variant Size</label>
-                                    <input type="text" class="form-control" name="size" placeholder="Enter size in ml"  />
+                                    <input type="text" class="form-control" name="size" value="${tempProductVariation.size}" placeholder="Enter size in ml"  />
 
                                 </div>
                             </div><%-- Product Variant Size --%>
@@ -157,14 +141,14 @@
                             <div class="col-lg-12 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label>Product Variant Price</label>
-                                    <input type="number" class="form-control" name="price" placeholder="Enter Product Variant Price" >
+                                    <input type="number" class="form-control" name="price" value="${tempProductVariation.price}" placeholder="Enter Product Variant Price" >
                                 </div>
                             </div><%-- Product Variant Price --%>
 
                             <div class="col-lg-12 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label>Product Variant Quantity</label>
-                                    <input type="number" class="form-control" name="quantity" placeholder="Enter Product Variant Quantity" >
+                                    <input type="number" class="form-control" name="quantity" value="${tempProductVariation.qtyInStock}" placeholder="Enter Product Variant Quantity" >
                                 </div>
                             </div><%-- Product Variant Quantity --%>
                             <div class="col-lg-12">
