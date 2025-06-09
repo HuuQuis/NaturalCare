@@ -19,8 +19,8 @@ public class SkillServlet extends HttpServlet {
             return;
         }
         model.User user = (model.User) session.getAttribute("user");
-        if (user.getRole() != 6) {
-            req.getSession().setAttribute("error", "Access denied. Expert role required.");
+        if (user.getRole() != 3) { // Changed from 6 to 3
+            req.getSession().setAttribute("error", "Access denied. Manager role required.");
             resp.sendRedirect("home");
         }
     }
