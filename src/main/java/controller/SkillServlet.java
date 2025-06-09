@@ -20,7 +20,7 @@ public class SkillServlet extends HttpServlet {
         }
         model.User user = (model.User) session.getAttribute("user");
         if (user.getRole() != 3) { // Changed from 6 to 3
-            req.getSession().setAttribute("error", "Access denied. Manager role required.");
+            req.getSession().setAttribute("error", "Access denied. Admin/Manager role required.");
             resp.sendRedirect("home");
         }
     }
@@ -79,7 +79,6 @@ public class SkillServlet extends HttpServlet {
                 int id = Integer.parseInt(req.getParameter("id"));
                 if (dao.getById(id) == null) {
                     req.setAttribute("error", "Skill not found.");
-                    req.getRequestDispatcher("/view/error.jsp").forward(req, resp);
                     return;
                 }
                 if (dao.isSkillInUse(id)) {

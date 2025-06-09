@@ -53,7 +53,7 @@ public class LoginServlet extends HttpServlet {
             // Redirect based on role
             switch (user.getRole()) {
                 case 3:
-                    response.sendRedirect("admin");
+                    response.sendRedirect("skill");
                     break;
                 case 4:
                     request.getRequestDispatcher("view/home/manager.jsp").forward(request, response);
