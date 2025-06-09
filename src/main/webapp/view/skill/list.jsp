@@ -16,7 +16,7 @@
   <meta name="keywords" content="admin, estimates, bootstrap, business, corporate, creative, invoice, tools, responsive">
   <meta name="author" content="Dreamguys - Bootstrap Admin Template">
   <meta name="robots" content="noindex, nofollow">
-  <title>Skill Management | Natural Care</title>
+  <title>Skill List | Natural Care</title>
 
   <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/adminassets/img/favicon.png">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/adminassets/css/bootstrap.min.css">
@@ -28,11 +28,28 @@
   <link rel="stylesheet" href="${pageContext.request.contextPath}/adminassets/css/style.css">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/adminStyle.css">
   <style>
+    .table {
+      table-layout: fixed;
+      width: 100%;
+    }
+    .table th:nth-child(1), .table td:nth-child(1) {
+      width: 80px;
+      text-align: center;
+    }
     .table th:nth-child(2), .table td:nth-child(2) {
+      width: 60%;
       max-width: 300px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+    }
+    .table th:nth-child(3), .table td:nth-child(3) {
+      width: 120px;
+      text-align: center;
+    }
+    .pagination {
+      position: sticky;
+      bottom: 0;
     }
   </style>
 </head>
@@ -126,7 +143,7 @@
               <c:forEach var="skill" items="${list}" varStatus="loop">
                 <tr>
                   <td>${(page - 1) * size + loop.index + 1}</td>
-                  <td>${skill.skillName}</td>
+                  <td title="${skill.skillName}">${skill.skillName}</td>
                   <td>
                     <a class="me-3" href="javascript:void(0);" onclick="openEditModal(${skill.skillId}, '${skill.skillName.replace("'", "\\'")}')">
                       <img src="${pageContext.request.contextPath}/adminassets/img/icons/edit.svg" alt="edit">
