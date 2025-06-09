@@ -27,6 +27,14 @@
   <link rel="stylesheet" href="${pageContext.request.contextPath}/adminassets/plugins/fontawesome/css/all.min.css">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/adminassets/css/style.css">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/adminStyle.css">
+  <style>
+    .table th:nth-child(2), .table td:nth-child(2) {
+      max-width: 300px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  </style>
 </head>
 <body>
 <div id="global-loader">
