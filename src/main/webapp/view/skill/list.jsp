@@ -13,7 +13,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
   <meta name="description" content="POS - Bootstrap Admin Template">
-  <meta name="keywords" content="admin, estimates, bootstrap, business, corporate, creative, invoice, html5, responsive, Projects">
+  <meta name="keywords" content="admin, estimates, bootstrap, business, corporate, creative, invoice, tools, responsive">
   <meta name="author" content="Dreamguys - Bootstrap Admin Template">
   <meta name="robots" content="noindex, nofollow">
   <title>Skill List | Natural Care</title>
@@ -36,8 +36,8 @@
 <div class="main-wrapper">
   <div class="header">
     <div class="header-left active">
-      <a href="" class="logo"></a>
-      <a href="" class="logo-small">
+      <a href="#" class="logo"></a>
+      <a href="#" class="logo-small">
         <img src="${pageContext.request.contextPath}/adminassets/img/logo-small.png" alt="">
       </a>
     </div>
@@ -64,6 +64,7 @@
     </ul>
   </div>
 
+  <c:set var="view" value="skill" scope="request"/>
   <jsp:include page="../common/sidebar-manager.jsp"/>
 
   <div class="page-wrapper">
@@ -83,31 +84,43 @@
         <div class="card-body">
           <div class="mb-3 d-flex justify-content-between align-items-center">
             <div class="input-group" style="max-width: 300px;">
-              <span class="input-group-text"><i class="fa fa-search"></i></span>
-              <input type="text" id="searchInput" class="form-control" placeholder="Search skills" value="${search}">
+              <form id="searchForm" action="${pageContext.request.contextPath}/skill" method="get">
+                <div class="input-group">
+                  <input type="text" id="searchInput" name="search" class="form-control" placeholder="Search skills" value="${search}">
+                  <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i></button>
+                </div>
+                <span class="text-danger d-none" id="searchError">${searchError}</span>
+              </form>
+            </div>
+            <div class="d-flex align-items-center">
+              <label for="pageSize" class="me-2">Show</label>
+              <select id="pageSize" class="form-select" style="width: 100px;">
+                <option value="10" ${size == 10 ? 'selected' : ''}>10</option>
+                <option value="20" ${size == 20 ? 'selected' : ''}>20</option>
+                <option value="30" ${size == 30 ? 'selected' : ''}>30</option>
+                <option value="40" ${size == 40 ? 'selected' : ''}>40</option>
+                <option value="50" ${size == 50 ? 'selected' : ''}>50</option>
+              </select>
+              <span class="ms-2">per page</span>
             </div>
           </div>
-
-          <c:if test="${not empty error}">
-            <div class="alert alert-danger" role="alert">${error}</div>
-          </c:if>
 
           <div class="table-responsive">
             <table class="table table-bordered">
               <thead class="table-light">
               <tr>
                 <th>No.</th>
-                <th>Skill Name <a href="${pageContext.request.contextPath}/skill?search=${search}&sort=${sort == 'asc' ? 'desc' : 'asc'}&page=${page}"><i class="fas ${sort == 'asc' ? 'fa-sort-up' : 'fa-sort-down'}"></i></a></th>
+                <th>Skill Name <a href="${pageContext.request.contextPath}/skill?search=${search}&sort=${sort == 'asc' ? 'desc' : 'asc'}&page=${page}&size=${size}"><i class="fas ${sort == 'asc' ? 'fa-sort-up' : 'fa-sort-down'}"></i></a></th>
                 <th>Actions</th>
               </tr>
               </thead>
               <tbody>
               <c:forEach var="skill" items="${list}" varStatus="loop">
                 <tr>
-                  <td>${(page - 1) * 5 + loop.index + 1}</td>
+                  <td>${(page - 1) * size + loop.index + 1}</td>
                   <td>${skill.skillName}</td>
                   <td>
-                    <a class="me-3" href="javascript:void(0);" onclick="openEditModal(${skill.skillId}, '${skill.skillName}')">
+                    <a class="me-3" href="javascript:void(0);" onclick="openEditModal(${skill.skillId}, '${skill.skillName.replace("'", "\\'")}')">
                       <img src="${pageContext.request.contextPath}/adminassets/img/icons/edit.svg" alt="edit">
                     </a>
                     <a href="javascript:void(0);" class="me-3 delete-btn" data-id="${skill.skillId}" onclick="openDeleteModal(${skill.skillId})">
@@ -126,11 +139,26 @@
           <c:if test="${totalPages > 1}">
             <div class="d-flex justify-content-end mt-3">
               <ul class="pagination">
-                <c:forEach var="i" begin="1" end="${totalPages}">
+                <li class="page-item ${page == 1 ? 'disabled' : ''}">
+                  <a class="page-link" href="${pageContext.request.contextPath}/skill?search=${search}&sort=${sort}&page=1&size=${size}" title="First Page">
+                    <i class="fas fa-angle-double-left"></i>
+                  </a>
+                </li>
+                <li class="page-item ${page == 1 ? 'disabled' : ''}">
+                  <a class="page-link" href="${pageContext.request.contextPath}/skill?search=${search}&sort=${sort}&page=${page - 1}&size=${size}" title="Previous Page">
+                    <i class="fas fa-angle-left"></i>
+                  </a>
+                </li>
+                <c:forEach var="i" begin="${page - 2 > 1 ? page - 2 : 1}" end="${page + 2 < totalPages ? page + 2 : totalPages}">
                   <li class="page-item ${i == page ? 'active' : ''}">
-                    <a class="page-link" href="${pageContext.request.contextPath}/skill?search=${search}&sort=${sort}&page=${i}">${i}</a>
+                    <a class="page-link" href="${pageContext.request.contextPath}/skill?search=${search}&sort=${sort}&page=${i}&size=${size}">${i}</a>
                   </li>
                 </c:forEach>
+                <li class="page-item ${page == totalPages ? 'disabled' : ''}">
+                  <a class="page-link" href="${pageContext.request.contextPath}/skill?search=${search}&sort=${sort}&page=${page + 1}&size=${size}" title="Next Page">
+                    <i class="fas fa-angle-right"></i>
+                  </a>
+                </li>
               </ul>
             </div>
           </c:if>
@@ -142,17 +170,17 @@
   <!-- Skill Modal -->
   <div class="modal fade" id="skillModal" tabindex="-1" aria-labelledby="skillModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-      <form action="${pageContext.request.contextPath}/skill" method="post" class="modal-content" onsubmit="return validateSkillForm()">
+      <form action="${pageContext.request.contextPath}/skill" method="post" class="modal-content" id="skillForm">
         <div class="modal-header">
           <h5 class="modal-title" id="skillModalLabel">Add New Skill</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <input type="hidden" name="skill_id" id="skillId">
+          <input type="hidden" name="skill_id" id="skillId" value="${skill.skillId}">
           <div class="mb-3">
             <label for="skillName" class="form-label">Skill Name</label>
-            <input type="text" class="form-control" name="skill_name" id="skillName" maxlength="50" required>
-            <span class="text-danger d-none" id="duplicateError">Skill name already exists</span>
+            <input type="text" class="form-control" name="skill_name" id="skillName" maxlength="50" value="${skill.skillName}" required>
+            <span class="text-danger d-none" id="skillNameError"></span>
           </div>
         </div>
         <div class="modal-footer">
@@ -191,14 +219,13 @@
 <script src="${pageContext.request.contextPath}/adminassets/js/bootstrap.bundle.min.js"></script>
 <script src="${pageContext.request.contextPath}/adminassets/plugins/select2/js/select2.min.js"></script>
 <script src="${pageContext.request.contextPath}/adminassets/plugins/sweetalert/sweetalert2.all.min.js"></script>
-<script src="${pageContext.request.contextPath}/adminassets/plugins/sweetalert/sweetalerts.min.js"></script>
 <script src="${pageContext.request.contextPath}/adminassets/js/script.js"></script>
 <script>
   function openAddModal() {
     document.getElementById('skillModalLabel').innerText = 'Add New Skill';
     document.getElementById('skillId').value = '';
     document.getElementById('skillName').value = '';
-    document.getElementById('duplicateError').classList.add('d-none');
+    document.getElementById('skillNameError').classList.add('d-none');
     new bootstrap.Modal(document.getElementById('skillModal')).show();
   }
 
@@ -206,7 +233,7 @@
     document.getElementById('skillModalLabel').innerText = 'Edit Skill';
     document.getElementById('skillId').value = id;
     document.getElementById('skillName').value = name;
-    document.getElementById('duplicateError').classList.add('d-none');
+    document.getElementById('skillNameError').classList.add('d-none');
     new bootstrap.Modal(document.getElementById('skillModal')).show();
   }
 
@@ -221,7 +248,7 @@
           $('#confirmDelete').hide();
         } else {
           $('#deleteModal .modal-body p').text('Are you sure you want to delete this skill?');
-          $('#confirmDelete').show().attr('href', '${pageContext.request.contextPath}/skill?action=delete&id=' + id + '&search=${search}&sort=${sort}&page=${page}');
+          $('#confirmDelete').show().attr('href', '${pageContext.request.contextPath}/skill?action=delete&id=' + id + '&search=${search}&sort=${sort}&page=${page}&size=${size}');
         }
         new bootstrap.Modal(document.getElementById('deleteModal')).show();
       }
@@ -232,40 +259,97 @@
     const skillName = document.getElementById('skillName').value.trim();
     const skillId = document.getElementById('skillId').value || 0;
     if (!skillName.match(/^[a-zA-Z\s]+$/)) {
-      alert('Skill name can only contain letters and spaces.');
+      document.getElementById('skillNameError').textContent = 'Skill name can only contain letters and spaces.';
+      document.getElementById('skillNameError').classList.remove('d-none');
       return false;
     }
-    if (skillName.length < 3 || skillName.length > 50) {
-      alert('Skill name must be between 3 and 50 characters.');
+    if (skillName.length < 3) {
+      document.getElementById('skillNameError').textContent = 'Skill name must be at least 3 characters long.';
+      document.getElementById('skillNameError').classList.remove('d-none');
+      return false;
+    }
+    if (skillName.length > 50) {
+      document.getElementById('skillNameError').textContent = 'Skill name must not exceed 50 characters.';
+      document.getElementById('skillNameError').classList.remove('d-none');
       return false;
     }
     return true;
   }
 
+  function validateSearchForm() {
+    const search = document.getElementById('searchInput').value.trim();
+    const searchError = document.getElementById('searchError');
+    if (search.length > 50) {
+      searchError.textContent = 'Search keyword must not exceed 50 characters.';
+      searchError.classList.remove('d-none');
+      return false;
+    }
+    if (!search.match(/^[a-zA-Z\s]*$/) && search.length > 0) {
+      searchError.textContent = 'Search keyword can only contain letters and spaces.';
+      searchError.classList.remove('d-none');
+      return false;
+    }
+    searchError.classList.add('d-none');
+    return true;
+  }
+
   $(document).ready(function() {
+    $('#pageSize').on('change', function() {
+      const size = this.value;
+      window.location.href = '${pageContext.request.contextPath}/skill?search=${search}&sort=${sort}&page=1&size=' + size;
+    });
+
+    $('#searchForm').on('submit', validateSearchForm);
+
     $('#searchInput').on('input', function() {
-      const filter = this.value.toLowerCase().trim();
-      window.location.href = '${pageContext.request.contextPath}/skill?search=' + encodeURIComponent(filter) + '&sort=${sort}&page=1';
+      const search = $(this).val().trim();
+      const searchError = $('#searchError');
+      if (search.length > 50) {
+        searchError.text('Search keyword must not exceed 50 characters.');
+        searchError.removeClass('d-none');
+      } else if (!search.match(/^[a-zA-Z\s]*$/) && search.length > 0) {
+        searchError.text('Search keyword can only contain letters and spaces.');
+        searchError.removeClass('d-none');
+      } else {
+        searchError.addClass('d-none');
+      }
     });
 
     $('#skillName').on('input', function() {
       const skillName = $(this).val().trim();
       const skillId = $('#skillId').val() || 0;
-      if (skillName.length >= 3) {
+      if (skillName.length >= 3 && skillName.length <= 50) {
         $.ajax({
           url: '${pageContext.request.contextPath}/skill',
           type: 'POST',
           data: { action: 'checkDuplicate', skill_name: skillName, skill_id: skillId },
           success: function(response) {
             if (response === 'duplicate') {
-              $('#duplicateError').removeClass('d-none');
+              $('#skillNameError').text('Skill name already exists.');
+              $('#skillNameError').removeClass('d-none');
             } else {
-              $('#duplicateError').addClass('d-none');
+              $('#skillNameError').addClass('d-none');
             }
           }
         });
       }
     });
+
+    $('#skillForm').on('submit', validateSkillForm);
+
+    <c:if test="${not empty error}">
+    document.getElementById('skillModalLabel').innerText = '${skill.skillId > 0 ? "Edit Skill" : "Add New Skill"}';
+    document.getElementById('skillId').value = '${skill.skillId}';
+    document.getElementById('skillName').value = '${skill.skillName}';
+    $('#skillNameError').text('${error}');
+    $('#skillNameError').removeClass('d-none');
+    new bootstrap.Modal(document.getElementById('skillModal')).show();
+    </c:if>
+
+    <c:if test="${not empty searchError}">
+    $('#searchError').text('${searchError}');
+    $('#searchError').removeClass('d-none');
+    </c:if>
   });
 </script>
 </body>
