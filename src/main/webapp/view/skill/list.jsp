@@ -110,7 +110,7 @@
               <thead class="table-light">
               <tr>
                 <th>No.</th>
-                <th>Skill Name <a href="${pageContext.request.contextPath}/skill?search=${search}&sort=${sort == 'asc' ? 'desc' : 'asc'}&page=${page}&size=${size}"><i class="fas ${sort == 'asc' ? 'fa-sort-up' : 'fa-sort-down'}"></i></a></th>
+                <th>Skill Name<a href="${pageContext.request.contextPath}/skill?search=${search}&sort=${sort == 'asc' ? 'desc' : 'asc'}&page=${page}&size=${size}" class="ms-1"><i class="fas ${sort == 'asc' ? 'fa-sort-up' : 'fa-sort-down'}"></i></a></th>
                 <th>Actions</th>
               </tr>
               </thead>
