@@ -133,7 +133,7 @@
                                             cols="50"
                                             name="description"
                                             placeholder="Enter product description..."
-                                            onfocus="this.style.borderColor='#28a745';"
+                                            onfocus="this.style.borderColor='orange';"
                                             onblur="this.style.borderColor='';"
                                     >${product.description}</textarea>
                                 </div>
@@ -143,7 +143,7 @@
                                     <label>Product Information</label>
                                     <textarea rows="10" cols="50" name="information"
                                                 placeholder="Enter product information..."
-                                              onfocus="this.style.borderColor='#28a745';"
+                                              onfocus="this.style.borderColor='orange';"
                                               onblur="this.style.borderColor='';"
                                     >${product.information}</textarea>
                                 </div>
@@ -153,7 +153,7 @@
                                     <label>Product Guideline</label>
                                     <textarea rows="10" cols="50" name="guideline"
                                               placeholder="Enter product guideline..."
-                                              onfocus="this.style.borderColor='#28a745';"
+                                              onfocus="this.style.borderColor='orange';"
                                               onblur="this.style.borderColor='';"
                                     >${product.guideline}</textarea>
                                 </div>

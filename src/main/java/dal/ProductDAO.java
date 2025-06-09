@@ -1,8 +1,11 @@
 package dal;
 
 import model.Product;
+import model.ProductCategory;
 import model.ProductVariation;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -98,6 +101,25 @@ public class ProductDAO extends DBContext {
         return products;
     }
 
+    //get products by page
+    public List<Product> getProductsByPage(int pageIndex, int pageSize) {
+        List<Product> products = new ArrayList<>();
+        sql = "SELECT * FROM product ORDER BY product_id LIMIT ? OFFSET ?";
+
+        try {
+            stm = connection.prepareStatement(sql);
+            int offset = (pageIndex - 1) * pageSize;
+            stm.setInt(1, pageSize);
+            stm.setInt(2, offset);
+            rs = stm.executeQuery();
+            products = extractProductsFromResultSet(rs);
+        } catch (SQLException e) {
+            e.printStackTrace();
+
+        }
+        return products;
+    }
+
     //get all variations of a product by product ID
     public List<ProductVariation> getProductVariationsByProductId(int productId) {
         String sql = "SELECT * FROM product_variation WHERE product_id = ?";
@@ -164,6 +186,20 @@ public class ProductDAO extends DBContext {
             e.printStackTrace();
         }
     }
+
+    // Get total number of products by category and subcategory
+    public int countTotalProducts() {
+        sql = "SELECT COUNT(*) FROM product";
+        try {
+            stm = connection.prepareStatement(sql);
+            rs = stm.executeQuery();
+            if (rs.next()) return rs.getInt(1);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
 
     public int getTotalProductsCountByCategory(int categoryId) {
         sql = "SELECT COUNT(*) \n" +

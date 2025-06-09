@@ -9,10 +9,7 @@
                                         Edit</span> <span class="menu-arrow"></span></a>
                     <ul>
                         <li><a href="">DashBoard</a></li>
-                        <li>
-                            <a href="${pageContext.request.contextPath}/productManage"
-                               class="${view eq 'product' ? 'active' : ''}">Manage Product</a>
-                        </li>
+                        <li><a href="${pageContext.request.contextPath}/productManage">Product List</a></li>
                         <li>
                             <a href="${pageContext.request.contextPath}/category"
                                class="${view eq 'category' ? 'active' : ''}">Manage Category</a>

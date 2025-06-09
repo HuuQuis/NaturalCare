@@ -21,8 +21,6 @@
 
     <link rel="stylesheet" href="${pageContext.request.contextPath}/adminassets/plugins/select2/css/select2.min.css">
 
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/adminassets/css/dataTables.bootstrap4.min.css">
-
     <link rel="stylesheet"
           href="${pageContext.request.contextPath}/adminassets/plugins/fontawesome/css/fontawesome.min.css">
 
@@ -76,7 +74,8 @@
         </ul>
     </div>
 
-<%--    <jsp:include page="../common/sidebar-manager.jsp" />--%>
+    <jsp:include page="../common/sidebar-manager.jsp"/>
+
     <div class="page-wrapper">
         <div class="content">
             <div class="page-header">
@@ -87,9 +86,7 @@
                     <a href="${pageContext.request.contextPath}/productManage?action=add" class="btn btn-added"><img
                             src="${pageContext.request.contextPath}/adminassets/img/icons/plus.svg" alt="img"
                             class="me-1">Add New Product</a>
-                    <a href="${pageContext.request.contextPath}/productVariantManage?action=add" class="btn btn-added"><img
-                            src="${pageContext.request.contextPath}/adminassets/img/icons/plus.svg" alt="img"
-                            class="me-1">Add New Product Variant</a>
+
                 </div>
             </div>
 
@@ -113,8 +110,7 @@
                         </div>
                     </div>
 
-                    <div class="table-responsive">
-                        <table class="table datanew">
+                        <table class="table">
                             <thead>
                             <tr>
                                 <th>No.</th>
@@ -128,7 +124,7 @@
                             <tbody>
                             <c:forEach var="c" items="${products}" varStatus="loop">
                                 <tr>
-                                    <td>${loop.index + 1}</td>
+                                    <td>${(page - 1) * pageSize + loop.index + 1}</td>
                                     <td>
                                             ${c.name}
                                                 <button class="btn btn-link toggle-variant-btn" type="button"
@@ -164,7 +160,6 @@
                             </c:forEach>
                             </tbody>
                         </table>
-                    </div> <!-- Đóng table-responsive -->
                     <div id="variantAccordion">
                         <c:forEach var="c" items="${products}">
                             <div class="collapse mt-2" id="variations${c.id}" data-bs-parent="#variantAccordion">
@@ -173,6 +168,7 @@
                                     <table class="table table-bordered">
                                         <thead>
                                         <tr>
+                                            <th>No.</th>
                                             <th>Image</th>
                                             <th>Color</th>
                                             <th>Size</th>
@@ -182,11 +178,11 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        <c:forEach var="variation" items="${productVariantsMap[c.id]}">
+                                        <c:forEach var="variation" items="${productVariantsMap[c.id]}" varStatus="loop">
                                             <tr>
+                                                <td>${loop.index + 1}</td>
                                                 <td><img src="${pageContext.request.contextPath}/${variation.imageUrl}" alt="product image"
                                                          style="max-width: 100px; max-height: 100px;"></td>
-<%--                                                <td>${variation.variationId}</td>--%>
                                                 <td>${variation.color}</td>
                                                 <td>${variation.size}</td>
                                                 <td>${variation.price}</td>
@@ -200,7 +196,7 @@
                                                     <form action="productVariantManage" method="post" style="display:inline;"
                                                           onsubmit="return confirm('Are you sure to delete this product variant?');">
                                                         <input type="hidden" name="action" value="delete"/>
-                                                        <input type="hidden" name="id" value="${c.id}"/>
+                                                        <input type="hidden" name="variantId" value="${variation.variationId}"/>
                                                         <button type="submit" class="btn btn-delete">
                                                             <img src="${pageContext.request.contextPath}/adminassets/img/icons/delete.svg"
                                                                  alt="img">
@@ -209,11 +205,29 @@
                                                 </td>
                                             </tr>
                                         </c:forEach>
+                                        <div class="page-header">
+                                            <div class="page-btn" >
+                                                <a href="${pageContext.request.contextPath}/productVariantManage?action=add&productId=${c.id}" class="btn btn-added">
+                                                    <img src="${pageContext.request.contextPath}/adminassets/img/icons/plus.svg" alt="img" class="me-1">
+                                                    Add New Product Variant
+                                                </a>
+                                            </div>
+                                        </div>
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
                         </c:forEach>
+                    </div>
+<%--                    pagination--%>
+                    <div class="d-flex justify-content-end mt-3">
+                        <ul class="pagination">
+                            <c:forEach var="i" begin="1" end="${totalPage}">
+                                <li class="page-item ${i == page ? 'active' : ''}">
+                                    <a class="page-link" href="productManage?page=${i}">${i}</a>
+                                </li>
+                            </c:forEach>
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -226,9 +240,6 @@
 <script src="${pageContext.request.contextPath}/adminassets/js/feather.min.js"></script>
 
 <script src="${pageContext.request.contextPath}/adminassets/js/jquery.slimscroll.min.js"></script>
-
-<script src="${pageContext.request.contextPath}/adminassets/js/jquery.dataTables.min.js"></script>
-<script src="${pageContext.request.contextPath}/adminassets/js/dataTables.bootstrap4.min.js"></script>
 
 <script src="${pageContext.request.contextPath}/adminassets/js/bootstrap.bundle.min.js"></script>
 

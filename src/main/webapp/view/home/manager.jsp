@@ -83,16 +83,6 @@
     <% } %>
 </div>
 
-
-<script>
-    function mess(id){
-        confirmation = confirm('Are you sure to delete?');
-        if(confirmation===true){
-            window.location.href = 'deleteNews?new_id=' + id;
-        }
-    }
-</script>
-
 <script src="${pageContext.request.contextPath}/adminassets/js/jquery-3.6.0.min.js"></script>
 
 <script src="${pageContext.request.contextPath}/adminassets/js/feather.min.js"></script>
