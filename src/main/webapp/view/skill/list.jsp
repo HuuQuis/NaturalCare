@@ -16,7 +16,7 @@
   <meta name="keywords" content="admin, estimates, bootstrap, business, corporate, creative, invoice, tools, responsive">
   <meta name="author" content="Dreamguys - Bootstrap Admin Template">
   <meta name="robots" content="noindex, nofollow">
-  <title>Skill List | Natural Care</title>
+  <title>Skill Management | Natural Care</title>
 
   <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/adminassets/img/favicon.png">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/adminassets/css/bootstrap.min.css">
