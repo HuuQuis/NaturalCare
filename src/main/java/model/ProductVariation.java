@@ -8,9 +8,24 @@ public class ProductVariation {
     private int price;
     private int qtyInStock;
     private int sold;
+    private int productId;
+
+    public ProductVariation() {
+    }
 
     public ProductVariation(int variationId, String imageUrl, String color, String size, int price, int qtyInStock, int sold) {
         this.variationId = variationId;
+        this.imageUrl = imageUrl;
+        this.color = color;
+        this.size = size;
+        this.price = price;
+        this.qtyInStock = qtyInStock;
+        this.sold = sold;
+    }
+
+    public ProductVariation(int variationId, int productId, String imageUrl, String color, String size, int price, int qtyInStock, int sold) {
+        this.variationId = variationId;
+        this.productId = productId;
         this.imageUrl = imageUrl;
         this.color = color;
         this.size = size;

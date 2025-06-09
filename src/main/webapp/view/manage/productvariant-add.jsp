@@ -109,7 +109,7 @@
                 </div>
             </div>
 
-            <form action="productVariantManage" method="post">
+            <form action="productVariantManage" method="post" enctype="multipart/form-data">
                 <input type="hidden" name="action" value="add">
                 <div class="card">
                     <div class="card-body">
@@ -134,34 +134,42 @@
                             </div><%-- Product Line Information --%>
 
                             <div class="col-lg-12 col-sm-6 col-12">
-
+                                <div class="form-group">
+                                    <label>Product Variant Image</label>
+                                    <input type="file" name="image" accept="image/*" required>
+                                </div>
                             </div><%-- Product Variant Image --%>
 
                             <div class="col-lg-12 col-sm-6 col-12">
                                 <div class="form-group">
-
+                                    <label>Product Variant Color</label>
+                                    <input type="text" class="form-control" name="color" placeholder="Enter Product Variant Color" >
                                 </div><%-- Product Variant Color --%>
                             </div>
                             <div class="col-lg-12 col-sm-6 col-12">
                                 <div class="form-group">
+                                    <label>Product Variant Size</label>
+                                    <input type="text" class="form-control" name="size" placeholder="Enter size in ml"  />
 
                                 </div>
                             </div><%-- Product Variant Size --%>
 
                             <div class="col-lg-12 col-sm-6 col-12">
                                 <div class="form-group">
-
+                                    <label>Product Variant Price</label>
+                                    <input type="number" class="form-control" name="price" placeholder="Enter Product Variant Price" >
                                 </div>
                             </div><%-- Product Variant Price --%>
 
                             <div class="col-lg-12 col-sm-6 col-12">
                                 <div class="form-group">
-
+                                    <label>Product Variant Quantity</label>
+                                    <input type="number" class="form-control" name="quantity" placeholder="Enter Product Variant Quantity" >
                                 </div>
                             </div><%-- Product Variant Quantity --%>
                             <div class="col-lg-12">
                                 <button type="submit" class="btn btn-submit me-2">Post</button>
-                                <a href="${pageContext.request.contextPath}/productVariantManage" class="btn btn-cancel">Cancel</a>
+                                <a href="${pageContext.request.contextPath}/productManage" class="btn btn-cancel">Cancel</a>
                             </div>
                         </div>
                     </div>
