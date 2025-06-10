@@ -193,19 +193,4 @@ public class UserDAO extends DBContext {
         }
     }
 
-    public boolean isPasswordSame(String token, String newPassword) {
-        try {
-            sql = "SELECT password FROM natural_care.user WHERE reset_token = ?";
-            stm = connection.prepareStatement(sql);
-            stm.setString(1, token);
-            rs = stm.executeQuery();
-            if (rs.next()) {
-                String oldPassword = rs.getString("password");
-                return oldPassword.equals(newPassword);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
 }

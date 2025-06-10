@@ -42,13 +42,6 @@ public class ResetPasswordServlet extends HttpServlet {
             }
 
             if (userDAO.isValidResetToken(token)) {
-                if (userDAO.isPasswordSame(token, newPassword)) {
-                    request.setAttribute("error", "New password must be different from old password");
-                    request.setAttribute("token", token);
-                    request.getRequestDispatcher("view/login/reset-password.jsp").forward(request, response);
-                    return;
-                }
-                
                 userDAO.updatePassword(token, newPassword);
                 request.setAttribute("message", "Password reset successfully. Please login with your new password.");
                 request.getRequestDispatcher("view/login/login.jsp").forward(request, response);
