@@ -285,7 +285,7 @@
 
 <c:if test="${hasDependency}">
     <script>
-        if (confirm("Không thể xoá Category vì vẫn còn SubCategory hoặc Sản phẩm.\nBạn có muốn ẩn Category này khỏi danh sách không?")) {
+        if (confirm("Cannot delete Category because there are still SubCategory or Products.\nDo you want to hide this Category from the list?")) {
             const form = document.createElement('form');
             form.method = 'POST';
             form.action = 'category';
@@ -311,14 +311,14 @@
 
 <c:if test="${hasSubDependency}">
     <script>
-        if (confirm("Không thể xoá SubCategory vì vẫn còn sản phẩm.\nBạn có muốn ẩn SubCategory này khỏi danh sách không?")) {
+        if (confirm("Cannot delete SubCategory because there are still products.\nDo you want to hide this SubCategory from the list?")) {
             const form = document.createElement('form');
             form.method = 'POST';
             form.action = 'subcategory';
             form.innerHTML = `
                 <input type="hidden" name="action" value="hide">
                 <input type="hidden" name="id" value="${subCategoryIdToHide}">
-                <input type="hidden" name="categoryId" value="0"> <!-- hoặc truyền đúng categoryId nếu bạn có -->
+                <input type="hidden" name="categoryId" value="0">
             `;
             document.body.appendChild(form);
             form.submit();
