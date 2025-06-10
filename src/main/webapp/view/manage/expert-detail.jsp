@@ -2,9 +2,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
-    <title>Chi tiết chuyên gia</title>
+    <title>Expert Detail</title>
     <style>
-        /* Reset cơ bản */
         * {
             box-sizing: border-box;
         }
@@ -118,7 +117,7 @@
 
 <div class="container">
 
-    <h2>Chi tiết chuyên gia</h2>
+    <h2>Expert Management</h2>
 
     <c:if test="${not empty message}">
         <div class="message">${message}</div>
@@ -129,54 +128,21 @@
             <input type="hidden" name="action" value="update" />
             <input type="hidden" name="user_id" value="${expertDetail.getUser_id()}" />
             <div class="form-row">
-                <p><strong>Tên chuyên gia:</strong> ${expertDetail.getUser_name()}</p>
-                <label for="skill_id_update">Kỹ năng:</label>
+                <p><strong>Expert Name:</strong> ${expertDetail.getUser_name()}</p>
+                <label for="skill_id_update">Skill:</label>
                 <select name="skill_id" id="skill_id_update" required>
                     <c:forEach var="skill" items="${allSkills}">
                         <option value="${skill.getSkillId()}" ${skill.getSkillId() == expertDetail.skill_id ? 'selected' : ''}>${skill.getSkillName()}</option>
                     </c:forEach>
                 </select>
-                <button type="submit">Cập nhật</button>
+                <button type="submit">Update</button>
             </div>
         </form>
     </c:if>
 
     <hr/>
 
-    <h3>Thêm chuyên gia mới</h3>
-    <form method="post" action="expertDetail" style="max-width:600px;">
-        <input type="hidden" name="action" value="add" />
-
-        <label for="username_new">Tên đăng nhập (username):</label>
-        <input type="text" id="username_new" name="username" required/>
-
-        <label for="password_new">Mật khẩu:</label>
-        <input type="password" id="password_new" name="password" required/>
-
-        <label for="first_name_new">Họ:</label>
-        <input type="text" id="first_name_new" name="first_name" required/>
-
-        <label for="last_name_new">Tên:</label>
-        <input type="text" id="last_name_new" name="last_name" required/>
-
-        <label for="email_new">Email:</label>
-        <input type="email" id="email_new" name="email" required/>
-
-        <label for="phone_number_new">Số điện thoại:</label>
-        <input type="tel" id="phone_number_new" name="phone_number" required/>
-
-        <label for="skill_id_new">Chọn kỹ năng:</label>
-        <select name="skill_id" id="skill_id_new" required>
-            <c:forEach var="skill" items="${allSkills}">
-                <option value="${skill.getSkillId()}">${skill.getSkillName()}</option>
-            </c:forEach>
-        </select>
-
-        <button type="submit" style="margin-top: 15px;">Thêm chuyên gia</button>
-    </form>
-
-
-    <p><a href="expertListManage">Quay lại danh sách chuyên gia</a></p>
+    <p><a href="expertListManage">Back to Expert List</a></p>
 
 </div>
 
