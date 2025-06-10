@@ -5,13 +5,14 @@ import java.sql.*;
 import java.util.*;
 
 public class SubProductCategoryDAO extends DBContext {
-    public List<SubProductCategory> getSubCategoriesByCategoryId(int CategoryId) {
+
+    public List<SubProductCategory> getSubCategoriesByCategoryId(int categoryId) {
         List<SubProductCategory> list = new ArrayList<>();
-        sql = "SELECT * FROM sub_product_category WHERE product_category_id = ?";
+        sql = "SELECT * FROM sub_product_category WHERE product_category_id = ? AND status = TRUE";
 
         try {
             stm = connection.prepareStatement(sql);
-            stm.setInt(1, CategoryId);
+            stm.setInt(1, categoryId);
             rs = stm.executeQuery();
 
             while (rs.next()) {
@@ -30,7 +31,7 @@ public class SubProductCategoryDAO extends DBContext {
 
     public List<SubProductCategory> getAllSubProductCategories() {
         List<SubProductCategory> list = new ArrayList<>();
-        sql = "SELECT * FROM sub_product_category";
+        sql = "SELECT * FROM sub_product_category WHERE status = TRUE";
 
         try {
             stm = connection.prepareStatement(sql);
@@ -51,7 +52,7 @@ public class SubProductCategoryDAO extends DBContext {
     }
 
     public void addSubCategory(String name, int categoryId) {
-        String sql = "INSERT INTO sub_product_category (sub_product_category_name, product_category_id) VALUES (?, ?)";
+        String sql = "INSERT INTO sub_product_category (sub_product_category_name, product_category_id, status) VALUES (?, ?, TRUE)";
         try (PreparedStatement stm = connection.prepareStatement(sql)) {
             stm.setString(1, name);
             stm.setInt(2, categoryId);
@@ -82,6 +83,21 @@ public class SubProductCategoryDAO extends DBContext {
         }
     }
 
+    public void hideSubCategory(int id) throws SQLException {
+        String sql = "UPDATE sub_product_category SET status = FALSE WHERE sub_product_category_id = ?";
+        PreparedStatement ps = connection.prepareStatement(sql);
+        ps.setInt(1, id);
+        ps.executeUpdate();
+    }
+
+    public boolean hasProductDependency(int subCategoryId) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM product WHERE sub_product_category_id = ?";
+        PreparedStatement ps = connection.prepareStatement(sql);
+        ps.setInt(1, subCategoryId);
+        ResultSet rs = ps.executeQuery();
+        return rs.next() && rs.getInt(1) > 0;
+    }
+
     public SubProductCategory getById(int id) {
         String sql = "SELECT * FROM sub_product_category WHERE sub_product_category_id = ?";
         try (PreparedStatement stm = connection.prepareStatement(sql)) {
@@ -101,7 +117,7 @@ public class SubProductCategoryDAO extends DBContext {
     }
 
     public boolean isSubNameExists(String name, int categoryId) {
-        String sql = "SELECT 1 FROM sub_product_category WHERE sub_product_category_name = ? AND product_category_id = ?";
+        String sql = "SELECT 1 FROM sub_product_category WHERE sub_product_category_name = ? AND product_category_id = ? AND status = TRUE";
         try (PreparedStatement stm = connection.prepareStatement(sql)) {
             stm.setString(1, name);
             stm.setInt(2, categoryId);
@@ -114,7 +130,7 @@ public class SubProductCategoryDAO extends DBContext {
     }
 
     public boolean isSubNameExistsInAnyCategory(String name) {
-        String sql = "SELECT 1 FROM sub_product_category WHERE LOWER(sub_product_category_name) = LOWER(?)";
+        String sql = "SELECT 1 FROM sub_product_category WHERE LOWER(sub_product_category_name) = LOWER(?) AND status = TRUE";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, name);
             ResultSet rs = ps.executeQuery();
@@ -126,7 +142,7 @@ public class SubProductCategoryDAO extends DBContext {
     }
 
     public boolean isSubNameExistsForOtherId(String name, int categoryId, int excludeId) {
-        String sql = "SELECT 1 FROM sub_product_category WHERE LOWER(sub_product_category_name) = LOWER(?) AND product_category_id = ? AND sub_product_category_id != ?";
+        String sql = "SELECT 1 FROM sub_product_category WHERE LOWER(sub_product_category_name) = LOWER(?) AND product_category_id = ? AND sub_product_category_id != ? AND status = TRUE";
         try (PreparedStatement stm = connection.prepareStatement(sql)) {
             stm.setString(1, name);
             stm.setInt(2, categoryId);
