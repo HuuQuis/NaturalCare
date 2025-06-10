@@ -64,7 +64,7 @@ public class LoginServlet extends HttpServlet {
                     break;
             }
         } else {
-            request.getSession().setAttribute("validate", "Invalid username or password.");
+            request.getSession().setAttribute("error", "Invalid username or password.");
             response.sendRedirect("login");
         }
     }

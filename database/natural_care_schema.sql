@@ -123,7 +123,8 @@ CREATE TABLE expertSkill
 CREATE TABLE product_category
 (
     product_category_id   INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    product_category_name VARCHAR(255)
+    product_category_name VARCHAR(255),
+    status BOOLEAN DEFAULT TRUE
 );
 
 CREATE TABLE sub_product_category
@@ -131,6 +132,7 @@ CREATE TABLE sub_product_category
     sub_product_category_id   INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     sub_product_category_name VARCHAR(255),
     product_category_id       INT,
+    status BOOLEAN DEFAULT TRUE,
     FOREIGN KEY (product_category_id)
         REFERENCES product_category (product_category_id)
 );

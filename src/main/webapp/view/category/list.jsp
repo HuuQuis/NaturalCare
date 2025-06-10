@@ -283,3 +283,45 @@
     });
 </script>
 
+<c:if test="${hasDependency}">
+    <script>
+        if (confirm("Cannot delete Category because there are still SubCategory or Products.\nDo you want to hide this Category from the list?")) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = 'category';
+
+            const actionInput = document.createElement('input');
+            actionInput.type = 'hidden';
+            actionInput.name = 'action';
+            actionInput.value = 'hide';
+
+            const idInput = document.createElement('input');
+            idInput.type = 'hidden';
+            idInput.name = 'id';
+            idInput.value = '${categoryIdToHide}';
+
+            form.appendChild(actionInput);
+            form.appendChild(idInput);
+            document.body.appendChild(form);
+            form.submit();
+        }
+    </script>
+</c:if>
+
+
+<c:if test="${hasSubDependency}">
+    <script>
+        if (confirm("Cannot delete SubCategory because there are still products.\nDo you want to hide this SubCategory from the list?")) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = 'subcategory';
+            form.innerHTML = `
+                <input type="hidden" name="action" value="hide">
+                <input type="hidden" name="id" value="${subCategoryIdToHide}">
+                <input type="hidden" name="categoryId" value="0">
+            `;
+            document.body.appendChild(form);
+            form.submit();
+        }
+    </script>
+</c:if>

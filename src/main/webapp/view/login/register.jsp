@@ -46,48 +46,62 @@
 </header><!--/header-->
 
 <!--form-->
-<section id="form">
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-offset-3 col-sm-6">
-                <!--sign up form-->
-                <div class="signup-form">
-                    <h2>New User Signup!</h2>
-                    <form action="register" method="POST" id="registerForm">
-                        <input type="text" name="username" id="username" placeholder="Username" required minlength="6" />
-                        <div class="error-message" id="usernameError"></div>
-                        
-                        <input type="password" name="password" id="password" placeholder="Password" required minlength="6"/>
-                        <div class="error-message" id="passwordError"></div>
-                        
-                        <input type="password" name="password-confirm" id="confirmPassword" placeholder="Re-enter your password" required/>
-                        <div class="error-message" id="confirmPasswordError"></div>
-                        
-                        <input type="text" name="firstName" id="firstName" placeholder="First Name" required value="${param.firstName}"/>
-                        <div class="error-message" id="firstNameError"></div>
-                        
-                        <input type="text" name="lastName" id="lastName" placeholder="Last Name" required value="${param.lastName}"/>
-                        <div class="error-message" id="lastNameError"></div>
-                        
-                        <input type="email" name="email" id="email" placeholder="Email Address" required value="${param.email}"/>
-                        <div class="error-message" id="emailError"></div>
-                        
-                        <input type="text" name="phone" id="phone" placeholder="Phone Number" pattern="0[0-9]{9}" required value="${param.phone}"/>
-                        <div class="error-message" id="phoneError"></div>
-                        
-                        <button type="submit" class="btn btn-default">Signup</button>
-                        <c:if test="${not empty error}">
-                            <div class="alert alert-danger">${error}</div>
-                        </c:if>
-                        <hr>
-                        <p class="message">Already registered? <a href="${pageContext.request.contextPath}/login">Login</a></p>
-                    </form>
-                </div>
-                <!--/sign up form-->
+<div class="container">
+    <div class="row">
+        <div class="col-sm-offset-3 col-sm-6">
+            <!--sign up form-->
+            <div class="signup-form">
+                <h2>New User Signup!</h2>
+                <form action="register" method="POST" id="registerForm">
+                    Username:<input type="text" name="username" id="username" placeholder="Username" required
+                                    minlength="6"/>
+                    <div class="error-message" id="usernameError"></div>
+
+                    Password:<input type="password" name="password" id="password" placeholder="Password" required
+                                    minlength="6"/>
+                    <div class="error-message" id="passwordError"></div>
+
+                    Confirm Password:<input type="password" name="password-confirm" id="confirmPassword"
+                                            placeholder="Re-enter your password" required/>
+                    <div class="error-message" id="confirmPasswordError"></div>
+
+                    First Name:<input type="text" name="firstName" id="firstName" placeholder="First Name" required
+                                      value="${param.firstName}"/>
+                    <div class="error-message" id="firstNameError"></div>
+
+                    Last Name:<input type="text" name="lastName" id="lastName" placeholder="Last Name" required
+                                     value="${param.lastName}"/>
+                    <div class="error-message" id="lastNameError"></div>
+
+                    Email:<input type="email" name="email" id="email" placeholder="Email Address" required
+                                 value="${param.email}"/>
+                    <div class="error-message" id="emailError"></div>
+
+                    Phone:<input type="text" name="phone" id="phone" placeholder="Phone Number" pattern="0[0-9]{9}"
+                                 required
+                                 value="${param.phone}"/>
+                    <div class="error-message" id="phoneError"></div>
+
+                    <br>
+
+                    <c:if test="${not empty error}">
+                        <i class="alert alert-danger">${error}</i>
+                    </c:if>
+
+                    <br>
+                    <br>
+
+                    <button type="submit" class="btn btn-default">Signup</button>
+
+                    <hr>
+                    <p class="message">Already registered? <a href="${pageContext.request.contextPath}/login">Login</a>
+                    </p>
+                </form>
             </div>
+            <!--/sign up form-->
         </div>
     </div>
-</section><!--/form-->
+</div>
 
 
 <!--/Footer-->
@@ -105,7 +119,7 @@
         const phone = document.querySelector('input[name="phone"]').value;
 
         // Check if any field contains only whitespace
-        if (username.trim() === '' || firstName.trim() === '' || lastName.trim() === '' || 
+        if (username.trim() === '' || firstName.trim() === '' || lastName.trim() === '' ||
             email.trim() === '' || phone.trim() === '') {
             event.preventDefault();
             alert("Please do not enter only spaces in any field!");

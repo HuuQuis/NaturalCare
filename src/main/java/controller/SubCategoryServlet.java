@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import model.SubProductCategory;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 @WebServlet("/subcategory")
 public class SubCategoryServlet extends HttpServlet {
@@ -45,6 +46,7 @@ public class SubCategoryServlet extends HttpServlet {
                     subDao.addSubCategory(name, categoryId);
                     req.getSession().setAttribute("message", " Subcategory added successfully.");
                 }
+
             } else if ("update".equals(action)) {
                 int id = Integer.parseInt(idRaw);
                 if (subDao.isSubNameExistsForOtherId(name, categoryId, id)) {
@@ -53,19 +55,32 @@ public class SubCategoryServlet extends HttpServlet {
                     subDao.updateSubCategory(id, name);
                     req.getSession().setAttribute("message", "Subcategory updated.");
                 }
+
             } else if ("delete".equals(action)) {
                 int id = Integer.parseInt(idRaw);
-                subDao.deleteSubCategory(id);
-                req.getSession().setAttribute("message", "️ Subcategory deleted.");
+                if (subDao.hasProductDependency(id)) {
+                    req.setAttribute("hasSubDependency", true);
+                    req.setAttribute("subCategoryIdToHide", id);
+                    req.setAttribute("view", "category");
+                    req.getRequestDispatcher("/view/home/manager.jsp").forward(req, resp);
+                    return;
+                } else {
+                    subDao.deleteSubCategory(id);
+                    req.getSession().setAttribute("message", "️ Subcategory deleted.");
+                }
+
+            } else if ("hide".equals(action)) {
+                int id = Integer.parseInt(idRaw);
+                subDao.hideSubCategory(id);
+                req.getSession().setAttribute("message", "️ Subcategory hidden.");
             }
 
-        } catch (NumberFormatException e) {
+        } catch (Exception e) {
+            e.printStackTrace();
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid or missing parameter.");
             return;
         }
 
         resp.sendRedirect("category");
     }
-
 }
-

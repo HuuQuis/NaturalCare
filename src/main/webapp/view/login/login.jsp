@@ -39,47 +39,51 @@
     <jsp:include page="../common/header-top.jsp"></jsp:include>
 
     <!--/header-middle-->
-<%--    <jsp:include page="../common/header-middle.jsp"></jsp:include>--%>
+    <jsp:include page="../common/header-middle.jsp"></jsp:include>
 
     <!--/header-bottom-->
     <jsp:include page="../common/header-bottom.jsp"></jsp:include>
 </header><!--/header-->
 
 <!--form-->
-<section id="form">
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-offset-3 col-sm-6">
-                <!--login form-->
-                <div class="login-form">
-                    <h2>Login to your account</h2>
-                    <form action="${pageContext.request.contextPath}/login" method="POST">
-                        <input name="username" type="text" placeholder="Username" required/>
-                        <input name="password" type="password" placeholder="Password" required/>
-                        <span>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-offset-3 col-sm-6">
+            <!--login form-->
+            <div class="login-form">
+                <h2>Login to your account</h2>
+                <form action="${pageContext.request.contextPath}/login" method="POST">
+                    Username: <input name="username" type="text" placeholder="Username" required/>
+                    Password: <input name="password" type="password" placeholder="Password" required/>
+                    <span>
 								<input name="remember-account" type="checkbox" class="checkbox" checked value="on">
 								Keep me signed in
 							</span>
 
-                        <br>
-                        <span class="validate-message">${validate}</span>
+                    <br>
+                    <br>
+                    <c:if test="${not empty error}">
+                        <i class="alert alert-danger">${error}</i>
+                    </c:if>
 
-                        <div style="display: flex; gap: 10px; margin-top: 10px;">
-                            <button type="submit" class="btn btn-default">Login</button>
-                            <button type="button" class="btn btn-default" onclick="window.location.href='${pageContext.request.contextPath}/forgot'">Forgot Password</button>
-                        </div>
+                    <div style="display: flex; gap: 10px; margin-top: 10px;">
+                        <button type="submit" class="btn btn-default">Login</button>
+                        <button type="button" class="btn btn-default"
+                                onclick="window.location.href='${pageContext.request.contextPath}/forgot'">Forgot
+                            Password
+                        </button>
+                    </div>
 
-                        <hr>
-                        <p class="message">Don’t have an account? <a href="${pageContext.request.contextPath}/register">Register</a>
-                        </p>
+                    <hr>
+                    <p class="message">Don’t have an account? <a href="${pageContext.request.contextPath}/register">Register</a>
+                    </p>
 
-                    </form>
-                </div>
-                <!--/login form-->
+                </form>
             </div>
+            <!--/login form-->
         </div>
     </div>
-</section><!--/form-->
+</div>
 
 
 <!--/Footer-->
