@@ -41,13 +41,6 @@ public class ResetPasswordServlet extends HttpServlet {
                 return;
             }
 
-            if (newPassword.length() < 6) {
-                request.setAttribute("error", "Password must be at least 6 characters long");
-                request.setAttribute("token", token);
-                request.getRequestDispatcher("view/login/reset-password.jsp").forward(request, response);
-                return;
-            }
-
             if (userDAO.isValidResetToken(token)) {
                 if (userDAO.isPasswordSame(token, newPassword)) {
                     request.setAttribute("error", "New password must be different from old password");
