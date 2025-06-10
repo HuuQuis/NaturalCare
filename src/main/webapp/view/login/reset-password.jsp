@@ -41,9 +41,10 @@
                     <h2>Reset Password</h2>
                     <form action="${pageContext.request.contextPath}/reset" method="POST">
                         <input type="hidden" name="token" value="${token}">
-                        
-                        <input name="password" type="password" placeholder="Enter new password" required/>
-                        <input name="confirmPassword" type="password" placeholder="Confirm new password" required/>
+
+                        <input name="password" type="password" placeholder="Enter new password" required minlength="6"/>
+                        <input name="confirmPassword" type="password" placeholder="Confirm new password" required
+                               minlength="6"/>
 
                         <br>
                         <c:if test="${not empty message}">
@@ -56,7 +57,8 @@
                         <div style="display: flex; gap: 10px; margin-top: 10px;">
                             <button type="submit" class="btn btn-default">Reset Password</button>
                             <button type="button" class="btn btn-default"
-                                    onclick="window.location.href='${pageContext.request.contextPath}/login'">Back to Login
+                                    onclick="window.location.href='${pageContext.request.contextPath}/login'">Back to
+                                Login
                             </button>
                         </div>
                     </form>
@@ -67,6 +69,27 @@
 </section>
 
 <jsp:include page="../common/footer.jsp"></jsp:include>
+
+<script>
+    document.querySelector('form').addEventListener('submit', function (event) {
+        const password = document.querySelector('input[name="password"]').value;
+        const confirmPassword = document.querySelector('input[name="confirmPassword"]').value;
+
+        // Validate password length
+        if (password.length < 6) {
+            event.preventDefault();
+            alert("Password must be at least 6 characters long!");
+            return;
+        }
+
+        // Validate password match
+        if (password !== confirmPassword) {
+            event.preventDefault();
+            alert("Passwords do not match!");
+            return;
+        }
+    });
+</script>
 
 <script src="${pageContext.request.contextPath}/js/jquery.js"></script>
 <script src="${pageContext.request.contextPath}/js/price-range.js"></script>

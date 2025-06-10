@@ -53,7 +53,7 @@
                 <!--login form-->
                 <div class="login-form">
                     <h2>Login to your account</h2>
-                    <form action="login" method="POST">
+                    <form action="${pageContext.request.contextPath}/login" method="POST">
                         <input name="username" type="text" placeholder="Username" required/>
                         <input name="password" type="password" placeholder="Password" required/>
                         <span>

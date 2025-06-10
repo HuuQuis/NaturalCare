@@ -81,8 +81,11 @@ VALUES (1, 'Skin Care Combo', 1),
 INSERT INTO user (username, password, first_name, last_name, email, phone_number, role_id)
 VALUES ('admin', 'admin', 'test', 'admin', 'test@gmail.com', '0123456789', 3);
 
-INSERT INTO user (user_id, username, password, first_name, last_name, email, phone_number, role_id)
-VALUES (2, 'manager', 'manager', 'test', 'manager', 'test@gmail.com', '0123456789', 4);
+INSERT INTO user (username, password, first_name, last_name, email, phone_number, role_id)
+VALUES ('manager', 'manager', 'test', 'manager', 'test@gmail.com', '0123456789', 4);
+
+INSERT INTO user (username, password, first_name, last_name, email, phone_number, role_id)
+VALUES ('lamtung', 'lamtung', 'lamtung', 'test', 'kojkon02@gmail.com', '0989785184', 1);
 
 INSERT INTO product (product_name, product_short_description, product_information, product_guideline,
                      sub_product_category_id)
@@ -162,6 +165,6 @@ VALUES ('Ginseng Skin Care Combo', 'A luxurious set for radiant skin',
         'Apply during diaper changes.', 21),
        ('Peppermint Essential Oil', 'Invigorating scent', 'Pure oil for aromatherapy and massage.',
         'Dilute before use.', 22);
-INSERT INTO product_variation (product_id, product_image, color, size, price, qty_in_stock) VALUES
-(7,'/images/product/lipstick-pink.jpg', 'Pink', null, 200000, 100),
-(7,'/images/product/lipstick-red.jpg', 'Red', null, 190000, 100)
+INSERT INTO product_variation (product_id, product_image, color, size, price, qty_in_stock)
+VALUES (7, '/images/product/lipstick-pink.jpg', 'Pink', null, 200000, 100),
+       (7, '/images/product/lipstick-red.jpg', 'Red', null, 190000, 100)
