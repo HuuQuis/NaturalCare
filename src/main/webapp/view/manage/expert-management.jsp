@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Order Management</title>
+  <title>Expert Management</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -80,13 +80,13 @@
   </style>
 </head>
 <body>
-<h2>Quản lý đơn hàng</h2>
+<h2>Expert Management</h2>
 
 <form method="get" class="filter-section">
-  <input type="text" name="search" placeholder="Tìm kiếm theo tên" value="${search}">
-  <input type="text" name="skill" placeholder="Tìm kiếm theo skill" value="${skill}">
-  <button type="submit">Lọc</button>
-  <a href="expertListManage" class="reset" style="text-decoration:none; padding:8px; border-radius:4px; color:white;">Xóa bộ lọc</a>
+  <input type="text" name="search" placeholder="Find by Name" value="${search}">
+  <input type="text" name="skill" placeholder="Find by Skill" value="${skill}">
+  <button type="submit">Filter</button>
+  <a href="expertListManage" class="reset" style="text-decoration:none; padding:8px; border-radius:4px; color:white;">Delete filter</a>
 </form>
 
 <c:if test="${not empty message}">
@@ -99,12 +99,12 @@
 <table>
   <thead>
     <tr>
-      <th>STT</th>
-      <th>Mã người chuyên gia</th>
-      <th>Tên người chuyên gia</th>
-      <th>Mã kỹ năng</th>
-      <th>Tên kỹ năng</th>
-    </tr>
+        <th>No.</th>
+        <th>Expert ID</th>
+        <th>Expert Name</th>
+        <th>Skill ID</th>
+        <th>Skill Name</th>
+      </tr>
   </thead>
   <tbody>
     <c:forEach var="expert" items="${experts}" varStatus="loop">

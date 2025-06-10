@@ -80,12 +80,12 @@
   </style>
 </head>
 <body>
-<h2>Quản lý đơn hàng</h2>
+<h2>Order Management</h2>
 
 <form method="get" class="filter-section">
-  <input type="text" name="search" placeholder="Tìm kiếm theo ID, người dùng, ghi chú..." value="${search}">
+  <input type="text" name="search" placeholder="Search by ID, UserName,..." value="${search}">
   <select name="status">
-    <option value="">-- Tất cả trạng thái --</option>
+    <option value="">-- All status --</option>
     <option value="1" ${status == '1' ? 'selected' : ''}>Pending</option>
     <option value="2" ${status == '2' ? 'selected' : ''}>Processing</option>
     <option value="3" ${status == '3' ? 'selected' : ''}>Assigned to Shipper</option>
@@ -97,8 +97,8 @@
   </select>
   <input type="date" name="fromDate" value="${fromDate}">
   <input type="date" name="toDate" value="${toDate}">
-  <button type="submit">Lọc</button>
-  <a href="orderManagement" class="reset" style="text-decoration:none; padding:8px; border-radius:4px; color:white;">Xóa bộ lọc</a>
+  <button type="submit">Filter</button>
+  <a href="orderManagement" class="reset" style="text-decoration:none; padding:8px; border-radius:4px; color:white;">Detele filter</a>
 </form>
 
 <c:if test="${not empty message}">
@@ -111,16 +111,16 @@
 <table>
   <thead>
     <tr>
-      <th>STT</th>
-      <th>Mã đơn</th>
-      <th>Người đặt</th>
-      <th>Ngày tạo</th>
-      <th>Trạng thái</th>
-      <th>Ghi chú</th>
-      <th>Shipper</th>
-      <th>Địa chỉ</th>
-      <th>Mã giảm</th>
-      <th>Hành động</th>
+      <th>No.</th>
+        <th>Order ID</th>
+        <th>Customer</th>
+        <th>Created Date</th>
+        <th>Status</th>
+        <th>Note</th>
+        <th>Shipper</th>
+        <th>Address</th>
+        <th>Discount Code</th>
+        <th>Actions</th>
     </tr>
   </thead>
   <tbody>
@@ -161,7 +161,7 @@
             <form method="post" style="display:inline;">
               <input type="hidden" name="action" value="delete">
               <input type="hidden" name="orderId" value="${order.orderId}">
-              <button type="submit" class="delete" onclick="return confirm('Bạn có chắc muốn xóa đơn này?')">Xóa</button>
+              <button type="submit" class="delete" onclick="return confirm('Are you sure to delete this order?')">Delete</button>
             </form>
           </c:if>
         </td>
