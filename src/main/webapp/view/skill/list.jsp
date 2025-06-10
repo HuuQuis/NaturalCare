@@ -11,267 +11,370 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="">
-  <meta name="author" content="">
-  <title>Skills Management | Natural Care</title>
-  <link href="${pageContext.request.contextPath}/css/bootstrap.min.css" rel="stylesheet">
-  <link href="${pageContext.request.contextPath}/css/font-awesome.min.css" rel="stylesheet">
-  <link href="${pageContext.request.contextPath}/css/prettyPhoto.css" rel="stylesheet">
-  <link href="${pageContext.request.contextPath}/css/price-range.css" rel="stylesheet">
-  <link href="${pageContext.request.contextPath}/css/animate.css" rel="stylesheet">
-  <link href="${pageContext.request.contextPath}/css/main.css" rel="stylesheet">
-  <link href="${pageContext.request.contextPath}/css/responsive.css" rel="stylesheet">
-  <!--[if lt IE 9]>
-    <script src="${pageContext.request.contextPath}/js/html5shiv.js"></script>
-    <![endif]-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+  <meta name="description" content="POS - Bootstrap Admin Template">
+  <meta name="keywords" content="admin, estimates, bootstrap, business, corporate, creative, invoice, tools, responsive">
+  <meta name="author" content="Dreamguys - Bootstrap Admin Template">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Skill List | Natural Care</title>
+
+  <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/adminassets/img/favicon.png">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/adminassets/css/bootstrap.min.css">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/adminassets/css/animate.css">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/adminassets/plugins/select2/css/select2.min.css">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/adminassets/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/adminassets/plugins/fontawesome/css/fontawesome.min.css">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/adminassets/plugins/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/adminassets/css/style.css">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/adminStyle.css">
   <style>
-    .animated { animation-duration: 1s; animation-fill-mode: both; }
-    .table tr { animation-delay: 2ms; }
-    .btn { transition: transform 0.3s ease, background-color 0.3s ease; }
-    .btn:hover { transform: scale(1.1); }
-    .form-control:focus { transition: box-shadow: 0.3s ease; }
-    .modal-content { animation-duration: 0.5s; }
-    .pagination li a { transition: transform 0.3s ease; }
-    .pagination li a:hover { transform: scale(1.1); }
-    .table tr:hover { transition: background-color 0.3s ease; background-color: #f5f5f5; }
-    .loading { opacity: 0.6; pointer-events: none; }
-    .action-buttons { display: flex; gap: 10px; white-space: nowrap; justify-content: center; align-items: center; }
-    .action-buttons .btn { margin: 0; }
-    /* Align search input and button */
-    .search-form {
-      display: flex;
-      align-items: center;
-      gap: 10px;
+    .table {
+      table-layout: fixed;
+      width: 100%;
     }
-    .search-form .form-group {
-      margin-bottom: 10px;
-      margin-top: 10px;
+    .table th:nth-child(1), .table td:nth-child(1) {
+      width: 80px;
+      text-align: center;
     }
-    .search-form .btn {
-      background: #FE980F;
-      color: #fff;
-      border: none;
-      padding: 10px 12px;
+    .table th:nth-child(2), .table td:nth-child(2) {
+      width: 60%;
+      max-width: 300px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
-    .search-form .btn:hover {
-      background: #e68a00;
+    .table th:nth-child(3), .table td:nth-child(3) {
+      width: 120px;
+      text-align: center;
     }
-    /* Custom button style for Add New Skill, Edit, Delete */
-    .btn-custom {
-      background: #FE980F;
-      color: #fff;
-      border: none;
-      padding: 6px 12px;
-    }
-    .btn-custom:hover {
-      background: #e68a00;
-      color: #fff;
-    }
-    /* Modal Cancel button */
-    .modal-footer .btn-default {
-      background: #fff;
-      color: #333;
-      border: 1px solid #ccc;
-    }
-    .modal-footer .btn-default:hover {
-      background: #f5f5f5;
+    .pagination {
+      position: sticky;
+      bottom: 0;
     }
   </style>
 </head>
 <body>
-<header id="header">
-  <jsp:include page="/view/common/header-top.jsp"/>
-  <jsp:include page="/view/common/header-middle.jsp"/>
-  <jsp:include page="/view/common/header-bottom.jsp"/>
-</header>
+<div id="global-loader">
+  <div class="whirly-loader"></div>
+</div>
 
-<section id="skill-list" class="animated fadeInUp">
-  <div class="container">
-    <div class="row">
-      <div class="col-sm-12">
-        <h2 class="title text-center animated fadeInDown">SKILLS MANAGEMENT</h2>
-        <c:if test="${not empty error}">
-          <div class="alert alert-danger text-center animated shake">${error}</div>
-        </c:if>
-        <div class="row">
-          <div class="col-md-12">
-            <form action="${pageContext.request.contextPath}/skill" method="GET" class="search-form pull-left animated slideInLeft" style="margin-bottom: 20px;">
-              <div class="form-group">
-                <input type="text" name="search" class="form-control" placeholder="Search skill..." value="${search}">
+<div class="main-wrapper">
+  <div class="header">
+    <div class="header-left active">
+      <a href="#" class="logo"></a>
+      <a href="#" class="logo-small">
+        <img src="${pageContext.request.contextPath}/adminassets/img/logo-small.png" alt="">
+      </a>
+    </div>
+    <ul class="nav user-menu">
+      <li class="nav-item dropdown has-arrow main-drop">
+        <a href="javascript:void(0);" class="dropdown-toggle nav-link userset" data-bs-toggle="dropdown">
+                    <span class="user-img"><img src="${pageContext.request.contextPath}/adminassets/img/profiles/avator1.jpg" alt="">
+                        <span class="status online"></span></span>
+        </a>
+        <div class="dropdown-menu menu-drop-user">
+          <div class="profilename">
+            <div class="profileset">
+                            <span class="user-img"><img src="${pageContext.request.contextPath}/adminassets/img/profiles/avator1.jpg" alt="">
+                                <span class="status online"></span></span>
+              <div class="profilesets">
+                <h5>Manager</h5>
               </div>
-              <button type="submit" class="btn btn-custom"><i class="fa fa-search"></i></button>
-              <input type="hidden" name="sort" value="${sort}">
-              <input type="hidden" name="page" value="${page}">
-            </form>
-            <a href="${pageContext.request.contextPath}/skill?action=form" class="btn btn-custom pull-right animated slideInRight">ADD NEW SKILL</a>
+            </div>
+            <hr class="m-0">
+            <a class="dropdown-item logout pb-0" href="logout"><img src="${pageContext.request.contextPath}/adminassets/img/icons/log-out.svg" class="me-2" alt="img">Logout</a>
           </div>
         </div>
-        <div class="row">
-          <div class="col-md-12">
+      </li>
+    </ul>
+  </div>
+
+  <c:set var="view" value="skill" scope="request"/>
+  <jsp:include page="../common/sidebar-manager.jsp"/>
+
+  <div class="page-wrapper">
+    <div class="content">
+      <div class="page-header">
+        <div class="page-title">
+          <h4>Skill List</h4>
+        </div>
+        <div class="page-btn">
+          <a href="javascript:void(0);" class="btn btn-added" onclick="openAddModal()">
+            <img src="${pageContext.request.contextPath}/adminassets/img/icons/plus.svg" alt="img" class="me-1">Add New Skill
+          </a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+          <div class="mb-3 d-flex justify-content-between align-items-center">
+            <div class="input-group" style="max-width: 300px;">
+              <form id="searchForm" action="${pageContext.request.contextPath}/skill" method="get">
+                <div class="input-group">
+                  <input type="text" id="searchInput" name="search" class="form-control" placeholder="Search skills" value="${search}">
+                  <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i></button>
+                </div>
+                <span class="text-danger d-none" id="searchError">${searchError}</span>
+              </form>
+            </div>
+            <div class="d-flex align-items-center">
+              <label for="pageSize" class="me-2">Show</label>
+              <select id="pageSize" class="form-select" style="width: 100px;">
+                <option value="10" ${size == 10 ? 'selected' : ''}>10</option>
+                <option value="20" ${size == 20 ? 'selected' : ''}>20</option>
+                <option value="30" ${size == 30 ? 'selected' : ''}>30</option>
+                <option value="40" ${size == 40 ? 'selected' : ''}>40</option>
+                <option value="50" ${size == 50 ? 'selected' : ''}>50</option>
+              </select>
+              <span class="ms-2">per page</span>
+            </div>
+          </div>
+
+          <div class="table-responsive">
             <table class="table table-bordered">
-              <thead>
+              <thead class="table-light">
               <tr>
-                <th>ID</th>
-                <th><a href="${pageContext.request.contextPath}/skill?search=${search}&sort=${sort == 'asc' ? 'desc' : 'asc'}&page=${page}" class="animated slideInUp">Skill Name <i class="fa ${sort == 'asc' ? 'fa-sort-asc' : 'fa-sort-desc'}"></i></a></th>
+                <th>No.</th>
+                <th>Skill Name<a href="${pageContext.request.contextPath}/skill?search=${search}&sort=${sort == 'asc' ? 'desc' : 'asc'}&page=${page}&size=${size}" class="ms-1"><i class="fas ${sort == 'asc' ? 'fa-sort-up' : 'fa-sort-down'}"></i></a></th>
                 <th>Actions</th>
               </tr>
               </thead>
               <tbody>
-              <c:forEach items="${list}" var="skill" varStatus="loop">
-                <tr class="animated slideInRight" style="animation-delay: ${loop.index * 0.1}s;">
-                  <td>${skill.skillId}</td>
-                  <td>${skill.skillName}</td>
+              <c:forEach var="skill" items="${list}" varStatus="loop">
+                <tr>
+                  <td>${(page - 1) * size + loop.index + 1}</td>
+                  <td title="${skill.skillName}">${skill.skillName}</td>
                   <td>
-                    <div class="action-buttons">
-                      <a href="${pageContext.request.contextPath}/skill?action=form&id=${skill.skillId}" class="btn btn-custom btn-sm">Edit</a>
-                      <a href="#" class="btn btn-custom btn-sm delete-btn" data-id="${skill.skillId}" data-toggle="modal" data-target="#deleteModal">Delete</a>
-                    </div>
+                    <a class="me-3" href="javascript:void(0);" onclick="openEditModal(${skill.skillId}, '${skill.skillName.replace("'", "\\'")}')">
+                      <img src="${pageContext.request.contextPath}/adminassets/img/icons/edit.svg" alt="edit">
+                    </a>
+                    <a href="javascript:void(0);" class="me-3 delete-btn" data-id="${skill.skillId}" onclick="openDeleteModal(${skill.skillId})">
+                      <img src="${pageContext.request.contextPath}/adminassets/img/icons/delete.svg" alt="delete">
+                    </a>
                   </td>
                 </tr>
               </c:forEach>
               <c:if test="${empty list}">
-                <tr><td colspan="3" class="text-center animated fadeIn">No skills found.</td></tr>
+                <tr><td colspan="3" class="text-muted fst-italic">No skills found</td></tr>
               </c:if>
               </tbody>
             </table>
           </div>
-        </div>
-        <c:if test="${totalPages > 1}">
-          <div class="row">
-            <div class="col-md-12 text-center">
-              <ul class="pagination animated fadeInUp">
-                <c:if test="${page > 1}">
-                  <li><a href="${pageContext.request.contextPath}/skill?search=${search}&sort=${sort}&page=${page - 1}" class="animated">←</a></li>
-                </c:if>
-                <c:forEach begin="1" end="${totalPages}" var="i">
-                  <li class="${page == i ? 'active' : ''}">
-                    <a href="${pageContext.request.contextPath}/skill?search=${search}&sort=${sort}&page=${i}" class="animated">${i}</a>
+
+          <c:if test="${totalPages > 1}">
+            <div class="d-flex justify-content-end mt-3">
+              <ul class="pagination">
+                <li class="page-item ${page == 1 ? 'disabled' : ''}">
+                  <a class="page-link" href="${pageContext.request.contextPath}/skill?search=${search}&sort=${sort}&page=1&size=${size}" title="First Page">
+                    <i class="fas fa-angle-double-left"></i>
+                  </a>
+                </li>
+                <li class="page-item ${page == 1 ? 'disabled' : ''}">
+                  <a class="page-link" href="${pageContext.request.contextPath}/skill?search=${search}&sort=${sort}&page=${page - 1}&size=${size}" title="Previous Page">
+                    <i class="fas fa-angle-left"></i>
+                  </a>
+                </li>
+                <c:forEach var="i" begin="${page - 2 > 1 ? page - 2 : 1}" end="${page + 2 < totalPages ? page + 2 : totalPages}">
+                  <li class="page-item ${i == page ? 'active' : ''}">
+                    <a class="page-link" href="${pageContext.request.contextPath}/skill?search=${search}&sort=${sort}&page=${i}&size=${size}">${i}</a>
                   </li>
                 </c:forEach>
-                <c:if test="${page < totalPages}">
-                  <li><a href="${pageContext.request.contextPath}/skill?search=${search}&sort=${sort}&page=${page + 1}" class="animated">→</a></li>
-                </c:if>
+                <li class="page-item ${page == totalPages ? 'disabled' : ''}">
+                  <a class="page-link" href="${pageContext.request.contextPath}/skill?search=${search}&sort=${sort}&page=${page + 1}&size=${size}" title="Next Page">
+                    <i class="fas fa-angle-right"></i>
+                  </a>
+                </li>
               </ul>
             </div>
-          </div>
-        </c:if>
+          </c:if>
+        </div>
       </div>
     </div>
   </div>
-</section>
 
-<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content animated zoomIn">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal"><span>×</span></button>
-        <h4 class="modal-title">Confirm Delete</h4>
-      </div>
-      <div class="modal-body">
-        <p>Are you sure you want to delete this skill?</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-        <a href="#" id="confirmDelete" class="btn btn-custom">Delete</a>
+  <!-- Skill Modal -->
+  <div class="modal fade" id="skillModal" tabindex="-1" aria-labelledby="skillModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <form action="${pageContext.request.contextPath}/skill" method="post" class="modal-content" id="skillForm">
+        <div class="modal-header">
+          <h5 class="modal-title" id="skillModalLabel">Add New Skill</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" name="skill_id" id="skillId" value="${skill.skillId}">
+          <div class="mb-3">
+            <label for="skillName" class="form-label">Skill Name</label>
+            <input type="text" class="form-control" name="skill_name" id="skillName" maxlength="50" value="${skill.skillName}" required>
+            <span class="text-danger d-none" id="skillNameError"></span>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success">Save</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Delete Modal -->
+  <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Are you sure you want to delete this skill?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <a href="#" id="confirmDelete" class="btn btn-danger">Delete</a>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
-<jsp:include page="/view/common/footer.jsp"/>
-
-<script src="${pageContext.request.contextPath}/js/jquery.js"></script>
-<script src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>
-<script src="${pageContext.request.contextPath}/js/jquery.scrollUp.min.js"></script>
-<script src="${pageContext.request.contextPath}/js/jquery.prettyPhoto.js"></script>
-<script src="${pageContext.request.contextPath}/js/main.js"></script>
+<script src="${pageContext.request.contextPath}/adminassets/js/jquery-3.6.0.min.js"></script>
+<script src="${pageContext.request.contextPath}/adminassets/js/feather.min.js"></script>
+<script src="${pageContext.request.contextPath}/adminassets/js/jquery.slimscroll.min.js"></script>
+<script src="${pageContext.request.contextPath}/adminassets/js/jquery.dataTables.min.js"></script>
+<script src="${pageContext.request.contextPath}/adminassets/js/dataTables.bootstrap4.min.js"></script>
+<script src="${pageContext.request.contextPath}/adminassets/js/bootstrap.bundle.min.js"></script>
+<script src="${pageContext.request.contextPath}/adminassets/plugins/select2/js/select2.min.js"></script>
+<script src="${pageContext.request.contextPath}/adminassets/plugins/sweetalert/sweetalert2.all.min.js"></script>
+<script src="${pageContext.request.contextPath}/adminassets/js/script.js"></script>
 <script>
-  const contextPath = "${pageContext.request.contextPath}";
-</script>
-<script src="${pageContext.request.contextPath}/js/search.js"></script>
-<script>
-  $(document).ready(function() {
-    // Debounce function to prevent multiple clicks
-    function debounce(func, wait) {
-      let timeout;
-      return function() {
-        clearTimeout(timeout);
-        timeout = setTimeout(func.bind(this), wait);
-      };
-    }
+  function openAddModal() {
+    document.getElementById('skillModalLabel').innerText = 'Add New Skill';
+    document.getElementById('skillId').value = '';
+    document.getElementById('skillName').value = '';
+    document.getElementById('skillNameError').classList.add('d-none');
+    new bootstrap.Modal(document.getElementById('skillModal')).show();
+  }
 
-    // Staggered animation for table rows
-    $('table tbody tr').each(function(index) {
-      $(this).css('animation-delay', (index * 0.1) + 's');
-    });
+  function openEditModal(id, name) {
+    document.getElementById('skillModalLabel').innerText = 'Edit Skill';
+    document.getElementById('skillId').value = id;
+    document.getElementById('skillName').value = name;
+    document.getElementById('skillNameError').classList.add('d-none');
+    new bootstrap.Modal(document.getElementById('skillModal')).show();
+  }
 
-    // Animate search input on focus
-    $('.form-control').on('focus', function() {
-      $(this).css('box-shadow', '0 0 8px rgba(0, 123, 255, 0.5)');
-    }).on('blur', function() {
-      $(this).css('box-shadow', 'none');
-    });
-
-    // Prevent animation flicker on buttons
-    $('.btn, .pagination a').on('animationend', function() {
-      $(this).removeClass('animated bounceIn');
-    });
-
-    // Scroll-based animation
-    let isScrolling = false;
-    $(window).on('scroll', debounce(function() {
-      if ($(window).scrollTop() > 50 && !isScrolling) {
-        isScrolling = true;
-        $('#skill-list').addClass('animated tada');
-        setTimeout(function() {
-          $('#skill-list').removeClass('animated tada');
-          isScrolling = false;
-        }, 1000);
-      }
-    }, 200));
-
-    // Table row hover effect
-    $('table tr').on('mouseenter', function() {
-      $(this).css('background-color', '#f5f5f5');
-    }).on('mouseleave', function() {
-      $(this).css('background-color', '');
-    });
-
-    // Modal animation on show/hide
-    $('#deleteModal').on('show.bs.modal', function() {
-      $('.modal-content').removeClass('zoomOut').addClass('animated zoomIn');
-    }).on('hide.bs.modal', function() {
-      $('.modal-content').removeClass('zoomIn').addClass('animated zoomOut');
-    });
-
-    // Delete button logic with loading state
-    let isChecking = false;
-    $('.delete-btn').on('click', debounce(function() {
-      if (isChecking) return;
-      var id = $(this).data('id');
-      isChecking = true;
-      $(this).addClass('loading');
-      $('#confirmDelete').attr('href', '${pageContext.request.contextPath}/skill?action=delete&id=' + id + '&search=${search}&sort=${sort}&page=${page}');
-      $.ajax({
-        url: '${pageContext.request.contextPath}/skill',
-        type: 'GET',
-        data: { action: 'check', id: id },
-        success: function(response) {
-          if (response === 'inUse') {
-            $('#deleteModal .modal-body p').text('Cannot delete this skill because it is in use.');
-            $('#confirmDelete').hide();
-          } else {
-            $('#deleteModal .modal-body p').text('Are you sure you want to delete this skill?');
-            $('#confirmDelete').show();
-          }
-        },
-        complete: function() {
-          isChecking = false;
-          $('.delete-btn').removeClass('loading');
+  function openDeleteModal(id) {
+    $.ajax({
+      url: '${pageContext.request.contextPath}/skill',
+      type: 'GET',
+      data: { action: 'check', id: id },
+      success: function(response) {
+        if (response === 'inUse') {
+          $('#deleteModal .modal-body p').text('Cannot delete this skill because it is in use.');
+          $('#confirmDelete').hide();
+        } else {
+          $('#deleteModal .modal-body p').text('Are you sure you want to delete this skill?');
+          $('#confirmDelete').show().attr('href', '${pageContext.request.contextPath}/skill?action=delete&id=' + id + '&search=${search}&sort=${sort}&page=${page}&size=${size}');
         }
-      });
-    }, 200));
+        new bootstrap.Modal(document.getElementById('deleteModal')).show();
+      }
+    });
+  }
+
+  function validateSkillForm() {
+    const skillName = document.getElementById('skillName').value.trim();
+    const skillId = document.getElementById('skillId').value || 0;
+    if (!skillName.match(/^[a-zA-Z\s]+$/)) {
+      document.getElementById('skillNameError').textContent = 'Skill name can only contain letters and spaces.';
+      document.getElementById('skillNameError').classList.remove('d-none');
+      return false;
+    }
+    if (skillName.length < 3) {
+      document.getElementById('skillNameError').textContent = 'Skill name must be at least 3 characters long.';
+      document.getElementById('skillNameError').classList.remove('d-none');
+      return false;
+    }
+    if (skillName.length > 50) {
+      document.getElementById('skillNameError').textContent = 'Skill name must not exceed 50 characters.';
+      document.getElementById('skillNameError').classList.remove('d-none');
+      return false;
+    }
+    return true;
+  }
+
+  function validateSearchForm() {
+    const search = document.getElementById('searchInput').value.trim();
+    const searchError = document.getElementById('searchError');
+    if (search.length > 50) {
+      searchError.textContent = 'Search keyword must not exceed 50 characters.';
+      searchError.classList.remove('d-none');
+      return false;
+    }
+    if (!search.match(/^[a-zA-Z\s]*$/) && search.length > 0) {
+      searchError.textContent = 'Search keyword can only contain letters and spaces.';
+      searchError.classList.remove('d-none');
+      return false;
+    }
+    searchError.classList.add('d-none');
+    return true;
+  }
+
+  $(document).ready(function() {
+    $('#pageSize').on('change', function() {
+      const size = this.value;
+      window.location.href = '${pageContext.request.contextPath}/skill?search=${search}&sort=${sort}&page=1&size=' + size;
+    });
+
+    $('#searchForm').on('submit', validateSearchForm);
+
+    $('#searchInput').on('input', function() {
+      const search = $(this).val().trim();
+      const searchError = $('#searchError');
+      if (search.length > 50) {
+        searchError.text('Search keyword must not exceed 50 characters.');
+        searchError.removeClass('d-none');
+      } else if (!search.match(/^[a-zA-Z\s]*$/) && search.length > 0) {
+        searchError.text('Search keyword can only contain letters and spaces.');
+        searchError.removeClass('d-none');
+      } else {
+        searchError.addClass('d-none');
+      }
+    });
+
+    $('#skillName').on('input', function() {
+      const skillName = $(this).val().trim();
+      const skillId = $('#skillId').val() || 0;
+      if (skillName.length >= 3 && skillName.length <= 50) {
+        $.ajax({
+          url: '${pageContext.request.contextPath}/skill',
+          type: 'POST',
+          data: { action: 'checkDuplicate', skill_name: skillName, skill_id: skillId },
+          success: function(response) {
+            if (response === 'duplicate') {
+              $('#skillNameError').text('Skill name already exists.');
+              $('#skillNameError').removeClass('d-none');
+            } else {
+              $('#skillNameError').addClass('d-none');
+            }
+          }
+        });
+      }
+    });
+
+    $('#skillForm').on('submit', validateSkillForm);
+
+    <c:if test="${not empty error}">
+    document.getElementById('skillModalLabel').innerText = '${skill.skillId > 0 ? "Edit Skill" : "Add New Skill"}';
+    document.getElementById('skillId').value = '${skill.skillId}';
+    document.getElementById('skillName').value = '${skill.skillName}';
+    $('#skillNameError').text('${error}');
+    $('#skillNameError').removeClass('d-none');
+    new bootstrap.Modal(document.getElementById('skillModal')).show();
+    </c:if>
+
+    <c:if test="${not empty searchError}">
+    $('#searchError').text('${searchError}');
+    $('#searchError').removeClass('d-none');
+    </c:if>
   });
 </script>
 </body>

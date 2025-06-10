@@ -128,7 +128,7 @@ CREATE TABLE product_category
 
 CREATE TABLE sub_product_category
 (
-    sub_product_category_id   INT NOT NULL PRIMARY KEY,
+    sub_product_category_id   INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     sub_product_category_name VARCHAR(255),
     product_category_id       INT,
     FOREIGN KEY (product_category_id)

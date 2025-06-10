@@ -2,123 +2,121 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
-    <title>Chi tiết chuyên gia</title>
+    <title>Expert Detail</title>
     <style>
-        /* Reset cơ bản */
-        * {
-            box-sizing: border-box;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f9fafb;
-            margin: 0;
-            padding: 20px;
-            color: #333;
-        }
-        h2, h3 {
-            color: #2c3e50;
-            margin-bottom: 20px;
-        }
-        /* Container chính */
-        .container {
-            max-width: 700px;
-            margin: 0 auto;
-            background: #fff;
-            padding: 30px 40px;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
+    * {
+        box-sizing: border-box;
+    }
 
-        /* Message thành công */
-        .message {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-            padding: 12px 20px;
-            border-radius: 6px;
-            margin-bottom: 20px;
-            font-weight: 600;
-        }
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: #f9fafb;
+        margin: 0;
+        padding: 40px 0;
+        color: #333;
+    }
 
-        form {
-            margin-bottom: 30px;
-        }
+    h2 {
+        color: #2e7d32; /* Xanh lá đậm */
+        margin-bottom: 25px;
+        font-size: 28px;
+        text-align: center;
+    }
 
-        label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: #34495e;
-        }
+    .container {
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #fff;
+        padding: 35px 40px;
+        border-radius: 12px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+    }
 
-        p {
-            margin-bottom: 15px;
-        }
+    .message {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+        padding: 12px 20px;
+        border-radius: 6px;
+        margin-bottom: 20px;
+        font-weight: 600;
+        text-align: center;
+    }
 
-        input[type="text"], select {
-            width: 100%;
-            padding: 10px 14px;
-            border-radius: 6px;
-            border: 1.5px solid #bdc3c7;
-            font-size: 1rem;
-            transition: border-color 0.3s ease;
-        }
+    label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #2e7d32;
+    }
 
-        input[type="text"]:focus, select:focus {
-            outline: none;
-            border-color: #2980b9;
-            box-shadow: 0 0 5px rgba(41, 128, 185, 0.5);
-        }
+    p {
+        font-size: 1rem;
+        margin-bottom: 16px;
+    }
 
-        button {
-            background-color: #2980b9;
-            border: none;
-            color: white;
-            font-weight: 700;
-            padding: 12px 25px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: background-color 0.3s ease;
-        }
+    input[type="text"], select {
+        width: 100%;
+        padding: 10px 14px;
+        border-radius: 6px;
+        border: 1.5px solid #c8e6c9;
+        font-size: 1rem;
+        transition: border-color 0.3s ease;
+    }
 
-        button:hover {
-            background-color: #1c5980;
-        }
+    input[type="text"]:focus, select:focus {
+        outline: none;
+        border-color: #43a047;
+        box-shadow: 0 0 6px rgba(76, 175, 80, 0.4);
+    }
 
-        a {
-            color: #2980b9;
-            text-decoration: none;
-            font-weight: 600;
-        }
+    button {
+        background-color: #43a047;
+        border: none;
+        color: white;
+        font-weight: 700;
+        padding: 12px 24px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: background-color 0.3s ease;
+        margin-top: 10px;
+    }
 
-        a:hover {
-            text-decoration: underline;
-        }
+    button:hover {
+        background-color: #2e7d32;
+    }
 
-        /* Flex cho form cập nhật để đẹp hơn */
-        .form-row {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-        .form-row > p {
-            flex: 1;
-            margin-bottom: 0;
-        }
-        .form-row select {
-            max-width: 250px;
-            flex-shrink: 0;
-        }
+    a {
+        color: #388e3c;
+        text-decoration: none;
+        font-weight: 600;
+        display: inline-block;
+        margin-top: 20px;
+        text-align: center;
+    }
 
-    </style>
+    a:hover {
+        text-decoration: underline;
+    }
+
+    .form-row {
+        margin-bottom: 20px;
+    }
+
+    hr {
+        margin-top: 40px;
+        margin-bottom: 20px;
+        border: none;
+        border-top: 1px solid #e0e0e0;
+    }
+</style>
 </head>
 <body>
 
 <div class="container">
 
-    <h2>Chi tiết chuyên gia</h2>
+    <h2>Expert Management</h2>
 
     <c:if test="${not empty message}">
         <div class="message">${message}</div>
@@ -129,54 +127,21 @@
             <input type="hidden" name="action" value="update" />
             <input type="hidden" name="user_id" value="${expertDetail.getUser_id()}" />
             <div class="form-row">
-                <p><strong>Tên chuyên gia:</strong> ${expertDetail.getUser_name()}</p>
-                <label for="skill_id_update">Kỹ năng:</label>
+                <p><strong>Expert Name:</strong> ${expertDetail.getUser_name()}</p>
+                <label for="skill_id_update">Skill:</label>
                 <select name="skill_id" id="skill_id_update" required>
                     <c:forEach var="skill" items="${allSkills}">
                         <option value="${skill.getSkillId()}" ${skill.getSkillId() == expertDetail.skill_id ? 'selected' : ''}>${skill.getSkillName()}</option>
                     </c:forEach>
                 </select>
-                <button type="submit">Cập nhật</button>
+                <button type="submit">Update</button>
             </div>
         </form>
     </c:if>
 
     <hr/>
 
-    <h3>Thêm chuyên gia mới</h3>
-    <form method="post" action="expertDetail" style="max-width:600px;">
-        <input type="hidden" name="action" value="add" />
-
-        <label for="username_new">Tên đăng nhập (username):</label>
-        <input type="text" id="username_new" name="username" required/>
-
-        <label for="password_new">Mật khẩu:</label>
-        <input type="password" id="password_new" name="password" required/>
-
-        <label for="first_name_new">Họ:</label>
-        <input type="text" id="first_name_new" name="first_name" required/>
-
-        <label for="last_name_new">Tên:</label>
-        <input type="text" id="last_name_new" name="last_name" required/>
-
-        <label for="email_new">Email:</label>
-        <input type="email" id="email_new" name="email" required/>
-
-        <label for="phone_number_new">Số điện thoại:</label>
-        <input type="tel" id="phone_number_new" name="phone_number" required/>
-
-        <label for="skill_id_new">Chọn kỹ năng:</label>
-        <select name="skill_id" id="skill_id_new" required>
-            <c:forEach var="skill" items="${allSkills}">
-                <option value="${skill.getSkillId()}">${skill.getSkillName()}</option>
-            </c:forEach>
-        </select>
-
-        <button type="submit" style="margin-top: 15px;">Thêm chuyên gia</button>
-    </form>
-
-
-    <p><a href="expertListManage">Quay lại danh sách chuyên gia</a></p>
+    <p><a href="expertListManage">Back to Expert List</a></p>
 
 </div>
 

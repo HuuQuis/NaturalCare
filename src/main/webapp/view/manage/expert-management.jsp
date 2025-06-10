@@ -4,106 +4,166 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Order Management</title>
+  <title>Expert Management</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       margin: 20px;
       background-color: #f9f9f9;
     }
+
     h2 {
       margin-bottom: 20px;
+      color: #2e7d32;
     }
+
     .filter-section {
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
       margin-bottom: 20px;
     }
+
     .filter-section input,
     .filter-section select,
-    .filter-section button {
+    .filter-section button,
+    .filter-section a {
       padding: 8px;
-      border: 1px solid #ccc;
+      border: 1px solid #a5d6a7;
       border-radius: 4px;
+      font-size: 14px;
     }
+
+    .filter-section input:focus {
+      outline: none;
+      border-color: #66bb6a;
+      box-shadow: 0 0 5px rgba(102, 187, 106, 0.5);
+    }
+
     .filter-section button {
-      background-color: #007bff;
+      background-color: #43a047;
       color: white;
       cursor: pointer;
+      border: none;
+      transition: background-color 0.3s ease;
     }
-    .filter-section button.reset {
-      background-color: #dc3545;
+
+    .filter-section button:hover {
+      background-color: #2e7d32;
     }
+
+    .filter-section a.reset {
+      background-color: #c62828;
+      color: white;
+      text-decoration: none;
+      border: none;
+    }
+
+    .filter-section a.reset:hover {
+      background-color: #8e0000;
+    }
+
+    .filter-section a {
+      text-decoration: none;
+      color: white;
+      background-color: #43a047;
+      transition: background-color 0.3s ease;
+    }
+
+    .filter-section a:hover {
+      background-color: #2e7d32;
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
       background-color: white;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
+
     th, td {
       padding: 12px;
       border: 1px solid #ddd;
       text-align: left;
     }
+
     th {
-      background-color: #f1f1f1;
+      background-color: #e8f5e9;
+      color: #2e7d32;
     }
-    .actions button {
-      padding: 5px 10px;
-      margin-right: 5px;
-      border: none;
-      border-radius: 3px;
-      cursor: pointer;
+
+    td a {
+      color: #2e7d32;
+      font-weight: bold;
+      text-decoration: none;
     }
-    .actions .delete {
-      background-color: #dc3545;
-      color: white;
+
+    td a:hover {
+      text-decoration: underline;
     }
+
     .pagination {
       margin-top: 20px;
       display: flex;
       justify-content: center;
       gap: 10px;
     }
+
     .pagination a {
       padding: 6px 12px;
-      border: 1px solid #ccc;
+      border: 1px solid #a5d6a7;
       background-color: white;
       text-decoration: none;
-      color: black;
+      color: #2e7d32;
+      font-weight: bold;
+      border-radius: 4px;
     }
+
     .pagination .active a {
-      background-color: #007bff;
+      background-color: #66bb6a;
       color: white;
+      border-color: #388e3c;
+    }
+
+    .message-success {
+      color: #2e7d32;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+
+    .message-error {
+      color: #c62828;
+      margin-bottom: 10px;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
-<h2>Quản lý đơn hàng</h2>
+<h2>Expert Management</h2>
 
 <form method="get" class="filter-section">
-  <input type="text" name="search" placeholder="Tìm kiếm theo tên" value="${search}">
-  <input type="text" name="skill" placeholder="Tìm kiếm theo skill" value="${skill}">
-  <button type="submit">Lọc</button>
-  <a href="expertListManage" class="reset" style="text-decoration:none; padding:8px; border-radius:4px; color:white;">Xóa bộ lọc</a>
+  <input type="text" name="search" placeholder="Find by Name" value="${search}">
+  <input type="text" name="skill" placeholder="Find by Skill" value="${skill}">
+  <button type="submit">Filter</button>
+  <a href="expertListManage" class="reset">Delete filter</a>
+  <a href="expertInsert">Add new expert</a>
 </form>
 
 <c:if test="${not empty message}">
-  <div style="color: green; margin-bottom: 10px;">${message}</div>
+  <div class="message-success">${message}</div>
 </c:if>
 <c:if test="${not empty error}">
-  <div style="color: red; margin-bottom: 10px;">${error}</div>
+  <div class="message-error">${error}</div>
 </c:if>
 
 <table>
   <thead>
     <tr>
-      <th>STT</th>
-      <th>Mã người chuyên gia</th>
-      <th>Tên người chuyên gia</th>
-      <th>Mã kỹ năng</th>
-      <th>Tên kỹ năng</th>
+      <th>No.</th>
+      <th>Expert ID</th>
+      <th>Expert Name</th>
+      <th>Skill ID</th>
+      <th>Skill Name</th>
     </tr>
   </thead>
   <tbody>

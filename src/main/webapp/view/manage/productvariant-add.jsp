@@ -76,29 +76,7 @@
         </ul>
     </div>
 
-
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-inner slimscroll">
-            <div id="sidebar-menu" class="sidebar-menu">
-                <ul>
-                    <li class="submenu">
-                        <a href="javascript:void(0);"><img
-                                src="${pageContext.request.contextPath}/adminassets/img/icons/product.svg"
-                                alt="img"><span>
-                                        Edit</span> <span class="menu-arrow"></span></a>
-                        <ul>
-                            <li><a href="">DashBoard</a></li>
-                            <li><a href="${pageContext.request.contextPath}/productManage" class="active">Product List</a></li>
-                            <li><a href="${pageContext.request.contextPath}/category">Category List</a></li>
-                            <li><a href="">Expert List</a></li>
-                            <li><a href="">Staff List</a></li>
-                            <li><a href="">Shipper List</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
+    <jsp:include page="../common/sidebar-manager.jsp"/>
 
     <div class="page-wrapper">
         <div class="content">
@@ -109,8 +87,8 @@
                 </div>
             </div>
 
-            <form action="productVariantManage" method="post">
-                <input type="hidden" name="action" value="add">
+            <form action="${pageContext.request.contextPath}/productVariantManage?action=add&productId=${productId}" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="action" value="add">
                 <div class="card">
                     <div class="card-body">
                         <div class="row">
@@ -119,67 +97,60 @@
                                         ${error}
                                 </div>
                             </c:if>
+<%--                            Product Variant Information--%>
                             <div class="col-lg-12 col-sm-6 col-12">
                                 <div class="form-group">
-                                    <label>Product Line</label>
-                                    <select name="ProductId" class="select">
-                                        <option>Choose Product Line</option>
+                                    <div class="form-control-plaintext">
                                         <c:forEach var="pro" items="${products}">
-                                            <option value="${pro.id}">${pro.name}</option>
+                                            <c:if test="${pro.id == productId}">
+                                                <label>Product Line: ${pro.name}</label>
+                                                <input type="hidden" name="ProductId" value="${pro.id}" />
+                                            </c:if>
                                         </c:forEach>
-                                    </select>
+                                    </div>
                                 </div>
+                            </div><%-- Product Line Information --%>
+
+                            <div class="col-lg-12 col-sm-6 col-12">
+                                <div class="form-group">
+                                    <label>Product Variant Image</label>
+                                    <input type="file" name="image" accept="image/*" ${empty previousImageUrl ? 'required' : ''}>
+                                    <c:if test="${not empty previousImageUrl}">
+                                        <input type="hidden" name="previousImageUrl" value="${previousImageUrl}">
+                                        <div class="mt-2">
+                                            <span>Current image: ${previousImageUrl}</span>
+                                        </div>
+                                    </c:if>
+                                </div>
+                            </div><%-- Product Variant Image --%>
+
+                            <div class="col-lg-12 col-sm-6 col-12">
+                                <div class="form-group">
+                                    <label>Product Variant Color</label>
+                                    <input type="text" class="form-control" name="color" value="${tempProductVariation.color}" placeholder="Enter Product Variant Color" >
+                                </div><%-- Product Variant Color --%>
                             </div>
                             <div class="col-lg-12 col-sm-6 col-12">
                                 <div class="form-group">
-                                    <label>Product Name</label>
-                                    <input name="name" type="text"  value="${product.name}" placeholder="Enter Product Name..." >
+                                    <label>Product Variant Size</label>
+                                    <input type="text" class="form-control" name="size" value="${tempProductVariation.size}" placeholder="Enter size in ml"  />
+
                                 </div>
-                            </div>
+                            </div><%-- Product Variant Size --%>
+
                             <div class="col-lg-12 col-sm-6 col-12">
                                 <div class="form-group">
-                                    <label class="description-label">Short Description</label>
-                                    <textarea
-                                            rows="10"
-                                            cols="50"
-                                            name="description"
-                                            placeholder="Enter product description..."
-                                            onfocus="this.style.borderColor='#28a745';"
-                                            onblur="this.style.borderColor='';"
-                                    >${product.description}</textarea>
+                                    <label>Product Variant Price</label>
+                                    <input type="number" class="form-control" name="price" value="${tempProductVariation.price}" placeholder="Enter Product Variant Price" >
                                 </div>
-                            </div>
+                            </div><%-- Product Variant Price --%>
+
                             <div class="col-lg-12 col-sm-6 col-12">
                                 <div class="form-group">
-                                    <label>Product Information</label>
-                                    <textarea rows="10" cols="50" name="information"
-                                              placeholder="Enter product information..."
-                                              onfocus="this.style.borderColor='#28a745';"
-                                              onblur="this.style.borderColor='';"
-                                    >${product.information}</textarea>
+                                    <label>Product Variant Quantity</label>
+                                    <input type="number" class="form-control" name="quantity" value="${tempProductVariation.qtyInStock}" placeholder="Enter Product Variant Quantity" >
                                 </div>
-                            </div>
-                            <div class="col-lg-12 col-sm-6 col-12">
-                                <div class="form-group">
-                                    <label>Product Guideline</label>
-                                    <textarea rows="10" cols="50" name="guideline"
-                                              placeholder="Enter product guideline..."
-                                              onfocus="this.style.borderColor='#28a745';"
-                                              onblur="this.style.borderColor='';"
-                                    >${product.guideline}</textarea>
-                                </div>
-                            </div>
-                            <div class="col-lg-12 col-sm-6 col-12">
-                                <div class="form-group">
-                                    <label>Sub Product Category</label>
-                                    <select name="subProductCategoryId" class="select">
-                                        <option>Choose Category</option>
-                                        <c:forEach var="sub" items="${subCategories}">
-                                            <option value="${sub.id}">${sub.name}</option>
-                                        </c:forEach>
-                                    </select>
-                                </div>
-                            </div>
+                            </div><%-- Product Variant Quantity --%>
                             <div class="col-lg-12">
                                 <button type="submit" class="btn btn-submit me-2">Post</button>
                                 <a href="${pageContext.request.contextPath}/productManage" class="btn btn-cancel">Cancel</a>
