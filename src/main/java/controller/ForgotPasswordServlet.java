@@ -58,9 +58,9 @@ public class ForgotPasswordServlet extends HttpServlet {
     }
 
     private void sendResetEmail(String email, String token) throws MessagingException {
-        String senderEmail = PropertiesUtils.get("mail.username");
-        String senderPassword = PropertiesUtils.get("mail.password");
-        String baseUrl = PropertiesUtils.get("app.base.url");
+        String senderEmail = PropertiesUtils.get("config","mail.username");
+        String senderPassword = PropertiesUtils.get("config","mail.password");
+        String baseUrl = PropertiesUtils.get("config", "app.base.url");
 
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");
