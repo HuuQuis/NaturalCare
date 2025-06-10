@@ -43,7 +43,14 @@ public class ForgotPasswordServlet extends HttpServlet {
             if (userDAO.checkEmailExists(email)) {
                 String token = UUID.randomUUID().toString();
                 userDAO.saveResetToken(email, token);
-                sendResetEmail(email, token);
+                // Gửi email bất đồng bộ
+                new Thread(() -> {
+                    try {
+                        sendResetEmail(email, token);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }).start();
                 request.setAttribute("message", "Reset link has been sent to your email");
             } else {
                 request.setAttribute("error", "Email not found");

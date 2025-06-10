@@ -148,8 +148,14 @@ public class UserDAO extends DBContext {
     }
 
     public void saveResetToken(String email, String token) {
-        // Save the reset token + token expiry for the user
         try {
+            // remove old token if exists
+            sql = "UPDATE natural_care.user SET reset_token = NULL, reset_token_expiry = NULL WHERE email = ?";
+            stm = connection.prepareStatement(sql);
+            stm.setString(1, email);
+            stm.executeUpdate();
+
+            // save new token with expiry time
             sql = "UPDATE natural_care.user SET reset_token = ?, reset_token_expiry = DATE_ADD(NOW(), INTERVAL 1 HOUR) WHERE email = ?";
             stm = connection.prepareStatement(sql);
             stm.setString(1, token);
@@ -161,22 +167,22 @@ public class UserDAO extends DBContext {
     }
 
     public boolean isValidResetToken(String token) {
-        // Check if the reset token is valid and not expired
         try {
+            // check if the token exists and is not expired
             sql = "SELECT * FROM natural_care.user WHERE reset_token = ? AND reset_token_expiry > NOW()";
             stm = connection.prepareStatement(sql);
             stm.setString(1, token);
             rs = stm.executeQuery();
-            return rs.next(); // Returns true if token is valid
+            return rs.next();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return false; // Token is invalid or expired
+        return false;
     }
 
     public void updatePassword(String token, String newPassword) {
-        // Update the user's password using the reset token
         try {
+            // update the password and clear the reset token
             sql = "UPDATE natural_care.user SET password = ?, reset_token = NULL, reset_token_expiry = NULL WHERE reset_token = ?";
             stm = connection.prepareStatement(sql);
             stm.setString(1, newPassword);
