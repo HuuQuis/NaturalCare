@@ -283,3 +283,45 @@
     });
 </script>
 
+<c:if test="${hasDependency}">
+    <script>
+        if (confirm("Không thể xoá Category vì vẫn còn SubCategory hoặc Sản phẩm.\nBạn có muốn ẩn Category này khỏi danh sách không?")) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = 'category';
+
+            const actionInput = document.createElement('input');
+            actionInput.type = 'hidden';
+            actionInput.name = 'action';
+            actionInput.value = 'hide';
+
+            const idInput = document.createElement('input');
+            idInput.type = 'hidden';
+            idInput.name = 'id';
+            idInput.value = '${categoryIdToHide}';
+
+            form.appendChild(actionInput);
+            form.appendChild(idInput);
+            document.body.appendChild(form);
+            form.submit();
+        }
+    </script>
+</c:if>
+
+
+<c:if test="${hasSubDependency}">
+    <script>
+        if (confirm("Không thể xoá SubCategory vì vẫn còn sản phẩm.\nBạn có muốn ẩn SubCategory này khỏi danh sách không?")) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = 'subcategory';
+            form.innerHTML = `
+                <input type="hidden" name="action" value="hide">
+                <input type="hidden" name="id" value="${subCategoryIdToHide}">
+                <input type="hidden" name="categoryId" value="0"> <!-- hoặc truyền đúng categoryId nếu bạn có -->
+            `;
+            document.body.appendChild(form);
+            form.submit();
+        }
+    </script>
+</c:if>
