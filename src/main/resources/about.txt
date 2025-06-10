@@ -5,5 +5,5 @@ db.url=jdbc:mysql://localhost:3306/natural_care?useSSL=false&serverTimezone=UTC&
 
 # Mail Configuration
 mail.username=email@gmail.com
-mail.password=app password
+mail.password= zwrb ysuv jmrp yfqa
 app.base.url=http://localhost:9999/NaturalCare
