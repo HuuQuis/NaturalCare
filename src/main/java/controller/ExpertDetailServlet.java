@@ -50,7 +50,7 @@ public class ExpertDetailServlet extends HttpServlet {
 
             expertDAO.updateExpertSkill(userId, skillId);
 
-            request.setAttribute("message", "Cập nhật kỹ năng thành công.");
+            request.setAttribute("message", "Update expert successfully.");
         } else if ("add".equals(action)) {
             String username = request.getParameter("username");
             String password = request.getParameter("password");
@@ -60,9 +60,21 @@ public class ExpertDetailServlet extends HttpServlet {
             String phoneNumber = request.getParameter("phone_number");
             int skillId = Integer.parseInt(request.getParameter("skill_id"));
 
-            expertDAO.addExpert(username, password, firstName, lastName, email, phoneNumber, skillId);
+            if (!phoneNumber.matches("\\d{10}")) {
+                request.setAttribute("error", "Phone number must be exactly 10 digits.");
+            } 
+            else if (expertDAO.isUsernameTakenForRole(username, 6)) {
+                request.setAttribute("error", "Username already exists for an expert.");
+            } 
+            else {
+                expertDAO.addExpert(username, password, firstName, lastName, email, phoneNumber, skillId);
+                request.setAttribute("message", "Add new expert successfully.");
+            }
 
-            request.setAttribute("message", "Thêm chuyên gia mới thành công.");
+            List<Skill> allSkills = expertDAO.getAllSkills();
+            request.setAttribute("allSkills", allSkills);
+
+            request.getRequestDispatcher("/view/manage/expert-insert.jsp").forward(request, response);
         }
 
 

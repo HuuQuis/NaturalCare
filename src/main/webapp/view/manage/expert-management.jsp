@@ -75,7 +75,7 @@
     }
     .pagination .active a {
       background-color: #007bff;
-      color: white;
+      color: black;
     }
   </style>
 </head>
@@ -85,8 +85,10 @@
 <form method="get" class="filter-section">
   <input type="text" name="search" placeholder="Find by Name" value="${search}">
   <input type="text" name="skill" placeholder="Find by Skill" value="${skill}">
-  <button type="submit">Filter</button>
+  <button type="submit">Filter</button>  
   <a href="expertListManage" class="reset" style="text-decoration:none; padding:8px; border-radius:4px; color:white;">Delete filter</a>
+  <button>
+  <a href="expertInsert" style="text-decoration:none; padding:8px; border-radius:4px; color:white;">Add new expert</a></button>
 </form>
 
 <c:if test="${not empty message}">
