@@ -5,9 +5,10 @@ import java.sql.*;
 import java.util.*;
 
 public class ProductCategoryDAO extends DBContext {
+
     public List<ProductCategory> getAllProductCategories() {
         List<ProductCategory> list = new ArrayList<>();
-        sql = "SELECT * FROM product_category";
+        sql = "SELECT * FROM product_category WHERE status = TRUE";
 
         try {
             stm = connection.prepareStatement(sql);
@@ -26,7 +27,7 @@ public class ProductCategoryDAO extends DBContext {
     }
 
     public void addProductCategory(String name) {
-        sql = "INSERT INTO product_category (product_category_name) VALUES (?)";
+        sql = "INSERT INTO product_category (product_category_name, status) VALUES (?, TRUE)";
         try {
             stm = connection.prepareStatement(sql);
             stm.setString(1, name);
@@ -77,10 +78,10 @@ public class ProductCategoryDAO extends DBContext {
         return null;
     }
 
-    //Lấy theo trang
+    // Lấy theo trang (chỉ lấy category có status = TRUE)
     public List<ProductCategory> getCategoriesByPage(int pageIndex, int pageSize) {
         List<ProductCategory> list = new ArrayList<>();
-        String sql = "SELECT * FROM product_category ORDER BY product_category_id LIMIT ? OFFSET ?";
+        String sql = "SELECT * FROM product_category WHERE status = TRUE ORDER BY product_category_id LIMIT ? OFFSET ?";
 
         try (PreparedStatement stm = connection.prepareStatement(sql)) {
             int offset = (pageIndex - 1) * pageSize;
@@ -101,9 +102,9 @@ public class ProductCategoryDAO extends DBContext {
         return list;
     }
 
-    //Đếm tổng số category
+    // Đếm tổng số category có status = TRUE
     public int countTotalCategories() {
-        String sql = "SELECT COUNT(*) FROM product_category";
+        String sql = "SELECT COUNT(*) FROM product_category WHERE status = TRUE";
         try (PreparedStatement stm = connection.prepareStatement(sql)) {
             ResultSet rs = stm.executeQuery();
             if (rs.next()) return rs.getInt(1);
@@ -114,7 +115,7 @@ public class ProductCategoryDAO extends DBContext {
     }
 
     public boolean isCategoryNameExists(String name) {
-        String sql = "SELECT 1 FROM product_category WHERE product_category_name = ?";
+        String sql = "SELECT 1 FROM product_category WHERE LOWER(product_category_name) = LOWER(?) AND status = TRUE";
         try (PreparedStatement stm = connection.prepareStatement(sql)) {
             stm.setString(1, name);
             ResultSet rs = stm.executeQuery();
@@ -126,7 +127,7 @@ public class ProductCategoryDAO extends DBContext {
     }
 
     public boolean isCategoryNameExistsForOtherId(String name, int excludeId) {
-        String sql = "SELECT 1 FROM product_category WHERE LOWER(product_category_name) = LOWER(?) AND product_category_id != ?";
+        String sql = "SELECT 1 FROM product_category WHERE LOWER(product_category_name) = LOWER(?) AND product_category_id != ? AND status = TRUE";
         try (PreparedStatement stm = connection.prepareStatement(sql)) {
             stm.setString(1, name);
             stm.setInt(2, excludeId);
@@ -136,5 +137,32 @@ public class ProductCategoryDAO extends DBContext {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public boolean hasDependency(int categoryId) throws SQLException {
+        // Check subcategories
+        String subQuery = "SELECT COUNT(*) FROM sub_product_category WHERE product_category_id = ?";
+        PreparedStatement ps1 = connection.prepareStatement(subQuery);
+        ps1.setInt(1, categoryId);
+        ResultSet rs1 = ps1.executeQuery();
+        if (rs1.next() && rs1.getInt(1) > 0) return true;
+
+        // Check products via subcategories
+        String prodQuery = "SELECT COUNT(*) FROM product p " +
+                "JOIN sub_product_category s ON p.sub_product_category_id = s.sub_product_category_id " +
+                "WHERE s.product_category_id = ?";
+        PreparedStatement ps2 = connection.prepareStatement(prodQuery);
+        ps2.setInt(1, categoryId);
+        ResultSet rs2 = ps2.executeQuery();
+        if (rs2.next() && rs2.getInt(1) > 0) return true;
+
+        return false;
+    }
+
+    public void hideCategory(int categoryId) throws SQLException {
+        String sql = "UPDATE product_category SET status = FALSE WHERE product_category_id = ?";
+        PreparedStatement ps = connection.prepareStatement(sql);
+        ps.setInt(1, categoryId);
+        ps.executeUpdate();
     }
 }
