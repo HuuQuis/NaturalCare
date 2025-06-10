@@ -53,16 +53,32 @@
                 <!--sign up form-->
                 <div class="signup-form">
                     <h2>New User Signup!</h2>
-                    <form action="register" method="POST">
-                        <input type="text" name="username" placeholder="Username" required minlength="6"/>
-                        <input type="password" name="password" placeholder="Password" required minlength="6"/>
-                        <input type="password" name="password-confirm" placeholder="Re-enter your password" required/>
-                        <input type="text" name="firstName" placeholder="First Name" required/>
-                        <input type="text" name="lastName" placeholder="Last Name" required/>
-                        <input type="email" name="email" placeholder="Email Address" required/>
-                        <input type="text" name="phone" placeholder="Phone Number" pattern="0[0-9]{10}" required/>
+                    <form action="register" method="POST" id="registerForm">
+                        <input type="text" name="username" id="username" placeholder="Username" required minlength="6" />
+                        <div class="error-message" id="usernameError"></div>
+                        
+                        <input type="password" name="password" id="password" placeholder="Password" required minlength="6"/>
+                        <div class="error-message" id="passwordError"></div>
+                        
+                        <input type="password" name="password-confirm" id="confirmPassword" placeholder="Re-enter your password" required/>
+                        <div class="error-message" id="confirmPasswordError"></div>
+                        
+                        <input type="text" name="firstName" id="firstName" placeholder="First Name" required value="${param.firstName}"/>
+                        <div class="error-message" id="firstNameError"></div>
+                        
+                        <input type="text" name="lastName" id="lastName" placeholder="Last Name" required value="${param.lastName}"/>
+                        <div class="error-message" id="lastNameError"></div>
+                        
+                        <input type="email" name="email" id="email" placeholder="Email Address" required value="${param.email}"/>
+                        <div class="error-message" id="emailError"></div>
+                        
+                        <input type="text" name="phone" id="phone" placeholder="Phone Number" pattern="0[0-9]{9}" required value="${param.phone}"/>
+                        <div class="error-message" id="phoneError"></div>
+                        
                         <button type="submit" class="btn btn-default">Signup</button>
-                        ${error}
+                        <c:if test="${not empty error}">
+                            <div class="alert alert-danger">${error}</div>
+                        </c:if>
                         <hr>
                         <p class="message">Already registered? <a href="${pageContext.request.contextPath}/login">Login</a></p>
                     </form>
@@ -80,9 +96,9 @@
 </section><!--/Footer-->
 <script>
     document.querySelector('form').addEventListener('submit', function (event) {
+        const username = document.querySelector('input[name="username"]').value;
         const password = document.querySelector('input[name="password"]').value;
         const confirmPassword = document.querySelector('input[name="password-confirm"]').value;
-        const username = document.querySelector('input[name="username"]').value;
         const firstName = document.querySelector('input[name="firstName"]').value;
         const lastName = document.querySelector('input[name="lastName"]').value;
         const email = document.querySelector('input[name="email"]').value;

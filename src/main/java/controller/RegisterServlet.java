@@ -35,9 +35,25 @@ public class RegisterServlet extends HttpServlet {
         String phone = request.getParameter("phone");
 
         UserDAO userDAO = new UserDAO();
-        //email provided is already registered
+        
+        // Check if username already exists
+        if (userDAO.checkUsernameExists(username)) {
+            request.setAttribute("error", "Username already exists.");
+            request.setAttribute("email", email);
+            request.setAttribute("firstName", firstName);
+            request.setAttribute("lastName", lastName);
+            request.setAttribute("phone", phone);
+            request.getRequestDispatcher("view/login/register.jsp").forward(request, response);
+            return;
+        }
+
+        // Check if email already exists
         if (userDAO.checkEmail(email)) {
             request.setAttribute("error", "Email is already registered.");
+            request.setAttribute("username", username);
+            request.setAttribute("firstName", firstName);
+            request.setAttribute("lastName", lastName);
+            request.setAttribute("phone", phone);
             request.getRequestDispatcher("view/login/register.jsp").forward(request, response);
             return;
         }
@@ -50,9 +66,13 @@ public class RegisterServlet extends HttpServlet {
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("error", "Registration failed. Please try again.");
+            request.setAttribute("username", username);
+            request.setAttribute("email", email);
+            request.setAttribute("firstName", firstName);
+            request.setAttribute("lastName", lastName);
+            request.setAttribute("phone", phone);
             request.getRequestDispatcher("view/login/register.jsp").forward(request, response);
         }
-
     }
 
     @Override

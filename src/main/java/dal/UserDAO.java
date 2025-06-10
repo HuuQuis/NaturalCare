@@ -103,6 +103,19 @@ public class UserDAO extends DBContext {
         return false; // Email does not exist
     }
 
+    public boolean checkUsernameExists(String username) {
+        try {
+            sql = "SELECT * FROM natural_care.user WHERE username = ?";
+            stm = connection.prepareStatement(sql);
+            stm.setString(1, username);
+            rs = stm.executeQuery();
+            return rs.next(); // Returns true if username exists
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false; // Username does not exist
+    }
+
     //Register a new user
     public void registerUser(String username, String password, String email, String firstName, String lastName, String phone) throws SQLException {
         try {
