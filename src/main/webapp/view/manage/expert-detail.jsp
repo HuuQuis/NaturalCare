@@ -4,114 +4,113 @@
 <head>
     <title>Expert Detail</title>
     <style>
-        * {
-            box-sizing: border-box;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f9fafb;
-            margin: 0;
-            padding: 20px;
-            color: #333;
-        }
-        h2, h3 {
-            color: #2c3e50;
-            margin-bottom: 20px;
-        }
-        /* Container chính */
-        .container {
-            max-width: 700px;
-            margin: 0 auto;
-            background: #fff;
-            padding: 30px 40px;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
+    * {
+        box-sizing: border-box;
+    }
 
-        /* Message thành công */
-        .message {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-            padding: 12px 20px;
-            border-radius: 6px;
-            margin-bottom: 20px;
-            font-weight: 600;
-        }
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: #f9fafb;
+        margin: 0;
+        padding: 40px 0;
+        color: #333;
+    }
 
-        form {
-            margin-bottom: 30px;
-        }
+    h2 {
+        color: #2e7d32; /* Xanh lá đậm */
+        margin-bottom: 25px;
+        font-size: 28px;
+        text-align: center;
+    }
 
-        label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: #34495e;
-        }
+    .container {
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #fff;
+        padding: 35px 40px;
+        border-radius: 12px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+    }
 
-        p {
-            margin-bottom: 15px;
-        }
+    .message {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+        padding: 12px 20px;
+        border-radius: 6px;
+        margin-bottom: 20px;
+        font-weight: 600;
+        text-align: center;
+    }
 
-        input[type="text"], select {
-            width: 100%;
-            padding: 10px 14px;
-            border-radius: 6px;
-            border: 1.5px solid #bdc3c7;
-            font-size: 1rem;
-            transition: border-color 0.3s ease;
-        }
+    label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #2e7d32;
+    }
 
-        input[type="text"]:focus, select:focus {
-            outline: none;
-            border-color: #2980b9;
-            box-shadow: 0 0 5px rgba(41, 128, 185, 0.5);
-        }
+    p {
+        font-size: 1rem;
+        margin-bottom: 16px;
+    }
 
-        button {
-            background-color: #2980b9;
-            border: none;
-            color: white;
-            font-weight: 700;
-            padding: 12px 25px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: background-color 0.3s ease;
-        }
+    input[type="text"], select {
+        width: 100%;
+        padding: 10px 14px;
+        border-radius: 6px;
+        border: 1.5px solid #c8e6c9;
+        font-size: 1rem;
+        transition: border-color 0.3s ease;
+    }
 
-        button:hover {
-            background-color: #1c5980;
-        }
+    input[type="text"]:focus, select:focus {
+        outline: none;
+        border-color: #43a047;
+        box-shadow: 0 0 6px rgba(76, 175, 80, 0.4);
+    }
 
-        a {
-            color: #2980b9;
-            text-decoration: none;
-            font-weight: 600;
-        }
+    button {
+        background-color: #43a047;
+        border: none;
+        color: white;
+        font-weight: 700;
+        padding: 12px 24px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: background-color 0.3s ease;
+        margin-top: 10px;
+    }
 
-        a:hover {
-            text-decoration: underline;
-        }
+    button:hover {
+        background-color: #2e7d32;
+    }
 
-        /* Flex cho form cập nhật để đẹp hơn */
-        .form-row {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-        .form-row > p {
-            flex: 1;
-            margin-bottom: 0;
-        }
-        .form-row select {
-            max-width: 250px;
-            flex-shrink: 0;
-        }
+    a {
+        color: #388e3c;
+        text-decoration: none;
+        font-weight: 600;
+        display: inline-block;
+        margin-top: 20px;
+        text-align: center;
+    }
 
-    </style>
+    a:hover {
+        text-decoration: underline;
+    }
+
+    .form-row {
+        margin-bottom: 20px;
+    }
+
+    hr {
+        margin-top: 40px;
+        margin-bottom: 20px;
+        border: none;
+        border-top: 1px solid #e0e0e0;
+    }
+</style>
 </head>
 <body>
 
