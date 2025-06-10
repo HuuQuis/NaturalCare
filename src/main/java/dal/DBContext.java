@@ -1,15 +1,14 @@
 package dal;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import utils.PropertiesUtils;
 
 /**
  * DBContext class: Quản lý kết nối đến CSDL thông qua file cấu hình db.properties.
@@ -26,21 +25,13 @@ public class DBContext {
      */
     public DBContext() {
         try {
-            Properties props = new Properties();
-            InputStream input = getClass().getClassLoader().getResourceAsStream("db.properties");
-
-            if (input == null) {
-                throw new RuntimeException("Không tìm thấy file cấu hình db.properties");
-            }
-
-            props.load(input);
-            String user = "root";
-            String pass = "Tanamson260904";
-            String url = "jdbc:mysql://localhost:3306/natural_care?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true";
+            String user = PropertiesUtils.get("db.username");
+            String pass = PropertiesUtils.get("db.password");
+            String url = PropertiesUtils.get("db.url");
 
             Class.forName("com.mysql.cj.jdbc.Driver"); // Nạp driver MySQL
             connection = DriverManager.getConnection(url, user, pass); // Kết nối đến CSDL
-        } catch (ClassNotFoundException | SQLException | IOException ex) {
+        } catch (ClassNotFoundException | SQLException ex) {
             Logger.getLogger(DBContext.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
