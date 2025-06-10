@@ -16,12 +16,14 @@ public class ResetPasswordServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
         String token = request.getParameter("token");
-        if (token != null && !token.isEmpty()) {
+        UserDAO userDAO = new UserDAO();
+
+        if (token != null && !token.isEmpty() && userDAO.isValidResetToken(token)) {
+            // valid token -> reset pass
             request.setAttribute("token", token);
             request.getRequestDispatcher("view/login/reset-password.jsp").forward(request, response);
         } else {
-            request.setAttribute("error", "Invalid reset link");
-            request.getRequestDispatcher("view/login/forgot-password.jsp").forward(request, response);
+            request.getRequestDispatcher("view/login/invalid-token.jsp").forward(request, response);
         }
     }
 
@@ -46,8 +48,7 @@ public class ResetPasswordServlet extends HttpServlet {
                 request.setAttribute("message", "Password reset successfully. Please login with your new password.");
                 request.getRequestDispatcher("view/login/login.jsp").forward(request, response);
             } else {
-                request.setAttribute("error", "Invalid or expired token");
-                request.getRequestDispatcher("view/login/forgot-password.jsp").forward(request, response);
+                request.getRequestDispatcher("view/login/invalid-token.jsp").forward(request, response);
             }
         } catch (Exception e) {
             e.printStackTrace();
