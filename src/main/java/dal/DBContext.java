@@ -24,13 +24,13 @@ public class DBContext {
     protected String sql;                   // Câu lệnh SQL
 
     /**
-     * Constructor: Khởi tạo kết nối CSDL từ file db.properties.
+     * Constructor: Khởi tạo kết nối CSDL từ file properties.
      */
     public DBContext() {
         try {
-            String user = PropertiesUtils.get("db", "db.user");
-            String pass = PropertiesUtils.get("db", "db.password");
-            String url = PropertiesUtils.get("db", "db.url");
+            String user = PropertiesUtils.get("config", "db.user");
+            String pass = PropertiesUtils.get("config", "db.password");
+            String url = PropertiesUtils.get("config", "db.url");
 
             Class.forName("com.mysql.cj.jdbc.Driver"); // Nạp driver MySQL
             connection = DriverManager.getConnection(url, user, pass); // Kết nối đến CSDL
