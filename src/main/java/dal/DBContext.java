@@ -1,17 +1,20 @@
 package dal;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import utils.PropertiesUtils;
 
 /**
- * DBContext class: Quản lý kết nối đến CSDL thông qua file cấu hình db.properties.
+ * DBContext class: Quản lý kết nối đến CSDL thông qua file cấu hình.
+ * Có thể đọc từ db.properties hoặc config.properties
  */
 public class DBContext {
 
@@ -25,9 +28,9 @@ public class DBContext {
      */
     public DBContext() {
         try {
-            String user = PropertiesUtils.get("db.username");
-            String pass = PropertiesUtils.get("db.password");
-            String url = PropertiesUtils.get("db.url");
+            String user = PropertiesUtils.get("db", "db.user");
+            String pass = PropertiesUtils.get("db", "db.password");
+            String url = PropertiesUtils.get("db", "db.url");
 
             Class.forName("com.mysql.cj.jdbc.Driver"); // Nạp driver MySQL
             connection = DriverManager.getConnection(url, user, pass); // Kết nối đến CSDL
