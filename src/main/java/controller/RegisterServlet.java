@@ -61,7 +61,6 @@ public class RegisterServlet extends HttpServlet {
         // Register the user
         try {
             userDAO.registerUser(username, password, email, firstName, lastName, phone);
-            request.setAttribute("success", "Registration successful! You can now log in.");
             request.getRequestDispatcher("view/login/login.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
