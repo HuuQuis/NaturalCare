@@ -7,11 +7,9 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import model.Product;
 import model.ProductVariation;
 import model.SubProductCategory;
-import model.User;
 
 import java.io.IOException;
 import java.util.List;
@@ -54,7 +52,6 @@ public class ProductManageServlet extends HttpServlet {
             request.setAttribute("page", page);
             request.setAttribute("pageSize", pageSize);
             request.setAttribute("totalPage", totalPage);
-//            request.getRequestDispatcher("/view/manage/product-manage.jsp").forward(request, response);
             request.getRequestDispatcher("/view/home/manager.jsp").forward(request, response);
         }
     }
@@ -150,8 +147,8 @@ public class ProductManageServlet extends HttpServlet {
             handleValidationError("Product name cannot be empty", request, response, tempProduct, isUpdate);
             return false; // Return false when validation FAILS
         }
-        if (name.length() >= 255) {
-            handleValidationError("Product name must be less than 255 characters", request, response, tempProduct, isUpdate);
+        if (name.length() >= 50) {
+            handleValidationError("Product name must be less than 50 characters", request, response, tempProduct, isUpdate);
             return false; // Return false when validation FAILS
         }
 

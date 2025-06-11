@@ -13,8 +13,7 @@
 
         <ul class="navbar-nav navbar-nav-right ml-lg-auto">
             <li class="nav-item nav-profile dropdown border-0">
-                <a class="nav-link dropdown-toggle" id="profileDropdown" href="#" data-toggle="dropdown">
-                    <img class="nav-profile-img mr-2" alt="profile" src="${pageContext.request.contextPath}/adminassets/images/faces/face1.jpg" />
+                <a class="nav-link dropdown-toggle" id="profileDropdown" href="#" data-toggle="dropdown" style="border-radius: 10px;">
                     <span class="profile-name">Henry Klein</span>
                 </a>
                 <div class="dropdown-menu navbar-dropdown w-100" aria-labelledby="profileDropdown">
