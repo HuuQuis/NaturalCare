@@ -42,12 +42,7 @@ public class LoginServlet extends HttpServlet {
             }
             HttpSession session = request.getSession(true);
 
-            String userAgent = request.getHeader("User-Agent");
-            String ipAddress = request.getRemoteAddr();
-
             session.setAttribute("user", user);
-            session.setAttribute("ip", ipAddress);
-            session.setAttribute("agent", userAgent);
             session.setMaxInactiveInterval(10 * 60);
 
             // Redirect based on role

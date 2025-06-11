@@ -23,25 +23,6 @@ public class ProductManageServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // Check if user is logged in and is an admin
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("user") == null) {
-            response.sendRedirect(request.getContextPath() + "/login"); // Redirect to login if user is not logged in or not an admin
-            return;
-        }
-
-        String sessionIp = (String) session.getAttribute("ip");
-        String sessionAgent = (String) session.getAttribute("agent");
-
-        String currentIp = request.getRemoteAddr();
-        String currentAgent = request.getHeader("User-Agent");
-
-        if (!currentIp.equals(sessionIp) || !currentAgent.equals(sessionAgent)) {
-            session.invalidate();
-            response.sendRedirect(request.getContextPath() + "/login"); // Redirect to login if session IP or agent does not match
-            return;
-        }
-
         String action = request.getParameter("action");
         List<SubProductCategory> subCategories = subProductCategoryDAO.getAllSubProductCategories();
         request.setAttribute("subCategories", subCategories);
@@ -73,31 +54,13 @@ public class ProductManageServlet extends HttpServlet {
             request.setAttribute("page", page);
             request.setAttribute("pageSize", pageSize);
             request.setAttribute("totalPage", totalPage);
-            request.getRequestDispatcher("/view/manage/product-manage.jsp").forward(request, response);
+//            request.getRequestDispatcher("/view/manage/product-manage.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/home/manager.jsp").forward(request, response);
         }
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("user") == null) {
-            response.sendRedirect(request.getContextPath() + "/login"); // Redirect to login if user is not logged in or not an admin
-            return;
-        }
-
-        String sessionIp = (String) session.getAttribute("ip");
-        String sessionAgent = (String) session.getAttribute("agent");
-
-        String currentIp = request.getRemoteAddr();
-        String currentAgent = request.getHeader("User-Agent");
-
-        if (!currentIp.equals(sessionIp) || !currentAgent.equals(sessionAgent)) {
-            session.invalidate();
-            response.sendRedirect(request.getContextPath() + "/login"); // Redirect to login if session IP or agent does not match
-            return;
-        }
-
         String action = request.getParameter("action");
         if ("add".equals(action)) {
             Product tempProduct = createProductFromRequest(request, false);
