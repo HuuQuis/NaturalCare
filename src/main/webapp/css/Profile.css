@@ -1,0 +1,20 @@
+.form-profile {
+    background-color: #eee;
+    transform: scale(1.1);
+    margin-left: 25%; /* Adjust margin to center the table */
+    border: 2px solid rgb(197 194 194 / 0%);
+    border-radius: 8px;
+    max-width: 900px; /* Increase the width of the container */
+    margin-bottom: 3%;
+}
+
+.profile-card {
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+}
+
+.profile-img {
+    width: 150px;
+}
+  
