@@ -2,6 +2,27 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html lang="en">
+<style>
+    tr.collapse:not(.show) {
+        display: none;
+    }
+
+    tr.collapse.show {
+        display: table-row;
+        animation: slideDown 0.25s ease;
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: scaleY(0.95);
+        }
+        to {
+            opacity: 1;
+            transform: scaleY(1);
+        }
+    }
+</style>
 
 <div class="main-wrapper">
     <div class="page-wrapper">
@@ -11,31 +32,45 @@
                     <h4>Product List</h4>
                 </div>
                 <div class="page-btn" >
-                    <a href="${pageContext.request.contextPath}/productManage?action=add" class="btn btn-added"><img
-                            src="${pageContext.request.contextPath}/adminassets/img/icons/plus.svg" alt="img"
-                            class="me-1">Add New Product</a>
-
+                    <button type="button" class="btn btn-info d-inline-flex align-items-center" onclick="location.href='${pageContext.request.contextPath}/productManage?action=add';" style="gap: 6px;">
+                        <i class="mdi mdi-plus-one" style="font-size: 19px; color: white;"></i>
+                        Add New Product
+                    </button>
                 </div>
             </div>
 
             <div class="card">
                 <div class="card-body">
                     <div class="table-top">
-                        <div class="search-set">
-                            <div class="search-path">
-                                <a class="btn btn-filter" id="filter_search">
-                                    <img src="${pageContext.request.contextPath}/adminassets/img/icons/filter.svg"
-                                         alt="img">
-                                    <span><img src="${pageContext.request.contextPath}/adminassets/img/icons/closes.svg"
-                                               alt="img"></span>
-                                </a>
-                            </div>
-                            <div class="search-input">
-                                <a class="btn btn-searchset"><img
-                                        src="${pageContext.request.contextPath}/adminassets/img/icons/search-white.svg"
-                                        alt="img"></a>
+                        <div class="search-set d-flex align-items-center flex-wrap" style="gap: 15px;">
+                            <form id="filterForm" method="get" action="productManage"
+                                  class="d-flex align-items-center flex-wrap" style="gap: 10px;">
+                                <select name="categoryId" id="categorySelect" class="form-select" style="width: 180px;">
+                                    <option value="">All Categories</option>
+                                    <c:forEach var="cat" items="${categories}">
+                                        <option value="${cat.id}" ${cat.id == selectedCategoryId ? 'selected' : ''}>${cat.name}</option>
+                                    </c:forEach>
+                                </select>
+                                <select name="subCategoryId" id="subCategorySelect" class="form-select"
+                                        style="width: 180px;">
+                                    <option value="">All Subcategories</option>
+                                    <c:forEach var="sub" items="${subCategories}">
+                                        <option value="${sub.id}"
+                                                data-category="${sub.productCategoryId}" ${sub.id == selectedSubCategoryId ? 'selected' : ''}>${sub.name}</option>
+                                    </c:forEach>
+                                </select>
+                                <button type="submit" class="btn btn-primary">Filter</button>
+                            </form>
+
+                            <div class="position-relative">
+                                <input type="text" id="productSearchInput" class="form-control"
+                                       placeholder="Search by product name..."
+                                       style="padding-left: 30px; min-width: 250px;"/>
+                                <i class="mdi mdi-magnify position-absolute"
+                                   style="left: 10px; top: 50%; transform: translateY(-50%); pointer-events: none;"></i>
                             </div>
                         </div>
+
                     </div>
 
                         <table class="table">
@@ -49,112 +84,189 @@
                                 <th>Actions</th>
                             </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="variantAccordion">
                             <c:forEach var="c" items="${products}" varStatus="loop">
-                                <tr>
+                                <tr data-name="${c.name.toLowerCase()}">
+                                <!-- Row chính -->
                                     <td>${(page - 1) * pageSize + loop.index + 1}</td>
                                     <td>
                                             ${c.name}
-                                                <button class="btn btn-link toggle-variant-btn" type="button"
-                                                        data-bs-toggle="collapse"
-                                                        data-bs-target="#variations${c.id}"
-                                                        aria-expanded="false"
-                                                        aria-controls="variations${c.id}">
-                                                    <i class="fas fa-chevron-down chevron-icon" id="chevron-${c.id}"></i>
-                                                </button>
-
-
+                                        <button class="btn btn-link toggle-variant-btn" type="button"
+                                                data-target="#variations${c.id}">
+                                            <i class="mdi mdi-arrow-down-drop-circle-outline chevron-icon"
+                                               id="chevron-${c.id}"
+                                               style="cursor: pointer;font-size: 20px;"></i>
+                                        </button>
                                     </td>
                                     <td>${c.description.length() > 10 ? c.description.substring(0,10).concat('...') : c.description}</td>
                                     <td>${c.information.length() > 10 ? c.information.substring(0,10).concat('...') : c.information}</td>
                                     <td>${c.guideline.length() > 10 ? c.guideline.substring(0,10).concat('...') : c.guideline}</td>
                                     <td>
                                         <a class="me-3" href="productManage?action=edit&id=${c.id}">
-                                            <img src="${pageContext.request.contextPath}/adminassets/img/icons/edit.svg"
-                                                 alt="img">
+                                            <i class="mdi mdi-table-edit"
+                                               style="display: inline-block;
+                                                  font-size: 20px;
+                                                  width: 40px;
+                                                  text-align: center;
+                                                  color: #3f50f6;"></i>
                                         </a>
                                         <form action="productManage" method="post" style="display:inline;"
                                               onsubmit="return confirm('Are you sure to delete this product?');">
                                             <input type="hidden" name="action" value="delete"/>
                                             <input type="hidden" name="id" value="${c.id}"/>
-                                            <button type="submit" class="btn btn-delete">
-                                                <img src="${pageContext.request.contextPath}/adminassets/img/icons/delete.svg"
-                                                     alt="img">
-                                            </button>
+
+                                            <!-- Nút submit ẩn để gọi submit hợp lệ -->
+                                            <button type="submit" id="submit-${c.id}" style="display:none;"></button>
+
+                                            <!-- Icon đóng vai trò nút -->
+                                            <i class="mdi mdi-delete"
+                                               role="button"
+                                               tabindex="0"
+                                               onclick="document.getElementById('submit-${c.id}').click();"
+                                               style="cursor: pointer;
+                                                  display: inline-block;
+                                                  font-size: 20px;
+                                                  width: 40px;
+                                                  text-align: center;
+                                                  color: #3f50f6;">
+                                            </i>
                                         </form>
                                     </td>
                                 </tr>
-                                <!-- Bảng phụ nằm bên ngoài bảng chính -->
+
+                                <!-- Row phụ hiển thị variants -->
+                                <tr class="collapse" id="variations${c.id}" data-bs-parent="#variantAccordion">
+                                    <td colspan="6">
+                                        <div class="card card-body border border-1">
+                                            <h6 class="mb-3">Variants of ${c.name}</h6>
+                                            <table class="table table-bordered">
+                                                <thead>
+                                                <tr>
+                                                    <th>No.</th>
+                                                    <th>Image</th>
+                                                    <th>Color</th>
+                                                    <th>Size</th>
+                                                    <th>Price</th>
+                                                    <th>Stock</th>
+                                                    <th>Sold</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <c:forEach var="variation" items="${productVariantsMap[c.id]}" varStatus="loop">
+                                                    <tr>
+                                                        <td>${loop.index + 1}</td>
+                                                        <td><img src="${pageContext.request.contextPath}/${variation.imageUrl}" style="max-width: 100px; max-height: 100px;"></td>
+                                                        <td>${variation.color}</td>
+                                                        <td>${variation.size}</td>
+                                                        <td>${variation.price}</td>
+                                                        <td>${variation.qtyInStock}</td>
+                                                        <td>${variation.sold}</td>
+                                                        <td>
+                                                            <a class="me-3" href="productVariantManage?action=edit&id=${variation.variationId}">
+                                                                <i class="mdi mdi-table-edit"
+                                                                   style="display: inline-block;
+                                                                      font-size: 20px;
+                                                                      width: 40px;
+                                                                      text-align: center;
+                                                                      color: #3f50f6;">
+                                                                </i>
+                                                            </a>
+                                                            <form action="productVariantManage" method="post" style="display:inline;"
+                                                                  onsubmit="return confirm('Are you sure to delete this product variant?');">
+                                                                <input type="hidden" name="action" value="delete"/>
+                                                                <input type="hidden" name="id" value="${variation.variationId}"/>
+
+                                                                <button type="submit" id="submit-${variation.variationId}" style="display:none;"></button>
+
+                                                                <i class="mdi mdi-delete"
+                                                                   role="button"
+                                                                   tabindex="0"
+                                                                   onclick="document.getElementById('submit-${variation.variationId}').click();"
+                                                                   style="cursor: pointer;
+                                                                      display: inline-block;
+                                                                      font-size: 20px;
+                                                                      width: 40px;
+                                                                      text-align: center;
+                                                                      color: #3f50f6;">
+                                                                </i>
+                                                            </form>
+                                                        </td>
+                                                    </tr>
+                                                </c:forEach>
+                                                </tbody>
+                                            </table>
+                                            <div class="text-end">
+                                                <button type="button" class="btn btn-info d-inline-flex align-items-center" onclick="location.href='${pageContext.request.contextPath}/productVariantManage?action=add&productId=${c.id}';" style="gap: 6px;">
+                                                    Add New Product Variant
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
                             </c:forEach>
                             </tbody>
                         </table>
-                    <div id="variantAccordion">
-                        <c:forEach var="c" items="${products}">
-                            <div class="collapse mt-2" id="variations${c.id}" data-bs-parent="#variantAccordion">
-                                <div class="card card-body border border-1">
-                                    <h6 class="mb-3">Variants of ${c.name}</h6>
-                                    <table class="table table-bordered">
-                                        <thead>
-                                        <tr>
-                                            <th>No.</th>
-                                            <th>Image</th>
-                                            <th>Color</th>
-                                            <th>Size</th>
-                                            <th>Price</th>
-                                            <th>Stock</th>
-                                            <th>Sold</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        <c:forEach var="variation" items="${productVariantsMap[c.id]}" varStatus="loop">
-                                            <tr>
-                                                <td>${loop.index + 1}</td>
-                                                <td><img src="${pageContext.request.contextPath}/${variation.imageUrl}" alt="product image"
-                                                         style="max-width: 100px; max-height: 100px;"></td>
-                                                <td>${variation.color}</td>
-                                                <td>${variation.size}</td>
-                                                <td>${variation.price}</td>
-                                                <td>${variation.qtyInStock}</td>
-                                                <td>${variation.sold}</td>
-                                                <td>
-<%--                                                    <a class="me-3" href="productVariantManage?action=edit&id=${variation.variationId}">--%>
-<%--                                                        <img src="${pageContext.request.contextPath}/adminassets/img/icons/edit.svg"--%>
-<%--                                                             alt="img">--%>
-<%--                                                    </a>--%>
-                                                    <form action="productVariantManage" method="post" style="display:inline;"
-                                                          onsubmit="return confirm('Are you sure to delete this product variant?');">
-                                                        <input type="hidden" name="action" value="delete"/>
-                                                        <input type="hidden" name="variantId" value="${variation.variationId}"/>
-                                                        <button type="submit" class="btn btn-delete">
-                                                            <img src="${pageContext.request.contextPath}/adminassets/img/icons/delete.svg"
-                                                                 alt="img">
-                                                        </button>
-                                                    </form>
-                                                </td>
-                                            </tr>
-                                        </c:forEach>
-                                        <div class="page-header">
-                                            <div class="page-btn" >
-                                                <a href="${pageContext.request.contextPath}/productVariantManage?action=add&productId=${c.id}" class="btn btn-added">
-                                                    <img src="${pageContext.request.contextPath}/adminassets/img/icons/plus.svg" alt="img" class="me-1">
-                                                    Add New Product Variant
-                                                </a>
-                                            </div>
-                                        </div>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </c:forEach>
-                    </div>
 <%--                    pagination--%>
                     <div class="d-flex justify-content-end mt-3">
                         <ul class="pagination">
-                            <c:forEach var="i" begin="1" end="${totalPage}">
-                                <li class="page-item ${i == page ? 'active' : ''}">
-                                    <a class="page-link" href="productManage?page=${i}">${i}</a>
-                                </li>
-                            </c:forEach>
+                            <c:set var="pageUrlBase" value="productManage?" />
+                            <c:if test="${not empty selectedCategoryId}">
+                                <c:set var="pageUrlBase" value="${pageUrlBase}&categoryId=${selectedCategoryId}" />
+                            </c:if>
+                            <c:if test="${not empty selectedSubCategoryId}">
+                                <c:set var="pageUrlBase" value="${pageUrlBase}&subCategoryId=${selectedSubCategoryId}" />
+                            </c:if>
+
+                            <c:choose>
+                                <c:when test="${totalPage <= 4}">
+                                    <c:forEach var="i" begin="1" end="${totalPage}">
+                                        <li class="page-item ${i == page ? 'active' : ''}">
+                                            <a class="page-link" href="${pageUrlBase}&page=${i}">${i}</a>
+                                        </li>
+                                    </c:forEach>
+                                </c:when>
+
+                                <c:when test="${page <= 2}">
+                                    <c:forEach var="i" begin="1" end="3">
+                                        <li class="page-item ${i == page ? 'active' : ''}">
+                                            <a class="page-link" href="${pageUrlBase}&page=${i}">${i}</a>
+                                        </li>
+                                    </c:forEach>
+                                    <li class="page-item disabled"><span class="page-link">...</span></li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="${pageUrlBase}&page=${totalPage}">${totalPage}</a>
+                                    </li>
+                                </c:when>
+
+                                <c:when test="${page >= totalPage - 1}">
+                                    <li class="page-item">
+                                        <a class="page-link" href="${pageUrlBase}&page=1">1</a>
+                                    </li>
+                                    <li class="page-item disabled"><span class="page-link">...</span></li>
+                                    <c:forEach var="i" begin="${totalPage - 2}" end="${totalPage}">
+                                        <li class="page-item ${i == page ? 'active' : ''}">
+                                            <a class="page-link" href="${pageUrlBase}&page=${i}">${i}</a>
+                                        </li>
+                                    </c:forEach>
+                                </c:when>
+
+                                <c:otherwise>
+                                    <li class="page-item">
+                                        <a class="page-link" href="${pageUrlBase}&page=1">1</a>
+                                    </li>
+                                    <li class="page-item ${page == page ? 'active' : ''}">
+                                        <a class="page-link" href="${pageUrlBase}&page=${page}">${page}</a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="${pageUrlBase}&page=${page + 1}">${page + 1}</a>
+                                    </li>
+                                    <li class="page-item disabled"><span class="page-link">...</span></li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="${pageUrlBase}&page=${totalPage}">${totalPage}</a>
+                                    </li>
+                                </c:otherwise>
+                            </c:choose>
                         </ul>
                     </div>
                 </div>
@@ -162,55 +274,117 @@
         </div>
     </div>
 </div>
-
-<script src="${pageContext.request.contextPath}/adminassets/js/jquery-3.6.0.min.js"></script>
-
-<script src="${pageContext.request.contextPath}/adminassets/js/feather.min.js"></script>
-
-<script src="${pageContext.request.contextPath}/adminassets/js/jquery.slimscroll.min.js"></script>
-
-<script src="${pageContext.request.contextPath}/adminassets/js/bootstrap.bundle.min.js"></script>
-
-<script src="${pageContext.request.contextPath}/adminassets/plugins/select2/js/select2.min.js"></script>
-
-<script src="${pageContext.request.contextPath}/adminassets/plugins/sweetalert/sweetalert2.all.min.js"></script>
-<script src="${pageContext.request.contextPath}/adminassets/plugins/sweetalert/sweetalerts.min.js"></script>
-
-<script src="${pageContext.request.contextPath}/adminassets/js/script.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const allIcons = document.querySelectorAll('.chevron-icon');
-
         document.querySelectorAll('.toggle-variant-btn').forEach(btn => {
-            const targetId = btn.getAttribute('data-bs-target');
-            const collapseEl = document.querySelector(targetId);
+            btn.addEventListener('click', function (e) {
+                e.preventDefault();
 
-            if (collapseEl) {
-                collapseEl.addEventListener('show.bs.collapse', () => {
-                    // Reset all arrows to down
-                    allIcons.forEach(icon => {
-                        icon.classList.remove('fa-chevron-up');
-                        icon.classList.add('fa-chevron-down');
-                    });
+                const targetId = btn.getAttribute('data-target');
+                const targetCollapse = document.querySelector(targetId);
+                const icon = btn.querySelector('.chevron-icon');
 
-                    // change the clicked button's icon to up
-                    const icon = btn.querySelector('.chevron-icon');
-                    if (icon) {
-                        icon.classList.remove('fa-chevron-down');
-                        icon.classList.add('fa-chevron-up');
+                const isShown = targetCollapse.classList.contains('show');
+
+                // Đóng tất cả hàng khác
+                document.querySelectorAll('tr.collapse.show').forEach(row => {
+                    if (row !== targetCollapse) {
+                        row.classList.remove('show');
+                        const iconReset = row.previousElementSibling?.querySelector('.chevron-icon');
+                        if (iconReset) {
+                            iconReset.classList.remove('mdi-arrow-up-drop-circle-outline');
+                            iconReset.classList.add('mdi-arrow-down-drop-circle-outline');
+                        }
                     }
                 });
 
-                collapseEl.addEventListener('hide.bs.collapse', () => {
-                    const icon = btn.querySelector('.chevron-icon');
-                    if (icon) {
-                        icon.classList.remove('fa-chevron-up');
-                        icon.classList.add('fa-chevron-down');
+                // Toggle cái hiện tại
+                if (isShown) {
+                    targetCollapse.classList.remove('show');
+                    icon.classList.remove('mdi-arrow-up-drop-circle-outline');
+                    icon.classList.add('mdi-arrow-down-drop-circle-outline');
+                } else {
+                    targetCollapse.classList.add('show');
+                    icon.classList.remove('mdi-arrow-down-drop-circle-outline');
+                    icon.classList.add('mdi-arrow-up-drop-circle-outline');
+                }
+            });
+        });
+        const searchInput = document.getElementById('productSearchInput');
+        const rows = document.querySelectorAll('tbody#variantAccordion tr');
+
+        searchInput.addEventListener('input', function () {
+            const searchTerm = this.value.trim().toLowerCase();
+
+            let currentMainRow = null;
+            rows.forEach((row, index) => {
+                if (row.hasAttribute('data-name')) {
+                    currentMainRow = row;
+                    const match = row.getAttribute('data-name').includes(searchTerm);
+
+                    // Hiển thị hoặc ẩn dòng chính
+                    row.style.display = match ? '' : 'none';
+
+                    // Ẩn luôn dòng phụ theo nó
+                    const variantRow = rows[index + 1];
+                    if (variantRow && variantRow.classList.contains('collapse')) {
+                        variantRow.style.display = match ? '' : 'none';
                     }
-                });
+                }
+            });
+        });
+        // Filter subcategories based on selected category
+        const categorySelect = document.getElementById('categorySelect');
+        const subCategorySelect = document.getElementById('subCategorySelect');
+        const allSubOptions = Array.from(subCategorySelect.options);
+
+        function filterSubCategories() {
+            const selectedCategory = categorySelect.value;
+            const selectedSubCategory = subCategorySelect.getAttribute('data-selected');
+            subCategorySelect.innerHTML = '';
+            // Always add "All Subcategories"
+            const allOption = document.createElement('option');
+            allOption.value = '';
+            allOption.textContent = 'All Subcategories';
+            subCategorySelect.appendChild(allOption);
+
+            allSubOptions.forEach(opt => {
+                if (!opt.value) return; // skip the default "All Subcategories" from original
+                if (!selectedCategory || opt.getAttribute('data-category') === selectedCategory) {
+                    const newOpt = opt.cloneNode(true);
+                    // Restore selected subcategory if matches
+                    if (selectedSubCategory && newOpt.value === selectedSubCategory) {
+                        newOpt.selected = true;
+                    }
+                    subCategorySelect.appendChild(newOpt);
+                }
+            });
+        }
+
+        // --- Fix: Set category if subcategory is selected ---
+        // If a subcategory is selected, set the category dropdown accordingly
+        const selectedSubCategoryOption = subCategorySelect.querySelector('option[selected]');
+        if (selectedSubCategoryOption && selectedSubCategoryOption.value) {
+            const subCatCategoryId = selectedSubCategoryOption.getAttribute('data-category');
+            if (subCatCategoryId) {
+                categorySelect.value = subCatCategoryId;
             }
+            // Mark the selected subcategory for filterSubCategories
+            subCategorySelect.setAttribute('data-selected', selectedSubCategoryOption.value);
+        }
+
+        // Initial filter on page load
+        filterSubCategories();
+
+        // When category changes, filter subcategories
+        categorySelect.addEventListener('change', function () {
+            subCategorySelect.removeAttribute('data-selected');
+            filterSubCategories();
+            // Optionally reset subcategory selection
+            subCategorySelect.selectedIndex = 0;
         });
     });
 </script>
+
 
 </html>

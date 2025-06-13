@@ -7,10 +7,9 @@
 <html lang="en">
 
 <head>
-    <!-- Required meta tags -->
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <title>Breeze Admin</title>
+    <title>NatureCare-ManagerPage</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/adminassets/vendors/mdi/css/materialdesignicons.min.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/adminassets/vendors/flag-icon-css/css/flag-icon.min.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/adminassets/vendors/css/vendor.bundle.base.css" />
@@ -79,6 +78,10 @@
 <script src="${pageContext.request.contextPath}/adminassets/vendors/flot/jquery.flot.fillbetween.js"></script>
 <script src="${pageContext.request.contextPath}/adminassets/vendors/flot/jquery.flot.stack.js"></script>
 <script src="${pageContext.request.contextPath}/adminassets/vendors/flot/jquery.flot.pie.js"></script>
+
+<!-- Bootstrap JS (includes Popper) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 <!-- End plugin js for this page -->
 <!-- inject:js -->
 <script src="${pageContext.request.contextPath}/adminassets/js/off-canvas.js"></script>
