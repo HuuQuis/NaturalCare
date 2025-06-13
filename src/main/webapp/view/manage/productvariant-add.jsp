@@ -5,7 +5,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
-    <title>Breeze Admin</title>
+    <title>Manager | Nature Care</title>
     <link rel="stylesheet"
           href="${pageContext.request.contextPath}/adminassets/vendors/mdi/css/materialdesignicons.min.css"/>
     <link rel="stylesheet"
@@ -86,7 +86,7 @@
                                             </div>
                                             <div class="form-group">
                                                 <label>File upload</label>
-                                                <input type="file" name="img[]" class="file-upload-default"
+                                                <input type="file" name="image" class="file-upload-default"
                                                        accept="image/*" ${empty previousImageUrl ? 'required' : ''}
                                                        style="display: none;"/>
 

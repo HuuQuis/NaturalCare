@@ -175,7 +175,7 @@
                                                             <form action="productVariantManage" method="post" style="display:inline;"
                                                                   onsubmit="return confirm('Are you sure to delete this product variant?');">
                                                                 <input type="hidden" name="action" value="delete"/>
-                                                                <input type="hidden" name="id" value="${variation.variationId}"/>
+                                                                <input type="hidden" name="variantId" value="${variation.variationId}"/>
 
                                                                 <button type="submit" id="submit-${variation.variationId}" style="display:none;"></button>
 
@@ -219,7 +219,7 @@
                             </c:if>
 
                             <c:choose>
-                                <c:when test="${totalPage <= 4}">
+                                <c:when test="${totalPage <= 5}">
                                     <c:forEach var="i" begin="1" end="${totalPage}">
                                         <li class="page-item ${i == page ? 'active' : ''}">
                                             <a class="page-link" href="${pageUrlBase}&page=${i}">${i}</a>
@@ -227,8 +227,8 @@
                                     </c:forEach>
                                 </c:when>
 
-                                <c:when test="${page <= 2}">
-                                    <c:forEach var="i" begin="1" end="3">
+                                <c:when test="${page <= 3}">
+                                    <c:forEach var="i" begin="1" end="4">
                                         <li class="page-item ${i == page ? 'active' : ''}">
                                             <a class="page-link" href="${pageUrlBase}&page=${i}">${i}</a>
                                         </li>
@@ -239,12 +239,12 @@
                                     </li>
                                 </c:when>
 
-                                <c:when test="${page >= totalPage - 1}">
+                                <c:when test="${page >= totalPage - 2}">
                                     <li class="page-item">
                                         <a class="page-link" href="${pageUrlBase}&page=1">1</a>
                                     </li>
                                     <li class="page-item disabled"><span class="page-link">...</span></li>
-                                    <c:forEach var="i" begin="${totalPage - 2}" end="${totalPage}">
+                                    <c:forEach var="i" begin="${totalPage - 3}" end="${totalPage}">
                                         <li class="page-item ${i == page ? 'active' : ''}">
                                             <a class="page-link" href="${pageUrlBase}&page=${i}">${i}</a>
                                         </li>
@@ -255,12 +255,12 @@
                                     <li class="page-item">
                                         <a class="page-link" href="${pageUrlBase}&page=1">1</a>
                                     </li>
-                                    <li class="page-item ${page == page ? 'active' : ''}">
-                                        <a class="page-link" href="${pageUrlBase}&page=${page}">${page}</a>
-                                    </li>
-                                    <li class="page-item">
-                                        <a class="page-link" href="${pageUrlBase}&page=${page + 1}">${page + 1}</a>
-                                    </li>
+                                    <li class="page-item disabled"><span class="page-link">...</span></li>
+                                    <c:forEach var="i" begin="${page - 1}" end="${page + 1}">
+                                        <li class="page-item ${i == page ? 'active' : ''}">
+                                            <a class="page-link" href="${pageUrlBase}&page=${i}">${i}</a>
+                                        </li>
+                                    </c:forEach>
                                     <li class="page-item disabled"><span class="page-link">...</span></li>
                                     <li class="page-item">
                                         <a class="page-link" href="${pageUrlBase}&page=${totalPage}">${totalPage}</a>

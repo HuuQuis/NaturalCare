@@ -1,7 +1,7 @@
 package controller;
 
-import dal.ProductVariationDAO;
 import dal.ProductDAO;
+import dal.ProductVariationDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
@@ -14,9 +14,11 @@ import model.ProductVariation;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
-import java.util.Properties;
 
 @MultipartConfig
 @WebServlet(name = "ProductVariantManageServlet", urlPatterns = {"/productVariantManage"})
@@ -47,15 +49,16 @@ public class ProductVariantManageServlet extends HttpServlet {
 
             ProductVariation tempProductVariant = createProductVariantFromRequest(request, false);
 
+            // ===== Handle Image Upload & Save Immediately If Valid =====
             if (file != null && file.getSize() > 0) {
                 String contentType = file.getContentType();
+
                 if (!isImageFile(contentType)) {
                     handleValidationError("Uploaded file must be an image (JPEG, PNG, GIF).", request, response, tempProductVariant, false);
                     return;
                 }
 
-                InputStream imageValidationStream = file.getInputStream();
-                BufferedImage image = ImageIO.read(imageValidationStream);
+                BufferedImage image = ImageIO.read(file.getInputStream());
                 if (image == null) {
                     handleValidationError("The uploaded file is not a valid image.", request, response, tempProductVariant, false);
                     return;
@@ -68,17 +71,12 @@ public class ProductVariantManageServlet extends HttpServlet {
                     return;
                 }
 
+                // Save image to disk immediately
                 imageFileName = file.getSubmittedFileName();
+                tempProductVariant.setImageUrl(imageFileName);
 
-                InputStream input = getClass().getClassLoader().getResourceAsStream("config.properties");
-                Properties prop = new Properties();
-                prop.load(input);
-                String uploadPath = prop.getProperty("upload.path");
-
-                if (uploadPath == null || uploadPath.isEmpty()) {
-                    throw new ServletException("Upload path is not configured in properties file.");
-                }
-
+                String webappPath = getServletContext().getRealPath("/");
+                String uploadPath = webappPath + "images" + File.separator + "product";
                 File uploadDir = new File(uploadPath);
                 if (!uploadDir.exists()) uploadDir.mkdirs();
 
@@ -92,25 +90,38 @@ public class ProductVariantManageServlet extends HttpServlet {
                         fos.write(buffer, 0, bytesRead);
                     }
                 }
-
-                tempProductVariant.setImageUrl("/images/product/" + imageFileName);
             } else {
+                // Nếu không chọn file mới, lấy ảnh cũ nếu có
                 String previousImageUrl = request.getParameter("previousImageUrl");
                 if (previousImageUrl != null && !previousImageUrl.isEmpty()) {
                     tempProductVariant.setImageUrl(previousImageUrl);
                 }
             }
 
+            // ===== Validate Other Fields =====
             if (!validateProductVariantInput(request, response, tempProductVariant, false)) {
                 return;
             }
 
+            // ===== Save to Database =====
             productVariationDao.addProductVariation(tempProductVariant, Integer.parseInt(productId));
             response.sendRedirect(request.getContextPath() + "/productManage");
-        } else if ("delete".equals(action)) {
-            int productVariantId = Integer.parseInt(request.getParameter("variantId"));
-            productVariationDao.deleteProductVariation(productVariantId);
-            response.sendRedirect(request.getContextPath() + "/productManage");
+        }
+
+        else if ("delete".equals(action)) {
+            String variantIdStr = request.getParameter("variantId");
+            if (variantIdStr == null || variantIdStr.trim().isEmpty()) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Variant ID is required for delete operation");
+                return;
+            }
+
+            try {
+                int productVariantId = Integer.parseInt(variantIdStr.trim());
+                productVariationDao.deleteProductVariation(productVariantId);
+                response.sendRedirect(request.getContextPath() + "/productManage");
+            } catch (NumberFormatException e) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid variant ID format");
+            }
         }
     }
 
