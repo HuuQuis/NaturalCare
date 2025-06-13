@@ -1,5 +1,6 @@
 package controller;
 
+import dal.ProductCategoryDAO;
 import dal.ProductDAO;
 import dal.SubProductCategoryDAO;
 import jakarta.servlet.ServletException;
@@ -8,6 +9,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.Product;
+import model.ProductCategory;
 import model.ProductVariation;
 import model.SubProductCategory;
 
@@ -18,12 +20,16 @@ import java.util.List;
 public class ProductManageServlet extends HttpServlet {
     ProductDAO productDAO = new ProductDAO();
     SubProductCategoryDAO subProductCategoryDAO = new SubProductCategoryDAO();
+    ProductCategoryDAO categoryDAO = new ProductCategoryDAO();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
+        List<ProductCategory> categories = categoryDAO.getAllProductCategories();
+        request.setAttribute("categories", categories);
         List<SubProductCategory> subCategories = subProductCategoryDAO.getAllSubProductCategories();
         request.setAttribute("subCategories", subCategories);
+
         if ("edit".equals(action)) {
             int productId = Integer.parseInt(request.getParameter("id"));
             Product product = productDAO.getProductById(productId);
@@ -32,18 +38,35 @@ public class ProductManageServlet extends HttpServlet {
         } else if ("add".equals(action)) {
             request.getRequestDispatcher("/view/manage/product-add.jsp").forward(request, response);
         } else {
-            // pagination
+            // pagination & filter by category/subcategory
             String pageRaw = request.getParameter("page");
             int page = (pageRaw == null || pageRaw.isEmpty()) ? 1 : Integer.parseInt(pageRaw);
             int pageSize = 10;
 
-            List<Product> products = productDAO.getProductsByPage(page, pageSize);
+            String categoryIdRaw = request.getParameter("categoryId");
+            String subCategoryIdRaw = request.getParameter("subCategoryId");
+            Integer categoryId = (categoryIdRaw != null && !categoryIdRaw.trim().isEmpty()) ? Integer.parseInt(categoryIdRaw.trim()) : null;
+            Integer subCategoryId = (subCategoryIdRaw != null && !subCategoryIdRaw.trim().isEmpty()) ? Integer.parseInt(subCategoryIdRaw.trim()) : null;
+
+            List<Product> products;
+            int total;
+            if (subCategoryId != null) {
+                products = productDAO.getProductsBySubCategoryId(subCategoryId, page);
+                total = productDAO.getTotalProductsCountBySubCategory(subCategoryId);
+                request.setAttribute("selectedSubCategoryId", subCategoryId);
+            } else if (categoryId != null) {
+                products = productDAO.getProductsByCategoryId(categoryId, page);
+                total = productDAO.getTotalProductsCountByCategory(categoryId);
+                request.setAttribute("selectedCategoryId", categoryId);
+            } else {
+                products = productDAO.getProductsByPage(page, pageSize);
+                total = productDAO.countTotalProducts();
+            }
 
             java.util.Map<Integer, List<ProductVariation>> productVariantsMap = new java.util.HashMap<>();
             for (Product p : products) {
                 productVariantsMap.put(p.getId(), productDAO.getProductVariationsByProductId(p.getId()));
             }
-            int total = productDAO.countTotalProducts();
             int totalPage = (int) Math.ceil((double) total / pageSize);
 
             request.setAttribute("view", "product");
@@ -151,7 +174,15 @@ public class ProductManageServlet extends HttpServlet {
             handleValidationError("Product name must be less than 50 characters", request, response, tempProduct, isUpdate);
             return false; // Return false when validation FAILS
         }
+        if (!name.matches("^[a-zA-Z ]+$")) {
+            handleValidationError("Product name can only contain letters and spaces", request, response, tempProduct, isUpdate);
+            return false; // Return false when validation FAILS
+        }
 
+        if (productDAO.isProductNameExists(name, tempProduct.getId())) {
+            handleValidationError("Product name already exists", request, response, tempProduct, isUpdate);
+            return false; // Return false when validation FAILS
+        }
         // Validate description
         if (description == null || description.isEmpty()) {
             handleValidationError("Product description cannot be empty", request, response, tempProduct, isUpdate);

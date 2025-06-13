@@ -233,6 +233,21 @@ public class ProductDAO extends DBContext {
         return 0;
     }
 
+   public boolean isProductNameExists(String name, int excludeId) {
+       sql = "SELECT COUNT(*) FROM product WHERE product_name = ? AND product_id != ?";
+       try {
+           stm = connection.prepareStatement(sql);
+           stm.setString(1, name);
+           stm.setInt(2, excludeId);
+           rs = stm.executeQuery();
+           if (rs.next()) {
+               return rs.getInt(1) > 0;
+           }
+       } catch (SQLException e) {
+           e.printStackTrace();
+       }
+         return false;
+   }
 
     public void addProductVariation(ProductVariation variation, int productId) {
         sql = "INSERT INTO product_variation (product_id, product_image, color, size, price, qty_in_stock) VALUES (?, ?, ?, ?, ?, ?)";

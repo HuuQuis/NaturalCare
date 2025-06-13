@@ -14598,7 +14598,9 @@ dl {
     padding-right: 15px;
     width: calc(100% - 260px);
     height: 100px;
-    background-image: url("../../images/home/header-image.png");}
+    background-image: url("../../images/home/header-image.png");
+    background-size: contain;
+    background-position: center;}
     @media (max-width: 991px) {
       .navbar .navbar-menu-wrapper {
         width: 100%;

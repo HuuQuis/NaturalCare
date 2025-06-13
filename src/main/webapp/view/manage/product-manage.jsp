@@ -42,18 +42,35 @@
             <div class="card">
                 <div class="card-body">
                     <div class="table-top">
-                        <div class="search-set">
-                            <div class="search-path">
-                                <a class="btn btn-filter" id="filter_search">
-                                </a>
-                            </div>
-                            <div class="search-input position-relative">
-                                <label for="productSearchInput">
-                                    <input type="text" id="productSearchInput" class="form-control ps-5" style="padding-left: 20px" placeholder="Search by product name..." />
-                                    <i class="mdi mdi-magnify position-absolute" style="left: 5px; top: 20%; pointer-events: none;"></i>
-                                </label>
+                        <div class="search-set d-flex align-items-center flex-wrap" style="gap: 15px;">
+                            <form id="filterForm" method="get" action="productManage"
+                                  class="d-flex align-items-center flex-wrap" style="gap: 10px;">
+                                <select name="categoryId" id="categorySelect" class="form-select" style="width: 180px;">
+                                    <option value="">All Categories</option>
+                                    <c:forEach var="cat" items="${categories}">
+                                        <option value="${cat.id}" ${cat.id == selectedCategoryId ? 'selected' : ''}>${cat.name}</option>
+                                    </c:forEach>
+                                </select>
+                                <select name="subCategoryId" id="subCategorySelect" class="form-select"
+                                        style="width: 180px;">
+                                    <option value="">All Subcategories</option>
+                                    <c:forEach var="sub" items="${subCategories}">
+                                        <option value="${sub.id}"
+                                                data-category="${sub.productCategoryId}" ${sub.id == selectedSubCategoryId ? 'selected' : ''}>${sub.name}</option>
+                                    </c:forEach>
+                                </select>
+                                <button type="submit" class="btn btn-primary">Filter</button>
+                            </form>
+
+                            <div class="position-relative">
+                                <input type="text" id="productSearchInput" class="form-control"
+                                       placeholder="Search by product name..."
+                                       style="padding-left: 30px; min-width: 250px;"/>
+                                <i class="mdi mdi-magnify position-absolute"
+                                   style="left: 10px; top: 50%; transform: translateY(-50%); pointer-events: none;"></i>
                             </div>
                         </div>
+
                     </div>
 
                         <table class="table">
@@ -180,10 +197,9 @@
                                                 </tbody>
                                             </table>
                                             <div class="text-end">
-                                                <a href="${pageContext.request.contextPath}/productVariantManage?action=add&productId=${c.id}" class="btn btn-added">
-
+                                                <button type="button" class="btn btn-info d-inline-flex align-items-center" onclick="location.href='${pageContext.request.contextPath}/productVariantManage?action=add&productId=${c.id}';" style="gap: 6px;">
                                                     Add New Product Variant
-                                                </a>
+                                                </button>
                                             </div>
                                         </div>
                                     </td>
@@ -194,11 +210,63 @@
 <%--                    pagination--%>
                     <div class="d-flex justify-content-end mt-3">
                         <ul class="pagination">
-                            <c:forEach var="i" begin="1" end="${totalPage}">
-                                <li class="page-item ${i == page ? 'active' : ''}">
-                                    <a class="page-link" href="productManage?page=${i}">${i}</a>
-                                </li>
-                            </c:forEach>
+                            <c:set var="pageUrlBase" value="productManage?" />
+                            <c:if test="${not empty selectedCategoryId}">
+                                <c:set var="pageUrlBase" value="${pageUrlBase}&categoryId=${selectedCategoryId}" />
+                            </c:if>
+                            <c:if test="${not empty selectedSubCategoryId}">
+                                <c:set var="pageUrlBase" value="${pageUrlBase}&subCategoryId=${selectedSubCategoryId}" />
+                            </c:if>
+
+                            <c:choose>
+                                <c:when test="${totalPage <= 4}">
+                                    <c:forEach var="i" begin="1" end="${totalPage}">
+                                        <li class="page-item ${i == page ? 'active' : ''}">
+                                            <a class="page-link" href="${pageUrlBase}&page=${i}">${i}</a>
+                                        </li>
+                                    </c:forEach>
+                                </c:when>
+
+                                <c:when test="${page <= 2}">
+                                    <c:forEach var="i" begin="1" end="3">
+                                        <li class="page-item ${i == page ? 'active' : ''}">
+                                            <a class="page-link" href="${pageUrlBase}&page=${i}">${i}</a>
+                                        </li>
+                                    </c:forEach>
+                                    <li class="page-item disabled"><span class="page-link">...</span></li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="${pageUrlBase}&page=${totalPage}">${totalPage}</a>
+                                    </li>
+                                </c:when>
+
+                                <c:when test="${page >= totalPage - 1}">
+                                    <li class="page-item">
+                                        <a class="page-link" href="${pageUrlBase}&page=1">1</a>
+                                    </li>
+                                    <li class="page-item disabled"><span class="page-link">...</span></li>
+                                    <c:forEach var="i" begin="${totalPage - 2}" end="${totalPage}">
+                                        <li class="page-item ${i == page ? 'active' : ''}">
+                                            <a class="page-link" href="${pageUrlBase}&page=${i}">${i}</a>
+                                        </li>
+                                    </c:forEach>
+                                </c:when>
+
+                                <c:otherwise>
+                                    <li class="page-item">
+                                        <a class="page-link" href="${pageUrlBase}&page=1">1</a>
+                                    </li>
+                                    <li class="page-item ${page == page ? 'active' : ''}">
+                                        <a class="page-link" href="${pageUrlBase}&page=${page}">${page}</a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="${pageUrlBase}&page=${page + 1}">${page + 1}</a>
+                                    </li>
+                                    <li class="page-item disabled"><span class="page-link">...</span></li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="${pageUrlBase}&page=${totalPage}">${totalPage}</a>
+                                    </li>
+                                </c:otherwise>
+                            </c:choose>
                         </ul>
                     </div>
                 </div>
@@ -264,6 +332,56 @@
                     }
                 }
             });
+        });
+        // Filter subcategories based on selected category
+        const categorySelect = document.getElementById('categorySelect');
+        const subCategorySelect = document.getElementById('subCategorySelect');
+        const allSubOptions = Array.from(subCategorySelect.options);
+
+        function filterSubCategories() {
+            const selectedCategory = categorySelect.value;
+            const selectedSubCategory = subCategorySelect.getAttribute('data-selected');
+            subCategorySelect.innerHTML = '';
+            // Always add "All Subcategories"
+            const allOption = document.createElement('option');
+            allOption.value = '';
+            allOption.textContent = 'All Subcategories';
+            subCategorySelect.appendChild(allOption);
+
+            allSubOptions.forEach(opt => {
+                if (!opt.value) return; // skip the default "All Subcategories" from original
+                if (!selectedCategory || opt.getAttribute('data-category') === selectedCategory) {
+                    const newOpt = opt.cloneNode(true);
+                    // Restore selected subcategory if matches
+                    if (selectedSubCategory && newOpt.value === selectedSubCategory) {
+                        newOpt.selected = true;
+                    }
+                    subCategorySelect.appendChild(newOpt);
+                }
+            });
+        }
+
+        // --- Fix: Set category if subcategory is selected ---
+        // If a subcategory is selected, set the category dropdown accordingly
+        const selectedSubCategoryOption = subCategorySelect.querySelector('option[selected]');
+        if (selectedSubCategoryOption && selectedSubCategoryOption.value) {
+            const subCatCategoryId = selectedSubCategoryOption.getAttribute('data-category');
+            if (subCatCategoryId) {
+                categorySelect.value = subCatCategoryId;
+            }
+            // Mark the selected subcategory for filterSubCategories
+            subCategorySelect.setAttribute('data-selected', selectedSubCategoryOption.value);
+        }
+
+        // Initial filter on page load
+        filterSubCategories();
+
+        // When category changes, filter subcategories
+        categorySelect.addEventListener('change', function () {
+            subCategorySelect.removeAttribute('data-selected');
+            filterSubCategories();
+            // Optionally reset subcategory selection
+            subCategorySelect.selectedIndex = 0;
         });
     });
 </script>

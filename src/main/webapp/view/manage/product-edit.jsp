@@ -72,6 +72,7 @@
                                         </c:if>
                                         <form action="productManage" method="post">
                                             <input type="hidden" name="action" value="update">
+                                            <input type="hidden" name="id" value="${product.id}">
                                             <div class="form-group">
                                                 <label for="exampleInputName1">Product Name</label>
                                                 <input name="name" type="text" class="form-control"
