@@ -1,5 +1,7 @@
 package controller;
 
+import dal.ProductVariationDAO;
+import dal.ProductDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
@@ -9,35 +11,28 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
 import model.Product;
 import model.ProductVariation;
-import dal.ProductDAO;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.*;
 import java.util.List;
-
-import java.io.IOException;
 import java.util.Properties;
 
 @MultipartConfig
 @WebServlet(name = "ProductVariantManageServlet", urlPatterns = {"/productVariantManage"})
 public class ProductVariantManageServlet extends HttpServlet {
     ProductDAO productDao = new ProductDAO();
-
+    ProductVariationDAO productVariationDao = new ProductVariationDAO();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
         List<Product> products = productDao.getAllProducts();
         request.setAttribute("products", products);
-        if ("edit".equals(action)) {
-
-        }else if ("add".equals(action)) {
-                String productId = request.getParameter("productId");
-                request.setAttribute("productId", productId);
-                request.getRequestDispatcher("/view/manage/productvariant-add.jsp").forward(request, response);
-        }else {
-
+        if ("add".equals(action)) {
+            String productId = request.getParameter("productId");
+            request.setAttribute("productId", productId);
+            request.getRequestDispatcher("/view/manage/productvariant-add.jsp").forward(request, response);
         }
     }
 
@@ -53,6 +48,26 @@ public class ProductVariantManageServlet extends HttpServlet {
             ProductVariation tempProductVariant = createProductVariantFromRequest(request, false);
 
             if (file != null && file.getSize() > 0) {
+                String contentType = file.getContentType();
+                if (!isImageFile(contentType)) {
+                    handleValidationError("Uploaded file must be an image (JPEG, PNG, GIF).", request, response, tempProductVariant, false);
+                    return;
+                }
+
+                InputStream imageValidationStream = file.getInputStream();
+                BufferedImage image = ImageIO.read(imageValidationStream);
+                if (image == null) {
+                    handleValidationError("The uploaded file is not a valid image.", request, response, tempProductVariant, false);
+                    return;
+                }
+
+                int width = image.getWidth();
+                int height = image.getHeight();
+                if (width < 400 || width > 600 || height < 400 || height > 600) {
+                    handleValidationError("Image dimensions must be between 400x400 and 600x600 pixels.", request, response, tempProductVariant, false);
+                    return;
+                }
+
                 imageFileName = file.getSubmittedFileName();
 
                 InputStream input = getClass().getClassLoader().getResourceAsStream("config.properties");
@@ -70,15 +85,15 @@ public class ProductVariantManageServlet extends HttpServlet {
                 String filePath = uploadPath + File.separator + imageFileName;
 
                 try (FileOutputStream fos = new FileOutputStream(filePath);
-                     InputStream inputStream = file.getInputStream()) {
+                     InputStream uploadStream = file.getInputStream()) {
                     byte[] buffer = new byte[1024];
                     int bytesRead;
-                    while ((bytesRead = inputStream.read(buffer)) != -1) {
+                    while ((bytesRead = uploadStream.read(buffer)) != -1) {
                         fos.write(buffer, 0, bytesRead);
                     }
                 }
 
-                tempProductVariant.setImageUrl("/images/product/" + imageFileName); // NEW
+                tempProductVariant.setImageUrl("/images/product/" + imageFileName);
             } else {
                 String previousImageUrl = request.getParameter("previousImageUrl");
                 if (previousImageUrl != null && !previousImageUrl.isEmpty()) {
@@ -90,20 +105,21 @@ public class ProductVariantManageServlet extends HttpServlet {
                 return;
             }
 
-            productDao.addProductVariation(tempProductVariant, Integer.parseInt(productId));
+            productVariationDao.addProductVariation(tempProductVariant, Integer.parseInt(productId));
             response.sendRedirect(request.getContextPath() + "/productManage");
-            return;
-
-        } else if ("update".equals(action)) {
-            //
         } else if ("delete".equals(action)) {
             int productVariantId = Integer.parseInt(request.getParameter("variantId"));
-            productDao.deleteProductVariation(productVariantId);
+            productVariationDao.deleteProductVariation(productVariantId);
+            response.sendRedirect(request.getContextPath() + "/productManage");
         }
-        response.sendRedirect(request.getContextPath() + "/productManage");
     }
 
-
+    private boolean isImageFile(String contentType) {
+        return contentType.equals("image/jpeg") ||
+                contentType.equals("image/png") ||
+                contentType.equals("image/gif") ||
+                contentType.equals("image/jpg");
+    }
 
     private ProductVariation createProductVariantFromRequest(HttpServletRequest request, boolean isUpdate) throws ServletException {
         ProductVariation tempProductVariation = new ProductVariation();
@@ -137,36 +153,36 @@ public class ProductVariantManageServlet extends HttpServlet {
         return tempProductVariation;
     }
 
-    private boolean validateProductVariantInput(HttpServletRequest request, HttpServletResponse response, ProductVariation tempProductVariation, boolean isUpdate) throws ServletException, IOException {
-        String color = tempProductVariation.getColor();
-        String size = tempProductVariation.getSize();
-        int price = tempProductVariation.getPrice();
-        int quantity = tempProductVariation.getQtyInStock();
+    private boolean validateProductVariantInput(HttpServletRequest request, HttpServletResponse response, ProductVariation tempProductVariant, boolean isUpdate) throws ServletException, IOException {
+        String color = tempProductVariant.getColor();
+        String size = tempProductVariant.getSize();
+        int price = tempProductVariant.getPrice();
+        int quantity = tempProductVariant.getQtyInStock();
 
-        if (color== null || color.isEmpty()) {
-            handleValidationError("Color cannot be empty",request, response, tempProductVariation, isUpdate);
-            return false; // Validation failed
+        if (color == null || color.isEmpty()) {
+            handleValidationError("Color cannot be empty.", request, response, tempProductVariant, isUpdate);
+            return false;
         }
         if (size == null || size.isEmpty()) {
-            handleValidationError("Size cannot be empty", request, response, tempProductVariation, isUpdate);
-            return false; // Validation failed
+            handleValidationError("Size cannot be empty.", request, response, tempProductVariant, isUpdate);
+            return false;
         }
 
         if (!size.matches("\\d+ml")) {
-            handleValidationError("Size must be a number and in milliliters (e.g., 100ml)", request, response, tempProductVariation, isUpdate);
+            handleValidationError("Size must be in the format of number followed by 'ml' (e.g., 100ml).", request, response, tempProductVariant, isUpdate);
             return false;
         }
 
         if (price <= 0) {
-            handleValidationError("Price must be greater than 0", request, response, tempProductVariation, isUpdate);
-            return false; // Validation failed
+            handleValidationError("Price must be greater than 0.", request, response, tempProductVariant, isUpdate);
+            return false;
         }
         if (quantity <= 0) {
-            handleValidationError("Quantity must be greater than 0", request, response, tempProductVariation, isUpdate);
-            return false; // Validation failed
+            handleValidationError("Quantity must be greater than 0.", request, response, tempProductVariant, isUpdate);
+            return false;
         }
 
-        return true; // Validation passed
+        return true;
     }
 
     private void handleValidationError(String errorMessage, HttpServletRequest request, HttpServletResponse response, ProductVariation tempProductVariation, boolean isUpdate) throws ServletException, IOException {
@@ -174,8 +190,7 @@ public class ProductVariantManageServlet extends HttpServlet {
         request.setAttribute("tempProductVariation", tempProductVariation);
         request.setAttribute("products", productDao.getAllProducts());
         request.setAttribute("productId", request.getParameter("productId"));
-        
-        // Store the current image URL to preserve it
+
         if (tempProductVariation.getImageUrl() != null) {
             request.setAttribute("previousImageUrl", tempProductVariation.getImageUrl());
         }
@@ -186,5 +201,4 @@ public class ProductVariantManageServlet extends HttpServlet {
             request.getRequestDispatcher("/view/manage/productvariant-add.jsp").forward(request, response);
         }
     }
-
 }

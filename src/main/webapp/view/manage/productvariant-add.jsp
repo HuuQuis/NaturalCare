@@ -87,7 +87,9 @@
                                             <div class="form-group">
                                                 <label>File upload</label>
                                                 <input type="file" name="img[]" class="file-upload-default"
-                                                       accept="image/*" ${empty previousImageUrl ? 'required' : ''}/>
+                                                       accept="image/*" ${empty previousImageUrl ? 'required' : ''}
+                                                       style="display: none;"/>
+
                                                 <div class="input-group col-xs-12">
                                                     <input type="text" class="form-control file-upload-info" disabled
                                                            placeholder="Upload Image"
@@ -162,6 +164,22 @@
 <!-- endinject -->
 <!-- Custom js for this page -->
 <script src="${pageContext.request.contextPath}/adminassets/js/dashboard.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const fileInput = document.querySelector('.file-upload-default');
+        const browseButton = document.querySelector('.file-upload-browse');
+        const fileInfoInput = document.querySelector('.file-upload-info');
+
+        browseButton.addEventListener('click', function () {
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', function () {
+            const fileName = fileInput.files.length > 0 ? fileInput.files[0].name : '';
+            fileInfoInput.value = fileName;
+        });
+    });
+</script>
 </body>
 
 </html>
