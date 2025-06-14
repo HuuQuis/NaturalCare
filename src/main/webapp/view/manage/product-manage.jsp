@@ -116,13 +116,13 @@
                                             <input type="hidden" name="id" value="${c.id}"/>
 
                                             <!-- Nút submit ẩn để gọi submit hợp lệ -->
-                                            <button type="submit" id="submit-${c.id}" style="display:none;"></button>
+                                            <button type="submit" id="submit-product-${c.id}" style="display:none;"></button>
 
                                             <!-- Icon đóng vai trò nút -->
                                             <i class="mdi mdi-delete"
                                                role="button"
                                                tabindex="0"
-                                               onclick="document.getElementById('submit-${c.id}').click();"
+                                               onclick="document.getElementById('submit-product-${c.id}').click();"
                                                style="cursor: pointer;
                                                   display: inline-block;
                                                   font-size: 20px;
@@ -177,12 +177,12 @@
                                                                 <input type="hidden" name="action" value="delete"/>
                                                                 <input type="hidden" name="variantId" value="${variation.variationId}"/>
 
-                                                                <button type="submit" id="submit-${variation.variationId}" style="display:none;"></button>
+                                                                <button type="submit" id="submit-variant-${variation.variationId}" style="display:none;"></button>
 
                                                                 <i class="mdi mdi-delete"
                                                                    role="button"
                                                                    tabindex="0"
-                                                                   onclick="document.getElementById('submit-${variation.variationId}').click();"
+                                                                   onclick="document.getElementById('submit-variant-${variation.variationId}').click();"
                                                                    style="cursor: pointer;
                                                                       display: inline-block;
                                                                       font-size: 20px;

@@ -18,7 +18,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.UUID;
 
 @MultipartConfig
 @WebServlet(name = "ProductVariantManageServlet", urlPatterns = {"/productVariantManage"})
@@ -46,10 +50,10 @@ public class ProductVariantManageServlet extends HttpServlet {
             String productId = request.getParameter("productId");
             Part file = request.getPart("image");
             String imageFileName = null;
+            String tempImagePath = null;
 
             ProductVariation tempProductVariant = createProductVariantFromRequest(request, false);
 
-            // ===== Handle Image Upload & Save Immediately If Valid =====
             if (file != null && file.getSize() > 0) {
                 String contentType = file.getContentType();
 
@@ -66,48 +70,63 @@ public class ProductVariantManageServlet extends HttpServlet {
 
                 int width = image.getWidth();
                 int height = image.getHeight();
-                if (width < 400 || width > 600 || height < 400 || height > 600) {
-                    handleValidationError("Image dimensions must be between 400x400 and 600x600 pixels.", request, response, tempProductVariant, false);
+                if (width < 400 || width > 1000 || height < 400 || height > 1000) {
+                    handleValidationError("Image dimensions must be between 400x400 and 1000x1000 pixels.", request, response, tempProductVariant, false);
                     return;
                 }
 
-                // Save image to disk immediately
-                imageFileName = file.getSubmittedFileName();
-                tempProductVariant.setImageUrl(imageFileName);
 
-                String webappPath = getServletContext().getRealPath("/");
-                String uploadPath = webappPath + "images" + File.separator + "product";
-                File uploadDir = new File(uploadPath);
-                if (!uploadDir.exists()) uploadDir.mkdirs();
+                imageFileName = UUID.randomUUID() + "_" + Paths.get(file.getSubmittedFileName()).getFileName().toString();
+                tempImagePath = "/images/temp/" + imageFileName;
+                String realTempPath = getServletContext().getRealPath(tempImagePath);
 
-                String filePath = uploadPath + File.separator + imageFileName;
+                // Tạo thư mục nếu chưa có
+                File tempFolder = new File(realTempPath).getParentFile();
+                if (!tempFolder.exists()) tempFolder.mkdirs();
 
-                try (FileOutputStream fos = new FileOutputStream(filePath);
-                     InputStream uploadStream = file.getInputStream()) {
+                // Lưu ảnh tạm
+                try (InputStream input = file.getInputStream(); FileOutputStream output = new FileOutputStream(realTempPath)) {
                     byte[] buffer = new byte[1024];
                     int bytesRead;
-                    while ((bytesRead = uploadStream.read(buffer)) != -1) {
-                        fos.write(buffer, 0, bytesRead);
+                    while ((bytesRead = input.read(buffer)) != -1) {
+                        output.write(buffer, 0, bytesRead);
                     }
                 }
+
+                tempProductVariant.setImageUrl(tempImagePath);
+                request.setAttribute("previousImageUrl", tempImagePath); // Gửi lại khi reload form
             } else {
-                // Nếu không chọn file mới, lấy ảnh cũ nếu có
+                // Không chọn lại ảnh → dùng previousImageUrl
                 String previousImageUrl = request.getParameter("previousImageUrl");
                 if (previousImageUrl != null && !previousImageUrl.isEmpty()) {
                     tempProductVariant.setImageUrl(previousImageUrl);
                 }
             }
 
-            // ===== Validate Other Fields =====
+            // Nếu validate thất bại → không lưu ảnh chính
             if (!validateProductVariantInput(request, response, tempProductVariant, false)) {
                 return;
             }
 
-            // ===== Save to Database =====
+            // Khi hợp lệ: di chuyển ảnh từ /temp/ → /product/
+            String finalImageUrl = null;
+            if (tempProductVariant.getImageUrl() != null && tempProductVariant.getImageUrl().startsWith("/images/temp/")) {
+                String tempPath = getServletContext().getRealPath(tempProductVariant.getImageUrl());
+                String fileName = Paths.get(tempProductVariant.getImageUrl()).getFileName().toString();
+                finalImageUrl = "/images/product/" + fileName;
+                String finalPath = getServletContext().getRealPath(finalImageUrl);
+
+                File finalDir = new File(finalPath).getParentFile();
+                if (!finalDir.exists()) finalDir.mkdirs();
+
+                // Di chuyển file
+                Files.move(Paths.get(tempPath), Paths.get(finalPath), StandardCopyOption.REPLACE_EXISTING);
+                tempProductVariant.setImageUrl(finalImageUrl);
+            }
+
             productVariationDao.addProductVariation(tempProductVariant, Integer.parseInt(productId));
             response.sendRedirect(request.getContextPath() + "/productManage");
         }
-
         else if ("delete".equals(action)) {
             String variantIdStr = request.getParameter("variantId");
             if (variantIdStr == null || variantIdStr.trim().isEmpty()) {

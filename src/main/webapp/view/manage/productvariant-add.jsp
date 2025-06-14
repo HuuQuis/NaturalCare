@@ -1,4 +1,5 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html lang="en">
@@ -84,22 +85,35 @@
                                                     </c:forEach>
                                                 </div>
                                             </div>
+
+                                            <c:if test="${not empty previousImageUrl}">
+                                                <c:set var="imageParts" value="${fn:split(previousImageUrl, '/')}" />
+                                                <c:set var="imageFileName" value="${imageParts[fn:length(imageParts) - 1]}" />
+                                            </c:if>
+
                                             <div class="form-group">
-                                                <label>File upload</label>
+                                                <label>Product Variant Image</label>
+
                                                 <input type="file" name="image" class="file-upload-default"
-                                                       accept="image/*" ${empty previousImageUrl ? 'required' : ''}
-                                                       style="display: none;"/>
+                                                       accept="image/*"
+                                                       style="display: none;"
+                                                ${empty previousImageUrl ? 'required' : ''} />
 
                                                 <div class="input-group col-xs-12">
                                                     <input type="text" class="form-control file-upload-info" disabled
                                                            placeholder="Upload Image"
-                                                           value="${not empty previousImageUrl ? previousImageUrl : ''}"/>
+                                                           value="${not empty previousImageUrl ? imageFileName : ''}" />
+
                                                     <span class="input-group-append">
                                                         <button class="file-upload-browse btn btn-primary" type="button">
                                                             ${not empty previousImageUrl ? 'Change Image' : 'Upload'}
                                                         </button>
                                                     </span>
                                                 </div>
+
+                                                <c:if test="${not empty previousImageUrl}">
+                                                    <input type="hidden" name="previousImageUrl" value="${previousImageUrl}">
+                                                </c:if>
                                             </div>
                                             <div class="form-group">
                                                 <label>Product Variant Color</label>
