@@ -1,11 +1,12 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
-    <title>Breeze Admin</title>
+    <title>Manager | Nature Care</title>
     <link rel="stylesheet"
           href="${pageContext.request.contextPath}/adminassets/vendors/mdi/css/materialdesignicons.min.css"/>
     <link rel="stylesheet"
@@ -16,7 +17,6 @@
     <link rel="stylesheet"
           href="${pageContext.request.contextPath}/adminassets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.css"/>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/adminassets/css/style.css"/>
-    <link rel="shortcut icon" href="${pageContext.request.contextPath}/adminassets/images/favicon.png"/>
 </head>
 
 <body>
@@ -84,32 +84,55 @@
                                                     </c:forEach>
                                                 </div>
                                             </div>
+
+                                            <c:if test="${not empty previousImageUrl}">
+                                                <c:set var="imageParts" value="${fn:split(previousImageUrl, '/')}" />
+                                                <c:set var="imageFileName" value="${imageParts[fn:length(imageParts) - 1]}" />
+                                            </c:if>
+
                                             <div class="form-group">
-                                                <label>File upload</label>
-                                                <input type="file" name="img[]" class="file-upload-default"
-                                                       accept="image/*" ${empty previousImageUrl ? 'required' : ''}
-                                                       style="display: none;"/>
+                                                <label>Product Variant Image</label>
+
+                                                <input type="file" name="image" class="file-upload-default"
+                                                       accept="image/*"
+                                                       style="display: none;"
+                                                ${empty previousImageUrl ? 'required' : ''} />
 
                                                 <div class="input-group col-xs-12">
                                                     <input type="text" class="form-control file-upload-info" disabled
                                                            placeholder="Upload Image"
-                                                           value="${not empty previousImageUrl ? previousImageUrl : ''}"/>
+                                                           value="${not empty previousImageUrl ? imageFileName : ''}" />
+
                                                     <span class="input-group-append">
                                                         <button class="file-upload-browse btn btn-primary" type="button">
                                                             ${not empty previousImageUrl ? 'Change Image' : 'Upload'}
                                                         </button>
                                                     </span>
                                                 </div>
+
+                                                <c:if test="${not empty previousImageUrl}">
+                                                    <input type="hidden" name="previousImageUrl" value="${previousImageUrl}">
+                                                </c:if>
                                             </div>
+
                                             <div class="form-group">
-                                                <label>Product Variant Color</label>
-                                                <input type="text" class="form-control" name="color"
-                                                       value="${tempProductVariation.color}" placeholder="Enter Product Variant Color">
-                                            </div><%-- Product Variant Color --%>
+                                                <label for="color">Product Color</label>
+                                                <select name="colorId" class="form-control" id="color">
+                                                    <option value="0">Choose Color</option>
+                                                    <c:forEach var="color" items="${colors}">
+                                                        <option value="${color.id}" ${tempProductVariation.colorId == color.id ? 'selected' : ''}>${color.name}</option>
+                                                    </c:forEach>
+                                                </select>
+                                            </div>
+
                                             <div class="form-group">
-                                                <label>Product Variant Size</label>
-                                                <input type="text" class="form-control" name="size"
-                                                       value="${tempProductVariation.size}" placeholder="Enter size in ml" />
+                                                <label for="size">Product Size</label>
+                                                <select name="sizeId" class="form-control" id="size">
+                                                    <option value="0">Choose Size(ml)</option>
+                                                    <c:forEach var="size" items="${sizes}">
+                                                        <option value="${size.id}" ${tempProductVariation.sizeId == size.id ? 'selected' : ''}>${size.name}</option>
+                                                    </c:forEach>
+                                                </select>
                                             </div>
 
                                             <div class="form-group">
@@ -178,6 +201,31 @@
             const fileName = fileInput.files.length > 0 ? fileInput.files[0].name : '';
             fileInfoInput.value = fileName;
         });
+
+        // --- Color/Size mutual exclusion logic ---
+        const colorSelect = document.getElementById('color');
+        const sizeSelect = document.getElementById('size');
+
+        function updateSelectStates() {
+            if (colorSelect.value !== "0") {
+                sizeSelect.value = "0";
+                sizeSelect.disabled = true;
+                colorSelect.disabled = false;
+            } else if (sizeSelect.value !== "0") {
+                colorSelect.value = "0";
+                colorSelect.disabled = true;
+                sizeSelect.disabled = false;
+            } else {
+                colorSelect.disabled = false;
+                sizeSelect.disabled = false;
+            }
+        }
+
+        colorSelect.addEventListener('change', updateSelectStates);
+        sizeSelect.addEventListener('change', updateSelectStates);
+
+        // On page load, set correct state if editing/validation error
+        updateSelectStates();
     });
 </script>
 </body>

@@ -1,7 +1,9 @@
 package controller;
 
-import dal.ProductVariationDAO;
+import dal.ColorDAO;
 import dal.ProductDAO;
+import dal.ProductVariationDAO;
+import dal.SizeDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
@@ -9,26 +11,41 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
+import model.Color;
 import model.Product;
 import model.ProductVariation;
+import model.Size;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
-import java.util.Properties;
+import java.util.UUID;
 
 @MultipartConfig
 @WebServlet(name = "ProductVariantManageServlet", urlPatterns = {"/productVariantManage"})
 public class ProductVariantManageServlet extends HttpServlet {
     ProductDAO productDao = new ProductDAO();
     ProductVariationDAO productVariationDao = new ProductVariationDAO();
+    ColorDAO colorDao = new ColorDAO();
+    SizeDAO sizeDao = new SizeDAO();
+
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
         List<Product> products = productDao.getAllProducts();
         request.setAttribute("products", products);
+        List<Color> colors = colorDao.getAllColors();
+        request.setAttribute("colors", colors);
+        List<Size> sizes = sizeDao.getAllSize();
+        request.setAttribute("sizes", sizes);
         if ("add".equals(action)) {
             String productId = request.getParameter("productId");
             request.setAttribute("productId", productId);
@@ -44,18 +61,19 @@ public class ProductVariantManageServlet extends HttpServlet {
             String productId = request.getParameter("productId");
             Part file = request.getPart("image");
             String imageFileName = null;
+            String tempImagePath = null;
 
             ProductVariation tempProductVariant = createProductVariantFromRequest(request, false);
 
             if (file != null && file.getSize() > 0) {
                 String contentType = file.getContentType();
+
                 if (!isImageFile(contentType)) {
                     handleValidationError("Uploaded file must be an image (JPEG, PNG, GIF).", request, response, tempProductVariant, false);
                     return;
                 }
 
-                InputStream imageValidationStream = file.getInputStream();
-                BufferedImage image = ImageIO.read(imageValidationStream);
+                BufferedImage image = ImageIO.read(file.getInputStream());
                 if (image == null) {
                     handleValidationError("The uploaded file is not a valid image.", request, response, tempProductVariant, false);
                     return;
@@ -63,38 +81,32 @@ public class ProductVariantManageServlet extends HttpServlet {
 
                 int width = image.getWidth();
                 int height = image.getHeight();
-                if (width < 400 || width > 600 || height < 400 || height > 600) {
-                    handleValidationError("Image dimensions must be between 400x400 and 600x600 pixels.", request, response, tempProductVariant, false);
+                if (width < 400 || width > 1000 || height < 400 || height > 1000) {
+                    handleValidationError("Image dimensions must be between 400x400 and 1000x1000 pixels.", request, response, tempProductVariant, false);
                     return;
                 }
 
-                imageFileName = file.getSubmittedFileName();
 
-                InputStream input = getClass().getClassLoader().getResourceAsStream("config.properties");
-                Properties prop = new Properties();
-                prop.load(input);
-                String uploadPath = prop.getProperty("upload.path");
+                imageFileName = UUID.randomUUID() + "_" + Paths.get(file.getSubmittedFileName()).getFileName().toString();
+                tempImagePath = "/images/temp/" + imageFileName;
+                String realTempPath = getServletContext().getRealPath(tempImagePath);
 
-                if (uploadPath == null || uploadPath.isEmpty()) {
-                    throw new ServletException("Upload path is not configured in properties file.");
-                }
+//                File tempFolder = new File(realTempPath).getParentFile();
+//                if (!tempFolder.exists()) tempFolder.mkdirs();
 
-                File uploadDir = new File(uploadPath);
-                if (!uploadDir.exists()) uploadDir.mkdirs();
-
-                String filePath = uploadPath + File.separator + imageFileName;
-
-                try (FileOutputStream fos = new FileOutputStream(filePath);
-                     InputStream uploadStream = file.getInputStream()) {
+                // Lưu ảnh tạm
+                try (InputStream input = file.getInputStream(); FileOutputStream output = new FileOutputStream(realTempPath)) {
                     byte[] buffer = new byte[1024];
                     int bytesRead;
-                    while ((bytesRead = uploadStream.read(buffer)) != -1) {
-                        fos.write(buffer, 0, bytesRead);
+                    while ((bytesRead = input.read(buffer)) != -1) {
+                        output.write(buffer, 0, bytesRead);
                     }
                 }
 
-                tempProductVariant.setImageUrl("/images/product/" + imageFileName);
+                tempProductVariant.setImageUrl(tempImagePath);
+                request.setAttribute("previousImageUrl", tempImagePath); // Gửi lại khi reload form
             } else {
+                // Không chọn lại ảnh → dùng previousImageUrl
                 String previousImageUrl = request.getParameter("previousImageUrl");
                 if (previousImageUrl != null && !previousImageUrl.isEmpty()) {
                     tempProductVariant.setImageUrl(previousImageUrl);
@@ -105,12 +117,37 @@ public class ProductVariantManageServlet extends HttpServlet {
                 return;
             }
 
+            String finalImageUrl = null;
+            if (tempProductVariant.getImageUrl() != null && tempProductVariant.getImageUrl().startsWith("/images/temp/")) {
+                String tempPath = getServletContext().getRealPath(tempProductVariant.getImageUrl());
+                String fileName = Paths.get(tempProductVariant.getImageUrl()).getFileName().toString();
+                finalImageUrl = "/images/product/" + fileName;
+                String finalPath = getServletContext().getRealPath(finalImageUrl);
+
+                File finalDir = new File(finalPath).getParentFile();
+                if (!finalDir.exists()) finalDir.mkdirs();
+
+                Files.move(Paths.get(tempPath), Paths.get(finalPath), StandardCopyOption.REPLACE_EXISTING);
+                tempProductVariant.setImageUrl(finalImageUrl);
+            }
+
             productVariationDao.addProductVariation(tempProductVariant, Integer.parseInt(productId));
             response.sendRedirect(request.getContextPath() + "/productManage");
-        } else if ("delete".equals(action)) {
-            int productVariantId = Integer.parseInt(request.getParameter("variantId"));
-            productVariationDao.deleteProductVariation(productVariantId);
-            response.sendRedirect(request.getContextPath() + "/productManage");
+        }
+        else if ("delete".equals(action)) {
+            String variantIdStr = request.getParameter("variantId");
+            if (variantIdStr == null || variantIdStr.trim().isEmpty()) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Variant ID is required for delete operation");
+                return;
+            }
+
+            try {
+                int productVariantId = Integer.parseInt(variantIdStr.trim());
+                productVariationDao.deleteProductVariation(productVariantId);
+                response.sendRedirect(request.getContextPath() + "/productManage");
+            } catch (NumberFormatException e) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid variant ID format");
+            }
         }
     }
 
@@ -124,8 +161,32 @@ public class ProductVariantManageServlet extends HttpServlet {
     private ProductVariation createProductVariantFromRequest(HttpServletRequest request, boolean isUpdate) throws ServletException {
         ProductVariation tempProductVariation = new ProductVariation();
 
-        String color = request.getParameter("color");
-        String size = request.getParameter("size");
+
+        if(isUpdate){
+
+        }
+
+        try{
+            int colorId = Integer.parseInt(request.getParameter("colorId"));
+            if (colorId > 0){
+                tempProductVariation.setColorId(colorId);
+            }
+        }catch (Exception e) {
+            if(!isUpdate) {
+                tempProductVariation.setColorId(0);
+            }
+        }
+
+        try{
+            int sizeId = Integer.parseInt(request.getParameter("sizeId"));
+            if (sizeId > 0){
+                tempProductVariation.setSizeId(sizeId);
+            }
+        }catch (Exception e) {
+            if(!isUpdate) {
+                tempProductVariation.setSizeId(0);
+            }
+        }
         String priceStr = request.getParameter("price");
         String quantityStr = request.getParameter("quantity");
 
@@ -142,11 +203,7 @@ public class ProductVariantManageServlet extends HttpServlet {
             throw new ServletException("Invalid number format for price or quantity", e);
         }
 
-        if (color != null) color = color.trim();
-        if (size != null) size = size.trim();
 
-        tempProductVariation.setColor(color);
-        tempProductVariation.setSize(size);
         tempProductVariation.setPrice(price);
         tempProductVariation.setQtyInStock(quantity);
 
@@ -154,22 +211,19 @@ public class ProductVariantManageServlet extends HttpServlet {
     }
 
     private boolean validateProductVariantInput(HttpServletRequest request, HttpServletResponse response, ProductVariation tempProductVariant, boolean isUpdate) throws ServletException, IOException {
-        String color = tempProductVariant.getColor();
-        String size = tempProductVariant.getSize();
+        int colorId = tempProductVariant.getColorId();
+        int sizeId = tempProductVariant.getSizeId();
         int price = tempProductVariant.getPrice();
         int quantity = tempProductVariant.getQtyInStock();
 
-        if (color == null || color.isEmpty()) {
-            handleValidationError("Color cannot be empty.", request, response, tempProductVariant, isUpdate);
-            return false;
-        }
-        if (size == null || size.isEmpty()) {
-            handleValidationError("Size cannot be empty.", request, response, tempProductVariant, isUpdate);
+        if (tempProductVariant.getImageUrl() == null || tempProductVariant.getImageUrl().isEmpty()) {
+            handleValidationError("Please upload an image for the product variant.", request, response, tempProductVariant, isUpdate);
             return false;
         }
 
-        if (!size.matches("\\d+ml")) {
-            handleValidationError("Size must be in the format of number followed by 'ml' (e.g., 100ml).", request, response, tempProductVariant, isUpdate);
+        // Only one of color or size can be selected, not both, and not neither
+        if ((colorId > 0 && sizeId > 0) || (colorId <= 0 && sizeId <= 0)) {
+            handleValidationError("Please select either a color or a size, but not both.", request, response, tempProductVariant, isUpdate);
             return false;
         }
 
@@ -190,6 +244,8 @@ public class ProductVariantManageServlet extends HttpServlet {
         request.setAttribute("tempProductVariation", tempProductVariation);
         request.setAttribute("products", productDao.getAllProducts());
         request.setAttribute("productId", request.getParameter("productId"));
+        request.setAttribute("colors", colorDao.getAllColors());
+        request.setAttribute("sizes", sizeDao.getAllSize());
 
         if (tempProductVariation.getImageUrl() != null) {
             request.setAttribute("previousImageUrl", tempProductVariation.getImageUrl());

@@ -89,7 +89,7 @@
                                 <tr data-name="${c.name.toLowerCase()}">
                                 <!-- Row chính -->
                                     <td>${(page - 1) * pageSize + loop.index + 1}</td>
-                                    <td>
+                                    <td style="word-break: break-word; white-space: normal;">
                                             ${c.name}
                                         <button class="btn btn-link toggle-variant-btn" type="button"
                                                 data-target="#variations${c.id}">
@@ -116,13 +116,13 @@
                                             <input type="hidden" name="id" value="${c.id}"/>
 
                                             <!-- Nút submit ẩn để gọi submit hợp lệ -->
-                                            <button type="submit" id="submit-${c.id}" style="display:none;"></button>
+                                            <button type="submit" id="submit-product-${c.id}" style="display:none;"></button>
 
                                             <!-- Icon đóng vai trò nút -->
                                             <i class="mdi mdi-delete"
                                                role="button"
                                                tabindex="0"
-                                               onclick="document.getElementById('submit-${c.id}').click();"
+                                               onclick="document.getElementById('submit-product-${c.id}').click();"
                                                style="cursor: pointer;
                                                   display: inline-block;
                                                   font-size: 20px;
@@ -157,8 +157,26 @@
                                                     <tr>
                                                         <td>${loop.index + 1}</td>
                                                         <td><img src="${pageContext.request.contextPath}/${variation.imageUrl}" style="max-width: 100px; max-height: 100px;"></td>
-                                                        <td>${variation.color}</td>
-                                                        <td>${variation.size}</td>
+                                                        <td>
+                                                            <c:choose>
+                                                                <c:when test="${not empty variation.colorName}">
+                                                                    ${variation.colorName}
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    ${variation.colorId}
+                                                                </c:otherwise>
+                                                            </c:choose>
+                                                        </td>
+                                                        <td>
+                                                            <c:choose>
+                                                                <c:when test="${not empty variation.sizeName}">
+                                                                    ${variation.sizeName}
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    ${variation.sizeId}
+                                                                </c:otherwise>
+                                                            </c:choose>
+                                                        </td>
                                                         <td>${variation.price}</td>
                                                         <td>${variation.qtyInStock}</td>
                                                         <td>${variation.sold}</td>
@@ -175,14 +193,14 @@
                                                             <form action="productVariantManage" method="post" style="display:inline;"
                                                                   onsubmit="return confirm('Are you sure to delete this product variant?');">
                                                                 <input type="hidden" name="action" value="delete"/>
-                                                                <input type="hidden" name="id" value="${variation.variationId}"/>
+                                                                <input type="hidden" name="variantId" value="${variation.variationId}"/>
 
-                                                                <button type="submit" id="submit-${variation.variationId}" style="display:none;"></button>
+                                                                <button type="submit" id="submit-variant-${variation.variationId}" style="display:none;"></button>
 
                                                                 <i class="mdi mdi-delete"
                                                                    role="button"
                                                                    tabindex="0"
-                                                                   onclick="document.getElementById('submit-${variation.variationId}').click();"
+                                                                   onclick="document.getElementById('submit-variant-${variation.variationId}').click();"
                                                                    style="cursor: pointer;
                                                                       display: inline-block;
                                                                       font-size: 20px;
@@ -219,7 +237,7 @@
                             </c:if>
 
                             <c:choose>
-                                <c:when test="${totalPage <= 4}">
+                                <c:when test="${totalPage <= 5}">
                                     <c:forEach var="i" begin="1" end="${totalPage}">
                                         <li class="page-item ${i == page ? 'active' : ''}">
                                             <a class="page-link" href="${pageUrlBase}&page=${i}">${i}</a>
@@ -227,8 +245,8 @@
                                     </c:forEach>
                                 </c:when>
 
-                                <c:when test="${page <= 2}">
-                                    <c:forEach var="i" begin="1" end="3">
+                                <c:when test="${page <= 3}">
+                                    <c:forEach var="i" begin="1" end="4">
                                         <li class="page-item ${i == page ? 'active' : ''}">
                                             <a class="page-link" href="${pageUrlBase}&page=${i}">${i}</a>
                                         </li>
@@ -239,12 +257,12 @@
                                     </li>
                                 </c:when>
 
-                                <c:when test="${page >= totalPage - 1}">
+                                <c:when test="${page >= totalPage - 2}">
                                     <li class="page-item">
                                         <a class="page-link" href="${pageUrlBase}&page=1">1</a>
                                     </li>
                                     <li class="page-item disabled"><span class="page-link">...</span></li>
-                                    <c:forEach var="i" begin="${totalPage - 2}" end="${totalPage}">
+                                    <c:forEach var="i" begin="${totalPage - 3}" end="${totalPage}">
                                         <li class="page-item ${i == page ? 'active' : ''}">
                                             <a class="page-link" href="${pageUrlBase}&page=${i}">${i}</a>
                                         </li>
@@ -255,12 +273,12 @@
                                     <li class="page-item">
                                         <a class="page-link" href="${pageUrlBase}&page=1">1</a>
                                     </li>
-                                    <li class="page-item ${page == page ? 'active' : ''}">
-                                        <a class="page-link" href="${pageUrlBase}&page=${page}">${page}</a>
-                                    </li>
-                                    <li class="page-item">
-                                        <a class="page-link" href="${pageUrlBase}&page=${page + 1}">${page + 1}</a>
-                                    </li>
+                                    <li class="page-item disabled"><span class="page-link">...</span></li>
+                                    <c:forEach var="i" begin="${page - 1}" end="${page + 1}">
+                                        <li class="page-item ${i == page ? 'active' : ''}">
+                                            <a class="page-link" href="${pageUrlBase}&page=${i}">${i}</a>
+                                        </li>
+                                    </c:forEach>
                                     <li class="page-item disabled"><span class="page-link">...</span></li>
                                     <li class="page-item">
                                         <a class="page-link" href="${pageUrlBase}&page=${totalPage}">${totalPage}</a>
