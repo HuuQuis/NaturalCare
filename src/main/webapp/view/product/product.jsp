@@ -61,16 +61,29 @@
                                         <!-- Carousel for product images -->
                                         <div id="carousel-${product.id}" class="carousel slide" data-ride="carousel">
                                             <div class="carousel-inner">
-                                                <c:forEach items="${product.imageUrls}" var="imageUrl" varStatus="status">
-                                                    <div class="item ${status.index == 0 ? 'active' : ''}">
-                                                        <img src="${pageContext.request.contextPath}/${imageUrl}" alt="${product.name}" />
-                                                    </div>
-                                                </c:forEach>
+                                                <c:choose>
+                                                    <c:when test="${not empty product.imageUrls}">
+                                                        <c:forEach items="${product.imageUrls}" var="imageUrl" varStatus="status">
+                                                            <div class="item ${status.index == 0 ? 'active' : ''}">
+                                                                <img src="${pageContext.request.contextPath}/${imageUrl}" alt="${product.name}" />
+                                                            </div>
+                                                        </c:forEach>
+                                                    </c:when>
+
+                                                    <c:otherwise>
+                                                        <div class="item active">
+                                                            <img src="${pageContext.request.contextPath}/images/default-product.png" alt="No Image Available" />
+                                                        </div>
+                                                    </c:otherwise>
+                                                </c:choose>
                                             </div>
-                                            <c:if test="${product.imageUrls.size() > 1}">
+
+                                            <c:if test="${product.imageUrls != null && product.imageUrls.size() > 1}">
                                                 <a class="left carousel-control" href="#carousel-${product.id}" data-slide="prev">
+                                                    <span class="glyphicon glyphicon-chevron-left"></span>
                                                 </a>
                                                 <a class="right carousel-control" href="#carousel-${product.id}" data-slide="next">
+                                                    <span class="glyphicon glyphicon-chevron-right"></span>
                                                 </a>
                                             </c:if>
                                         </div>

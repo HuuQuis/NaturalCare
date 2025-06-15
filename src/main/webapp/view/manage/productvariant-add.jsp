@@ -17,7 +17,6 @@
     <link rel="stylesheet"
           href="${pageContext.request.contextPath}/adminassets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.css"/>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/adminassets/css/style.css"/>
-    <link rel="shortcut icon" href="${pageContext.request.contextPath}/adminassets/images/favicon.png"/>
 </head>
 
 <body>
@@ -115,15 +114,25 @@
                                                     <input type="hidden" name="previousImageUrl" value="${previousImageUrl}">
                                                 </c:if>
                                             </div>
+
                                             <div class="form-group">
-                                                <label>Product Variant Color</label>
-                                                <input type="text" class="form-control" name="color"
-                                                       value="${tempProductVariation.color}" placeholder="Enter Product Variant Color">
-                                            </div><%-- Product Variant Color --%>
+                                                <label for="color">Product Color</label>
+                                                <select name="colorId" class="form-control" id="color">
+                                                    <option>Choose Color</option>
+                                                    <c:forEach var="color" items="${colors}">
+                                                        <option value="${color.id}">${color.name}</option>
+                                                    </c:forEach>
+                                                </select>
+                                            </div>
+
                                             <div class="form-group">
-                                                <label>Product Variant Size</label>
-                                                <input type="text" class="form-control" name="size"
-                                                       value="${tempProductVariation.size}" placeholder="Enter size in ml" />
+                                                <label for="size">Product Size</label>
+                                                <select name="sizeId" class="form-control" id="size">
+                                                    <option>Choose Size(ml)</option>
+                                                    <c:forEach var="size" items="${sizes}">
+                                                        <option value="${size.id}">${size.name}</option>
+                                                    </c:forEach>
+                                                </select>
                                             </div>
 
                                             <div class="form-group">

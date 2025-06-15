@@ -1,7 +1,9 @@
 package controller;
 
+import dal.ColorDAO;
 import dal.ProductDAO;
 import dal.ProductVariationDAO;
+import dal.SizeDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
@@ -9,8 +11,10 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
+import model.Color;
 import model.Product;
 import model.ProductVariation;
+import model.Size;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -29,12 +33,19 @@ import java.util.UUID;
 public class ProductVariantManageServlet extends HttpServlet {
     ProductDAO productDao = new ProductDAO();
     ProductVariationDAO productVariationDao = new ProductVariationDAO();
+    ColorDAO colorDao = new ColorDAO();
+    SizeDAO sizeDao = new SizeDAO();
+
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
         List<Product> products = productDao.getAllProducts();
         request.setAttribute("products", products);
+        List<Color> colors = colorDao.getAllColors();
+        request.setAttribute("colors", colors);
+        List<Size> sizes = sizeDao.getAllSize();
+        request.setAttribute("sizes", sizes);
         if ("add".equals(action)) {
             String productId = request.getParameter("productId");
             request.setAttribute("productId", productId);
@@ -80,9 +91,8 @@ public class ProductVariantManageServlet extends HttpServlet {
                 tempImagePath = "/images/temp/" + imageFileName;
                 String realTempPath = getServletContext().getRealPath(tempImagePath);
 
-                // Tạo thư mục nếu chưa có
-                File tempFolder = new File(realTempPath).getParentFile();
-                if (!tempFolder.exists()) tempFolder.mkdirs();
+//                File tempFolder = new File(realTempPath).getParentFile();
+//                if (!tempFolder.exists()) tempFolder.mkdirs();
 
                 // Lưu ảnh tạm
                 try (InputStream input = file.getInputStream(); FileOutputStream output = new FileOutputStream(realTempPath)) {
@@ -103,12 +113,10 @@ public class ProductVariantManageServlet extends HttpServlet {
                 }
             }
 
-            // Nếu validate thất bại → không lưu ảnh chính
             if (!validateProductVariantInput(request, response, tempProductVariant, false)) {
                 return;
             }
 
-            // Khi hợp lệ: di chuyển ảnh từ /temp/ → /product/
             String finalImageUrl = null;
             if (tempProductVariant.getImageUrl() != null && tempProductVariant.getImageUrl().startsWith("/images/temp/")) {
                 String tempPath = getServletContext().getRealPath(tempProductVariant.getImageUrl());
@@ -119,7 +127,6 @@ public class ProductVariantManageServlet extends HttpServlet {
                 File finalDir = new File(finalPath).getParentFile();
                 if (!finalDir.exists()) finalDir.mkdirs();
 
-                // Di chuyển file
                 Files.move(Paths.get(tempPath), Paths.get(finalPath), StandardCopyOption.REPLACE_EXISTING);
                 tempProductVariant.setImageUrl(finalImageUrl);
             }
@@ -154,8 +161,32 @@ public class ProductVariantManageServlet extends HttpServlet {
     private ProductVariation createProductVariantFromRequest(HttpServletRequest request, boolean isUpdate) throws ServletException {
         ProductVariation tempProductVariation = new ProductVariation();
 
-        String color = request.getParameter("color");
-        String size = request.getParameter("size");
+
+        if(isUpdate){
+
+        }
+
+        try{
+            int colorId = Integer.parseInt(request.getParameter("colorId"));
+            if (colorId > 0){
+                tempProductVariation.setColorId(colorId);
+            }
+        }catch (Exception e) {
+            if(!isUpdate) {
+                tempProductVariation.setColorId(0);
+            }
+        }
+
+        try{
+            int sizeId = Integer.parseInt(request.getParameter("sizeId"));
+            if (sizeId > 0){
+                tempProductVariation.setSizeId(sizeId);
+            }
+        }catch (Exception e) {
+            if(!isUpdate) {
+                tempProductVariation.setSizeId(0);
+            }
+        }
         String priceStr = request.getParameter("price");
         String quantityStr = request.getParameter("quantity");
 
@@ -172,11 +203,7 @@ public class ProductVariantManageServlet extends HttpServlet {
             throw new ServletException("Invalid number format for price or quantity", e);
         }
 
-        if (color != null) color = color.trim();
-        if (size != null) size = size.trim();
 
-        tempProductVariation.setColor(color);
-        tempProductVariation.setSize(size);
         tempProductVariation.setPrice(price);
         tempProductVariation.setQtyInStock(quantity);
 
@@ -184,22 +211,22 @@ public class ProductVariantManageServlet extends HttpServlet {
     }
 
     private boolean validateProductVariantInput(HttpServletRequest request, HttpServletResponse response, ProductVariation tempProductVariant, boolean isUpdate) throws ServletException, IOException {
-        String color = tempProductVariant.getColor();
-        String size = tempProductVariant.getSize();
+        int colorId = tempProductVariant.getColorId();
+        int sizeId = tempProductVariant.getSizeId();
         int price = tempProductVariant.getPrice();
         int quantity = tempProductVariant.getQtyInStock();
 
-        if (color == null || color.isEmpty()) {
-            handleValidationError("Color cannot be empty.", request, response, tempProductVariant, isUpdate);
+        if (tempProductVariant.getImageUrl() == null || tempProductVariant.getImageUrl().isEmpty()) {
+            handleValidationError("Please upload an image for the product variant.", request, response, tempProductVariant, isUpdate);
             return false;
         }
-        if (size == null || size.isEmpty()) {
-            handleValidationError("Size cannot be empty.", request, response, tempProductVariant, isUpdate);
+        if (colorId <= 0) {
+            handleValidationError("Please select a color for this product variant.", request, response, tempProductVariant, isUpdate);
             return false;
         }
 
-        if (!size.matches("\\d+ml")) {
-            handleValidationError("Size must be in the format of number followed by 'ml' (e.g., 100ml).", request, response, tempProductVariant, isUpdate);
+        if (sizeId <= 0) {
+            handleValidationError("Please select a size for this product variant", request, response, tempProductVariant, isUpdate);
             return false;
         }
 
@@ -220,6 +247,8 @@ public class ProductVariantManageServlet extends HttpServlet {
         request.setAttribute("tempProductVariation", tempProductVariation);
         request.setAttribute("products", productDao.getAllProducts());
         request.setAttribute("productId", request.getParameter("productId"));
+        request.setAttribute("colors", colorDao.getAllColors());
+        request.setAttribute("sizes", sizeDao.getAllSize());
 
         if (tempProductVariation.getImageUrl() != null) {
             request.setAttribute("previousImageUrl", tempProductVariation.getImageUrl());

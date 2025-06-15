@@ -157,8 +157,8 @@
                                                     <tr>
                                                         <td>${loop.index + 1}</td>
                                                         <td><img src="${pageContext.request.contextPath}/${variation.imageUrl}" style="max-width: 100px; max-height: 100px;"></td>
-                                                        <td>${variation.color}</td>
-                                                        <td>${variation.size}</td>
+                                                        <td>${variation.colorId}</td>
+                                                        <td>${variation.sizeId}</td>
                                                         <td>${variation.price}</td>
                                                         <td>${variation.qtyInStock}</td>
                                                         <td>${variation.sold}</td>

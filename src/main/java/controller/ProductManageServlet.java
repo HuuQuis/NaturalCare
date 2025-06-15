@@ -146,10 +146,7 @@ public class ProductManageServlet extends HttpServlet {
             if (subProductCategoryId > 0) {
                 tempProduct.setSubProductCategoryId(subProductCategoryId);
             }
-            // If subProductCategoryId <= 0 and this is an update, the original category is already set above
         } catch (Exception e) {
-            // For updates, keep the original subcategory that was already set
-            // For adds, this will remain 0 and trigger validation error
             if (!isUpdate) {
                 tempProduct.setSubProductCategoryId(0);
             }

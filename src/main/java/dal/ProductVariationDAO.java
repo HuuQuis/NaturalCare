@@ -6,13 +6,13 @@ import java.sql.SQLException;
 
 public class ProductVariationDAO extends DBContext{
     public void addProductVariation(ProductVariation variation, int productId) {
-        sql = "INSERT INTO product_variation (product_id, product_image, color, size, price, qty_in_stock) VALUES (?, ?, ?, ?, ?, ?)";
+        sql = "INSERT INTO product_variation (product_id, product_image, color_id, size_id, price, qty_in_stock) VALUES (?, ?, ?, ?, ?, ?)";
         try {
             stm = connection.prepareStatement(sql);
             stm.setInt(1, productId);
             stm.setString(2, variation.getImageUrl());
-            stm.setString(3, variation.getColor());
-            stm.setString(4, variation.getSize());
+            stm.setInt(3, variation.getColorId());
+            stm.setInt(4, variation.getSizeId());
             stm.setInt(5, variation.getPrice());
             stm.setInt(6, variation.getQtyInStock());
             stm.executeUpdate();
@@ -22,12 +22,12 @@ public class ProductVariationDAO extends DBContext{
     }
 
     public void updateProductVariation(ProductVariation variation, int variationId) {
-        sql = "UPDATE product_variation SET product_image = ?, color = ?, size = ?, price = ?, qty_in_stock = ? WHERE variation_id = ?";
+        sql = "UPDATE product_variation SET product_image = ?, color_id = ?, size_id = ?, price = ?, qty_in_stock = ? WHERE variation_id = ?";
         try {
             stm = connection.prepareStatement(sql);
             stm.setString(1, variation.getImageUrl());
-            stm.setString(2, variation.getColor());
-            stm.setString(3, variation.getSize());
+            stm.setInt(2, variation.getColorId());
+            stm.setInt(3, variation.getSizeId());
             stm.setInt(4, variation.getPrice());
             stm.setInt(5, variation.getQtyInStock());
             stm.setInt(6, variationId);
