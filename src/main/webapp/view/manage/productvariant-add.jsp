@@ -118,9 +118,9 @@
                                             <div class="form-group">
                                                 <label for="color">Product Color</label>
                                                 <select name="colorId" class="form-control" id="color">
-                                                    <option>Choose Color</option>
+                                                    <option value="0">Choose Color</option>
                                                     <c:forEach var="color" items="${colors}">
-                                                        <option value="${color.id}">${color.name}</option>
+                                                        <option value="${color.id}" ${tempProductVariation.colorId == color.id ? 'selected' : ''}>${color.name}</option>
                                                     </c:forEach>
                                                 </select>
                                             </div>
@@ -128,9 +128,9 @@
                                             <div class="form-group">
                                                 <label for="size">Product Size</label>
                                                 <select name="sizeId" class="form-control" id="size">
-                                                    <option>Choose Size(ml)</option>
+                                                    <option value="0">Choose Size(ml)</option>
                                                     <c:forEach var="size" items="${sizes}">
-                                                        <option value="${size.id}">${size.name}</option>
+                                                        <option value="${size.id}" ${tempProductVariation.sizeId == size.id ? 'selected' : ''}>${size.name}</option>
                                                     </c:forEach>
                                                 </select>
                                             </div>
@@ -201,6 +201,31 @@
             const fileName = fileInput.files.length > 0 ? fileInput.files[0].name : '';
             fileInfoInput.value = fileName;
         });
+
+        // --- Color/Size mutual exclusion logic ---
+        const colorSelect = document.getElementById('color');
+        const sizeSelect = document.getElementById('size');
+
+        function updateSelectStates() {
+            if (colorSelect.value !== "0") {
+                sizeSelect.value = "0";
+                sizeSelect.disabled = true;
+                colorSelect.disabled = false;
+            } else if (sizeSelect.value !== "0") {
+                colorSelect.value = "0";
+                colorSelect.disabled = true;
+                sizeSelect.disabled = false;
+            } else {
+                colorSelect.disabled = false;
+                sizeSelect.disabled = false;
+            }
+        }
+
+        colorSelect.addEventListener('change', updateSelectStates);
+        sizeSelect.addEventListener('change', updateSelectStates);
+
+        // On page load, set correct state if editing/validation error
+        updateSelectStates();
     });
 </script>
 </body>

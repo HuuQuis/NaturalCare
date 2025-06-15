@@ -89,7 +89,7 @@
                                 <tr data-name="${c.name.toLowerCase()}">
                                 <!-- Row chính -->
                                     <td>${(page - 1) * pageSize + loop.index + 1}</td>
-                                    <td>
+                                    <td style="word-break: break-word; white-space: normal;">
                                             ${c.name}
                                         <button class="btn btn-link toggle-variant-btn" type="button"
                                                 data-target="#variations${c.id}">
@@ -157,8 +157,26 @@
                                                     <tr>
                                                         <td>${loop.index + 1}</td>
                                                         <td><img src="${pageContext.request.contextPath}/${variation.imageUrl}" style="max-width: 100px; max-height: 100px;"></td>
-                                                        <td>${variation.colorId}</td>
-                                                        <td>${variation.sizeId}</td>
+                                                        <td>
+                                                            <c:choose>
+                                                                <c:when test="${not empty variation.colorName}">
+                                                                    ${variation.colorName}
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    ${variation.colorId}
+                                                                </c:otherwise>
+                                                            </c:choose>
+                                                        </td>
+                                                        <td>
+                                                            <c:choose>
+                                                                <c:when test="${not empty variation.sizeName}">
+                                                                    ${variation.sizeName}
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    ${variation.sizeId}
+                                                                </c:otherwise>
+                                                            </c:choose>
+                                                        </td>
                                                         <td>${variation.price}</td>
                                                         <td>${variation.qtyInStock}</td>
                                                         <td>${variation.sold}</td>

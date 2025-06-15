@@ -213,9 +213,22 @@ public class ProductManageServlet extends HttpServlet {
 
     private void handleValidationError(String errorMessage, HttpServletRequest request, HttpServletResponse response, Product tempProduct, boolean isUpdate)
             throws ServletException, IOException {
+
         request.setAttribute("error", errorMessage);
         request.setAttribute("product", tempProduct);
         request.setAttribute("subCategories", subProductCategoryDAO.getAllSubProductCategories());
+
+        if (errorMessage.contains("name")) {
+            request.setAttribute("errorField", "name");
+        } else if (errorMessage.contains("description")) {
+            request.setAttribute("errorField", "description");
+        } else if (errorMessage.contains("information")) {
+            request.setAttribute("errorField", "information");
+        } else if (errorMessage.contains("guideline")) {
+            request.setAttribute("errorField", "guideline");
+        } else if (errorMessage.contains("category")) {
+            request.setAttribute("errorField", "subProductCategoryId");
+        }
 
         if (isUpdate) {
             request.getRequestDispatcher("/view/manage/product-edit.jsp").forward(request, response);
@@ -223,4 +236,5 @@ public class ProductManageServlet extends HttpServlet {
             request.getRequestDispatcher("/view/manage/product-add.jsp").forward(request, response);
         }
     }
+
 }

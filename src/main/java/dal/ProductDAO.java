@@ -132,7 +132,11 @@ public class ProductDAO extends DBContext {
 
     //get all variations of a product by product ID
     public List<ProductVariation> getProductVariationsByProductId(int productId) {
-        String sql = "SELECT * FROM product_variation WHERE product_id = ?";
+        String sql = "SELECT pv.*, c.color_name, s.size_name " +
+                     "FROM product_variation pv " +
+                     "LEFT JOIN color c ON pv.color_id = c.color_id " +
+                     "LEFT JOIN size s ON pv.size_id = s.size_id " +
+                     "WHERE pv.product_id = ?";
 
         List<ProductVariation> variations = new ArrayList<>();
         try {
@@ -150,6 +154,8 @@ public class ProductDAO extends DBContext {
                         rs.getInt("qty_in_stock"),
                         rs.getInt("sold")
                 );
+                variation.setColorName(rs.getString("color_name"));
+                variation.setSizeName(rs.getString("size_name"));
                 variations.add(variation);
             }
         } catch (SQLException e) {

@@ -11,8 +11,17 @@ public class ProductVariationDAO extends DBContext{
             stm = connection.prepareStatement(sql);
             stm.setInt(1, productId);
             stm.setString(2, variation.getImageUrl());
-            stm.setInt(3, variation.getColorId());
-            stm.setInt(4, variation.getSizeId());
+            // Set color_id and size_id to null if 0 (not selected)
+            if (variation.getColorId() > 0) {
+                stm.setInt(3, variation.getColorId());
+            } else {
+                stm.setNull(3, java.sql.Types.INTEGER);
+            }
+            if (variation.getSizeId() > 0) {
+                stm.setInt(4, variation.getSizeId());
+            } else {
+                stm.setNull(4, java.sql.Types.INTEGER);
+            }
             stm.setInt(5, variation.getPrice());
             stm.setInt(6, variation.getQtyInStock());
             stm.executeUpdate();
@@ -26,8 +35,17 @@ public class ProductVariationDAO extends DBContext{
         try {
             stm = connection.prepareStatement(sql);
             stm.setString(1, variation.getImageUrl());
-            stm.setInt(2, variation.getColorId());
-            stm.setInt(3, variation.getSizeId());
+            // Set color_id and size_id to null if 0 (not selected)
+            if (variation.getColorId() > 0) {
+                stm.setInt(2, variation.getColorId());
+            } else {
+                stm.setNull(2, java.sql.Types.INTEGER);
+            }
+            if (variation.getSizeId() > 0) {
+                stm.setInt(3, variation.getSizeId());
+            } else {
+                stm.setNull(3, java.sql.Types.INTEGER);
+            }
             stm.setInt(4, variation.getPrice());
             stm.setInt(5, variation.getQtyInStock());
             stm.setInt(6, variationId);

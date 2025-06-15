@@ -220,13 +220,10 @@ public class ProductVariantManageServlet extends HttpServlet {
             handleValidationError("Please upload an image for the product variant.", request, response, tempProductVariant, isUpdate);
             return false;
         }
-        if (colorId <= 0) {
-            handleValidationError("Please select a color for this product variant.", request, response, tempProductVariant, isUpdate);
-            return false;
-        }
 
-        if (sizeId <= 0) {
-            handleValidationError("Please select a size for this product variant", request, response, tempProductVariant, isUpdate);
+        // Only one of color or size can be selected, not both, and not neither
+        if ((colorId > 0 && sizeId > 0) || (colorId <= 0 && sizeId <= 0)) {
+            handleValidationError("Please select either a color or a size, but not both.", request, response, tempProductVariant, isUpdate);
             return false;
         }
 

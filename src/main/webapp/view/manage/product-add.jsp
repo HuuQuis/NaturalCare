@@ -72,12 +72,14 @@
                                         </c:if>
                                         <form action="productManage" method="post">
                                             <input type="hidden" name="action" value="add">
+
                                             <div class="form-group">
                                                 <label for="exampleInputName1">Product Name</label>
                                                 <input name="name" type="text" class="form-control"
                                                        id="exampleInputName1" value="${product.name}"
                                                        placeholder="Enter Product Name...">
                                             </div>
+
                                             <div class="form-group">
                                                 <label for="description-label">Short Description</label>
                                                 <textarea
@@ -88,6 +90,7 @@
                                                         placeholder="Enter product description..."
                                                 >${product.description}</textarea>
                                             </div>
+
                                             <div class="form-group">
                                                 <label for="information-label">Product Information</label>
                                                 <textarea
@@ -98,6 +101,7 @@
                                                         placeholder="Enter product information..."
                                                 >${product.information}</textarea>
                                             </div>
+
                                             <div class="form-group">
                                                 <label for="guideline-label">Product Guideline</label>
                                                 <textarea
@@ -118,7 +122,8 @@
                                                     </c:forEach>
                                                 </select>
                                             </div>
-                                            <button type="submit" class="btn btn-primary mr-2"> Submit</button>
+
+                                            <button type="submit" class="btn btn-primary mr-2">Submit</button>
                                             <a href="${pageContext.request.contextPath}/productManage" class="btn btn-light">Cancel</a>
                                         </form>
                                     </div>
@@ -156,6 +161,18 @@
 <!-- endinject -->
 <!-- Custom js for this page -->
 <script src="${pageContext.request.contextPath}/adminassets/js/dashboard.js"></script>
+<script>
+    window.onload = function () {
+        const errorField = '${errorField}';
+        if (errorField) {
+            const field = document.querySelector('[name="' + errorField + '"]');
+            if (field) {
+                field.focus();
+                field.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+    };
+</script>
 </body>
 
 </html>
