@@ -165,6 +165,34 @@ VALUES ('Ginseng Skin Care Combo', 'A luxurious set for radiant skin',
         'Apply during diaper changes.', 21),
        ('Peppermint Essential Oil', 'Invigorating scent', 'Pure oil for aromatherapy and massage.',
         'Dilute before use.', 22);
-INSERT INTO product_variation (product_id, product_image, color, size, price, qty_in_stock)
-VALUES (7, '/images/product/lipstick-pink.jpg', 'Pink', null, 200000, 100),
-       (7, '/images/product/lipstick-red.jpg', 'Red', null, 190000, 100)
+        
+INSERT INTO color (color_id, color_name) VALUES
+(1, 'Red'),
+(2, 'Pink'),
+(3, 'Nude'),
+(4, 'Coral'),
+(5, 'Berry'),
+(6, 'Plum'),
+(7, 'Brown'),
+(8, 'Mauve'),
+(9, 'Orange'),
+(10, 'Wine');
+
+INSERT INTO size (size_id, size_name) VALUES
+(1, '50ml'),
+(2, '100ml'),
+(3, '200ml'),
+(4, '300ml'),
+(5, '400ml'),
+(6, '500ml'),
+(7, '600ml'),
+(8, '700ml'),
+(9, '800ml'),
+(10, '900ml'),
+(11, '1000ml');
+
+INSERT INTO product_variation (product_id, product_image, color_id, size_id, price, qty_in_stock)
+VALUES (7, '/images/product/lipstick-pink.jpg',2, null, 200000, 100),
+       (7, '/images/product/lipstick-red.jpg',1, null, 190000, 100),
+       (9, '/images/product/foundation-diro.jpg', 3, null, 210000, 100),
+       (9, '/images/product/foundation-este.jpg', 2, null, 250000, 100);

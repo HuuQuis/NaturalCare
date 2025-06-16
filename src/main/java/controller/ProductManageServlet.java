@@ -146,10 +146,7 @@ public class ProductManageServlet extends HttpServlet {
             if (subProductCategoryId > 0) {
                 tempProduct.setSubProductCategoryId(subProductCategoryId);
             }
-            // If subProductCategoryId <= 0 and this is an update, the original category is already set above
         } catch (Exception e) {
-            // For updates, keep the original subcategory that was already set
-            // For adds, this will remain 0 and trigger validation error
             if (!isUpdate) {
                 tempProduct.setSubProductCategoryId(0);
             }
@@ -216,9 +213,22 @@ public class ProductManageServlet extends HttpServlet {
 
     private void handleValidationError(String errorMessage, HttpServletRequest request, HttpServletResponse response, Product tempProduct, boolean isUpdate)
             throws ServletException, IOException {
+
         request.setAttribute("error", errorMessage);
         request.setAttribute("product", tempProduct);
         request.setAttribute("subCategories", subProductCategoryDAO.getAllSubProductCategories());
+
+        if (errorMessage.contains("name")) {
+            request.setAttribute("errorField", "name");
+        } else if (errorMessage.contains("description")) {
+            request.setAttribute("errorField", "description");
+        } else if (errorMessage.contains("information")) {
+            request.setAttribute("errorField", "information");
+        } else if (errorMessage.contains("guideline")) {
+            request.setAttribute("errorField", "guideline");
+        } else if (errorMessage.contains("category")) {
+            request.setAttribute("errorField", "subProductCategoryId");
+        }
 
         if (isUpdate) {
             request.getRequestDispatcher("/view/manage/product-edit.jsp").forward(request, response);
@@ -226,4 +236,5 @@ public class ProductManageServlet extends HttpServlet {
             request.getRequestDispatcher("/view/manage/product-add.jsp").forward(request, response);
         }
     }
+
 }

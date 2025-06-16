@@ -1,11 +1,8 @@
 package dal;
 
 import model.Product;
-import model.ProductCategory;
 import model.ProductVariation;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -42,10 +39,13 @@ public class ProductDAO extends DBContext {
     }
 
     public Product getProductById(int productId) {
-         sql = "SELECT p.*, pv.product_image, pv.color, pv.size, pv.price, pv.qty_in_stock, pv.sold\n" +
-                 "                FROM product p\n" +
-                 "                LEFT JOIN product_variation pv ON pv.product_id = p.product_id\n" +
-                 "                WHERE p.product_id = ?";
+        String sql = "SELECT p.*, pv.variation_id, pv.product_image, pv.color_id, pv.size_id, pv.price, pv.qty_in_stock, pv.sold, " +
+                "c.color_name, s.size_name " +
+                "FROM product p " +
+                "LEFT JOIN product_variation pv ON pv.product_id = p.product_id " +
+                "LEFT JOIN color c ON pv.color_id = c.color_id " +
+                "LEFT JOIN size s ON pv.size_id = s.size_id " +
+                "WHERE p.product_id = ?";
 
         Product product = null;
         try {
@@ -56,27 +56,35 @@ public class ProductDAO extends DBContext {
             while (rs.next()) {
                 if (product == null) {
                     product = new Product(
-                        rs.getInt("product_id"),
-                        rs.getString("product_name"),
-                        rs.getString("product_short_description"),
-                        rs.getString("product_information"),
-                        rs.getString("product_guideline"),
-                        rs.getString("product_image"),
-                        rs.getInt("sub_product_category_id")
+                            rs.getInt("product_id"),
+                            rs.getString("product_name"),
+                            rs.getString("product_short_description"),
+                            rs.getString("product_information"),
+                            rs.getString("product_guideline"),
+                            rs.getInt("sub_product_category_id")
                     );
                 }
 
-                // Add variation if exists
+                // Handle variations
+                int variationId = rs.getInt("variation_id");
                 String imageUrl = rs.getString("product_image");
-                if (imageUrl != null) {
+                int colorId = rs.getInt("color_id");
+                int sizeId = rs.getInt("size_id");
+                String colorName = rs.getString("color_name");
+                String sizeName = rs.getString("size_name");
+
+                if (variationId > 0) {
                     ProductVariation variation = new ProductVariation(
-                        imageUrl,
-                        rs.getString("color"),
-                        rs.getString("size"),
-                        rs.getInt("price"),
-                        rs.getInt("qty_in_stock"),
-                        rs.getInt("sold")
+                            variationId,
+                            imageUrl,
+                            colorId,
+                            sizeId,
+                            rs.getInt("price"),
+                            rs.getInt("qty_in_stock"),
+                            rs.getInt("sold")
                     );
+                    variation.setColorName(colorName);
+                    variation.setSizeName(sizeName);
                     product.addVariation(variation);
                     product.addImageUrl(imageUrl);
                 }
@@ -86,6 +94,8 @@ public class ProductDAO extends DBContext {
         }
         return product;
     }
+
+
 
     public List<Product> getAllProducts() {
         sql = "SELECT * FROM product";
@@ -122,28 +132,39 @@ public class ProductDAO extends DBContext {
 
     //get all variations of a product by product ID
     public List<ProductVariation> getProductVariationsByProductId(int productId) {
-        String sql = "SELECT * FROM product_variation WHERE product_id = ?";
+        String sql = "SELECT pv.*, c.color_name, s.size_name " +
+                     "FROM product_variation pv " +
+                     "LEFT JOIN color c ON pv.color_id = c.color_id " +
+                     "LEFT JOIN size s ON pv.size_id = s.size_id " +
+                     "WHERE pv.product_id = ?";
+
         List<ProductVariation> variations = new ArrayList<>();
         try {
             stm = connection.prepareStatement(sql);
             stm.setInt(1, productId);
             rs = stm.executeQuery();
+
             while (rs.next()) {
-                variations.add(new ProductVariation(
+                ProductVariation variation = new ProductVariation(
                         rs.getInt("variation_id"),
                         rs.getString("product_image"),
-                        rs.getString("color"),
-                        rs.getString("size"),
+                        rs.getInt("color_id"),
+                        rs.getInt("size_id"),
                         rs.getInt("price"),
                         rs.getInt("qty_in_stock"),
                         rs.getInt("sold")
-                ));
+                );
+                variation.setColorName(rs.getString("color_name"));
+                variation.setSizeName(rs.getString("size_name"));
+                variations.add(variation);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return variations;
     }
+
+
 
     public void addProduct(Product product) {
         sql = "INSERT INTO product (product_name, product_short_description, product_information, product_guideline, sub_product_category_id) VALUES (?, ?, ?, ?, ?)";
