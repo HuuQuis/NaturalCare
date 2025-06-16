@@ -15,6 +15,16 @@ public class ProductVariation {
     public ProductVariation() {
     }
 
+    public ProductVariation(int variationId, int productId, String imageUrl, int colorId, int sizeId, int price, int qtyInStock) {
+        this.variationId = variationId;
+        this.productId = productId;
+        this.imageUrl = imageUrl;
+        this.colorId = colorId;
+        this.sizeId = sizeId;
+        this.price = price;
+        this.qtyInStock = qtyInStock;
+    }
+
     public ProductVariation(int variationId, String imageUrl, int colorId, int sizeId, int price, int qtyInStock, int sold) {
         this.variationId = variationId;
         this.imageUrl = imageUrl;

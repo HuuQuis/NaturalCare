@@ -59,7 +59,7 @@
                             <div class="page-header">
                                 <div class="page-title">
                                     <h4>Manage Product Variant</h4>
-                                    <h6>Add New Product Variant</h6>
+                                    <h6>Edit Product Variant</h6>
                                 </div>
                             </div>
                             <div class="col-12 grid-margin stretch-card">
@@ -70,16 +70,15 @@
                                                     ${error}
                                             </div>
                                         </c:if>
-                                        <form action="${pageContext.request.contextPath}/productVariantManage?action=add&productId=${productId}"
-                                              method="post"
-                                              enctype="multipart/form-data">
-                                            <input type="hidden" name="action" value="add">
+                                        <form action="${pageContext.request.contextPath}/productVariantManage?productId=${productId}" method="post" enctype="multipart/form-data">
+                                            <input type="hidden" name="action" value="update">
+                                            <input type="hidden" name="variantId" value="${tempProductVariation.variationId}" />
                                             <div class="form-group">
                                                 <div class="form-control-plaintext">
                                                     <c:forEach var="pro" items="${products}">
-                                                        <c:if test="${pro.id eq productId}">
+                                                        <c:if test="${pro.id eq tempProductVariation.productId}">
                                                             <label>Product Line: ${pro.name}</label>
-                                                            <input type="hidden" name="ProductId" value="${pro.id}"/>
+                                                            <input type="hidden" name="productId" value="${pro.id}"/>
                                                         </c:if>
                                                     </c:forEach>
                                                 </div>
@@ -221,6 +220,7 @@
                 sizeSelect.disabled = false;
             }
         }
+
 
         colorSelect.addEventListener('change', updateSelectStates);
         sizeSelect.addEventListener('change', updateSelectStates);

@@ -50,6 +50,28 @@ public class ProductVariantManageServlet extends HttpServlet {
             String productId = request.getParameter("productId");
             request.setAttribute("productId", productId);
             request.getRequestDispatcher("/view/manage/productvariant-add.jsp").forward(request, response);
+        }else if("edit".equals(action)){
+            String variantIdStr = request.getParameter("variantId");
+            if (variantIdStr == null || variantIdStr.trim().isEmpty()) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Variant ID is required for edit operation");
+                return;
+            }
+            try {
+                int productVariantId = Integer.parseInt(variantIdStr.trim());
+                ProductVariation productVariation = productVariationDao.getProductVariationById(productVariantId);
+                if (productVariation == null) {
+                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "Product variation not found");
+                    return;
+                }
+                request.setAttribute("tempProductVariation", productVariation);
+                request.setAttribute("previousImageUrl", productVariation.getImageUrl());
+                request.setAttribute("productId", productVariation.getProductId());
+                request.getRequestDispatcher("/view/manage/productvariant-edit.jsp").forward(request, response);
+            } catch (NumberFormatException e) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid variant ID format");
+            }
+        } else {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid action specified");
         }
     }
 
@@ -91,10 +113,9 @@ public class ProductVariantManageServlet extends HttpServlet {
                 tempImagePath = "/images/temp/" + imageFileName;
                 String realTempPath = getServletContext().getRealPath(tempImagePath);
 
-//                File tempFolder = new File(realTempPath).getParentFile();
-//                if (!tempFolder.exists()) tempFolder.mkdirs();
+                File tempFolder = new File(realTempPath).getParentFile();
+                if (!tempFolder.exists()) tempFolder.mkdirs();
 
-                // Lưu ảnh tạm
                 try (InputStream input = file.getInputStream(); FileOutputStream output = new FileOutputStream(realTempPath)) {
                     byte[] buffer = new byte[1024];
                     int bytesRead;
@@ -143,12 +164,117 @@ public class ProductVariantManageServlet extends HttpServlet {
 
             try {
                 int productVariantId = Integer.parseInt(variantIdStr.trim());
+
+                ProductVariation pv = productVariationDao.getProductVariationById(productVariantId);
+                if (pv != null && pv.getImageUrl() != null && pv.getImageUrl().startsWith("/images/product/")) {
+                    String imagePath = getServletContext().getRealPath(pv.getImageUrl());
+                    File imageFile = new File(imagePath);
+                    if (imageFile.exists()) {
+                        boolean deleted = imageFile.delete();
+                        System.out.println("Deleted image from disk? " + deleted);
+                    }
+                }
+
+                // Tiếp tục xóa bản ghi trong DB
                 productVariationDao.deleteProductVariation(productVariantId);
                 response.sendRedirect(request.getContextPath() + "/productManage");
+
             } catch (NumberFormatException e) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid variant ID format");
             }
         }
+        else if ("update".equals(action)) {
+            String productId = request.getParameter("productId");
+            String variantIdStr = request.getParameter("variantId");
+
+            if (variantIdStr == null || productId == null) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing required parameters.");
+                return;
+            }
+
+            int variantId = Integer.parseInt(variantIdStr);
+            ProductVariation tempProductVariant = createProductVariantFromRequest(request, true);
+            tempProductVariant.setVariationId(variantId);
+            tempProductVariant.setProductId(Integer.parseInt(productId));
+
+            Part file = request.getPart("image");
+            String imageFileName = null;
+            String tempImagePath = null;
+
+            if (file != null && file.getSize() > 0) {
+                String contentType = file.getContentType();
+
+                if (!isImageFile(contentType)) {
+                    handleValidationError("Uploaded file must be an image (JPEG, PNG, GIF).", request, response, tempProductVariant, true);
+                    return;
+                }
+
+                BufferedImage image = ImageIO.read(file.getInputStream());
+                if (image == null) {
+                    handleValidationError("The uploaded file is not a valid image.", request, response, tempProductVariant, true);
+                    return;
+                }
+
+                int width = image.getWidth();
+                int height = image.getHeight();
+                if (width < 400 || width > 1000 || height < 400 || height > 1000) {
+                    handleValidationError("Image dimensions must be between 400x400 and 1000x1000 pixels.", request, response, tempProductVariant, true);
+                    return;
+                }
+
+                String previousImageUrl = request.getParameter("previousImageUrl");
+                if (previousImageUrl != null && !previousImageUrl.isEmpty() && previousImageUrl.contains("images/product/")) {
+                    String oldImagePath = getServletContext().getRealPath("/" + previousImageUrl.replaceFirst("^/+", ""));
+                    File oldFile = new File(oldImagePath);
+                    if (oldFile.exists()) {
+                        boolean deleted = oldFile.delete();
+                        System.out.println("Deleted old image? " + deleted);
+                    }
+                }
+
+
+                imageFileName = UUID.randomUUID() + "_" + Paths.get(file.getSubmittedFileName()).getFileName().toString();
+                tempImagePath = "/images/temp/" + imageFileName;
+                String realTempPath = getServletContext().getRealPath(tempImagePath);
+
+                try (InputStream input = file.getInputStream(); FileOutputStream output = new FileOutputStream(realTempPath)) {
+                    byte[] buffer = new byte[1024];
+                    int bytesRead;
+                    while ((bytesRead = input.read(buffer)) != -1) {
+                        output.write(buffer, 0, bytesRead);
+                    }
+                }
+
+                tempProductVariant.setImageUrl(tempImagePath);
+                request.setAttribute("previousImageUrl", tempImagePath);
+            } else {
+                String previousImageUrl = request.getParameter("previousImageUrl");
+                if (previousImageUrl != null && !previousImageUrl.isEmpty()) {
+                    tempProductVariant.setImageUrl(previousImageUrl);
+                }
+            }
+
+            if (!validateProductVariantInput(request, response, tempProductVariant, true)) {
+                return;
+            }
+
+            if (tempProductVariant.getImageUrl() != null && tempProductVariant.getImageUrl().startsWith("/images/temp/")) {
+                String tempPath = getServletContext().getRealPath(tempProductVariant.getImageUrl());
+                String fileName = Paths.get(tempProductVariant.getImageUrl()).getFileName().toString();
+                String finalImageUrl = "/images/product/" + fileName;
+                String finalPath = getServletContext().getRealPath(finalImageUrl);
+
+                File finalDir = new File(finalPath).getParentFile();
+                if (!finalDir.exists()) finalDir.mkdirs();
+
+                Files.move(Paths.get(tempPath), Paths.get(finalPath), StandardCopyOption.REPLACE_EXISTING);
+                tempProductVariant.setImageUrl(finalImageUrl);
+            }
+
+            productVariationDao.updateProductVariation(tempProductVariant);
+            response.sendRedirect(request.getContextPath() + "/productManage");
+        }
+
     }
 
     private boolean isImageFile(String contentType) {
@@ -160,11 +286,6 @@ public class ProductVariantManageServlet extends HttpServlet {
 
     private ProductVariation createProductVariantFromRequest(HttpServletRequest request, boolean isUpdate) throws ServletException {
         ProductVariation tempProductVariation = new ProductVariation();
-
-
-        if(isUpdate){
-
-        }
 
         try{
             int colorId = Integer.parseInt(request.getParameter("colorId"));
@@ -221,11 +342,11 @@ public class ProductVariantManageServlet extends HttpServlet {
             return false;
         }
 
-        // Only one of color or size can be selected, not both, and not neither
         if ((colorId > 0 && sizeId > 0) || (colorId <= 0 && sizeId <= 0)) {
             handleValidationError("Please select either a color or a size, but not both.", request, response, tempProductVariant, isUpdate);
             return false;
         }
+
 
         if (price <= 0) {
             handleValidationError("Price must be greater than 0.", request, response, tempProductVariant, isUpdate);
@@ -249,6 +370,18 @@ public class ProductVariantManageServlet extends HttpServlet {
 
         if (tempProductVariation.getImageUrl() != null) {
             request.setAttribute("previousImageUrl", tempProductVariation.getImageUrl());
+        }
+
+        // ✅ Set errorField để JavaScript trong JSP focus vào ô lỗi
+        if (errorMessage.contains("image")) {
+            request.setAttribute("errorField", "image");
+        } else if (errorMessage.contains("either a color or a size")) {
+            // Ưu tiên focus vào colorId nếu cả hai sai
+            request.setAttribute("errorField", "colorId");
+        } else if (errorMessage.contains("Price")) {
+            request.setAttribute("errorField", "price");
+        } else if (errorMessage.contains("Quantity")) {
+            request.setAttribute("errorField", "quantity");
         }
 
         if (isUpdate) {
