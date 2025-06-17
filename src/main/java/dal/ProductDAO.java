@@ -391,4 +391,52 @@ public class ProductDAO extends DBContext {
         }
         return products;
     }
+
+    public List<Product> getProductsByCategoryIdSorted(int categoryId, int pageIndex, String sort) {
+        int offset = (pageIndex - 1) * 6;
+        int limit = 6;
+        String orderBy = getOrderByClause(sort);
+        sql = "SELECT p.*, MIN(pv.product_image) AS product_image, MIN(pv.sell_price) AS min_price " +
+                "FROM product p " +
+                "INNER JOIN sub_product_category s ON p.sub_product_category_id = s.sub_product_category_id " +
+                "INNER JOIN product_category pc ON s.product_category_id = pc.product_category_id " +
+                "LEFT JOIN product_variation pv ON pv.product_id = p.product_id " +
+                "WHERE pc.product_category_id = ? " +
+                "GROUP BY p.product_id " +
+                orderBy +
+                " LIMIT ?, ?";
+        return fetchProductsByQuery(sql, categoryId, offset, limit);
+    }
+
+    public List<Product> getProductsBySubCategoryIdSorted(int subCategoryId, int pageIndex, String sort) {
+        int offset = (pageIndex - 1) * 6;
+        int limit = 6;
+        String orderBy = getOrderByClause(sort);
+        sql = "SELECT p.*, MIN(pv.product_image) AS product_image, MIN(pv.sell_price) AS min_price " +
+                "FROM product p " +
+                "INNER JOIN sub_product_category s ON p.sub_product_category_id = s.sub_product_category_id " +
+                "INNER JOIN product_category pc ON s.product_category_id = pc.product_category_id " +
+                "LEFT JOIN product_variation pv ON pv.product_id = p.product_id " +
+                "WHERE p.sub_product_category_id = ? " +
+                "GROUP BY p.product_id " +
+                orderBy +
+                " LIMIT ?, ?";
+        return fetchProductsByQuery(sql, subCategoryId, offset, limit);
+    }
+
+    private String getOrderByClause(String sort) {
+        if (sort == null) return "ORDER BY p.product_id";
+        switch (sort) {
+            case "name-asc":
+                return "ORDER BY p.product_name ASC";
+            case "name-desc":
+                return "ORDER BY p.product_name DESC";
+            case "price-asc":
+                return "ORDER BY min_price ASC";
+            case "price-desc":
+                return "ORDER BY min_price DESC";
+            default:
+                return "ORDER BY p.product_id";
+        }
+    }
 }
