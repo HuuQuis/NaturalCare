@@ -100,7 +100,7 @@
                 <c:if test="${not empty error}">
                     <span style="color: #a94442; background-color: #f2dede; border: 1px solid #ebccd1; padding: 8px 15px; border-radius: 4px; display: table;">
                             <strong>${error}</strong>
-                        </span>
+                    </span>
                 </c:if>
 
                 <button style="margin-top: 20px" type="submit" class="btn btn-default">Signup</button>

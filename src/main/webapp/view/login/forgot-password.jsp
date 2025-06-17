@@ -46,42 +46,44 @@
 </header><!--/header-->
 
 <!--form-->
-<section id="form">
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-offset-3 col-sm-6">
-                <!--forgot password form-->
-                <div class="login-form">
-                    <h2>Forgot Password</h2>
-                    <form action="${pageContext.request.contextPath}/forgot" method="POST">
-                        <input name="email" type="email" placeholder="Submit your email for recovery!" required/>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-offset-3 col-sm-6">
+            <!--forgot password form-->
+            <div class="login-form">
+                <h2>Forgot Password</h2>
+                <form action="${pageContext.request.contextPath}/forgot" method="POST">
+                    Submit your email to reset your password:
+                    <input name="email" type="email" placeholder="Submit your email for recovery!" required/>
 
-                        <br>
-                        <c:if test="${not empty message}">
-                            <div class="alert alert-success">${message}</div>
-                        </c:if>
-                        <c:if test="${not empty error}">
-                            <div class="alert alert-danger">${error}</div>
-                        </c:if>
+                    <c:if test="${not empty message}">
+                        <span style="color: #155724; background-color: #d4edda; border: 1px solid #c3e6cb; padding: 8px 15px; border-radius: 4px; display: table;">
+                            <strong>${message}</strong>
+                        </span>
+                    </c:if>
+                    <c:if test="${not empty error}">
+                        <span style="color: #a94442; background-color: #f2dede; padding: 8px 15px; border-radius: 4px; display: table;">
+                            <strong>${error}</strong>
+                        </span>
+                    </c:if>
 
-                        <div style="display: flex; gap: 10px; margin-top: 10px;">
-                            <button type="submit" class="btn btn-default">Reset Password</button>
-                            <button type="button" class="btn btn-default"
-                                    onclick="window.location.href='${pageContext.request.contextPath}/login'">Back to
-                                Login
-                            </button>
-                        </div>
+                    <div style="display: flex; gap: 10px; margin-top: 10px;">
+                        <button type="submit" class="btn btn-default">Reset Password</button>
+                        <button type="button" class="btn btn-default"
+                                onclick="window.location.href='${pageContext.request.contextPath}/login'">Back to
+                            Login
+                        </button>
+                    </div>
 
-                        <hr>
-                        <p class="message">Don't have an account? <a href="${pageContext.request.contextPath}/register">Register</a>
-                        </p>
-                    </form>
-                </div>
-                <!--/forgot password form-->
+                    <hr>
+                    <p class="message">Don't have an account? <a href="${pageContext.request.contextPath}/register">Register</a>
+                    </p>
+                </form>
             </div>
+            <!--/forgot password form-->
         </div>
     </div>
-</section><!--/form-->
+</div>
 
 <!--/Footer-->
 <jsp:include page="../common/footer.jsp"></jsp:include>
