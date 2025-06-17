@@ -114,35 +114,43 @@
                                                 </c:if>
                                             </div>
 
-                                            <div class="form-group">
-                                                <label for="color">Product Color</label>
-                                                <select name="colorId" class="form-control" id="color">
-                                                    <option value="0">Choose Color</option>
-                                                    <c:forEach var="color" items="${colors}">
-                                                        <option value="${color.id}" ${tempProductVariation.colorId == color.id ? 'selected' : ''}>${color.name}</option>
-                                                    </c:forEach>
-                                                </select>
-                                            </div>
+                                            <c:if test="${variantType ne 'size'}">
+                                                <div class="form-group">
+                                                    <label for="color">Color</label>
+                                                    <select name="colorId" id="color" class="form-control">
+                                                        <option value="0">Select color</option>
+                                                        <c:forEach var="color" items="${colors}">
+                                                            <option value="${color.id}" ${tempProductVariation.colorId == color.id ? 'selected' : ''}>${color.name}</option>
+                                                        </c:forEach>
+                                                    </select>
+                                                </div>
+                                            </c:if>
 
-                                            <div class="form-group">
-                                                <label for="size">Product Size</label>
-                                                <select name="sizeId" class="form-control" id="size"
-                                                    <c:if test="${hasColorVariant}">disabled</c:if>>
-                                                    <option value="0">Choose Size(ml)</option>
-                                                    <c:forEach var="size" items="${sizes}">
-                                                        <option value="${size.id}" ${tempProductVariation.sizeId == size.id ? 'selected' : ''}>${size.name}</option>
-                                                    </c:forEach>
-                                                </select>
-                                                <c:if test="${hasColorVariant}">
-                                                    <small class="text-danger">This product already has color-based variants. You can only select a color for new variants.</small>
-                                                </c:if>
-                                            </div>
+                                            <c:if test="${variantType ne 'color'}">
+                                                <!-- SHOW SIZE SELECT -->
+                                                <div class="form-group">
+                                                    <label for="size">Size</label>
+                                                    <select name="sizeId" id="size" class="form-control">
+                                                        <option value="0">Select size</option>
+                                                        <c:forEach var="size" items="${sizes}">
+                                                            <option value="${size.id}" ${tempProductVariation.sizeId == size.id ? 'selected' : ''}>${size.name}</option>
+                                                        </c:forEach>
+                                                    </select>
+                                                </div>
+                                            </c:if>
 
                                             <div class="form-group">
                                                 <label>Product Variant Price</label>
                                                 <input type="number" class="form-control" name="price"
                                                        value="${tempProductVariation.price}"
                                                        placeholder="Enter Product Variant Price">
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>Product Variant Sell Price</label>
+                                                <input type="number" class="form-control" name="sell_price"
+                                                       value="${tempProductVariation.sell_price}"
+                                                       placeholder="Enter Product Variant Sell Price">
                                             </div>
 
                                             <div class="form-group">

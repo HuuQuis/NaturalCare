@@ -335,14 +335,19 @@ public class ProductVariantManageServlet extends HttpServlet {
                 tempProductVariation.setSizeId(0);
             }
         }
+        String sellPriceStr = request.getParameter("sell_price");
         String priceStr = request.getParameter("price");
         String quantityStr = request.getParameter("quantity");
 
         int price = 0;
         int quantity = 0;
+        int sellPrice = 0;
         try {
             if (priceStr != null && !priceStr.trim().isEmpty()) {
                 price = Integer.parseInt(priceStr.trim());
+            }
+            if (sellPriceStr != null && !sellPriceStr.trim().isEmpty()) {
+                sellPrice = Integer.parseInt(sellPriceStr.trim());
             }
             if (quantityStr != null && !quantityStr.trim().isEmpty()) {
                 quantity = Integer.parseInt(quantityStr.trim());
@@ -353,8 +358,9 @@ public class ProductVariantManageServlet extends HttpServlet {
 
 
         tempProductVariation.setPrice(price);
+        tempProductVariation.setSell_price(sellPrice);
         tempProductVariation.setQtyInStock(quantity);
-
+        tempProductVariation.setProductId(Integer.parseInt(request.getParameter("productId")));
         return tempProductVariation;
     }
 
@@ -364,6 +370,7 @@ public class ProductVariantManageServlet extends HttpServlet {
         int colorId = tempProductVariant.getColorId();
         int sizeId = tempProductVariant.getSizeId();
         int price = tempProductVariant.getPrice();
+        int sellPrice = tempProductVariant.getSell_price();
         int quantity = tempProductVariant.getQtyInStock();
         int productId = tempProductVariant.getProductId();
         int variationId = tempProductVariant.getVariationId();
@@ -374,30 +381,49 @@ public class ProductVariantManageServlet extends HttpServlet {
         }
 
         // --- Enforce color-only rule if product has color-based variants ---
-        boolean hasColorVariant = false;
+        String variantType = null;
         List<ProductVariation> variations = productDao.getProductVariationsByProductId(productId);
+
         for (ProductVariation v : variations) {
-            if (v.getColorId() > 0 && (!isUpdate || v.getVariationId() != variationId)) {
-                hasColorVariant = true;
-                break;
+            if (!isUpdate || v.getVariationId() != variationId) {
+                if (v.getColorId() > 0 && v.getSizeId() <= 0) {
+                    variantType = "color";
+                    break;
+                } else if (v.getSizeId() > 0 && v.getColorId() <= 0) {
+                    variantType = "size";
+                    break;
+                }
             }
         }
-        if (hasColorVariant) {
+
+        request.setAttribute("variantType", variantType);
+
+        if ("color".equals(variantType)) {
             if (colorId <= 0 || sizeId > 0) {
-                handleValidationError("This product already has color-based variants. You can only select a color (not size) for new variants.", request, response, tempProductVariant, isUpdate);
+                handleValidationError("This product already uses color variants. You can only select a color (not size).", request, response, tempProductVariant, isUpdate);
+                return false;
+            }
+        } else if ("size".equals(variantType)) {
+            if (sizeId <= 0 || colorId > 0) {
+                handleValidationError("This product already uses size variants. You can only select a size (not color).", request, response, tempProductVariant, isUpdate);
                 return false;
             }
         } else {
+            // First variation being added
             if ((colorId > 0 && sizeId > 0) || (colorId <= 0 && sizeId <= 0)) {
                 handleValidationError("Please select either a color or a size, but not both.", request, response, tempProductVariant, isUpdate);
                 return false;
             }
         }
 
-        // Check duplicate
-        boolean isDuplicate = productVariationDao.isDuplicateVariation(productId, colorId, sizeId, isUpdate ? variationId : null);
-        if (isDuplicate) {
-            handleValidationError("This combination of color or size already exists for the product.", request, response, tempProductVariant, isUpdate);
+        // --- Check for duplicate colors and sizes ---
+        if (colorId > 0 && productVariationDao.isDuplicateColor(productId, colorId, isUpdate ? variationId : null)) {
+            handleValidationError("This color already exists for the product.", request, response, tempProductVariant, isUpdate);
+            return false;
+        }
+
+        if (sizeId > 0 && productVariationDao.isDuplicateSize(productId, sizeId, isUpdate ? variationId : null)) {
+            handleValidationError("This size already exists for the product.", request, response, tempProductVariant, isUpdate);
             return false;
         }
 
@@ -405,6 +431,17 @@ public class ProductVariantManageServlet extends HttpServlet {
             handleValidationError("Price must be greater than 0.", request, response, tempProductVariant, isUpdate);
             return false;
         }
+
+        if (sellPrice <= 0) {
+            handleValidationError("Sell price must be greater than 0.", request, response, tempProductVariant, isUpdate);
+            return false;
+        }
+
+        if (sellPrice < price) {
+            handleValidationError("Sell price must be greater than or equal to the price.", request, response, tempProductVariant, isUpdate);
+            return false;
+        }
+
         if (quantity <= 0) {
             handleValidationError("Quantity must be greater than 0.", request, response, tempProductVariant, isUpdate);
             return false;
@@ -430,9 +467,17 @@ public class ProductVariantManageServlet extends HttpServlet {
         } else if (errorMessage.contains("either a color or a size")) {
             // Ưu tiên focus vào colorId nếu cả hai sai
             request.setAttribute("errorField", "colorId");
-        } else if (errorMessage.contains("Price")) {
+        } else if (errorMessage.contains("color already exists")) {
+            request.setAttribute("errorField", "colorId");
+        } else if (errorMessage.contains("size already exists")) {
+            request.setAttribute("errorField", "sizeId");
+        } else if (errorMessage.contains("Price must be greater than 0")) {
             request.setAttribute("errorField", "price");
-        } else if (errorMessage.contains("Quantity")) {
+        } else if (errorMessage.contains("Sell price must be greater than 0")) {
+            request.setAttribute("errorField", "sell_price");
+        } else if (errorMessage.contains("Sell price must be greater than or equal to the price")) {
+            request.setAttribute("errorField", "sell_price");
+        } else if (errorMessage.contains("Quantity must be greater than 0")) {
             request.setAttribute("errorField", "quantity");
         }
 

@@ -134,7 +134,7 @@
 
                                 <!-- Row phụ hiển thị variants -->
                                 <tr class="collapse" id="variations${c.id}" data-bs-parent="#variantAccordion">
-                                    <td colspan="7">
+                                    <td colspan="9">
                                         <div class="card card-body border border-1">
                                             <h6 class="mb-3">Variants of ${c.name}</h6>
                                             <table class="table table-bordered">

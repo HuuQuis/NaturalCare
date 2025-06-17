@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 public class ProductVariationDAO extends DBContext{
     public void addProductVariation(ProductVariation variation, int productId) {
-        sql = "INSERT INTO product_variation (product_id, product_image, color_id, size_id, price, qty_in_stock) VALUES (?, ?, ?, ?, ?, ?)";
+        sql = "INSERT INTO product_variation (product_id, product_image, color_id, size_id, price, sell_price, qty_in_stock) VALUES (?, ?, ?, ?, ?, ?,?)";
         try {
             stm = connection.prepareStatement(sql);
             stm.setInt(1, productId);
@@ -23,7 +23,8 @@ public class ProductVariationDAO extends DBContext{
                 stm.setNull(4, java.sql.Types.INTEGER);
             }
             stm.setInt(5, variation.getPrice());
-            stm.setInt(6, variation.getQtyInStock());
+            stm.setInt(6, variation.getSell_price());
+            stm.setInt(7, variation.getQtyInStock());
             stm.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -31,7 +32,7 @@ public class ProductVariationDAO extends DBContext{
     }
 
     public void updateProductVariation(ProductVariation variation) {
-        sql = "UPDATE product_variation SET product_image = ?, color_id = ?, size_id = ?, price = ?, qty_in_stock = ? WHERE variation_id = ?";
+        sql = "UPDATE product_variation SET product_image = ?, color_id = ?, size_id = ?, price = ?, sell_price = ?, qty_in_stock = ? WHERE variation_id = ?";
         try  {
             stm = connection.prepareStatement(sql);
             stm.setString(1, variation.getImageUrl());
@@ -49,8 +50,9 @@ public class ProductVariationDAO extends DBContext{
             }
 
             stm.setInt(4, variation.getPrice());
-            stm.setInt(5, variation.getQtyInStock());
-            stm.setInt(6, variation.getVariationId());
+            stm.setInt(5, variation.getSell_price());
+            stm.setInt(6, variation.getQtyInStock());
+            stm.setInt(7, variation.getVariationId());
 
             stm.executeUpdate();
         } catch (SQLException e) {
@@ -92,10 +94,9 @@ public class ProductVariationDAO extends DBContext{
         }
         return null;
     }
-    public boolean isDuplicateVariation(int productId, int colorId, int sizeId, Integer excludeVariationId) {
-        sql = "SELECT COUNT(*) FROM product_variation WHERE product_id = ? AND color_id " +
-                (colorId > 0 ? "= ?" : "IS NULL") + " AND size_id " +
-                (sizeId > 0 ? "= ?" : "IS NULL");
+    public boolean isDuplicateColor(int productId, int colorId, Integer excludeVariationId) {
+        sql = "SELECT COUNT(*) FROM product_variation WHERE product_id = ? AND " +
+                "((color_id = ?) OR (color_id IS NULL AND ? = 0))";
 
         if (excludeVariationId != null) {
             sql += " AND variation_id != ?";
@@ -103,11 +104,13 @@ public class ProductVariationDAO extends DBContext{
 
         try {
             stm = connection.prepareStatement(sql);
-            int paramIndex = 1;
-            stm.setInt(paramIndex++, productId);
-            if (colorId > 0) stm.setInt(paramIndex++, colorId);
-            if (sizeId > 0) stm.setInt(paramIndex++, sizeId);
-            if (excludeVariationId != null) stm.setInt(paramIndex++, excludeVariationId);
+            int index = 1;
+            stm.setInt(index++, productId);
+            stm.setInt(index++, colorId);
+            stm.setInt(index++, colorId);
+            if (excludeVariationId != null) {
+                stm.setInt(index++, excludeVariationId);
+            }
 
             rs = stm.executeQuery();
             if (rs.next()) {
@@ -116,7 +119,39 @@ public class ProductVariationDAO extends DBContext{
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
         return false;
     }
+
+
+    public boolean isDuplicateSize(int productId, int sizeId, Integer excludeVariationId) {
+        sql = "SELECT COUNT(*) FROM product_variation WHERE product_id = ? AND " +
+                "((size_id = ?) OR (size_id IS NULL AND ? = 0))";
+
+        if (excludeVariationId != null) {
+            sql += " AND variation_id != ?";
+        }
+
+        try {
+            stm = connection.prepareStatement(sql);
+            int index = 1;
+            stm.setInt(index++, productId);
+            stm.setInt(index++, sizeId);
+            stm.setInt(index++, sizeId);
+            if (excludeVariationId != null) {
+                stm.setInt(index++, excludeVariationId);
+            }
+
+            rs = stm.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
 
 }
