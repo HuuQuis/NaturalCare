@@ -93,8 +93,7 @@
                         <div class="error-message" id="emailError"></div>
                     </div>
                 </div>
-                Phone:<input type="text" name="phone" id="phone" placeholder="Phone Number" pattern="0[0-9]{9}"
-                             required
+                Phone:<input type="text" name="phone" id="phone" placeholder="Phone Number" required
                              value="${param.phone}"/>
                 <div class="error-message" id="phoneError"></div>
 
@@ -204,9 +203,9 @@
             errorMessages.push({field: errors.email, message: 'Please enter a valid email address!'});
             hasError = true;
         }
-        const phonePattern = /^\+?[0-9]{10,15}$/;
+        const phonePattern = /^0\d{9}$/;
         if (!phonePattern.test(inputs.phone.value)) {
-            errorMessages.push({field: errors.phone, message: 'Please enter a valid phone number!'});
+            errorMessages.push({field: errors.phone, message: 'Phone number must start with 0 and be 10 digits long!'});
             hasError = true;
         }
 
