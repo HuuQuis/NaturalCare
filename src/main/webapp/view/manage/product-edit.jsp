@@ -2,205 +2,163 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
-    <meta name="description" content="POS - Bootstrap Admin Template">
-    <meta name="keywords"
-          content="admin, estimates, bootstrap, business, corporate, creative, invoice, html5, responsive, Projects">
-    <meta name="author" content="Dreamguys - Bootstrap Admin Template">
-    <meta name="robots" content="noindex, nofollow">
-    <title>News Admin</title>
-
-    <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/adminassets/img/favicon.png">
-
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/adminassets/css/bootstrap.min.css">
-
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/adminassets/css/animate.css">
-
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/adminassets/plugins/select2/css/select2.min.css">
-
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/adminassets/css/dataTables.bootstrap4.min.css">
-
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <title>Breeze Admin</title>
     <link rel="stylesheet"
-          href="${pageContext.request.contextPath}/adminassets/plugins/fontawesome/css/fontawesome.min.css">
-
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/adminassets/plugins/fontawesome/css/all.min.css">
-
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/adminassets/css/style.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/adminStyle.css">
+          href="${pageContext.request.contextPath}/adminassets/vendors/mdi/css/materialdesignicons.min.css"/>
+    <link rel="stylesheet"
+          href="${pageContext.request.contextPath}/adminassets/vendors/flag-icon-css/css/flag-icon.min.css"/>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/adminassets/vendors/css/vendor.bundle.base.css"/>
+    <link rel="stylesheet"
+          href="${pageContext.request.contextPath}/adminassets/vendors/font-awesome/css/font-awesome.min.css"/>
+    <link rel="stylesheet"
+          href="${pageContext.request.contextPath}/adminassets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.css"/>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/adminassets/css/style.css"/>
+    <link rel="shortcut icon" href="${pageContext.request.contextPath}/adminassets/images/favicon.png"/>
 </head>
 
 <body>
-<div id="global-loader">
-    <div class="whirly-loader"></div>
-</div>
+<div class="container-scroller">
 
-<div class="main-wrapper">
+    <!-- SIDEBAR -->
+    <jsp:include page="../common/sidebar-manager.jsp"/>
 
-    <div class="header">
-        <div class="header-left active">
-            <a href="" class="logo">
-            </a>
-            <a href="" class="logo-small">
-                <img src="${pageContext.request.contextPath}/adminassets/img/logo-small.png" alt="">
-            </a>
-        </div>
-        <ul class="nav user-menu">
-            <li class="nav-item dropdown has-arrow main-drop">
-                <a href="javascript:void(0);" class="dropdown-toggle nav-link userset" data-bs-toggle="dropdown">
-                            <span class="user-img"><img
-                                    src="${pageContext.request.contextPath}/adminassets/img/profiles/avator1.jpg"
-                                    alt="">
-                                <span class="status online"></span></span>
-                </a>
-                <div class="dropdown-menu menu-drop-user">
-                    <div class="profilename">
-                        <div class="profileset">
-                                    <span class="user-img"><img
-                                            src="${pageContext.request.contextPath}/adminassets/img/profiles/avator1.jpg"
-                                            alt="">
-                                        <span class="status online"></span></span>
-                            <div class="profilesets">
-                                <h5>Manager</h5>
-                            </div>
-                        </div>
-                        <hr class="m-0">
-                        <a class="dropdown-item logout pb-0" href=""><img
-                                src="${pageContext.request.contextPath}/adminassets/img/icons/log-out.svg" class="me-2"
-                                alt="img">Logout</a>
-                    </div>
-                </div>
-            </li>
-        </ul>
-    </div>
+    <!-- BODY WRAPPER -->
+    <div class="container-fluid page-body-wrapper">
 
+        <!-- HEADER -->
+        <jsp:include page="../common/header-manager.jsp"/>
 
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-inner slimscroll">
-            <div id="sidebar-menu" class="sidebar-menu">
-                <ul>
-                    <li class="submenu">
-                        <a href="javascript:void(0);"><img
-                                src="${pageContext.request.contextPath}/adminassets/img/icons/product.svg"
-                                alt="img"><span>
-                                        Edit</span> <span class="menu-arrow"></span></a>
-                        <ul>
-                            <li><a href="">DashBoard</a></li>
-                            <li><a href="${pageContext.request.contextPath}/productManage" class="active">Product List</a></li>
-                            <li><a href="">Category List</a></li>
-                            <li><a href="">Expert List</a></li>
-                            <li><a href="">Staff List</a></li>
-                            <li><a href="">Shipper List</a></li>
-                        </ul>
-                    </li>
-                </ul>
+        <!-- SETTINGS PANEL (có thể đặt trong content-wrapper nếu cần) -->
+        <div id="theme-settings" class="settings-panel">
+            <i class="settings-close mdi mdi-close"></i>
+            <p class="settings-heading">SIDEBAR SKINS</p>
+            <div class="sidebar-bg-options selected" id="sidebar-default-theme">
+                <div class="img-ss rounded-circle bg-light border mr-3"></div>
+                Default
+            </div>
+            <div class="sidebar-bg-options" id="sidebar-dark-theme">
+                <div class="img-ss rounded-circle bg-dark border mr-3"></div>
+                Dark
+            </div>
+            <p class="settings-heading mt-2">HEADER SKINS</p>
+            <div class="color-tiles mx-0 px-4">
+                <div class="tiles light"></div>
+                <div class="tiles dark"></div>
             </div>
         </div>
-    </div>
 
-    <div class="page-wrapper">
-        <div class="content">
-            <div class="page-header">
-                <div class="page-title">
-                    <h4>Manage Product</h4>
-                    <h6>Update Product</h6>
-                </div>
-            </div>
+        <!-- MAIN PANEL -->
+        <div class="main-panel">
+            <div class="content-wrapper">
+                <div class="main-wrapper">
+                    <div class="page-wrapper">
+                        <div class="content">
+                            <div class="page-header">
+                                <div class="page-title">
+                                    <h4>Manage Product</h4>
+                                    <h6>Add New Product</h6>
+                                </div>
+                            </div>
+                            <div class="col-12 grid-margin stretch-card">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <c:if test="${not empty error}">
+                                            <div class="alert alert-danger" role="alert">
+                                                    ${error}
+                                            </div>
+                                        </c:if>
+                                        <form action="productManage" method="post">
+                                            <input type="hidden" name="action" value="update">
+                                            <input type="hidden" name="id" value="${product.id}">
+                                            <div class="form-group">
+                                                <label for="exampleInputName1">Product Name</label>
+                                                <input name="name" type="text" class="form-control"
+                                                       id="exampleInputName1" value="${product.name}"
+                                                       placeholder="Enter Product Name...">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="description-label">Short Description</label>
+                                                <textarea
+                                                        class="form-control"
+                                                        id="description-label"
+                                                        name="description"
+                                                        rows="5"
+                                                        placeholder="Enter product description..."
+                                                >${product.description}</textarea>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="information-label">Product Information</label>
+                                                <textarea
+                                                        class="form-control"
+                                                        id="information-label"
+                                                        rows="5"
+                                                        name="information"
+                                                        placeholder="Enter product information..."
+                                                >${product.information}</textarea>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="guideline-label">Product Guideline</label>
+                                                <textarea
+                                                        class="form-control"
+                                                        id="guideline-label"
+                                                        rows="5"
+                                                        name="guideline"
+                                                        placeholder="Enter product guideline..."
+                                                >${product.guideline}</textarea>
+                                            </div>
 
-            <form action="productManage" method="post">
-                <input type="hidden" name="action" value="update">
-                <input type="hidden" name="id" value="${product.id}">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="row">
-                            <c:if test="${not empty error}">
-                                <div class="alert alert-danger" role="alert">
-                                        ${error}
+                                            <div class="form-group">
+                                                <label for="subCategory">Sub Product Category</label>
+                                                <select name="subProductCategoryId" class="form-control" id="subCategory">
+                                                    <c:forEach var="sub" items="${subCategories}">
+                                                        <option value="${sub.id}"
+                                                                <c:if test="${product.subProductCategoryId == sub.id}">selected</c:if>>
+                                                                ${sub.name}
+                                                        </option>
+                                                    </c:forEach>
+                                                </select>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary mr-2"> Update</button>
+                                            <a href="${pageContext.request.contextPath}/productManage" class="btn btn-light">Cancel</a>
+                                        </form>
+                                    </div>
                                 </div>
-                            </c:if>
-                            <div class="col-lg-12 col-sm-6 col-12">
-                                <div class="form-group">
-                                    <label>Product Name</label>
-                                    <input name="name" type="text"  value="${product.name}" placeholder="Enter Product Name..." >
-                                </div>
-                            </div>
-                            <div class="col-lg-12 col-sm-6 col-12">
-                                <div class="form-group">
-                                    <label class="description-label">Short Description</label>
-                                    <textarea
-                                            rows="10"
-                                            cols="50"
-                                            name="description"
-                                            placeholder="Enter product description..."
-                                            onfocus="this.style.borderColor='#28a745';"
-                                            onblur="this.style.borderColor='';"
-                                    >${product.description}</textarea>
-                                </div>
-                            </div>
-                            <div class="col-lg-12 col-sm-6 col-12">
-                                <div class="form-group">
-                                    <label>Product Information</label>
-                                    <textarea rows="10" cols="50" name="information"
-                                              placeholder="Enter product information..."
-                                              onfocus="this.style.borderColor='#28a745';"
-                                              onblur="this.style.borderColor='';"
-                                    >${product.information}</textarea>
-                                </div>
-                            </div>
-                            <div class="col-lg-12 col-sm-6 col-12">
-                                <div class="form-group">
-                                    <label>Product Guideline</label>
-                                    <textarea rows="10" cols="50" name="guideline"
-                                              placeholder="Enter product guideline..."
-                                              onfocus="this.style.borderColor='#28a745';"
-                                              onblur="this.style.borderColor='';"
-                                    >${product.guideline}</textarea>
-                                </div>
-                            </div>
-                            <div class="col-lg-12 col-sm-6 col-12">
-                                <div class="form-group">
-                                    <label>Sub Product Category</label>
-                                    <select name="subProductCategoryId" class="select">
-                                        <c:forEach var="sub" items="${subCategories}">
-                                            <option value="${sub.id}"
-                                                    <c:if test="${product.subProductCategoryId == sub.id}">selected</c:if>>
-                                                    ${sub.name}
-                                            </option>
-                                        </c:forEach>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-lg-12">
-                                <button type="submit" class="btn btn-submit me-2">Update</button>
-                                <a href="${pageContext.request.contextPath}/productManage" class="btn btn-cancel">Cancel</a>
                             </div>
                         </div>
                     </div>
                 </div>
-            </form>
+            </div>
         </div>
     </div>
 </div>
 
-<script src="${pageContext.request.contextPath}/adminassets/js/jquery-3.6.0.min.js"></script>
+<!-- plugins:js -->
+<script src="${pageContext.request.contextPath}/adminassets/vendors/js/vendor.bundle.base.js"></script>
+<!-- endinject -->
+<!-- Plugin js for this page -->
+<script src="${pageContext.request.contextPath}/adminassets/vendors/chart.js/Chart.min.js"></script>
+<script src="${pageContext.request.contextPath}/adminassets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
+<script src="${pageContext.request.contextPath}/adminassets/vendors/flot/jquery.flot.js"></script>
+<script src="${pageContext.request.contextPath}/adminassets/vendors/flot/jquery.flot.resize.js"></script>
+<script src="${pageContext.request.contextPath}/adminassets/vendors/flot/jquery.flot.categories.js"></script>
+<script src="${pageContext.request.contextPath}/adminassets/vendors/flot/jquery.flot.fillbetween.js"></script>
+<script src="${pageContext.request.contextPath}/adminassets/vendors/flot/jquery.flot.stack.js"></script>
+<script src="${pageContext.request.contextPath}/adminassets/vendors/flot/jquery.flot.pie.js"></script>
 
-<script src="${pageContext.request.contextPath}/adminassets/js/feather.min.js"></script>
+<!-- Bootstrap JS (includes Popper) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-<script src="${pageContext.request.contextPath}/adminassets/js/jquery.slimscroll.min.js"></script>
-
-<script src="${pageContext.request.contextPath}/adminassets/js/jquery.dataTables.min.js"></script>
-<script src="${pageContext.request.contextPath}/adminassets/js/dataTables.bootstrap4.min.js"></script>
-
-<script src="${pageContext.request.contextPath}/adminassets/js/bootstrap.bundle.min.js"></script>
-
-<script src="${pageContext.request.contextPath}/adminassets/plugins/select2/js/select2.min.js"></script>
-
-<script src="${pageContext.request.contextPath}/adminassets/plugins/sweetalert/sweetalert2.all.min.js"></script>
-<script src="${pageContext.request.contextPath}/adminassets/plugins/sweetalert/sweetalerts.min.js"></script>
-
-<script src="${pageContext.request.contextPath}/adminassets/js/script.js"></script>
+<!-- End plugin js for this page -->
+<!-- inject:js -->
+<script src="${pageContext.request.contextPath}/adminassets/js/off-canvas.js"></script>
+<script src="${pageContext.request.contextPath}/adminassets/js/hoverable-collapse.js"></script>
+<script src="${pageContext.request.contextPath}/adminassets/js/misc.js"></script>
+<!-- endinject -->
+<!-- Custom js for this page -->
+<script src="${pageContext.request.contextPath}/adminassets/js/dashboard.js"></script>
 </body>
 
 </html>

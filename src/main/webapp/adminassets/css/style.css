@@ -12355,7 +12355,7 @@ code {
 .tt-hint {
   border-top-left-radius: 50px;
   border-bottom-left-radius: 50px;
-  border: 1px solid #ebedf2;
+  border: 1px solid #c5c5cd;
   font-family: "Rubik", sans-serif;
   font-weight: 400;
   font-size: 0.8125rem;
@@ -12371,9 +12371,7 @@ select.form-control, .select2-container--default select.select2-selection--singl
 select.tt-query,
 select.tt-hint {
   padding: 0.4375rem 0.75rem;
-  border: 0;
-  outline: 1px solid #ebedf2;
-  color: #c9c8c8; }
+  outline: 1px solid #ebedf2; }
   select.form-control:focus, .select2-container--default select.select2-selection--single:focus, .select2-container--default .select2-selection--single select.select2-search__field:focus, select.typeahead:focus,
   select.tt-query:focus,
   select.tt-hint:focus {
@@ -14599,15 +14597,17 @@ dl {
     padding-left: 15px;
     padding-right: 15px;
     width: calc(100% - 260px);
-    height: 70px;
-    background: #000; }
+    height: 100px;
+    background-image: url("../../images/home/header-image.png");
+    background-size: contain;
+    background-position: center;}
     @media (max-width: 991px) {
       .navbar .navbar-menu-wrapper {
         width: 100%;
         padding-left: 11px; } }
     .navbar .navbar-menu-wrapper .navbar-toggler {
       border: 0;
-      color: #8e94a9; }
+    }
       @media (max-width: 991px) {
         .navbar .navbar-menu-wrapper .navbar-toggler:not(.navbar-toggler-right) {
           display: none; } }
@@ -14617,7 +14617,7 @@ dl {
           width: 34px;
           height: 34px;
           border-radius: 50px;
-          background: #3f3f40;
+          /*background: #3f3f40;*/
           text-align: center;
           line-height: 2.2; }
     .navbar .navbar-menu-wrapper .navbar-text {
@@ -14645,7 +14645,7 @@ dl {
             padding-right: 0.5rem;
             padding-left: 0.5rem; } }
         .navbar .navbar-menu-wrapper .navbar-nav .nav-item .nav-link {
-          color: #8e94a9;
+          color: black;
           font-size: 0.875rem; }
           .navbar .navbar-menu-wrapper .navbar-nav .nav-item .nav-link i {
             font-size: 17px;

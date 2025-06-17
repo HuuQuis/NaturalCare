@@ -11,19 +11,8 @@
         </a>
     </div>
     <ul class="nav">
-        <li class="nav-item nav-profile">
-            <a href="#" class="nav-link">
-                <div class="nav-profile-image">
-                    <img src="${pageContext.request.contextPath}/adminassets/images/faces/face1.jpg" alt="profile"/>
-                    <span class="login-status online"></span>
-                </div>
-                <div class="nav-profile-text d-flex flex-column pr-3">
-                    <span class="font-weight-medium mb-2">Henry Klein</span>
-                </div>
-            </a>
-        </li>
         <li class="nav-item">
-            <a class="nav-link" href="${pageContext.request.contextPath}/admin">
+            <a class="nav-link" href="">
                 <i class="mdi mdi-home menu-icon"></i>
                 <span class="menu-title">Dashboard</span>
             </a>
