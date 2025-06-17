@@ -9,6 +9,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import utils.EmailUtils;
 import utils.PropertiesUtils;
 
 import java.io.IOException;
@@ -43,10 +44,11 @@ public class ForgotPasswordServlet extends HttpServlet {
             if (userDAO.checkEmailExists(email)) {
                 String token = UUID.randomUUID().toString();
                 userDAO.saveResetToken(email, token);
+                String baseUrl = PropertiesUtils.get("config", "app.base.url");
                 // Gửi email bất đồng bộ
                 new Thread(() -> {
                     try {
-                        sendResetEmail(email, token);
+                        EmailUtils.sendResetEmail(email, token, baseUrl);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -62,34 +64,6 @@ public class ForgotPasswordServlet extends HttpServlet {
             request.setAttribute("error", "An error occurred");
             request.getRequestDispatcher("view/login/forgot-password.jsp").forward(request, response);
         }
-    }
-
-    private void sendResetEmail(String email, String token) throws MessagingException {
-        String senderEmail = PropertiesUtils.get("config","mail.username");
-        String senderPassword = PropertiesUtils.get("config","mail.password");
-        String baseUrl = PropertiesUtils.get("config", "app.base.url");
-
-        Properties props = new Properties();
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.host", "smtp.gmail.com");
-        props.put("mail.smtp.port", "587");
-
-        Session session = Session.getInstance(props, new Authenticator() {
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(senderEmail, senderPassword);
-            }
-        });
-
-        Message message = new MimeMessage(session);
-        message.setFrom(new InternetAddress(senderEmail));
-        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email));
-        message.setSubject("Password Reset Request");
-
-        String resetLink = baseUrl + "/reset?token=" + token;
-        message.setText("Click this link to reset your password: " + resetLink);
-
-        Transport.send(message);
     }
 
 }

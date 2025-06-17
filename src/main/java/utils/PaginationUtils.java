@@ -1,6 +1,6 @@
 package utils;
 
-public class PaginationUtil {
+public class PaginationUtils {
 
     // Tính tổng số trang
     public static int calculateTotalPages(int totalItems, int itemsPerPage) {
