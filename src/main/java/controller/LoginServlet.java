@@ -35,7 +35,7 @@ public class LoginServlet extends HttpServlet {
 
         UserDAO userDAO = new UserDAO();
         User user = userDAO.checkUser(username, password);
-        
+
         if (user != null) {
             if (request.getSession(false) != null) {
                 request.getSession(false).invalidate();
@@ -54,13 +54,13 @@ public class LoginServlet extends HttpServlet {
                     request.getRequestDispatcher("view/home/manager.jsp").forward(request, response);
                     break;
                 default:
-                    session.setAttribute("validate", "");
+                    request.setAttribute("error", "");
                     response.sendRedirect("home");
                     break;
             }
         } else {
-            request.getSession().setAttribute("error", "Invalid username or password.");
-            response.sendRedirect("login");
+            request.setAttribute("error", "Invalid username or password.");
+            request.getRequestDispatcher("view/login/login.jsp").forward(request, response);
         }
     }
 
