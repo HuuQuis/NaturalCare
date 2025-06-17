@@ -123,36 +123,98 @@
 
 <!--/Footer-->
 <script>
-    document.querySelector('form').addEventListener('submit', function (event) {
-        const username = document.querySelector('input[name="username"]').value;
-        const password = document.querySelector('input[name="password"]').value;
-        const confirmPassword = document.querySelector('input[name="password-confirm"]').value;
-        const firstName = document.querySelector('input[name="firstName"]').value;
-        const lastName = document.querySelector('input[name="lastName"]').value;
-        const email = document.querySelector('input[name="email"]').value;
-        const phone = document.querySelector('input[name="phone"]').value;
+    document.querySelector('form')?.addEventListener('submit', function (event) {
+        event.preventDefault(); // Prevent form submission to handle validation
 
-        // Check if any field contains only whitespace
-        if (username.trim() === '' || firstName.trim() === '' || lastName.trim() === '' ||
-            email.trim() === '' || phone.trim() === '') {
-            event.preventDefault();
-            alert("Please do not enter only spaces in any field!");
-            return;
+
+        const inputs = {
+            username: document.querySelector('input[name="username"]'),
+            password: document.querySelector('input[name="password"]'),
+            confirmPassword: document.querySelector('input[name="password-confirm"]'),
+            firstName: document.querySelector('input[name="firstName"]'),
+            lastName: document.querySelector('input[name="lastName"]'),
+            email: document.querySelector('input[name="email"]'),
+            phone: document.querySelector('input[name="phone"]'),
+        };
+
+        const errors = {
+            username: document.querySelector('#usernameError'),
+            password: document.querySelector('#passwordError'),
+            confirmPassword: document.querySelector('#confirmPasswordError'),
+            firstName: document.querySelector('#firstNameError'),
+            lastName: document.querySelector('#lastNameError'),
+            email: document.querySelector('#emailError'),
+            phone: document.querySelector('#phoneError'),
+        };
+
+        for (const [key, input] of Object.entries(inputs)) {
+            if (!input || !errors[key]) {
+                console.error(`${key} input or error element not found!`);
+                return;
+            }
         }
 
-        if (password !== confirmPassword) {
-            event.preventDefault();
-            alert("Passwords do not match!");
+        Object.values(errors).forEach(error => error.textContent = '');
+
+        let hasError = false;
+        const errorMessages = [];
+
+        for (const [key, input] of Object.entries(inputs)) {
+            if (input.value.trim() === '') {
+                errorMessages.push({field: errors[key], message: `${key} cannot be empty!`});
+                hasError = true;
+            }
         }
 
-        // Validate email format
+        // Check for whitespaces in username and password
+        if (/\s/.test(inputs.username.value)) {
+            errorMessages.push({field: errors.username, message: 'Username cannot contain spaces!'});
+            hasError = true;
+        }
+        if (/\s/.test(inputs.password.value)) {
+            errorMessages.push({field: errors.password, message: 'Password cannot contain spaces!'});
+            hasError = true;
+        }
+
+        // Check for minimum length of username and password
+        if (inputs.password.value.length < 6) {
+            errorMessages.push({field: errors.password, message: 'Password must be at least 6 characters long!'});
+            hasError = true;
+        }
+
+        // Check for minimum length of first and last names
+        if (inputs.firstName.value.length < 2) {
+            errorMessages.push({field: errors.firstName, message: 'First Name must be at least 2 characters long!'});
+            hasError = true;
+        }
+        if (inputs.lastName.value.length < 2) {
+            errorMessages.push({field: errors.lastName, message: 'Last Name must be at least 2 characters long!'});
+            hasError = true;
+        }
+
+        // Check if passwords match
+        if (inputs.password.value !== inputs.confirmPassword.value) {
+            errorMessages.push({field: errors.confirmPassword, message: 'Passwords do not match!'});
+            hasError = true;
+        }
+
+        // Validate email and phone formats
         const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        if (!emailPattern.test(email)) {
-            event.preventDefault();
-            alert("Please enter a valid email address!");
-            return;
+        if (!emailPattern.test(inputs.email.value)) {
+            errorMessages.push({field: errors.email, message: 'Please enter a valid email address!'});
+            hasError = true;
+        }
+        const phonePattern = /^\+?[0-9]{10,15}$/;
+        if (!phonePattern.test(inputs.phone.value)) {
+            errorMessages.push({field: errors.phone, message: 'Please enter a valid phone number!'});
+            hasError = true;
         }
 
+        if (hasError) {
+            errorMessages.forEach(error => error.field.textContent = error.message);
+        } else {
+            this.submit();
+        }
     });
 </script>
 
