@@ -6,6 +6,7 @@ public class ProductVariation {
     private int colorId;
     private int sizeId;
     private int price;
+    private int sell_price;
     private int qtyInStock;
     private int sold;
     private int productId;
@@ -15,42 +16,24 @@ public class ProductVariation {
     public ProductVariation() {
     }
 
-    public ProductVariation(int variationId, int productId, String imageUrl, int colorId, int sizeId, int price, int qtyInStock) {
+    public ProductVariation(int variationId, int productId, String imageUrl, int colorId, int sizeId, int price, int sell_price, int qtyInStock) {
         this.variationId = variationId;
         this.productId = productId;
         this.imageUrl = imageUrl;
         this.colorId = colorId;
         this.sizeId = sizeId;
         this.price = price;
+        this.sell_price = sell_price;
         this.qtyInStock = qtyInStock;
     }
 
-    public ProductVariation(int variationId, String imageUrl, int colorId, int sizeId, int price, int qtyInStock, int sold) {
+    public ProductVariation(int variationId, String imageUrl, int colorId, int sizeId, int price, int sell_price, int qtyInStock, int sold) {
         this.variationId = variationId;
         this.imageUrl = imageUrl;
         this.colorId = colorId;
         this.sizeId = sizeId;
         this.price = price;
-        this.qtyInStock = qtyInStock;
-        this.sold = sold;
-    }
-
-    public ProductVariation(int variationId, int productId, String imageUrl, int colorId, int sizeId, int price, int qtyInStock, int sold) {
-        this.variationId = variationId;
-        this.productId = productId;
-        this.imageUrl = imageUrl;
-        this.colorId = colorId;
-        this.sizeId = sizeId;
-        this.price = price;
-        this.qtyInStock = qtyInStock;
-        this.sold = sold;
-    }
-
-    public ProductVariation(String imageUrl, int colorId, int sizeId, int price, int qtyInStock, int sold) {
-        this.imageUrl = imageUrl;
-        this.colorId = colorId;
-        this.sizeId = sizeId;
-        this.price = price;
+        this.sell_price = sell_price;
         this.qtyInStock = qtyInStock;
         this.sold = sold;
     }
@@ -65,6 +48,8 @@ public class ProductVariation {
     public void setSizeId(int sizeId) { this.sizeId = sizeId; }
     public int getPrice() { return price; }
     public void setPrice(int price) { this.price = price; }
+    public int getSell_price() { return sell_price; }
+    public void setSell_price(int sell_price) { this.sell_price = sell_price; }
     public int getQtyInStock() { return qtyInStock; }
     public void setQtyInStock(int qtyInStock) { this.qtyInStock = qtyInStock; }
     public int getSold() { return sold; }

@@ -11,7 +11,7 @@ public class ProductDAO extends DBContext {
     public List<Product> getProductsByCategoryId(int categoryId, int pageIndex) {
         int offset = (pageIndex - 1) * 6;
         int limit = 6;
-        sql = "SELECT p.*, MIN(pv.product_image) AS product_image, MIN(pv.price) AS min_price " +
+        sql = "SELECT p.*, MIN(pv.product_image) AS product_image, MIN(pv.sell_price) AS min_price " +
                 "FROM product p " +
                 "INNER JOIN sub_product_category s ON p.sub_product_category_id = s.sub_product_category_id " +
                 "INNER JOIN product_category pc ON s.product_category_id = pc.product_category_id " +
@@ -26,7 +26,7 @@ public class ProductDAO extends DBContext {
     public List<Product> getProductsBySubCategoryId(int subCategoryId, int pageIndex) {
         int offset = (pageIndex - 1) * 6;
         int limit = 6;
-        sql = "SELECT p.*, MIN(pv.product_image) AS product_image, MIN(pv.price) AS min_price " +
+        sql = "SELECT p.*, MIN(pv.product_image) AS product_image, MIN(pv.sell_price) AS min_price " +
                 "FROM product p " +
                 "INNER JOIN sub_product_category s ON p.sub_product_category_id = s.sub_product_category_id " +
                 "INNER JOIN product_category pc ON s.product_category_id = pc.product_category_id " +
@@ -39,7 +39,7 @@ public class ProductDAO extends DBContext {
     }
 
     public Product getProductById(int productId) {
-        String sql = "SELECT p.*, pv.variation_id, pv.product_image, pv.color_id, pv.size_id, pv.price, pv.qty_in_stock, pv.sold, " +
+        sql = "SELECT p.*, pv.variation_id, pv.product_image, pv.color_id, pv.size_id, pv.price, pv.sell_price, pv.qty_in_stock, pv.sold, " +
                 "c.color_name, s.size_name " +
                 "FROM product p " +
                 "LEFT JOIN product_variation pv ON pv.product_id = p.product_id " +
@@ -80,6 +80,7 @@ public class ProductDAO extends DBContext {
                             colorId,
                             sizeId,
                             rs.getInt("price"),
+                            rs.getInt("sell_price"),
                             rs.getInt("qty_in_stock"),
                             rs.getInt("sold")
                     );
@@ -151,6 +152,7 @@ public class ProductDAO extends DBContext {
                         rs.getInt("color_id"),
                         rs.getInt("size_id"),
                         rs.getInt("price"),
+                        rs.getInt("sell_price"),
                         rs.getInt("qty_in_stock"),
                         rs.getInt("sold")
                 );
@@ -188,6 +190,7 @@ public class ProductDAO extends DBContext {
                         rs.getInt("color_id"),
                         rs.getInt("size_id"),
                         rs.getInt("price"),
+                        rs.getInt("sell_price"),
                         rs.getInt("qty_in_stock"),
                         rs.getInt("sold")
                 );

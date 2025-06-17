@@ -83,6 +83,7 @@ public class ProductVariationDAO extends DBContext{
                         rs.getInt("color_id"),
                         rs.getInt("size_id"),
                         rs.getInt("price"),
+                        rs.getInt("sell_price"),
                         rs.getInt("qty_in_stock")
                 );
             }
@@ -91,4 +92,31 @@ public class ProductVariationDAO extends DBContext{
         }
         return null;
     }
+    public boolean isDuplicateVariation(int productId, int colorId, int sizeId, Integer excludeVariationId) {
+        sql = "SELECT COUNT(*) FROM product_variation WHERE product_id = ? AND color_id " +
+                (colorId > 0 ? "= ?" : "IS NULL") + " AND size_id " +
+                (sizeId > 0 ? "= ?" : "IS NULL");
+
+        if (excludeVariationId != null) {
+            sql += " AND variation_id != ?";
+        }
+
+        try {
+            stm = connection.prepareStatement(sql);
+            int paramIndex = 1;
+            stm.setInt(paramIndex++, productId);
+            if (colorId > 0) stm.setInt(paramIndex++, colorId);
+            if (sizeId > 0) stm.setInt(paramIndex++, sizeId);
+            if (excludeVariationId != null) stm.setInt(paramIndex++, excludeVariationId);
+
+            rs = stm.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 }

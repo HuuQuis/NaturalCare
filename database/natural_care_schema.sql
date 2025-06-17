@@ -167,6 +167,7 @@ CREATE TABLE product_variation
     color_id int,
     size_id int,
     price         BIGINT NOT NULL,
+    sell_price BIGINT NOT NULL,
     qty_in_stock  INT    NOT NULL,
     sold          INT DEFAULT 0,
     FOREIGN KEY (product_id) REFERENCES product (product_id),

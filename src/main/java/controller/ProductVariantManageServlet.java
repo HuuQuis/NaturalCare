@@ -49,6 +49,22 @@ public class ProductVariantManageServlet extends HttpServlet {
         if ("add".equals(action)) {
             String productId = request.getParameter("productId");
             request.setAttribute("productId", productId);
+
+            boolean hasColorVariant = false;
+            if (productId != null) {
+                try {
+                    int pid = Integer.parseInt(productId);
+                    List<ProductVariation> variations = productDao.getProductVariationsByProductId(pid);
+                    for (ProductVariation v : variations) {
+                        if (v.getColorId() > 0) {
+                            hasColorVariant = true;
+                            break;
+                        }
+                    }
+                } catch (Exception ignored) {}
+            }
+            request.setAttribute("hasColorVariant", hasColorVariant);
+
             request.getRequestDispatcher("/view/manage/productvariant-add.jsp").forward(request, response);
         }else if("edit".equals(action)){
             String variantIdStr = request.getParameter("variantId");
@@ -66,6 +82,19 @@ public class ProductVariantManageServlet extends HttpServlet {
                 request.setAttribute("tempProductVariation", productVariation);
                 request.setAttribute("previousImageUrl", productVariation.getImageUrl());
                 request.setAttribute("productId", productVariation.getProductId());
+
+                // --- Check if product has color-based variants ---
+                boolean hasColorVariant = false;
+                int pid = productVariation.getProductId();
+                List<ProductVariation> variations = productDao.getProductVariationsByProductId(pid);
+                for (ProductVariation v : variations) {
+                    if (v.getColorId() > 0) {
+                        hasColorVariant = true;
+                        break;
+                    }
+                }
+                request.setAttribute("hasColorVariant", hasColorVariant);
+
                 request.getRequestDispatcher("/view/manage/productvariant-edit.jsp").forward(request, response);
             } catch (NumberFormatException e) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid variant ID format");
@@ -127,7 +156,6 @@ public class ProductVariantManageServlet extends HttpServlet {
                 tempProductVariant.setImageUrl(tempImagePath);
                 request.setAttribute("previousImageUrl", tempImagePath); // Gửi lại khi reload form
             } else {
-                // Không chọn lại ảnh → dùng previousImageUrl
                 String previousImageUrl = request.getParameter("previousImageUrl");
                 if (previousImageUrl != null && !previousImageUrl.isEmpty()) {
                     tempProductVariant.setImageUrl(previousImageUrl);
@@ -175,7 +203,6 @@ public class ProductVariantManageServlet extends HttpServlet {
                     }
                 }
 
-                // Tiếp tục xóa bản ghi trong DB
                 productVariationDao.deleteProductVariation(productVariantId);
                 response.sendRedirect(request.getContextPath() + "/productManage");
 
@@ -331,22 +358,48 @@ public class ProductVariantManageServlet extends HttpServlet {
         return tempProductVariation;
     }
 
-    private boolean validateProductVariantInput(HttpServletRequest request, HttpServletResponse response, ProductVariation tempProductVariant, boolean isUpdate) throws ServletException, IOException {
+    private boolean validateProductVariantInput(HttpServletRequest request, HttpServletResponse response,
+                                                ProductVariation tempProductVariant, boolean isUpdate) throws ServletException, IOException {
+
         int colorId = tempProductVariant.getColorId();
         int sizeId = tempProductVariant.getSizeId();
         int price = tempProductVariant.getPrice();
         int quantity = tempProductVariant.getQtyInStock();
+        int productId = tempProductVariant.getProductId();
+        int variationId = tempProductVariant.getVariationId();
 
         if (tempProductVariant.getImageUrl() == null || tempProductVariant.getImageUrl().isEmpty()) {
             handleValidationError("Please upload an image for the product variant.", request, response, tempProductVariant, isUpdate);
             return false;
         }
 
-        if ((colorId > 0 && sizeId > 0) || (colorId <= 0 && sizeId <= 0)) {
-            handleValidationError("Please select either a color or a size, but not both.", request, response, tempProductVariant, isUpdate);
-            return false;
+        // --- Enforce color-only rule if product has color-based variants ---
+        boolean hasColorVariant = false;
+        List<ProductVariation> variations = productDao.getProductVariationsByProductId(productId);
+        for (ProductVariation v : variations) {
+            if (v.getColorId() > 0 && (!isUpdate || v.getVariationId() != variationId)) {
+                hasColorVariant = true;
+                break;
+            }
+        }
+        if (hasColorVariant) {
+            if (colorId <= 0 || sizeId > 0) {
+                handleValidationError("This product already has color-based variants. You can only select a color (not size) for new variants.", request, response, tempProductVariant, isUpdate);
+                return false;
+            }
+        } else {
+            if ((colorId > 0 && sizeId > 0) || (colorId <= 0 && sizeId <= 0)) {
+                handleValidationError("Please select either a color or a size, but not both.", request, response, tempProductVariant, isUpdate);
+                return false;
+            }
         }
 
+        // Check duplicate
+        boolean isDuplicate = productVariationDao.isDuplicateVariation(productId, colorId, sizeId, isUpdate ? variationId : null);
+        if (isDuplicate) {
+            handleValidationError("This combination of color or size already exists for the product.", request, response, tempProductVariant, isUpdate);
+            return false;
+        }
 
         if (price <= 0) {
             handleValidationError("Price must be greater than 0.", request, response, tempProductVariant, isUpdate);
@@ -372,7 +425,6 @@ public class ProductVariantManageServlet extends HttpServlet {
             request.setAttribute("previousImageUrl", tempProductVariation.getImageUrl());
         }
 
-        // ✅ Set errorField để JavaScript trong JSP focus vào ô lỗi
         if (errorMessage.contains("image")) {
             request.setAttribute("errorField", "image");
         } else if (errorMessage.contains("either a color or a size")) {

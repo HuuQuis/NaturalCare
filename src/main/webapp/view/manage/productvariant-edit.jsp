@@ -126,12 +126,16 @@
 
                                             <div class="form-group">
                                                 <label for="size">Product Size</label>
-                                                <select name="sizeId" class="form-control" id="size">
+                                                <select name="sizeId" class="form-control" id="size"
+                                                    <c:if test="${hasColorVariant}">disabled</c:if>>
                                                     <option value="0">Choose Size(ml)</option>
                                                     <c:forEach var="size" items="${sizes}">
                                                         <option value="${size.id}" ${tempProductVariation.sizeId == size.id ? 'selected' : ''}>${size.name}</option>
                                                     </c:forEach>
                                                 </select>
+                                                <c:if test="${hasColorVariant}">
+                                                    <small class="text-danger">This product already has color-based variants. You can only select a color for new variants.</small>
+                                                </c:if>
                                             </div>
 
                                             <div class="form-group">
@@ -201,26 +205,33 @@
             fileInfoInput.value = fileName;
         });
 
-        // --- Color/Size mutual exclusion logic ---
+        // --- Color/Size mutual exclusion logic with color-only enforcement ---
         const colorSelect = document.getElementById('color');
         const sizeSelect = document.getElementById('size');
+        // --- Color/Size mutual exclusion logic with color-only enforcement ---
+        const hasColorVariant = ${hasColorVariant ? 'true' : 'false'};
 
         function updateSelectStates() {
-            const colorChosen = colorSelect.value !== "0";
-            const sizeChosen = sizeSelect.value !== "0";
-
-            if (colorChosen && !sizeChosen) {
+            if (hasColorVariant) {
+                // Only color allowed, size must be 0 and disabled
+                sizeSelect.value = "0";
                 sizeSelect.disabled = true;
                 colorSelect.disabled = false;
-            } else if (!colorChosen && sizeChosen) {
-                colorSelect.disabled = true;
-                sizeSelect.disabled = false;
             } else {
-                colorSelect.disabled = false;
-                sizeSelect.disabled = false;
+                const colorChosen = colorSelect.value !== "0";
+                const sizeChosen = sizeSelect.value !== "0";
+                if (colorChosen && !sizeChosen) {
+                    sizeSelect.disabled = true;
+                    colorSelect.disabled = false;
+                } else if (!colorChosen && sizeChosen) {
+                    colorSelect.disabled = true;
+                    sizeSelect.disabled = false;
+                } else {
+                    colorSelect.disabled = false;
+                    sizeSelect.disabled = false;
+                }
             }
         }
-
 
         colorSelect.addEventListener('change', updateSelectStates);
         sizeSelect.addEventListener('change', updateSelectStates);

@@ -115,10 +115,8 @@
                                             <input type="hidden" name="action" value="delete"/>
                                             <input type="hidden" name="id" value="${c.id}"/>
 
-                                            <!-- Nút submit ẩn để gọi submit hợp lệ -->
                                             <button type="submit" id="submit-product-${c.id}" style="display:none;"></button>
 
-                                            <!-- Icon đóng vai trò nút -->
                                             <i class="mdi mdi-delete"
                                                role="button"
                                                tabindex="0"
@@ -136,7 +134,7 @@
 
                                 <!-- Row phụ hiển thị variants -->
                                 <tr class="collapse" id="variations${c.id}" data-bs-parent="#variantAccordion">
-                                    <td colspan="6">
+                                    <td colspan="7">
                                         <div class="card card-body border border-1">
                                             <h6 class="mb-3">Variants of ${c.name}</h6>
                                             <table class="table table-bordered">
@@ -147,6 +145,7 @@
                                                     <th>Color</th>
                                                     <th>Size</th>
                                                     <th>Price</th>
+                                                    <th>Sell Price</th>
                                                     <th>Stock</th>
                                                     <th>Sold</th>
                                                     <th>Actions</th>
@@ -180,6 +179,7 @@
                                                             </c:choose>
                                                         </td>
                                                         <td>${variation.price}</td>
+                                                        <td>${variation.sell_price}</td>
                                                         <td>${variation.qtyInStock}</td>
                                                         <td>${variation.sold}</td>
                                                         <td>
