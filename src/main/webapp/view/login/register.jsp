@@ -31,6 +31,17 @@
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
     <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
+
+    <style>
+        .error-message {
+            color: #a94442;
+            padding: 5px;
+            border-radius: 4px;
+            margin-top: 5px;
+            display: block;
+        }
+    </style>
+
 </head><!--/head-->
 
 <body>
@@ -47,59 +58,62 @@
 
 <!--form-->
 <div class="container">
-    <div class="row">
-        <div class="col-sm-offset-3 col-sm-6">
-            <!--sign up form-->
-            <div class="signup-form">
-                <h2>New User Signup!</h2>
-                <form action="register" method="POST" id="registerForm">
-                    Username:<input type="text" name="username" id="username" placeholder="Username" required
-                                    minlength="6"/>
-                    <div class="error-message" id="usernameError"></div>
+    <div class="col-sm-offset-3 col-sm-6">
+        <!--sign up form-->
+        <div class="signup-form">
+            <h2>New User Signup!</h2>
+            <form action="register" method="POST" id="registerForm">
+                <div class="row">
+                    <!-- Cột trái -->
+                    <div class="col-sm-6">
+                        Username:<input type="text" name="username" id="username" placeholder="Username" required
+                                        minlength="6"/>
+                        <div class="error-message" id="usernameError"></div>
 
-                    Password:<input type="password" name="password" id="password" placeholder="Password" required
-                                    minlength="6"/>
-                    <div class="error-message" id="passwordError"></div>
+                        Password:<input type="password" name="password" id="password" placeholder="Password" required
+                                        minlength="6"/>
+                        <div class="error-message" id="passwordError"></div>
 
-                    Confirm Password:<input type="password" name="password-confirm" id="confirmPassword"
-                                            placeholder="Re-enter your password" required/>
-                    <div class="error-message" id="confirmPasswordError"></div>
+                        Confirm Password:<input type="password" name="password-confirm" id="confirmPassword"
+                                                placeholder="Re-enter your password" required/>
+                        <div class="error-message" id="confirmPasswordError"></div>
+                    </div>
+                    <!-- Cột phải -->
+                    <div class="col-sm-6">
+                        First Name:<input type="text" name="firstName" id="firstName" placeholder="First Name" required
+                                          value="${param.firstName}"/>
+                        <div class="error-message" id="firstNameError"></div>
 
-                    First Name:<input type="text" name="firstName" id="firstName" placeholder="First Name" required
-                                      value="${param.firstName}"/>
-                    <div class="error-message" id="firstNameError"></div>
+                        Last Name:<input type="text" name="lastName" id="lastName" placeholder="Last Name" required
+                                         value="${param.lastName}"/>
+                        <div class="error-message" id="lastNameError"></div>
 
-                    Last Name:<input type="text" name="lastName" id="lastName" placeholder="Last Name" required
-                                     value="${param.lastName}"/>
-                    <div class="error-message" id="lastNameError"></div>
+                        Email:<input type="email" name="email" id="email" placeholder="Email Address" required
+                                     value="${param.email}"/>
+                        <div class="error-message" id="emailError"></div>
+                    </div>
+                </div>
+                Phone:<input type="text" name="phone" id="phone" placeholder="Phone Number" pattern="0[0-9]{9}"
+                             required
+                             value="${param.phone}"/>
+                <div class="error-message" id="phoneError"></div>
 
-                    Email:<input type="email" name="email" id="email" placeholder="Email Address" required
-                                 value="${param.email}"/>
-                    <div class="error-message" id="emailError"></div>
+                <c:if test="${not empty error}">
+                    <span style="color: #a94442; background-color: #f2dede; border: 1px solid #ebccd1; padding: 8px 15px; border-radius: 4px; display: table;">
+                            <strong>${error}</strong>
+                        </span>
+                </c:if>
 
-                    Phone:<input type="text" name="phone" id="phone" placeholder="Phone Number" pattern="0[0-9]{9}"
-                                 required
-                                 value="${param.phone}"/>
-                    <div class="error-message" id="phoneError"></div>
+                <button style="margin-top: 20px" type="submit" class="btn btn-default">Signup</button>
 
-                    <br>
+                <hr>
+                <p class="message">Already registered? <a
+                        href="${pageContext.request.contextPath}/login">Login</a>
+                </p>
 
-                    <c:if test="${not empty error}">
-                        <i class="alert alert-danger">${error}</i>
-                    </c:if>
-
-                    <br>
-                    <br>
-
-                    <button type="submit" class="btn btn-default">Signup</button>
-
-                    <hr>
-                    <p class="message">Already registered? <a href="${pageContext.request.contextPath}/login">Login</a>
-                    </p>
-                </form>
-            </div>
-            <!--/sign up form-->
+            </form>
         </div>
+        <!--/sign up form-->
     </div>
 </div>
 
@@ -107,7 +121,7 @@
 <!--/Footer-->
 <jsp:include page="../common/footer.jsp"></jsp:include>
 
-</section><!--/Footer-->
+<!--/Footer-->
 <script>
     document.querySelector('form').addEventListener('submit', function (event) {
         const username = document.querySelector('input[name="username"]').value;
