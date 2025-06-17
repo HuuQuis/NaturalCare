@@ -59,7 +59,7 @@
                             <div class="page-header">
                                 <div class="page-title">
                                     <h4>Manage Product</h4>
-                                    <h6>Add New Product</h6>
+                                    <h6>Edit Product</h6>
                                 </div>
                             </div>
                             <div class="col-12 grid-margin stretch-card">

@@ -191,8 +191,8 @@ INSERT INTO size (size_id, size_name) VALUES
 (10, '900ml'),
 (11, '1000ml');
 
-INSERT INTO product_variation (product_id, product_image, color_id, size_id, price, qty_in_stock)
-VALUES (7, '/images/product/lipstick-pink.jpg',2, null, 200000, 100),
-       (7, '/images/product/lipstick-red.jpg',1, null, 190000, 100),
-       (9, '/images/product/foundation-diro.jpg', 3, null, 210000, 100),
-       (9, '/images/product/foundation-este.jpg', 2, null, 250000, 100);
+INSERT INTO product_variation (product_id, product_image, color_id, size_id, price,sell_price, qty_in_stock)
+VALUES (7, '/images/product/lipstick-pink.jpg',2, null, 100000,200000, 100),
+       (7, '/images/product/lipstick-red.jpg',1, null, 90000,190000, 100),
+       (9, '/images/product/foundation-diro.jpg', 3, null, 110000,210000, 100),
+       (9, '/images/product/foundation-este.jpg', 2, null, 150000,250000, 100);

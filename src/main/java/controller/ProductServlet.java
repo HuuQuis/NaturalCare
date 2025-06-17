@@ -43,20 +43,24 @@ public class ProductServlet extends HttpServlet {
             int index = Integer.parseInt(indexPage);
             String categoryId = request.getParameter("category");
             String subCategoryId = request.getParameter("subcategory");
+            String sort = request.getParameter("sort");
             List<Product> products;
 
-        if (categoryId != null) {
-            if (subCategoryId != null) {
-                products = productDAO.getProductsBySubCategoryId(Integer.parseInt(subCategoryId),index);
+        boolean hasCategory = categoryId != null && !categoryId.isEmpty();
+        boolean hasSubCategory = subCategoryId != null && !subCategoryId.isEmpty();
+
+        if (hasCategory) {
+            if (hasSubCategory) {
+                products = productDAO.getProductsBySubCategoryIdSorted(Integer.parseInt(subCategoryId), index, sort);
                 request.setAttribute("selectedCategoryId", categoryId);
                 request.setAttribute("selectedSubCategoryId", subCategoryId);
             } else {
-                products = productDAO.getProductsByCategoryId(Integer.parseInt(categoryId),index);
+                products = productDAO.getProductsByCategoryIdSorted(Integer.parseInt(categoryId), index, sort);
                 request.setAttribute("selectedCategoryId", categoryId);
             }
             request.setAttribute("products", products);
-        } else if (subCategoryId != null) {
-            products = productDAO.getProductsBySubCategoryId(Integer.parseInt(subCategoryId),index);
+        } else if (hasSubCategory) {
+            products = productDAO.getProductsBySubCategoryIdSorted(Integer.parseInt(subCategoryId), index, sort);
             request.setAttribute("selectedSubCategoryId", subCategoryId);
             request.setAttribute("products", products);
         }
@@ -69,8 +73,8 @@ public class ProductServlet extends HttpServlet {
                 subCategories.addAll(subProductCategoryDAO.getSubCategoriesByCategoryId(category.getId()));
             }
 
-        int count = categoryId != null ? productDAO.getTotalProductsCountByCategory(Integer.parseInt(categoryId))
-                : subCategoryId != null ? productDAO.getTotalProductsCountBySubCategory(Integer.parseInt(subCategoryId))
+        int count = hasCategory ? productDAO.getTotalProductsCountByCategory(Integer.parseInt(categoryId))
+                : hasSubCategory ? productDAO.getTotalProductsCountBySubCategory(Integer.parseInt(subCategoryId))
                 : 0;
         int endPage = count / 6;
         if( count % 6 != 0) {
@@ -80,6 +84,7 @@ public class ProductServlet extends HttpServlet {
         request.setAttribute("categories", categories);
         request.setAttribute("blogCategories", blogCategories);
         request.setAttribute("subCategories", subCategories);
+        request.setAttribute("sort", sort);
 
         request.getRequestDispatcher("/view/product/product.jsp").forward(request, response);
     }
