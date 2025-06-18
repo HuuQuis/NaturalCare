@@ -322,8 +322,59 @@ public class ProductDAO extends DBContext {
          return false;
    }
 
+    public List<Product> getProductsByCategoryIdSorted(int categoryId, int pageIndex, String sort) {
+        int offset = (pageIndex - 1) * 6;
+        int limit = 6;
+        String orderBy = getOrderByClause(sort);
+
+        sql = "SELECT p.*, " +
+                "       (SELECT MIN(pv1.product_image) FROM product_variation pv1 WHERE pv1.product_id = p.product_id) AS product_image, " +
+                "       NULLIF((SELECT MIN(pv2.sell_price) FROM product_variation pv2 WHERE pv2.product_id = p.product_id), 0) AS min_price " +
+                "FROM product p " +
+                "INNER JOIN sub_product_category s ON p.sub_product_category_id = s.sub_product_category_id " +
+                "INNER JOIN product_category pc ON s.product_category_id = pc.product_category_id " +
+                "WHERE pc.product_category_id = ? " +
+                orderBy + " LIMIT ?, ?";
+
+        return fetchProductsByQuery(sql, categoryId, offset, limit);
+    }
+
+    public List<Product> getProductsBySubCategoryIdSorted(int subCategoryId, int pageIndex, String sort) {
+        int offset = (pageIndex - 1) * 6;
+        int limit = 6;
+        String orderBy = getOrderByClause(sort);
+
+        sql = "SELECT p.*, " +
+                "       (SELECT MIN(pv1.product_image) FROM product_variation pv1 WHERE pv1.product_id = p.product_id) AS product_image, " +
+                "       NULLIF((SELECT MIN(pv2.sell_price) FROM product_variation pv2 WHERE pv2.product_id = p.product_id), 0) AS min_price " +
+                "FROM product p " +
+                "WHERE p.sub_product_category_id = ? " +
+                orderBy + " LIMIT ?, ?";
+
+        return fetchProductsByQuery(sql, subCategoryId, offset, limit);
+    }
+
+    private String getOrderByClause(String sort) {
+        if (sort == null) return "ORDER BY p.product_id";
+
+        switch (sort) {
+            case "name-asc":
+                return "ORDER BY p.product_name ASC";
+            case "name-desc":
+                return "ORDER BY p.product_name DESC";
+            case "price-asc":
+                // Put products with NULL min_price (no price) at the end
+                return "ORDER BY (min_price IS NULL), min_price ASC";
+            case "price-desc":
+                // Put products with NULL min_price (no price) at the end
+                return "ORDER BY (min_price IS NULL), min_price DESC";
+            default:
+                return "ORDER BY p.product_id";
+        }
+    }
+
     private List<Product> fetchProductsByQuery(String sql, int id, int offset, int limit) {
-        Map<Integer, Product> productMap = new HashMap<>();
+        List<Product> productList = new ArrayList<>();
         try {
             stm = connection.prepareStatement(sql);
             stm.setInt(1, id);
@@ -334,31 +385,31 @@ public class ProductDAO extends DBContext {
             while (rs.next()) {
                 int productId = rs.getInt("product_id");
                 String imageUrl = rs.getString("product_image");
+                int minPrice = rs.getObject("min_price") == null ? 0 : rs.getInt("min_price");
 
-                if (!productMap.containsKey(productId)) {
-                    Product product = new Product(
-                            productId,
-                            rs.getString("product_name"),
-                            rs.getString("product_short_description"),
-                            rs.getString("product_information"),
-                            rs.getString("product_guideline"),
-                            null,
-                            rs.getInt("sub_product_category_id"),
-                            rs.getInt("min_price")
-                    );
-                    productMap.put(productId, product);
-                }
+                Product product = new Product(
+                        productId,
+                        rs.getString("product_name"),
+                        rs.getString("product_short_description"),
+                        rs.getString("product_information"),
+                        rs.getString("product_guideline"),
+                        null,
+                        rs.getInt("sub_product_category_id"),
+                        minPrice
+                );
 
+                // Chỉ add một hình ảnh duy nhất
                 if (imageUrl != null) {
-                    productMap.get(productId).addImageUrl(imageUrl);
+                    product.addImageUrl(imageUrl);
                 }
+
+                productList.add(product);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return new ArrayList<>(productMap.values());
+        return productList;
     }
-
 
     public List<Product> searchProductsByText(String keyword) {
         List<Product> products = new ArrayList<>();
@@ -390,53 +441,5 @@ public class ProductDAO extends DBContext {
             ));
         }
         return products;
-    }
-
-    public List<Product> getProductsByCategoryIdSorted(int categoryId, int pageIndex, String sort) {
-        int offset = (pageIndex - 1) * 6;
-        int limit = 6;
-        String orderBy = getOrderByClause(sort);
-        sql = "SELECT p.*, MIN(pv.product_image) AS product_image, MIN(pv.sell_price) AS min_price " +
-                "FROM product p " +
-                "INNER JOIN sub_product_category s ON p.sub_product_category_id = s.sub_product_category_id " +
-                "INNER JOIN product_category pc ON s.product_category_id = pc.product_category_id " +
-                "LEFT JOIN product_variation pv ON pv.product_id = p.product_id " +
-                "WHERE pc.product_category_id = ? " +
-                "GROUP BY p.product_id " +
-                orderBy +
-                " LIMIT ?, ?";
-        return fetchProductsByQuery(sql, categoryId, offset, limit);
-    }
-
-    public List<Product> getProductsBySubCategoryIdSorted(int subCategoryId, int pageIndex, String sort) {
-        int offset = (pageIndex - 1) * 6;
-        int limit = 6;
-        String orderBy = getOrderByClause(sort);
-        sql = "SELECT p.*, MIN(pv.product_image) AS product_image, MIN(pv.sell_price) AS min_price " +
-                "FROM product p " +
-                "INNER JOIN sub_product_category s ON p.sub_product_category_id = s.sub_product_category_id " +
-                "INNER JOIN product_category pc ON s.product_category_id = pc.product_category_id " +
-                "LEFT JOIN product_variation pv ON pv.product_id = p.product_id " +
-                "WHERE p.sub_product_category_id = ? " +
-                "GROUP BY p.product_id " +
-                orderBy +
-                " LIMIT ?, ?";
-        return fetchProductsByQuery(sql, subCategoryId, offset, limit);
-    }
-
-    private String getOrderByClause(String sort) {
-        if (sort == null) return "ORDER BY p.product_id";
-        switch (sort) {
-            case "name-asc":
-                return "ORDER BY p.product_name ASC";
-            case "name-desc":
-                return "ORDER BY p.product_name DESC";
-            case "price-asc":
-                return "ORDER BY min_price ASC";
-            case "price-desc":
-                return "ORDER BY min_price DESC";
-            default:
-                return "ORDER BY p.product_id";
-        }
     }
 }
