@@ -21,7 +21,7 @@
 
         .staff-sidebar {
             width: 220px;
-            background-color: #f4f6f9;
+            background-color: #f0f0e9;
             padding: 20px;
             border-right: 1px solid #ddd;
         }
