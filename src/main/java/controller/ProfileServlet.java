@@ -22,28 +22,38 @@ public class ProfileServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        HttpSession session = request.getSession();
-        User user = (User) session.getAttribute("user");
+        try {
+            // Không tạo session mới nếu chưa tồn tại
+            HttpSession session = request.getSession(false);
+            if (session == null || session.getAttribute("user") == null) {
+                response.sendRedirect("login.jsp");
+                return;
+            }
 
-        // Nếu chưa đăng nhập, chuyển về trang login
-        if (user == null) {
-            response.sendRedirect("login.jsp");
-            return;
+            User user = (User) session.getAttribute("user");
+
+            // Load danh mục và danh mục con
+            ProductCategoryDAO categoryDAO = new ProductCategoryDAO();
+            SubProductCategoryDAO subCategoryDAO = new SubProductCategoryDAO();
+
+            List<ProductCategory> categories = categoryDAO.getAllProductCategories();
+            List<SubProductCategory> subCategories = subCategoryDAO.getAllSubProductCategories();
+
+            // Kiểm tra nếu không load được dữ liệu
+            if (categories == null || subCategories == null) {
+                request.setAttribute("error", "Không thể tải danh mục sản phẩm. Vui lòng thử lại sau.");
+            }
+
+            // Đẩy dữ liệu sang JSP
+            request.setAttribute("categories", categories);
+            request.setAttribute("subCategories", subCategories);
+            request.setAttribute("user", user);
+
+            request.getRequestDispatcher("/view/common/profile.jsp").forward(request, response);
+
+        } catch (Exception e) {
+            // Trả lỗi nội bộ (500) nếu có exception
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Đã xảy ra lỗi khi tải trang hồ sơ.");
         }
-
-        // Load danh mục để header-bottom.jsp hiển thị đúng menu
-        ProductCategoryDAO categoryDAO = new ProductCategoryDAO();
-        SubProductCategoryDAO subCategoryDAO = new SubProductCategoryDAO();
-
-        List<ProductCategory> categories = categoryDAO.getAllProductCategories();
-        List<SubProductCategory> subCategories = subCategoryDAO.getAllSubProductCategories();
-
-        // Truyền dữ liệu vào request
-        request.setAttribute("categories", categories);
-        request.setAttribute("subCategories", subCategories);
-        request.setAttribute("user", user);
-
-        // Forward đến JSP hiển thị hồ sơ
-        request.getRequestDispatcher("/view/common/profile.jsp").forward(request, response);
     }
 }
