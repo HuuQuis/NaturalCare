@@ -3,94 +3,120 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Staff Home | Nature Care</title>
+    <meta charset="UTF-8">
+    <title>Staff | Nature Care</title>
+    <link href="${pageContext.request.contextPath}/css/bootstrap.min.css" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/css/main.css" rel="stylesheet">
+    <style>
+        /* Đảm bảo CSS không ảnh hưởng global */
+        .staff-dashboard {
+            display: flex;
+            margin: 40px auto;
+            max-width: 1200px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
 
-  <!-- Bootstrap & Custom CSS -->
-  <link href="${pageContext.request.contextPath}/css/bootstrap.min.css" rel="stylesheet">
-  <link href="${pageContext.request.contextPath}/css/font-awesome.min.css" rel="stylesheet">
-  <link href="${pageContext.request.contextPath}/css/prettyPhoto.css" rel="stylesheet">
-  <link href="${pageContext.request.contextPath}/css/price-range.css" rel="stylesheet">
-  <link href="${pageContext.request.contextPath}/css/animate.css" rel="stylesheet">
-  <link href="${pageContext.request.contextPath}/css/main.css" rel="stylesheet">
-  <link href="${pageContext.request.contextPath}/css/responsive.css" rel="stylesheet">
+        .staff-sidebar {
+            width: 220px;
+            background-color: #f4f6f9;
+            padding: 20px;
+            border-right: 1px solid #ddd;
+        }
 
-  <!-- Custom inline CSS -->
-  <style>
-    body {
-      background-color: #f0fdf4;
-      font-family: 'Segoe UI', sans-serif;
-      color: #333;
-      margin: 0;
-      padding: 0;
-    }
+        .staff-sidebar h3 {
+            font-size: 20px;
+            color: #2d3436;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
 
-    .container {
-      padding: 50px 15px;
-    }
+        .staff-sidebar a {
+            display: block;
+            color: #2d3436;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            text-decoration: none;
+            transition: 0.3s;
+            background-color: #ffffff;
+            border: 1px solid #e0e0e0;
+        }
 
-    h1 {
-      color: #28a745;
-      font-weight: bold;
-    }
+        .staff-sidebar a:hover {
+            background-color: #e3f2fd;
+            color: #0d47a1;
+            border-color: #90caf9;
+        }
 
-    .lead {
-      font-size: 1.25rem;
-      color: #555;
-    }
+        .staff-content {
+            flex-grow: 1;
+            padding: 40px;
+        }
 
-    .btn-green {
-      background-color: #28a745;
-      border-color: #28a745;
-      color: white;
-      transition: 0.3s ease-in-out;
-    }
+        .staff-content h1 {
+            font-size: 28px;
+            font-weight: bold;
+            color: #1e3d59;
+        }
 
-    .btn-green:hover {
-      background-color: #218838;
-      border-color: #1e7e34;
-      color: white;
-    }
+        .staff-content p {
+            font-size: 16px;
+            color: #555;
+            margin: 10px 0 20px;
+        }
 
-    .text-center {
-      text-align: center;
-    }
+        .staff-content .btn-primary {
+            background-color: #4caf50;
+            border-color: #4caf50;
+            padding: 10px 20px;
+        }
 
-    @media (max-width: 768px) {
-      .container {
-        padding: 30px 10px;
-      }
+        .staff-content .btn-primary:hover {
+            background-color: #43a047;
+            border-color: #388e3c;
+        }
 
-      h1 {
-        font-size: 2rem;
-      }
+        /* Responsive */
+        @media (max-width: 768px) {
+            .staff-dashboard {
+                flex-direction: column;
+            }
 
-      .lead {
-        font-size: 1rem;
-      }
-    }
-  </style>
+            .staff-sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid #ddd;
+            }
+        }
+    </style>
 </head>
-
 <body>
-  <div class="container mt-5">
-    <div class="text-center">
-      <h1 class="mb-4">Welcome, Staff!</h1>
-      <p class="lead">This is your homepage where you can manage orders and perform staff tasks.</p>
-      <a href="${pageContext.request.contextPath}/orderManagement" class="btn btn-green btn-lg mt-3">
-        Go to Order Management
-      </a>
-    </div>
-  </div>
+<jsp:include page="/view/common/header-top.jsp" />
+<jsp:include page="/view/common/header-middle.jsp" />
 
-  <!-- Scripts -->
-  <script src="${pageContext.request.contextPath}/js/jquery.js"></script>
-  <script src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>
-  <script src="${pageContext.request.contextPath}/js/jquery.scrollUp.min.js"></script>
-  <script src="${pageContext.request.contextPath}/js/jquery.prettyPhoto.js"></script>
-  <script src="${pageContext.request.contextPath}/js/main.js"></script>
-  <script>
-    const contextPath = "${pageContext.request.contextPath}";
-  </script>
-  <script src="${pageContext.request.contextPath}/js/search.j
+<div class="container">
+    <div class="staff-dashboard">
+        <!-- Sidebar -->
+        <div class="staff-sidebar">
+            <h3>Staff Dashboard</h3>
+            <a href="${pageContext.request.contextPath}/orderManagement">📦 Order Management</a>
+            <!-- Future: <a href="#">👥 Manage Users</a> -->
+        </div>
+
+        <!-- Main content -->
+        <div class="staff-content">
+            <h1>Welcome, Staff!</h1>
+            <p>This is your homepage where you can manage orders and perform staff tasks.</p>
+        </div>
+    </div>
+</div>
+
+<jsp:include page="/view/common/footer.jsp" />
+
+<script src="${pageContext.request.contextPath}/js/jquery.js"></script>
+<script src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>
+</body>
+</html>
