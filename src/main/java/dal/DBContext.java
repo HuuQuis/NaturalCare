@@ -35,7 +35,7 @@ public class DBContext {
 
             props.load(input);
             String user = "root";
-            String pass = "Tanamson260904";
+            String pass = "";
             String url = "jdbc:mysql://localhost:3306/natural_care?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true";
 
             Class.forName("com.mysql.cj.jdbc.Driver"); // Nạp driver MySQL
