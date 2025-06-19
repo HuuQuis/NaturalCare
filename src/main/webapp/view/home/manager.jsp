@@ -1,105 +1,96 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%
+    String view = (String) request.getAttribute("view");
+%>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
-    <meta name="description" content="POS - Bootstrap Admin Template">
-    <meta name="keywords"
-          content="admin, estimates, bootstrap, business, corporate, creative, invoice, html5, responsive, Projects">
-    <meta name="author" content="Dreamguys - Bootstrap Admin Template">
-    <meta name="robots" content="noindex, nofollow">
-    <title>News Admin</title>
-
-    <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/adminassets/img/favicon.png">
-
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/adminassets/css/bootstrap.min.css">
-
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/adminassets/css/animate.css">
-
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/adminassets/plugins/select2/css/select2.min.css">
-
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/adminassets/css/dataTables.bootstrap4.min.css">
-
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/adminassets/plugins/fontawesome/css/fontawesome.min.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/adminassets/plugins/fontawesome/css/all.min.css">
-
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/adminassets/css/style.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/adminStyle.css">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>Manager | Nature Care</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/adminassets/vendors/mdi/css/materialdesignicons.min.css" />
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/adminassets/vendors/flag-icon-css/css/flag-icon.min.css" />
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/adminassets/vendors/css/vendor.bundle.base.css" />
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/adminassets/vendors/font-awesome/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/adminassets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.css" />
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/adminassets/css/style.css" />
+    <link rel="shortcut icon" href="${pageContext.request.contextPath}/adminassets/images/favicon.png" />
 </head>
 
 <body>
-<div id="global-loader">
-    <div class="whirly-loader"> </div>
-</div>
+<div class="container-scroller">
 
-<div class="main-wrapper">
-
-    <div class="header">
-        <div class="header-left active">
-            <a href="" class="logo">
-            </a>
-            <a href="" class="logo-small">
-                <img src="${pageContext.request.contextPath}/adminassets/img/logo-small.png" alt="">
-            </a>
-        </div>
-        <ul class="nav user-menu">
-            <li class="nav-item dropdown has-arrow main-drop">
-                <a href="javascript:void(0);" class="dropdown-toggle nav-link userset" data-bs-toggle="dropdown">
-                            <span class="user-img"><img src="${pageContext.request.contextPath}/adminassets/img/profiles/avator1.jpg" alt="">
-                                <span class="status online"></span></span>
-                </a>
-                <div class="dropdown-menu menu-drop-user">
-                    <div class="profilename">
-                        <div class="profileset">
-                                    <span class="user-img"><img src="${pageContext.request.contextPath}/adminassets/img/profiles/avator1.jpg" alt="">
-                                        <span class="status online"></span></span>
-                            <div class="profilesets">
-                                <h5>Manager</h5>
-                            </div>
-                        </div>
-                        <hr class="m-0">
-                        <a class="dropdown-item logout pb-0" href=""><img
-                                src="${pageContext.request.contextPath}/adminassets/img/icons/log-out.svg" class="me-2" alt="img">Logout</a>
-                    </div>
-                </div>
-            </li>
-        </ul>
-    </div>
-
-    // Sidebar
+    <!-- SIDEBAR -->
     <jsp:include page="../common/sidebar-manager.jsp" />
+
+    <!-- BODY WRAPPER -->
+    <div class="container-fluid page-body-wrapper">
+
+        <!-- HEADER -->
+        <jsp:include page="../common/header-manager.jsp" />
+
+        <!-- SETTINGS PANEL (có thể đặt trong content-wrapper nếu cần) -->
+        <div id="theme-settings" class="settings-panel">
+            <i class="settings-close mdi mdi-close"></i>
+            <p class="settings-heading">SIDEBAR SKINS</p>
+            <div class="sidebar-bg-options selected" id="sidebar-default-theme">
+                <div class="img-ss rounded-circle bg-light border mr-3"></div> Default
+            </div>
+            <div class="sidebar-bg-options" id="sidebar-dark-theme">
+                <div class="img-ss rounded-circle bg-dark border mr-3"></div> Dark
+            </div>
+            <p class="settings-heading mt-2">HEADER SKINS</p>
+            <div class="color-tiles mx-0 px-4">
+                <div class="tiles light"></div>
+                <div class="tiles dark"></div>
+            </div>
+        </div>
+
+        <!-- MAIN PANEL -->
+        <div class="main-panel">
+            <div class="content-wrapper">
+                <%-- Nội dung động ở đây, ví dụ: --%>
+                <% if ("category".equals(view)) { %>
+                <jsp:include page="../category/list.jsp" />
+                <% } %>
+
+                <% if ("product".equals(view)) { %>
+                <jsp:include page="../manage/product-manage.jsp" />
+                <% } %>
+            </div>
+        </div>
+
+    </div>
 </div>
 
-<%
-    String view = (String) request.getAttribute("view");
-%>
 
-<div class="main-content">
-    <% if ("category".equals(view)) { %>
-    <jsp:include page="../category/list.jsp" />
-    <% } %>
-</div>
+<!-- plugins:js -->
+<script src="${pageContext.request.contextPath}/adminassets/vendors/js/vendor.bundle.base.js"></script>
+<!-- endinject -->
+<!-- Plugin js for this page -->
+<script src="${pageContext.request.contextPath}/adminassets/vendors/chart.js/Chart.min.js"></script>
+<script src="${pageContext.request.contextPath}/adminassets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
+<script src="${pageContext.request.contextPath}/adminassets/vendors/flot/jquery.flot.js"></script>
+<script src="${pageContext.request.contextPath}/adminassets/vendors/flot/jquery.flot.resize.js"></script>
+<script src="${pageContext.request.contextPath}/adminassets/vendors/flot/jquery.flot.categories.js"></script>
+<script src="${pageContext.request.contextPath}/adminassets/vendors/flot/jquery.flot.fillbetween.js"></script>
+<script src="${pageContext.request.contextPath}/adminassets/vendors/flot/jquery.flot.stack.js"></script>
+<script src="${pageContext.request.contextPath}/adminassets/vendors/flot/jquery.flot.pie.js"></script>
 
-<script src="${pageContext.request.contextPath}/adminassets/js/jquery-3.6.0.min.js"></script>
+<!-- Bootstrap JS (includes Popper) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-<script src="${pageContext.request.contextPath}/adminassets/js/feather.min.js"></script>
-
-<script src="${pageContext.request.contextPath}/adminassets/js/jquery.slimscroll.min.js"></script>
-
-<script src="${pageContext.request.contextPath}/adminassets/js/jquery.dataTables.min.js"></script>
-<script src="${pageContext.request.contextPath}/adminassets/js/dataTables.bootstrap4.min.js"></script>
-
-<script src="${pageContext.request.contextPath}/adminassets/js/bootstrap.bundle.min.js"></script>
-
-<script src="${pageContext.request.contextPath}/adminassets/plugins/select2/js/select2.min.js"></script>
-
-<script src="${pageContext.request.contextPath}/adminassets/plugins/sweetalert/sweetalert2.all.min.js"></script>
-<script src="${pageContext.request.contextPath}/adminassets/plugins/sweetalert/sweetalerts.min.js"></script>
-
-<script src="${pageContext.request.contextPath}/adminassets/js/script.js"></script>
+<!-- End plugin js for this page -->
+<!-- inject:js -->
+<script src="${pageContext.request.contextPath}/adminassets/js/off-canvas.js"></script>
+<script src="${pageContext.request.contextPath}/adminassets/js/hoverable-collapse.js"></script>
+<script src="${pageContext.request.contextPath}/adminassets/js/misc.js"></script>
+<!-- endinject -->
+<!-- Custom js for this page -->
+<script src="${pageContext.request.contextPath}/adminassets/js/dashboard.js"></script>
+<!-- End custom js for this page -->
 </body>
 
 </html>

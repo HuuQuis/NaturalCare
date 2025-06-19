@@ -51,6 +51,33 @@
             </div>
 
             <div class="col-sm-9 padding-right">
+                <!-- Sort Dropdown -->
+                <div style="margin-bottom: 15px;">
+                    <form id="sortForm" method="get" style="display:inline;">
+                        <c:if test="${not empty param.category}">
+                            <input type="hidden" name="category" value="${param.category}">
+                        </c:if>
+                        <c:if test="${not empty param.subcategory}">
+                            <input type="hidden" name="subcategory" value="${param.subcategory}">
+                        </c:if>
+                        <input type="hidden" name="index" value="${param.index}">
+                        <label for="sort" style="font-weight:bold;">Sort by:</label>
+                        <select id="sort" name="sort" class="form-control" style="width:auto;display:inline-block;">
+                            <option value="">-- Select --</option>
+                            <option value="name-asc" ${sort == 'name-asc' ? 'selected' : ''}>Sort Product Name From A to Z</option>
+                            <option value="name-desc" ${sort == 'name-desc' ? 'selected' : ''}>Sort Product Name From Z to A</option>
+                            <option value="price-asc" ${sort == 'price-asc' ? 'selected' : ''}>Sort Product by Price ascending</option>
+                            <option value="price-desc" ${sort == 'price-desc' ? 'selected' : ''}>Sort Product by Price descending</option>
+                        </select>
+                    </form>
+                </div>
+                <script>
+                    document.getElementById('sort').addEventListener('change', function() {
+                        document.getElementById('sortForm').submit();
+                    });
+                </script>
+                <!-- End Sort Dropdown -->
+
                 <div class="features_items"><!--features_items-->
                     <h2 class="title text-center">Features Items</h2>
                     <c:forEach items="${products}" var="product">
@@ -61,16 +88,29 @@
                                         <!-- Carousel for product images -->
                                         <div id="carousel-${product.id}" class="carousel slide" data-ride="carousel">
                                             <div class="carousel-inner">
-                                                <c:forEach items="${product.imageUrls}" var="imageUrl" varStatus="status">
-                                                    <div class="item ${status.index == 0 ? 'active' : ''}">
-                                                        <img src="${pageContext.request.contextPath}/${imageUrl}" alt="${product.name}" />
-                                                    </div>
-                                                </c:forEach>
+                                                <c:choose>
+                                                    <c:when test="${not empty product.imageUrls}">
+                                                        <c:forEach items="${product.imageUrls}" var="imageUrl" varStatus="status">
+                                                            <div class="item ${status.index == 0 ? 'active' : ''}">
+                                                                <img src="${pageContext.request.contextPath}/${imageUrl}" alt="${product.name}" />
+                                                            </div>
+                                                        </c:forEach>
+                                                    </c:when>
+
+                                                    <c:otherwise>
+                                                        <div class="item active">
+                                                            <img src="${pageContext.request.contextPath}/images/default-product.png" alt="No Image Available" />
+                                                        </div>
+                                                    </c:otherwise>
+                                                </c:choose>
                                             </div>
-                                            <c:if test="${product.imageUrls.size() > 1}">
+
+                                            <c:if test="${product.imageUrls != null && product.imageUrls.size() > 1}">
                                                 <a class="left carousel-control" href="#carousel-${product.id}" data-slide="prev">
+                                                    <span class="glyphicon glyphicon-chevron-left"></span>
                                                 </a>
                                                 <a class="right carousel-control" href="#carousel-${product.id}" data-slide="next">
+                                                    <span class="glyphicon glyphicon-chevron-right"></span>
                                                 </a>
                                             </c:if>
                                         </div>

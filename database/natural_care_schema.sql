@@ -123,7 +123,8 @@ CREATE TABLE expertSkill
 CREATE TABLE product_category
 (
     product_category_id   INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    product_category_name VARCHAR(255)
+    product_category_name VARCHAR(255),
+    status BOOLEAN DEFAULT TRUE
 );
 
 CREATE TABLE sub_product_category
@@ -131,6 +132,7 @@ CREATE TABLE sub_product_category
     sub_product_category_id   INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     sub_product_category_name VARCHAR(255),
     product_category_id       INT,
+    status BOOLEAN DEFAULT TRUE,
     FOREIGN KEY (product_category_id)
         REFERENCES product_category (product_category_id)
 );
@@ -147,18 +149,30 @@ CREATE TABLE product
         REFERENCES sub_product_category (sub_product_category_id)
 );
 
+create table color(
+	color_id int not null primary key,
+    color_name varchar(255)
+);
+
+create table size(
+	size_id int not null primary key,
+    size_name varchar(255)
+);
+
 CREATE TABLE product_variation
 (
     variation_id  INT    NOT NULL AUTO_INCREMENT PRIMARY KEY,
     product_id    INT    NOT NULL,
     product_image TEXT,
-    color         VARCHAR(50),
-    size          VARCHAR(50),
+    color_id int,
+    size_id int,
     price         BIGINT NOT NULL,
+    sell_price BIGINT NOT NULL,
     qty_in_stock  INT    NOT NULL,
     sold          INT DEFAULT 0,
-    FOREIGN KEY (product_id)
-        REFERENCES product (product_id)
+    FOREIGN KEY (product_id) REFERENCES product (product_id),
+    foreign key (color_id) references color(color_id),
+    foreign key (size_id) references size(size_id)
 );
 
 CREATE TABLE product_feedback

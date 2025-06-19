@@ -13,7 +13,6 @@
     <link href="${pageContext.request.contextPath}/css/bootstrap.min.css" rel="stylesheet">
     <link href="${pageContext.request.contextPath}/css/font-awesome.min.css" rel="stylesheet">
     <link href="${pageContext.request.contextPath}/css/prettyPhoto.css" rel="stylesheet">
-    <link href="${pageContext.request.contextPath}/css/price-range.css" rel="stylesheet">
     <link href="${pageContext.request.contextPath}/css/animate.css" rel="stylesheet">
     <link href="${pageContext.request.contextPath}/css/main.css" rel="stylesheet">
     <link href="${pageContext.request.contextPath}/css/responsive.css" rel="stylesheet">
@@ -110,15 +109,30 @@
                                 <div class="product-variations">
                                     <h3>Available Options</h3>
 
-                                    <!-- Colors -->
-                                    <c:if test="${not empty product.variations[0].color}">
+                                        <%-- Check if there are any colors or sizes --%>
+                                    <c:set var="hasColor" value="false" />
+                                    <c:set var="hasSize" value="false" />
+
+                                    <c:forEach items="${product.variations}" var="v">
+                                        <c:if test="${not empty v.colorId and not empty v.colorName}">
+                                            <c:set var="hasColor" value="true" />
+                                        </c:if>
+                                        <c:if test="${not empty v.sizeId and not empty v.sizeName}">
+                                            <c:set var="hasSize" value="true" />
+                                        </c:if>
+                                    </c:forEach>
+
+                                        <%-- Color Options --%>
+                                    <c:if test="${hasColor}">
                                         <div class="colors">
                                             <h4>Colors:</h4>
                                             <div class="color-options">
                                                 <c:forEach items="${product.variations}" var="variation">
-                                                    <c:if test="${not empty variation.color}">
-                                                        <button class="color-option" data-color="${variation.color}">
-                                                                ${variation.color}
+                                                    <c:if test="${not empty variation.colorId and not empty variation.colorName}">
+                                                        <button class="color-option"
+                                                                data-color="${variation.colorId}"
+                                                                data-color-name="${variation.colorName}">
+                                                                ${variation.colorName}
                                                         </button>
                                                     </c:if>
                                                 </c:forEach>
@@ -126,15 +140,17 @@
                                         </div>
                                     </c:if>
 
-                                    <!-- Sizes -->
-                                    <c:if test="${not empty product.variations[0].size}">
+                                        <%-- Size Options --%>
+                                    <c:if test="${hasSize}">
                                         <div class="sizes">
                                             <h4>Sizes:</h4>
                                             <div class="size-options">
                                                 <c:forEach items="${product.variations}" var="variation">
-                                                    <c:if test="${not empty variation.size}">
-                                                        <button class="size-option" data-size="${variation.size}">
-                                                                ${variation.size}
+                                                    <c:if test="${not empty variation.sizeId and not empty variation.sizeName}">
+                                                        <button class="size-option"
+                                                                data-size="${variation.sizeId}"
+                                                                data-size-name="${variation.sizeName}">
+                                                                ${variation.sizeName}
                                                         </button>
                                                     </c:if>
                                                 </c:forEach>
@@ -154,10 +170,10 @@
                                     <div class="variation-details" style="display: none;">
                                         <c:forEach items="${product.variations}" var="variation">
                                             <div class="variation-item"
-                                                 data-color="${variation.color}"
-                                                 data-size="${variation.size}"
+                                                 data-color="${variation.colorId}"
+                                                 data-size="${variation.sizeId}"
                                                  data-image="${variation.imageUrl}">
-                                                <span class="price-data">${variation.price}</span>
+                                                <span class="price-data">${variation.sell_price}</span>
                                                 <span class="stock-data">${variation.qtyInStock}</span>
                                                 <span class="sold-data">${variation.sold}</span>
                                                 <span class="image-data">${variation.imageUrl}</span>
@@ -258,160 +274,110 @@
     let selectedSize = null;
     const defaultImageUrl = '${not empty product.variations ? product.variations[0].imageUrl : ""}';
 
-    // No need to store original images since product doesn't have original images
-
-    // Handle color selection
     document.querySelectorAll('.color-option').forEach(button => {
-        button.addEventListener('click', function() {
-            // Remove selected class from all color buttons
+        button.addEventListener('click', function () {
             document.querySelectorAll('.color-option').forEach(btn => btn.classList.remove('selected'));
-            // Add selected class to clicked button
             this.classList.add('selected');
-
-            selectedColor = this.getAttribute('data-color');
+            selectedColor = this.dataset.color;
             updateVariationInfo();
             updateProductImages();
         });
     });
 
-    // Handle size selection
     document.querySelectorAll('.size-option').forEach(button => {
-        button.addEventListener('click', function() {
-            // Remove selected class from all size buttons
+        button.addEventListener('click', function () {
             document.querySelectorAll('.size-option').forEach(btn => btn.classList.remove('selected'));
-            // Add selected class to clicked button
             this.classList.add('selected');
-
-            selectedSize = this.getAttribute('data-size');
+            selectedSize = this.dataset.size;
             updateVariationInfo();
             updateProductImages();
         });
     });
 
-    // Function to format number with commas
     function formatNumber(num) {
         return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
 
-    // Function to format price in VND
     function formatPrice(price) {
         const numPrice = parseFloat(price);
-        if (isNaN(numPrice)) return 'N/A';
-        return formatNumber(numPrice) + ' VND';
+        return isNaN(numPrice) ? 'N/A' : formatNumber(numPrice) + ' VND';
     }
 
     function updateVariationInfo() {
         const variationInfo = document.getElementById('variation-info');
-
-        // Show variation info section
         variationInfo.style.display = 'block';
-
-        const variationItems = document.querySelectorAll('.variation-item');
         let found = false;
 
-        variationItems.forEach(item => {
-            const color = item.getAttribute('data-color');
-            const size = item.getAttribute('data-size');
-
-            // Check if this variation matches the selected options
+        document.querySelectorAll('.variation-item').forEach(item => {
+            const color = item.dataset.color;
+            const size = item.dataset.size;
             const colorMatch = !selectedColor || color === selectedColor;
             const sizeMatch = !selectedSize || size === selectedSize;
 
             if (colorMatch && sizeMatch) {
-                const price = item.querySelector('.price-data').textContent;
-                const stock = item.querySelector('.stock-data').textContent;
-                const sold = item.querySelector('.sold-data').textContent;
-
-                document.getElementById('price').textContent = formatPrice(price);
-                document.getElementById('stock').textContent = formatNumber(stock);
-                document.getElementById('sold').textContent = formatNumber(sold);
+                document.getElementById('price').textContent = formatPrice(item.querySelector('.price-data').textContent);
+                document.getElementById('stock').textContent = formatNumber(item.querySelector('.stock-data').textContent);
+                document.getElementById('sold').textContent = formatNumber(item.querySelector('.sold-data').textContent);
                 found = true;
             }
         });
 
         if (!found) {
-            document.getElementById('price').textContent = 'N/A';
-            document.getElementById('stock').textContent = 'N/A';
-            document.getElementById('sold').textContent = 'N/A';
+            ['price', 'stock', 'sold'].forEach(id => document.getElementById(id).textContent = 'N/A');
         }
     }
 
     function updateProductImages() {
-        const variationItems = document.querySelectorAll('.variation-item');
-        let newImageUrl = null;
+        const carouselImg = document.querySelector('#carousel-${product.id} .carousel-inner .item img');
         let found = false;
+        let newImageUrl = null;
 
-        // Find matching variation and get its image
-        variationItems.forEach(item => {
-            const color = item.getAttribute('data-color');
-            const size = item.getAttribute('data-size');
-
-            // Check if this variation matches the selected options
+        document.querySelectorAll('.variation-item').forEach(item => {
+            const color = item.dataset.color;
+            const size = item.dataset.size;
             const colorMatch = !selectedColor || color === selectedColor;
             const sizeMatch = !selectedSize || size === selectedSize;
 
             if (colorMatch && sizeMatch && !found) {
-                const imageElement = item.querySelector('.image-data');
-                if (imageElement && imageElement.textContent.trim()) {
-                    newImageUrl = imageElement.textContent.trim();
+                const imgText = item.querySelector('.image-data')?.textContent?.trim();
+                if (imgText) {
+                    newImageUrl = imgText;
                     found = true;
                 }
             }
         });
 
-        // Update the carousel image
-        const carouselImg = document.querySelector('#carousel-${product.id} .carousel-inner .item img');
-
-        if (found && newImageUrl && carouselImg) {
-            // Update with variation image
-            carouselImg.src = contextPath + newImageUrl;
-        } else if (!found && defaultImageUrl && carouselImg) {
-            // Reset to default image (first variation) if no specific match found
-            carouselImg.src = contextPath + defaultImageUrl;
+        if (carouselImg) {
+            carouselImg.src = contextPath + (found && newImageUrl ? newImageUrl : defaultImageUrl);
         }
     }
 
-    // Add reset functionality (optional)
     function resetSelection() {
         selectedColor = null;
         selectedSize = null;
-
-        // Remove all selected classes
-        document.querySelectorAll('.color-option.selected, .size-option.selected').forEach(btn => {
-            btn.classList.remove('selected');
-        });
-
-        // Hide variation info
+        document.querySelectorAll('.color-option.selected, .size-option.selected').forEach(btn => btn.classList.remove('selected'));
         document.getElementById('variation-info').style.display = 'none';
 
-        // Reset to default image (first variation)
         const carouselImg = document.querySelector('#carousel-${product.id} .carousel-inner .item img');
         if (defaultImageUrl && carouselImg) {
             carouselImg.src = contextPath + defaultImageUrl;
         }
     }
 
-    // Add event listener for "View More" link
     document.addEventListener('DOMContentLoaded', function () {
-        const toggles = document.querySelectorAll('.view-toggle');
-        toggles.forEach(function (toggle) {
+        document.querySelectorAll('.view-toggle').forEach(toggle => {
             toggle.addEventListener('click', function () {
                 const parent = toggle.closest('p');
                 const shortText = parent.querySelector('.short-text');
                 const fullText = parent.querySelector('.full-text');
-                if (fullText.style.display === 'none') {
-                    fullText.style.display = 'inline';
-                    shortText.style.display = 'none';
-                    toggle.textContent = 'View Less';
-                } else {
-                    fullText.style.display = 'none';
-                    shortText.style.display = 'inline';
-                    toggle.textContent = 'View More';
-                }
+                const isExpanded = fullText.style.display !== 'none';
+
+                fullText.style.display = isExpanded ? 'none' : 'inline';
+                shortText.style.display = isExpanded ? 'inline' : 'none';
+                toggle.textContent = isExpanded ? 'View More' : 'View Less';
             });
         });
     });
 </script>
-
 </body>
 </html>

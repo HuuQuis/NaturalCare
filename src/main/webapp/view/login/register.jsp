@@ -46,32 +46,62 @@
 </header><!--/header-->
 
 <!--form-->
-<section id="form">
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-offset-3 col-sm-6">
-                <!--sign up form-->
-                <div class="signup-form">
-                    <h2>New User Signup!</h2>
-                    <form action="register" method="POST">
-                        <input type="text" name="username" placeholder="Username" required minlength="6"/>
-                        <input type="password" name="password" placeholder="Password" required minlength="6"/>
-                        <input type="password" name="password-confirm" placeholder="Re-enter your password" required/>
-                        <input type="text" name="firstName" placeholder="First Name" required/>
-                        <input type="text" name="lastName" placeholder="Last Name" required/>
-                        <input type="email" name="email" placeholder="Email Address" required/>
-                        <input type="text" name="phone" placeholder="Phone Number" pattern="[0-9]{10}" required/>
-                        <button type="submit" class="btn btn-default">Signup</button>
-                        ${error}
-                        <hr>
-                        <p class="message">Already registered? <a href="${pageContext.request.contextPath}/login">Login</a></p>
-                    </form>
-                </div>
-                <!--/sign up form-->
+<div class="container">
+    <div class="row">
+        <div class="col-sm-offset-3 col-sm-6">
+            <!--sign up form-->
+            <div class="signup-form">
+                <h2>New User Signup!</h2>
+                <form action="register" method="POST" id="registerForm">
+                    Username:<input type="text" name="username" id="username" placeholder="Username" required
+                                    minlength="6"/>
+                    <div class="error-message" id="usernameError"></div>
+
+                    Password:<input type="password" name="password" id="password" placeholder="Password" required
+                                    minlength="6"/>
+                    <div class="error-message" id="passwordError"></div>
+
+                    Confirm Password:<input type="password" name="password-confirm" id="confirmPassword"
+                                            placeholder="Re-enter your password" required/>
+                    <div class="error-message" id="confirmPasswordError"></div>
+
+                    First Name:<input type="text" name="firstName" id="firstName" placeholder="First Name" required
+                                      value="${param.firstName}"/>
+                    <div class="error-message" id="firstNameError"></div>
+
+                    Last Name:<input type="text" name="lastName" id="lastName" placeholder="Last Name" required
+                                     value="${param.lastName}"/>
+                    <div class="error-message" id="lastNameError"></div>
+
+                    Email:<input type="email" name="email" id="email" placeholder="Email Address" required
+                                 value="${param.email}"/>
+                    <div class="error-message" id="emailError"></div>
+
+                    Phone:<input type="text" name="phone" id="phone" placeholder="Phone Number" pattern="0[0-9]{9}"
+                                 required
+                                 value="${param.phone}"/>
+                    <div class="error-message" id="phoneError"></div>
+
+                    <br>
+
+                    <c:if test="${not empty error}">
+                        <i class="alert alert-danger">${error}</i>
+                    </c:if>
+
+                    <br>
+                    <br>
+
+                    <button type="submit" class="btn btn-default">Signup</button>
+
+                    <hr>
+                    <p class="message">Already registered? <a href="${pageContext.request.contextPath}/login">Login</a>
+                    </p>
+                </form>
             </div>
+            <!--/sign up form-->
         </div>
     </div>
-</section><!--/form-->
+</div>
 
 
 <!--/Footer-->
@@ -80,16 +110,16 @@
 </section><!--/Footer-->
 <script>
     document.querySelector('form').addEventListener('submit', function (event) {
+        const username = document.querySelector('input[name="username"]').value;
         const password = document.querySelector('input[name="password"]').value;
         const confirmPassword = document.querySelector('input[name="password-confirm"]').value;
-        const username = document.querySelector('input[name="username"]').value;
         const firstName = document.querySelector('input[name="firstName"]').value;
         const lastName = document.querySelector('input[name="lastName"]').value;
         const email = document.querySelector('input[name="email"]').value;
         const phone = document.querySelector('input[name="phone"]').value;
 
         // Check if any field contains only whitespace
-        if (username.trim() === '' || firstName.trim() === '' || lastName.trim() === '' || 
+        if (username.trim() === '' || firstName.trim() === '' || lastName.trim() === '' ||
             email.trim() === '' || phone.trim() === '') {
             event.preventDefault();
             alert("Please do not enter only spaces in any field!");
@@ -100,6 +130,15 @@
             event.preventDefault();
             alert("Passwords do not match!");
         }
+
+        // Validate email format
+        const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!emailPattern.test(email)) {
+            event.preventDefault();
+            alert("Please enter a valid email address!");
+            return;
+        }
+
     });
 </script>
 

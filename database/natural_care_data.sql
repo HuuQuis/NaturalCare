@@ -31,58 +31,61 @@ VALUES ('Makeup Expert'),
        ('Hair Care Experts'),
        ('Perfume Expert');
 
-INSERT INTO product_category (product_category_name)
-VALUES ('Sale'),
-       ('Makeup'),
-       ('Skin'),
-       ('Hair'),
-       ('Beauty Drink'),
-       ('Body Care'),
-       ('Baby Care'),
-       ('Fragrance'),
-       ('Gifts'),
-       ('Product Sets');
+INSERT INTO product_category (product_category_name, status) VALUES
+                                                                 ('Sale', TRUE),
+                                                                 ('Makeup', TRUE),
+                                                                 ('Skin', TRUE),
+                                                                 ('Hair', TRUE),
+                                                                 ('Beauty Drink', TRUE),
+                                                                 ('Body Care', TRUE),
+                                                                 ('Baby Care', TRUE),
+                                                                 ('Fragrance', TRUE),
+                                                                 ('Gifts', TRUE),
+                                                                 ('Product Sets', TRUE);
 
-INSERT INTO sub_product_category (sub_product_category_id, sub_product_category_name, product_category_id)
-VALUES (1, 'Skin Care Combo', 1),
-       (2, 'Hair Care Combo', 1),
-       (3, 'Lip Care Combo', 1),
-       (4, 'Other Combos', 1),
-       (5, 'Black Green Day', 1),
-       (6, 'Lip Balm', 2),
-       (7, 'Colored Lipstick', 2),
-       (8, 'Lip Scrub', 2),
-       (9, 'Foundation', 2),
-       (10, 'Blush', 2),
-       (11, 'Shampoo', 4),
-       (12, 'Hair Conditioner', 4),
-       (13, 'Beauty Drink', 5),
-       (14, 'Natural Soap', 6),
-       (15, 'Natural Shower Gel', 6),
-       (16, 'Body Lotion', 6),
-       (17, 'Body Scrub', 6),
-       (18, 'Feminine Hygiene', 6),
-       (19, 'Oral Care', 6),
-       (20, 'Baby Bath', 7),
-       (21, 'Baby Care', 7),
-       (22, 'Pure Essential Oil', 8),
-       (23, 'Therapeutic Essential Oil', 8),
-       (24, 'Smart Hanging Oil', 8),
-       (25, 'Solid Perfume', 8),
-       (26, 'Spray Perfume', 8),
-       (27, 'Under 300k', 9),
-       (28, 'Under 500k', 9),
-       (29, 'Under 800k', 9),
-       (30, 'Anti-aging Ginseng Skin Care Set', 10),
-       (31, 'Centella Skin Care Set', 10),
-       (32, 'Silkworm Skin Care Set', 10),
-       (33, 'Acerola Skin Care Set', 10);
+INSERT INTO sub_product_category (sub_product_category_id, sub_product_category_name, product_category_id, status) VALUES
+                                                                                                                       (1, 'Skin Care Combo', 1, TRUE),
+                                                                                                                       (2, 'Hair Care Combo', 1, TRUE),
+                                                                                                                       (3, 'Lip Care Combo', 1, TRUE),
+                                                                                                                       (4, 'Other Combos', 1, TRUE),
+                                                                                                                       (5, 'Black Green Day', 1, TRUE),
+                                                                                                                       (6, 'Lip Balm', 2, TRUE),
+                                                                                                                       (7, 'Colored Lipstick', 2, TRUE),
+                                                                                                                       (8, 'Lip Scrub', 2, TRUE),
+                                                                                                                       (9, 'Foundation', 2, TRUE),
+                                                                                                                       (10, 'Blush', 2, TRUE),
+                                                                                                                       (11, 'Shampoo', 4, TRUE),
+                                                                                                                       (12, 'Hair Conditioner', 4, TRUE),
+                                                                                                                       (13, 'Beauty Drink', 5, TRUE),
+                                                                                                                       (14, 'Natural Soap', 6, TRUE),
+                                                                                                                       (15, 'Natural Shower Gel', 6, TRUE),
+                                                                                                                       (16, 'Body Lotion', 6, TRUE),
+                                                                                                                       (17, 'Body Scrub', 6, TRUE),
+                                                                                                                       (18, 'Feminine Hygiene', 6, TRUE),
+                                                                                                                       (19, 'Oral Care', 6, TRUE),
+                                                                                                                       (20, 'Baby Bath', 7, TRUE),
+                                                                                                                       (21, 'Baby Care', 7, TRUE),
+                                                                                                                       (22, 'Pure Essential Oil', 8, TRUE),
+                                                                                                                       (23, 'Therapeutic Essential Oil', 8, TRUE),
+                                                                                                                       (24, 'Smart Hanging Oil', 8, TRUE),
+                                                                                                                       (25, 'Solid Perfume', 8, TRUE),
+                                                                                                                       (26, 'Spray Perfume', 8, TRUE),
+                                                                                                                       (27, 'Under 300k', 9, TRUE),
+                                                                                                                       (28, 'Under 500k', 9, TRUE),
+                                                                                                                       (29, 'Under 800k', 9, TRUE),
+                                                                                                                       (30, 'Anti-aging Ginseng Skin Care Set', 10, TRUE),
+                                                                                                                       (31, 'Centella Skin Care Set', 10, TRUE),
+                                                                                                                       (32, 'Silkworm Skin Care Set', 10, TRUE),
+                                                                                                                       (33, 'Acerola Skin Care Set', 10, TRUE);
 
 INSERT INTO user (username, password, first_name, last_name, email, phone_number, role_id)
 VALUES ('admin', 'admin', 'test', 'admin', 'test@gmail.com', '0123456789', 3);
 
-INSERT INTO user (user_id, username, password, first_name, last_name, email, phone_number, role_id)
-VALUES (2, 'manager', 'manager', 'test', 'manager', 'test@gmail.com', '0123456789', 4);
+INSERT INTO user (username, password, first_name, last_name, email, phone_number, role_id)
+VALUES ('manager', 'manager', 'test', 'manager', 'test@gmail.com', '0123456789', 4);
+
+INSERT INTO user (username, password, first_name, last_name, email, phone_number, role_id)
+VALUES ('lamtung', 'lamtung', 'lamtung', 'test', 'kojkon02@gmail.com', '0989785184', 1);
 
 INSERT INTO product (product_name, product_short_description, product_information, product_guideline,
                      sub_product_category_id)
@@ -162,6 +165,34 @@ VALUES ('Ginseng Skin Care Combo', 'A luxurious set for radiant skin',
         'Apply during diaper changes.', 21),
        ('Peppermint Essential Oil', 'Invigorating scent', 'Pure oil for aromatherapy and massage.',
         'Dilute before use.', 22);
-INSERT INTO product_variation (product_id, product_image, color, size, price, qty_in_stock) VALUES
-(7,'/images/product/lipstick-pink.jpg', 'Pink', null, 200000, 100),
-(7,'/images/product/lipstick-red.jpg', 'Red', null, 190000, 100)
+        
+INSERT INTO color (color_id, color_name) VALUES
+(1, 'Red'),
+(2, 'Pink'),
+(3, 'Nude'),
+(4, 'Coral'),
+(5, 'Berry'),
+(6, 'Plum'),
+(7, 'Brown'),
+(8, 'Mauve'),
+(9, 'Orange'),
+(10, 'Wine');
+
+INSERT INTO size (size_id, size_name) VALUES
+(1, '50ml'),
+(2, '100ml'),
+(3, '200ml'),
+(4, '300ml'),
+(5, '400ml'),
+(6, '500ml'),
+(7, '600ml'),
+(8, '700ml'),
+(9, '800ml'),
+(10, '900ml'),
+(11, '1000ml');
+
+INSERT INTO product_variation (product_id, product_image, color_id, size_id, price,sell_price, qty_in_stock)
+VALUES (7, '/images/product/lipstick-pink.jpg',2, null, 100000,200000, 100),
+       (7, '/images/product/lipstick-red.jpg',1, null, 90000,190000, 100),
+       (9, '/images/product/foundation-diro.jpg', 3, null, 110000,210000, 100),
+       (9, '/images/product/foundation-este.jpg', 2, null, 150000,250000, 100);

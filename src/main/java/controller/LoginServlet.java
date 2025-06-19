@@ -42,16 +42,14 @@ public class LoginServlet extends HttpServlet {
             }
             HttpSession session = request.getSession(true);
 
-            String userAgent = request.getHeader("User-Agent");
-            String ipAddress = request.getRemoteAddr();
-
             session.setAttribute("user", user);
-            session.setAttribute("ip", ipAddress);
-            session.setAttribute("agent", userAgent);
             session.setMaxInactiveInterval(10 * 60);
 
             // Redirect based on role
             switch (user.getRole()) {
+                case 2:
+                    response.sendRedirect("staffHome");
+                    break;
                 case 3:
                     response.sendRedirect("skill");
                     break;
@@ -64,7 +62,7 @@ public class LoginServlet extends HttpServlet {
                     break;
             }
         } else {
-            request.getSession().setAttribute("validate", "Invalid username or password.");
+            request.getSession().setAttribute("error", "Invalid username or password.");
             response.sendRedirect("login");
         }
     }
