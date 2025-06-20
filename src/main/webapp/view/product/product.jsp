@@ -51,6 +51,33 @@
             </div>
 
             <div class="col-sm-9 padding-right">
+                <!-- Sort Dropdown -->
+                <div style="margin-bottom: 15px;">
+                    <form id="sortForm" method="get" style="display:inline;">
+                        <c:if test="${not empty param.category}">
+                            <input type="hidden" name="category" value="${param.category}">
+                        </c:if>
+                        <c:if test="${not empty param.subcategory}">
+                            <input type="hidden" name="subcategory" value="${param.subcategory}">
+                        </c:if>
+                        <input type="hidden" name="index" value="${param.index}">
+                        <label for="sort" style="font-weight:bold;">Sort by:</label>
+                        <select id="sort" name="sort" class="form-control" style="width:auto;display:inline-block;">
+                            <option value="">-- Select --</option>
+                            <option value="name-asc" ${sort == 'name-asc' ? 'selected' : ''}>Sort Product Name From A to Z</option>
+                            <option value="name-desc" ${sort == 'name-desc' ? 'selected' : ''}>Sort Product Name From Z to A</option>
+                            <option value="price-asc" ${sort == 'price-asc' ? 'selected' : ''}>Sort Product by Price ascending</option>
+                            <option value="price-desc" ${sort == 'price-desc' ? 'selected' : ''}>Sort Product by Price descending</option>
+                        </select>
+                    </form>
+                </div>
+                <script>
+                    document.getElementById('sort').addEventListener('change', function() {
+                        document.getElementById('sortForm').submit();
+                    });
+                </script>
+                <!-- End Sort Dropdown -->
+
                 <div class="features_items"><!--features_items-->
                     <h2 class="title text-center">Features Items</h2>
                     <c:forEach items="${products}" var="product">

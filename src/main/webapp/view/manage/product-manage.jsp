@@ -115,10 +115,8 @@
                                             <input type="hidden" name="action" value="delete"/>
                                             <input type="hidden" name="id" value="${c.id}"/>
 
-                                            <!-- Nút submit ẩn để gọi submit hợp lệ -->
                                             <button type="submit" id="submit-product-${c.id}" style="display:none;"></button>
 
-                                            <!-- Icon đóng vai trò nút -->
                                             <i class="mdi mdi-delete"
                                                role="button"
                                                tabindex="0"
@@ -136,7 +134,7 @@
 
                                 <!-- Row phụ hiển thị variants -->
                                 <tr class="collapse" id="variations${c.id}" data-bs-parent="#variantAccordion">
-                                    <td colspan="6">
+                                    <td colspan="9">
                                         <div class="card card-body border border-1">
                                             <h6 class="mb-3">Variants of ${c.name}</h6>
                                             <table class="table table-bordered">
@@ -147,6 +145,7 @@
                                                     <th>Color</th>
                                                     <th>Size</th>
                                                     <th>Price</th>
+                                                    <th>Sell Price</th>
                                                     <th>Stock</th>
                                                     <th>Sold</th>
                                                     <th>Actions</th>
@@ -155,7 +154,9 @@
                                                 <tbody>
                                                 <c:forEach var="variation" items="${productVariantsMap[c.id]}" varStatus="loop">
                                                     <tr>
-                                                        <td>${loop.index + 1}</td>
+                                                        <td>
+                                                            ${(variantPageMap[c.id] - 1) * variantPageSize + loop.index + 1}
+                                                        </td>
                                                         <td><img src="${pageContext.request.contextPath}/${variation.imageUrl}" style="max-width: 100px; max-height: 100px;"></td>
                                                         <td>
                                                             <c:choose>
@@ -178,11 +179,12 @@
                                                             </c:choose>
                                                         </td>
                                                         <td>${variation.price}</td>
+                                                        <td>${variation.sell_price}</td>
                                                         <td>${variation.qtyInStock}</td>
                                                         <td>${variation.sold}</td>
                                                         <td>
-                                                            <a class="me-3" href="productVariantManage?action=edit&id=${variation.variationId}">
-                                                                <i class="mdi mdi-table-edit"
+                                                            <a class="me-3" href="productVariantManage?action=edit&variantId=${variation.variationId}">
+                                                            <i class="mdi mdi-table-edit"
                                                                    style="display: inline-block;
                                                                       font-size: 20px;
                                                                       width: 40px;
@@ -214,6 +216,99 @@
                                                 </c:forEach>
                                                 </tbody>
                                             </table>
+                                            <!-- Variant pagination controls -->
+                                            <c:if test="${variantTotalPageMap[c.id] > 1}">
+                                                <div class="d-flex justify-content-end mt-3">
+                                                    <ul class="pagination">
+                                                        <c:url var="variantBaseUrl" value="/productManage">
+                                                            <c:param name="page" value="${page}" />
+                                                            <c:if test="${not empty selectedCategoryId}">
+                                                                <c:param name="categoryId" value="${selectedCategoryId}" />
+                                                            </c:if>
+                                                            <c:if test="${not empty selectedSubCategoryId}">
+                                                                <c:param name="subCategoryId" value="${selectedSubCategoryId}" />
+                                                            </c:if>
+                                                        </c:url>
+
+                                                        <c:set var="vPage" value="${variantPageMap[c.id]}" />
+                                                        <c:set var="vTotalPage" value="${variantTotalPageMap[c.id]}" />
+
+                                                        <c:choose>
+                                                            <c:when test="${vTotalPage <= 5}">
+                                                                <c:forEach var="i" begin="1" end="${vTotalPage}">
+                                                                    <li class="page-item ${i == vPage ? 'active' : ''}">
+                                                                        <a class="page-link"
+                                                                           href="${variantBaseUrl}&variantPage${c.id}=${i}#variations${c.id}">
+                                                                                ${i}
+                                                                        </a>
+                                                                    </li>
+                                                                </c:forEach>
+                                                            </c:when>
+
+                                                            <c:when test="${vPage <= 3}">
+                                                                <c:forEach var="i" begin="1" end="4">
+                                                                    <li class="page-item ${i == vPage ? 'active' : ''}">
+                                                                        <a class="page-link"
+                                                                           href="${variantBaseUrl}&variantPage${c.id}=${i}#variations${c.id}">
+                                                                                ${i}
+                                                                        </a>
+                                                                    </li>
+                                                                </c:forEach>
+                                                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                                                                <li class="page-item">
+                                                                    <a class="page-link"
+                                                                       href="${variantBaseUrl}&variantPage${c.id}=${vTotalPage}#variations${c.id}">
+                                                                            ${vTotalPage}
+                                                                    </a>
+                                                                </li>
+                                                            </c:when>
+
+                                                            <c:when test="${vPage >= vTotalPage - 2}">
+                                                                <li class="page-item">
+                                                                    <a class="page-link"
+                                                                       href="${variantBaseUrl}&variantPage${c.id}=1#variations${c.id}">
+                                                                        1
+                                                                    </a>
+                                                                </li>
+                                                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                                                                <c:forEach var="i" begin="${vTotalPage - 3}" end="${vTotalPage}">
+                                                                    <li class="page-item ${i == vPage ? 'active' : ''}">
+                                                                        <a class="page-link"
+                                                                           href="${variantBaseUrl}&variantPage${c.id}=${i}#variations${c.id}">
+                                                                                ${i}
+                                                                        </a>
+                                                                    </li>
+                                                                </c:forEach>
+                                                            </c:when>
+
+                                                            <c:otherwise>
+                                                                <li class="page-item">
+                                                                    <a class="page-link"
+                                                                       href="${variantBaseUrl}&variantPage${c.id}=1#variations${c.id}">
+                                                                        1
+                                                                    </a>
+                                                                </li>
+                                                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                                                                <c:forEach var="i" begin="${vPage - 1}" end="${vPage + 1}">
+                                                                    <li class="page-item ${i == vPage ? 'active' : ''}">
+                                                                        <a class="page-link"
+                                                                           href="${variantBaseUrl}&variantPage${c.id}=${i}#variations${c.id}">
+                                                                                ${i}
+                                                                        </a>
+                                                                    </li>
+                                                                </c:forEach>
+                                                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                                                                <li class="page-item">
+                                                                    <a class="page-link"
+                                                                       href="${variantBaseUrl}&variantPage${c.id}=${vTotalPage}#variations${c.id}">
+                                                                            ${vTotalPage}
+                                                                    </a>
+                                                                </li>
+                                                            </c:otherwise>
+                                                        </c:choose>
+                                                    </ul>
+                                                </div>
+                                            </c:if>
                                             <div class="text-end">
                                                 <button type="button" class="btn btn-info d-inline-flex align-items-center" onclick="location.href='${pageContext.request.contextPath}/productVariantManage?action=add&productId=${c.id}';" style="gap: 6px;">
                                                     Add New Product Variant
