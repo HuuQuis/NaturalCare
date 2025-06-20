@@ -13,7 +13,6 @@
     <link href="${pageContext.request.contextPath}/css/bootstrap.min.css" rel="stylesheet">
     <link href="${pageContext.request.contextPath}/css/font-awesome.min.css" rel="stylesheet">
     <link href="${pageContext.request.contextPath}/css/prettyPhoto.css" rel="stylesheet">
-    <link href="${pageContext.request.contextPath}/css/price-range.css" rel="stylesheet">
     <link href="${pageContext.request.contextPath}/css/animate.css" rel="stylesheet">
     <link href="${pageContext.request.contextPath}/css/main.css" rel="stylesheet">
     <link href="${pageContext.request.contextPath}/css/responsive.css" rel="stylesheet">
@@ -174,7 +173,7 @@
                                                  data-color="${variation.colorId}"
                                                  data-size="${variation.sizeId}"
                                                  data-image="${variation.imageUrl}">
-                                                <span class="price-data">${variation.price}</span>
+                                                <span class="price-data">${variation.sell_price}</span>
                                                 <span class="stock-data">${variation.qtyInStock}</span>
                                                 <span class="sold-data">${variation.sold}</span>
                                                 <span class="image-data">${variation.imageUrl}</span>

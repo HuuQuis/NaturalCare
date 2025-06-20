@@ -63,15 +63,38 @@ public class ProductManageServlet extends HttpServlet {
                 total = productDAO.countTotalProducts();
             }
 
-            java.util.Map<Integer, List<ProductVariation>> productVariantsMap = new java.util.HashMap<>();
+            // --- Variant paging ---
+            int variantPageSize = 5;
+            java.util.Map<Integer, Integer> variantPageMap = new java.util.HashMap<>();
+            java.util.Map<Integer, Integer> variantTotalMap = new java.util.HashMap<>();
+            java.util.Map<Integer, Integer> variantTotalPageMap = new java.util.HashMap<>();
+            java.util.Map<Integer, java.util.List<ProductVariation>> productVariantsMap = new java.util.HashMap<>();
+
             for (Product p : products) {
-                productVariantsMap.put(p.getId(), productDAO.getProductVariationsByProductId(p.getId()));
+                String param = request.getParameter("variantPage" + p.getId());
+                int variantPage = 1;
+                try {
+                    if (param != null) variantPage = Integer.parseInt(param);
+                } catch (Exception ignored) {}
+                int variantTotal = productDAO.countProductVariants(p.getId());
+                int variantTotalPage = (int) Math.ceil((double) variantTotal / variantPageSize);
+                List<ProductVariation> pagedVariants = productDAO.getProductVariationsByProductIdPaged(p.getId(), variantPage, variantPageSize);
+
+                variantPageMap.put(p.getId(), variantPage);
+                variantTotalMap.put(p.getId(), variantTotal);
+                variantTotalPageMap.put(p.getId(), variantTotalPage);
+                productVariantsMap.put(p.getId(), pagedVariants);
             }
+
             int totalPage = (int) Math.ceil((double) total / pageSize);
 
             request.setAttribute("view", "product");
             request.setAttribute("products", products);
             request.setAttribute("productVariantsMap", productVariantsMap);
+            request.setAttribute("variantPageMap", variantPageMap);
+            request.setAttribute("variantTotalMap", variantTotalMap);
+            request.setAttribute("variantTotalPageMap", variantTotalPageMap);
+            request.setAttribute("variantPageSize", variantPageSize);
             request.setAttribute("page", page);
             request.setAttribute("pageSize", pageSize);
             request.setAttribute("totalPage", totalPage);
