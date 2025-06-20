@@ -39,7 +39,9 @@ public class SubCategoryServlet extends HttpServlet {
         req.setAttribute("subList", subList);
         req.setAttribute("categoryList", catDao.getAllProductCategories());
 
-        req.getRequestDispatcher("/view/category/list.jsp").forward(req, resp);
+        req.setAttribute("view", "subcategory");
+        req.getRequestDispatcher("/view/home/manager.jsp").forward(req, resp);
+
     }
 
 

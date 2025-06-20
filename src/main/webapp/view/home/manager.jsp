@@ -52,7 +52,7 @@
         <div class="main-panel">
             <div class="content-wrapper">
                 <%-- Nội dung động ở đây, ví dụ: --%>
-                <% if ("category".equals(view)) { %>
+                <% if ("subcategory".equals(view)) { %>
                 <jsp:include page="../category/list.jsp" />
                 <% } %>
 
