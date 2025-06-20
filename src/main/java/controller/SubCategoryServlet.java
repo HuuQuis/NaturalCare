@@ -11,6 +11,7 @@ import model.SubProductCategory;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 
 @WebServlet("/subcategory")
 public class SubCategoryServlet extends HttpServlet {
@@ -20,21 +21,34 @@ public class SubCategoryServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String action = req.getParameter("action");
+
         if ("edit".equals(action)) {
             int id = Integer.parseInt(req.getParameter("id"));
             SubProductCategory sub = subDao.getById(id);
             req.setAttribute("sub", sub);
         }
-        req.setAttribute("categories", catDao.getAllProductCategories());
-        //req.getRequestDispatcher("/view/category/formSub.jsp").forward(req, resp);
+
+        String categoryIdRaw = req.getParameter("productCategoryId");
+        String keyword = req.getParameter("search");
+        Integer categoryId = null;
+        if (categoryIdRaw != null && !categoryIdRaw.isEmpty()) {
+            categoryId = Integer.parseInt(categoryIdRaw);
+        }
+
+        List<SubProductCategory> subList = subDao.getFilteredSubcategories(keyword, categoryId);
+        req.setAttribute("subList", subList);
+        req.setAttribute("categoryList", catDao.getAllProductCategories());
+
+        req.getRequestDispatcher("/view/category/list.jsp").forward(req, resp);
     }
+
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String action = req.getParameter("action");
         String name = req.getParameter("name");
         String idRaw = req.getParameter("id");
-        String categoryIdRaw = req.getParameter("categoryId");
+        String categoryIdRaw = req.getParameter("productCategoryId");
 
         try {
             int categoryId = Integer.parseInt(categoryIdRaw);
