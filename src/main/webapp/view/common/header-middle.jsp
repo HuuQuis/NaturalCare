@@ -29,7 +29,7 @@
                     <ul class="nav navbar-nav">
                         <c:choose>
                             <c:when test="${not empty user}">
-                                <li><a href="#" aria-label="Shopping Cart"><i class="fa fa-shopping-cart"></i>
+                                <li><a href="cart" aria-label="Shopping Cart"><i class="fa fa-shopping-cart"></i>
                                     Cart</a></li>
                                 <li><a href="#" aria-label="User Profile"><i class="fa fa-user"></i>
                                     Profile</a></li>
@@ -37,7 +37,7 @@
                             </c:when>
                             <c:otherwise>
                                 <li><a href="login" aria-label="Login"><i class="fa fa-lock"></i> Login</a></li>
-                                <li><a href="#" aria-label="Shopping Cart"><i class="fa fa-shopping-cart"></i>
+                                <li><a href="cart" aria-label="Shopping Cart"><i class="fa fa-shopping-cart"></i>
                                     Cart</a></li>
                             </c:otherwise>
                         </c:choose>
