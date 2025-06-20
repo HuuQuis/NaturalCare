@@ -14,15 +14,13 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Thông tin cá nhân</title>
+  <title>Profile</title>
   <link href="${pageContext.request.contextPath}/css/bootstrap.min.css" rel="stylesheet"/>
   <link href="${pageContext.request.contextPath}/css/Profile.css" rel="stylesheet"/>
 </head>
 <body>
 
-<jsp:include page="/view/common/header-top.jsp"/>
 <jsp:include page="/view/common/header-middle.jsp"/>
-<jsp:include page="/view/common/header-bottom.jsp"/>
 
 <div class="form-profile py-5">
   <div class="container">
@@ -31,7 +29,7 @@
       <div class="col-lg-4">
         <div class="card mb-4 text-center">
           <div class="card-body">
-            <img src="<c:out value='${user.avatarUrl != null ? user.avatarUrl : "/images/default-avatar.png"}'/>"
+            <img src=""
                  alt="avatar"
                  class="rounded-circle profile-img"/>
             <h5 class="mt-3">${user.firstName} ${user.lastName}</h5>
@@ -67,7 +65,7 @@
             </div>
             <hr/>
             <div class="row mb-2">
-              <div class="col-sm-3"><p>Ngày sinh</p></div>
+              <div class="col-sm-3"><p>Birth</p></div>
               <div class="col-sm-9"><p class="text-muted">${user.dateOfBirth}</p></div>
             </div>
             <hr/>
@@ -76,7 +74,7 @@
               <div class="col-sm-9"><p class="text-muted">${user.role.name}</p></div>
             </div>
             <hr/>
-            <a href="changePassword.jsp" class="btn btn-warning">Thay đổi mật khẩu</a>
+            <a href="changePassword.jsp" class="btn btn-warning">Change Password</a>
           </div>
         </div>
       </div>

@@ -3,129 +3,72 @@
 
 <div class="page-wrapper">
     <div class="content">
-        <!-- Hiển thị thông báo -->
-        <c:if test="${not empty sessionScope.message}">
-            <script>
-                alert("${sessionScope.message}");
-            </script>
-            <c:remove var="message" scope="session" />
-        </c:if>
-
-        <div class="page-header">
-            <div class="page-title">
-                <h4>Category List</h4>
-            </div>
-            <div class="page-btn">
-                <a href="javascript:void(0);" class="btn btn-added" onclick="openAddModal()">
-                    <img src="${pageContext.request.contextPath}/adminassets/img/icons/plus.svg" alt="img" class="me-1">
-                    Add New Category
-                </a>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="fw-bold">Sub Category List</h4>
+            <div>
+                <button class="btn btn-primary me-2" onclick="openAddSubModal(0)">
+                    <i class="fa fa-plus me-1"></i> Add New Sub Category
+                </button>
+                <button class="btn btn-primary" onclick="openAddModal()">
+                    <i class="fa fa-plus me-1"></i> Add New Category
+                </button>
             </div>
         </div>
 
-        <div class="card">
-            <div class="card-body">
-                <div class="mb-3 d-flex justify-content-between align-items-center">
-                    <div class="input-group" style="max-width: 300px;">
-                        <span class="input-group-text"><i class="fa fa-search"></i></span>
-                        <input type="text" id="searchInput" class="form-control" placeholder="Search">
-                    </div>
-                </div>
-
-                <div class="table-responsive">
-                    <table class="table table-bordered">
-                        <thead class="table-light">
-                        <tr>
-                            <th>No.</th>
-                            <th>Category Name</th>
-                            <th>Actions</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <c:forEach var="c" items="${list}" varStatus="loop">
-                            <tr class="accordion-toggle" data-bs-toggle="collapse" data-bs-target="#collapse${c.id}">
-                                <td>${(page - 1) * pageSize + loop.index + 1}</td>
-                                <td><i class="fas fa-chevron-down me-2 text-primary"></i> ${c.name}</td>
-                                <td>
-                                    <a class="me-3" href="javascript:void(0);" onclick="openEditModal(${c.id}, '${c.name}')">
-                                        <img src="${pageContext.request.contextPath}/adminassets/img/icons/edit.svg" alt="edit">
-                                    </a>
-                                    <form action="category" method="post" style="display:inline;" onsubmit="return confirm('Are you sure to delete this category?');">
-                                        <input type="hidden" name="action" value="delete" />
-                                        <input type="hidden" name="id" value="${c.id}" />
-                                        <button type="submit" class="btn btn-delete">
-                                            <img src="${pageContext.request.contextPath}/adminassets/img/icons/delete.svg" alt="delete">
-                                        </button>
-                                    </form>
-                                </td>
-                            </tr>
-
-                            <!-- Subcategory Row -->
-                            <tr class="collapse" id="collapse${c.id}">
-                                <td colspan="3" class="p-0">
-                                    <div class="p-3">
-                                        <table class="table table-sm table-borderless mb-0 ms-4">
-                                            <thead>
-                                            <tr class="table-light">
-                                                <th>#</th>
-                                                <th>Subcategory Name</th>
-                                                <th>Actions</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            <c:forEach var="s" items="${c.subList}" varStatus="subLoop">
-                                                <tr>
-                                                    <td>${subLoop.index + 1}</td>
-                                                    <td>${s.name}</td>
-                                                    <td>
-                                                        <a href="javascript:void(0);" class="me-2" onclick="openEditSubModal(${s.id}, '${s.name}', ${c.id})">
-                                                            <img src="${pageContext.request.contextPath}/adminassets/img/icons/edit.svg" alt="edit">
-                                                        </a>
-                                                        <form action="subcategory" method="post" style="display:inline;" onsubmit="return confirm('Delete this subcategory?');">
-                                                            <input type="hidden" name="action" value="delete"/>
-                                                            <input type="hidden" name="id" value="${s.id}"/>
-                                                            <input type="hidden" name="categoryId" value="${c.id}"/>
-                                                            <button type="submit" class="btn btn-delete">
-                                                                <img src="${pageContext.request.contextPath}/adminassets/img/icons/delete.svg" alt="delete">
-                                                            </button>
-                                                        </form>
-                                                    </td>
-                                                </tr>
-                                            </c:forEach>
-                                            <c:if test="${empty c.subList}">
-                                                <tr><td colspan="3" class="text-muted fst-italic">No subcategories</td></tr>
-                                            </c:if>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <a href="javascript:void(0);"
-                                       class="btn btn-success btn-sm ms-4 text-white"
-                                       onclick="openAddSubModal(${c.id})">
-                                        <i class="fa fa-plus me-1"></i> Add Subcategory
-                                    </a>
-                                </td>
-                            </tr>
-                        </c:forEach>
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- PHÂN TRANG -->
-                <div class="d-flex justify-content-end mt-3">
-                    <ul class="pagination">
-                        <c:forEach var="i" begin="1" end="${totalPage}">
-                            <li class="page-item ${i == page ? 'active' : ''}">
-                                <a class="page-link" href="category?page=${i}">${i}</a>
-                            </li>
-                        </c:forEach>
-                    </ul>
-                </div>
+        <form method="get" action="subcategory">
+            <div class="d-flex flex-wrap gap-2 mb-3">
+                <select class="form-select" style="max-width: 200px;" name="productCategoryId">
+                    <option value="">All Categories</option>
+                    <c:forEach var="c" items="${categoryList}">
+                        <option value="${c.id}" ${param.productCategoryId == c.id ? 'selected' : ''}>${c.name}</option>
+                    </c:forEach>
+                </select>
+                <input type="text" name="search" class="form-control ms-auto" placeholder="Search by Sub Category name..." style="max-width: 300px;" value="${param.search}"/>
+                <button class="btn btn-primary" type="submit">Filter</button>
             </div>
+        </form>
+
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-light">
+                <tr>
+                    <th>No.</th>
+                    <th>Sub Category Name</th>
+                    <th>Category</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody id="subTableBody">
+                <c:forEach var="s" items="${subList}" varStatus="loop">
+                    <tr>
+                        <td>${loop.index + 1}</td>
+                        <td>${s.name}</td>
+                        <td>${s.categoryName}</td>
+                        <td>
+                            <a href="javascript:void(0);" onclick="openEditSubModal(${s.id}, '${s.name}', ${s.productCategoryId})">
+                                <i class="fa fa-edit text-primary me-2"></i>
+                            </a>
+                            <form action="subcategory" method="post" style="display:inline;" onsubmit="return confirm('Delete this subcategory?');">
+                                <input type="hidden" name="action" value="delete"/>
+                                <input type="hidden" name="id" value="${s.id}"/>
+                                <input type="hidden" name="productCategoryId" value="${s.productCategoryId}"/>
+                                <button type="submit" class="btn btn-link p-0">
+                                    <i class="fa fa-trash text-danger"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                </c:forEach>
+                <c:if test="${empty subList}">
+                    <tr><td colspan="4" class="text-center text-muted fst-italic">No subcategories found.</td></tr>
+                </c:if>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
 
-<!-- Modal Popup -->
+<!-- Category Modal -->
 <div class="modal fade" id="categoryModal" tabindex="-1" aria-labelledby="categoryModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <form action="category" method="post" class="modal-content" onsubmit="return validateCategoryForm();">
@@ -135,16 +78,14 @@
             </div>
             <div class="modal-body">
                 <input type="hidden" name="action" value="add" id="categoryAction">
-                <input type="hidden" name="id" id="categoryId">
+                <input type="hidden" name="id" id="productCategoryId">
                 <div class="mb-3">
                     <label for="categoryName" class="form-label">Category Name:</label>
                     <input type="text" class="form-control" name="name" id="categoryName" maxlength="15" required>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="submit" class="btn btn-success">
-                    <i class="fa fa-save"></i> Save
-                </button>
+                <button type="submit" class="btn btn-success"><i class="fa fa-save"></i> Save</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
             </div>
         </form>
@@ -162,11 +103,17 @@
             <div class="modal-body">
                 <input type="hidden" name="action" id="subAction" value="add">
                 <input type="hidden" name="id" id="subId">
-                <input type="hidden" name="categoryId" id="subCategoryId">
-
                 <div class="mb-3">
                     <label for="subName" class="form-label">Subcategory Name</label>
                     <input type="text" class="form-control" name="name" id="subName" required maxlength="15">
+                </div>
+                <div class="mb-3">
+                    <label for="subCategorySelect" class="form-label">Category</label>
+                    <select class="form-select" name="productCategoryId" id="subCategorySelect" required>
+                        <c:forEach var="c" items="${categoryList}">
+                            <option value="${c.id}">${c.name}</option>
+                        </c:forEach>
+                    </select>
                 </div>
             </div>
             <div class="modal-footer">
@@ -177,22 +124,31 @@
     </div>
 </div>
 
-<!-- Scripts -->
 <script>
     function openAddModal() {
         document.getElementById('categoryModalLabel').innerText = 'Add New Category';
         document.getElementById('categoryAction').value = 'add';
-        document.getElementById('categoryId').value = '';
+        document.getElementById('productCategoryId').value = '';
         document.getElementById('categoryName').value = '';
         new bootstrap.Modal(document.getElementById('categoryModal')).show();
     }
 
-    function openEditModal(id, name) {
-        document.getElementById('categoryModalLabel').innerText = 'Update Category';
-        document.getElementById('categoryAction').value = 'update';
-        document.getElementById('categoryId').value = id;
-        document.getElementById('categoryName').value = name;
-        new bootstrap.Modal(document.getElementById('categoryModal')).show();
+    function openAddSubModal(productCategoryId) {
+        document.getElementById('subModalLabel').innerText = 'Add Subcategory';
+        document.getElementById('subAction').value = 'add';
+        document.getElementById('subId').value = '';
+        document.getElementById('subName').value = '';
+        document.getElementById('subCategorySelect').value = productCategoryId || '';
+        new bootstrap.Modal(document.getElementById('subModal')).show();
+    }
+
+    function openEditSubModal(id, name, productCategoryId) {
+        document.getElementById('subModalLabel').innerText = 'Edit Subcategory';
+        document.getElementById('subAction').value = 'update';
+        document.getElementById('subId').value = id;
+        document.getElementById('subName').value = name;
+        document.getElementById('subCategorySelect').value = productCategoryId;
+        new bootstrap.Modal(document.getElementById('subModal')).show();
     }
 
     function validateCategoryForm() {
@@ -211,27 +167,6 @@
             return false;
         }
         return true;
-    }
-</script>
-
-
-<script>
-    function openAddSubModal(categoryId) {
-        document.getElementById('subModalLabel').innerText = 'Add Subcategory';
-        document.getElementById('subAction').value = 'add';
-        document.getElementById('subId').value = '';
-        document.getElementById('subCategoryId').value = categoryId;
-        document.getElementById('subName').value = '';
-        new bootstrap.Modal(document.getElementById('subModal')).show();
-    }
-
-    function openEditSubModal(id, name, categoryId) {
-        document.getElementById('subModalLabel').innerText = 'Edit Subcategory';
-        document.getElementById('subAction').value = 'update';
-        document.getElementById('subId').value = id;
-        document.getElementById('subCategoryId').value = categoryId;
-        document.getElementById('subName').value = name;
-        new bootstrap.Modal(document.getElementById('subModal')).show();
     }
 
     function validateSubForm() {
@@ -252,76 +187,3 @@
         return true;
     }
 </script>
-
-<script>
-    document.getElementById('searchInput').addEventListener('input', function () {
-        const filter = this.value.toLowerCase().trim();
-        const rows = document.querySelectorAll('tbody tr.accordion-toggle');
-
-        rows.forEach(row => {
-            const categoryCell = row.querySelector('td:nth-child(2)');
-            const categoryName = categoryCell ? categoryCell.innerText.toLowerCase() : '';
-            const collapseId = row.getAttribute('data-bs-target');
-            const subRow = document.querySelector(collapseId);
-            let match = categoryName.includes(filter);
-
-            // Nếu chưa match, kiểm tra các subcategory bên trong
-            if (!match && subRow) {
-                const subTexts = subRow.querySelectorAll('td:nth-child(2)');
-                for (const sub of subTexts) {
-                    if (sub.innerText.toLowerCase().includes(filter)) {
-                        match = true;
-                        break;
-                    }
-                }
-            }
-
-            // Hiển thị nếu có match
-            row.style.display = match ? '' : 'none';
-            if (subRow) subRow.style.display = match ? '' : 'none';
-        });
-    });
-</script>
-
-<c:if test="${hasDependency}">
-    <script>
-        if (confirm("Cannot delete Category because there are still SubCategory or Products.\nDo you want to hide this Category from the list?")) {
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = 'category';
-
-            const actionInput = document.createElement('input');
-            actionInput.type = 'hidden';
-            actionInput.name = 'action';
-            actionInput.value = 'hide';
-
-            const idInput = document.createElement('input');
-            idInput.type = 'hidden';
-            idInput.name = 'id';
-            idInput.value = '${categoryIdToHide}';
-
-            form.appendChild(actionInput);
-            form.appendChild(idInput);
-            document.body.appendChild(form);
-            form.submit();
-        }
-    </script>
-</c:if>
-
-
-<c:if test="${hasSubDependency}">
-    <script>
-        if (confirm("Cannot delete SubCategory because there are still products.\nDo you want to hide this SubCategory from the list?")) {
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = 'subcategory';
-            form.innerHTML = `
-                <input type="hidden" name="action" value="hide">
-                <input type="hidden" name="id" value="${subCategoryIdToHide}">
-                <input type="hidden" name="categoryId" value="0">
-            `;
-            document.body.appendChild(form);
-            form.submit();
-        }
-    </script>
-</c:if>
