@@ -56,9 +56,17 @@
         top: 0;
         width: 100%;
         height: 100%;
-        overflow: auto;
+        overflow: hidden;
         background-color: rgb(0,0,0);
         background-color: rgba(0,0,0,0.4);
+    }
+
+    /* Prevent body scroll when modal is open */
+    body.modal-open {
+        overflow: hidden;
+        position: fixed;
+        width: 100%;
+        height: 100%;
     }
 
     .modal-content {
@@ -70,6 +78,11 @@
         max-width: 600px;
         border-radius: 8px;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        position: relative;
+        max-height: 90vh;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
     }
 
     .modal-header {
@@ -78,6 +91,7 @@
         padding: 20px;
         border-radius: 8px 8px 0 0;
         position: relative;
+        flex-shrink: 0;
     }
 
     .modal-header h2 {
@@ -95,6 +109,7 @@
         right: 20px;
         top: 15px;
         cursor: pointer;
+        z-index: 10001;
     }
 
     .close:hover,
@@ -105,8 +120,10 @@
 
     .modal-body {
         padding: 20px;
-        max-height: 400px;
         overflow-y: auto;
+        overflow-x: hidden;
+        flex: 1;
+        min-height: 0;
     }
 
     .address-card {
@@ -288,7 +305,7 @@
                                 <li><a href="cart" aria-label="Shopping Cart"><i class="fa fa-shopping-cart"></i>
                                     Cart</a></li>
                                 <li class="profile-dropdown">
-                                    <a href="#" aria-label="User Profile"><i class="fa fa-user"></i>${user.username}</a>
+                                    <a href="" aria-label="User Profile"><i class="fa fa-user"></i>${user.username}</a>
                                     <div class="dropdown-content">
                                         <div class="user-info">
                                             <a href="#" aria-label="User Profile"><i class="fa fa-user-circle"></i> My Profile</a>
@@ -317,7 +334,7 @@
 <div id="addressModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-            <span class="close">&times;</span>
+            <span class="close" onclick="closeAddressModal()">&times;</span>
             <h2><i class="fa fa-map-marker"></i> My Addresses</h2>
         </div>
         <div class="modal-body">
@@ -355,6 +372,10 @@
     // Modal functionality
     function openAddressModal() {
         document.getElementById('addressModal').style.display = 'block';
+        // Disable body scroll
+        document.body.classList.add('modal-open');
+        const scrollY = window.scrollY;
+        document.body.style.top = `-${scrollY}px`;
         // Close dropdown when modal opens
         document.querySelector('.profile-dropdown').blur();
         // Load addresses when modal opens
@@ -363,20 +384,35 @@
 
     function closeAddressModal() {
         document.getElementById('addressModal').style.display = 'none';
+        // Re-enable body scroll
+        document.body.classList.remove('modal-open');
+        // Restore scroll position
+        const scrollY = document.body.style.top;
+        document.body.style.top = '';
+        window.scrollTo(0, parseInt(scrollY || '0') * -1);
     }
 
-    // Close modal when clicking outside
-    window.onclick = function(event) {
+    // Prevent modal from closing when clicking outside
+    document.addEventListener('click', function(event) {
         var modal = document.getElementById('addressModal');
-        if (event.target == modal) {
-            closeAddressModal();
-        }
-    }
+        var modalContent = document.querySelector('.modal-content');
 
-    // Close modal when clicking X
-    document.querySelector('.close').onclick = function() {
-        closeAddressModal();
-    }
+        // Only close if clicking exactly on the modal backdrop, not on modal content
+        if (event.target === modal) {
+            // Do nothing - prevent closing when clicking outside
+            event.preventDefault();
+            event.stopPropagation();
+        }
+    });
+
+    // Handle keyboard events
+    document.addEventListener('keydown', function(event) {
+        var modal = document.getElementById('addressModal');
+        if (event.key === 'Escape' && modal.style.display === 'block') {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+    });
 
     // Load addresses from server
     function loadAddresses() {
@@ -435,24 +471,33 @@
         const card = document.createElement('div');
         card.className = 'address-card';
 
-        const addressTypeClass = address.addressType.toLowerCase() === 'home' ? '' :
-                               address.addressType.toLowerCase() === 'work' ? ' work' : ' other';
-
         card.innerHTML = `
-            <span class="address-type${addressTypeClass}">${address.addressType}</span>
-            <div class="address-details">
-                <div class="address-text">
-                    ${address.detail}<br>
-                    ${address.wardName}, ${address.districtName}<br>
-                    ${address.provinceName}
-                </div>
+        <div class="address-details">
+            <div class="address-text">
+                ${address.detail}<br>
+                <span class="ward-district-province">Loading...</span>
             </div>
-            <div class="address-actions">
-                <button class="btn-address secondary" onclick="deleteAddress('${address.addressId}')">Delete</button>
-            </div>
-        `;
+            <div><strong>Distance:</strong> ${address.distanceKm} km</div>
+        </div>
+        <div class="address-actions">
+            <button class="btn-address secondary" onclick="deleteAddress('${address.addressId}')">Delete</button>
+        </div>
+    `;
+
+        // Gọi API để hiển thị tên tỉnh/huyện/xã
+        fetch('https://provinces.open-api.vn/api/w/' + address.wardCode + '?depth=2')
+            .then(res => res.json())
+            .then(ward => {
+                const full = `${ward.name}, ${ward.district.name}, ${ward.district.province.name}`;
+                card.querySelector('.ward-district-province').textContent = full;
+            })
+            .catch(() => {
+                card.querySelector('.ward-district-province').textContent = "Unknown location";
+            });
+
         return card;
     }
+
 
     // Show loading state
     function showLoading(show) {
@@ -470,14 +515,12 @@
         }
     }
 
-    // Show success message
     function showSuccess(message) {
         const messageContainer = document.getElementById('messageContainer');
         messageContainer.innerHTML = `<div class="success-message">${message}</div>`;
         setTimeout(clearMessages, 5000);
     }
 
-    // Show error message
     function showError(message) {
         const messageContainer = document.getElementById('messageContainer');
         messageContainer.innerHTML = `<div class="error-message">${message}</div>`;
@@ -492,8 +535,7 @@
 
     // Address management functions
     function addNewAddress() {
-        // Redirect to add address page or open another modal
-        window.location.href = '${pageContext.request.contextPath}/add-address.jsp';
+        window.location.href = '${pageContext.request.contextPath}/address-add.jsp';
     }
 
     function deleteAddress(addressId) {
@@ -520,30 +562,8 @@
         }
     }
 
-    function setDefaultAddress(addressId) {
-        const formData = new FormData();
-        formData.append('action', 'setDefault');
-        formData.append('addressId', addressId);
 
-        fetch('${pageContext.request.contextPath}/address', {
-            method: 'POST',
-            body: formData
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    showSuccess(data.message);
-                    loadAddresses(); // Reload addresses
-                } else {
-                    showError(data.message || 'Failed to set default address');
-                }
-            })
-            .catch(error => {
-                console.error('Error setting default address:', error);
-                showError('Failed to set default address. Please try again.');
-            });
-    }
-
+    // Handle profile dropdown clicks
     document.addEventListener('click', function(event) {
         var dropdown = document.querySelector('.profile-dropdown');
         if (!dropdown.contains(event.target)) {
