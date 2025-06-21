@@ -137,6 +137,7 @@
         font-size: 12px;
         font-weight: bold;
         margin-bottom: 8px;
+        text-transform: uppercase;
     }
 
     .address-type.work {
@@ -201,6 +202,11 @@
         background-color: #5a6268;
     }
 
+    .btn-address:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+    }
+
     .add-address-btn {
         width: 100%;
         padding: 15px;
@@ -229,6 +235,30 @@
     .empty-state i {
         font-size: 48px;
         color: #ddd;
+        margin-bottom: 15px;
+    }
+
+    .loading {
+        text-align: center;
+        padding: 20px;
+        color: #666;
+    }
+
+    .error-message {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+        border-radius: 4px;
+        padding: 10px;
+        margin-bottom: 15px;
+    }
+
+    .success-message {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+        border-radius: 4px;
+        padding: 10px;
         margin-bottom: 15px;
     }
 </style>
@@ -291,71 +321,28 @@
             <h2><i class="fa fa-map-marker"></i> My Addresses</h2>
         </div>
         <div class="modal-body">
+            <!-- Message Container -->
+            <div id="messageContainer"></div>
+
             <!-- Add New Address Button -->
             <div class="add-address-btn" onclick="addNewAddress()">
                 <i class="fa fa-plus"></i> Add New Address
             </div>
 
-            <!-- Address List Container -->
-            <div id="addressListContainer">
-                <!-- Sample addresses - replace with dynamic content -->
-                <div class="address-card default">
-                    <span class="address-type">Home</span>
-                    <span class="default-badge">Default</span>
-                    <div class="address-details">
-                        <strong>John Doe</strong>
-                        <div class="address-text">
-                            123 Main Street, Apartment 4B<br>
-                            New York, NY 10001<br>
-                            Phone: +1 (555) 123-4567
-                        </div>
-                    </div>
-                    <div class="address-actions">
-                        <button class="btn-address" onclick="editAddress(1)">Edit</button>
-                        <button class="btn-address secondary" onclick="deleteAddress(1)">Delete</button>
-                        <button class="btn-address" onclick="setDefaultAddress(1)">Set as Default</button>
-                    </div>
-                </div>
-
-                <div class="address-card">
-                    <span class="address-type work">Work</span>
-                    <div class="address-details">
-                        <strong>John Doe</strong>
-                        <div class="address-text">
-                            456 Business Ave, Suite 100<br>
-                            New York, NY 10002<br>
-                            Phone: +1 (555) 987-6543
-                        </div>
-                    </div>
-                    <div class="address-actions">
-                        <button class="btn-address" onclick="editAddress(2)">Edit</button>
-                        <button class="btn-address secondary" onclick="deleteAddress(2)">Delete</button>
-                        <button class="btn-address" onclick="setDefaultAddress(2)">Set as Default</button>
-                    </div>
-                </div>
-
-                <div class="address-card">
-                    <span class="address-type other">Other</span>
-                    <div class="address-details">
-                        <strong>Jane Smith</strong>
-                        <div class="address-text">
-                            789 Park Avenue<br>
-                            Brooklyn, NY 11201<br>
-                            Phone: +1 (555) 555-1234
-                        </div>
-                    </div>
-                    <div class="address-actions">
-                        <button class="btn-address" onclick="editAddress(3)">Edit</button>
-                        <button class="btn-address secondary" onclick="deleteAddress(3)">Delete</button>
-                        <button class="btn-address" onclick="setDefaultAddress(3)">Set as Default</button>
-                    </div>
-                </div>
+            <!-- Loading State -->
+            <div id="loadingState" class="loading" style="display: none;">
+                <i class="fa fa-spinner fa-spin"></i> Loading addresses...
             </div>
 
-            <!-- Empty State (show when no addresses) -->
+            <!-- Address List Container -->
+            <div id="addressListContainer">
+                <!-- Dynamic content will be loaded here -->
+            </div>
+
+            <!-- Empty State -->
             <div id="emptyState" class="empty-state" style="display: none;">
                 <i class="fa fa-map-marker"></i>
-                <h3>No addresses found</h3>
+                <h3>No addresses were found</h3>
                 <p>Add your first address to get started with faster checkout.</p>
             </div>
         </div>
@@ -363,11 +350,15 @@
 </div>
 
 <script>
+    let addresses = [];
+
     // Modal functionality
     function openAddressModal() {
         document.getElementById('addressModal').style.display = 'block';
         // Close dropdown when modal opens
         document.querySelector('.profile-dropdown').blur();
+        // Load addresses when modal opens
+        loadAddresses();
     }
 
     function closeAddressModal() {
@@ -387,35 +378,172 @@
         closeAddressModal();
     }
 
-    // Address management functions
-    function addNewAddress() {
-        alert('Add new address functionality - redirect to add address form');
-        // You can redirect to add address page or open another modal
-        // window.location.href = 'add-address.jsp';
+    // Load addresses from server
+    function loadAddresses() {
+        showLoading(true);
+        clearMessages();
+
+        fetch('${pageContext.request.contextPath}/address?action=list', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                showLoading(false);
+                if (data.addresses) {
+                    addresses = data.addresses;
+                    renderAddresses(addresses);
+                } else {
+                    showError('Failed to load addresses');
+                }
+            })
+            .catch(error => {
+                showLoading(false);
+                console.error('Error loading addresses:', error);
+                showError('Failed to load addresses. Please try again.');
+            });
     }
 
-    function editAddress(addressId) {
-        alert('Edit address ID: ' + addressId);
-        // Implement edit functionality
-        // window.location.href = 'edit-address.jsp?id=' + addressId;
+    // Render addresses in the modal
+    function renderAddresses(addressList) {
+        const container = document.getElementById('addressListContainer');
+        const emptyState = document.getElementById('emptyState');
+
+        if (!addressList || addressList.length === 0) {
+            container.innerHTML = '';
+            emptyState.style.display = 'block';
+            return;
+        }
+
+        emptyState.style.display = 'none';
+        container.innerHTML = '';
+
+        addressList.forEach(address => {
+            const addressCard = createAddressCard(address);
+            container.appendChild(addressCard);
+        });
+    }
+
+    function createAddressCard(address) {
+        const card = document.createElement('div');
+        card.className = 'address-card';
+
+        const addressTypeClass = address.addressType.toLowerCase() === 'home' ? '' :
+                               address.addressType.toLowerCase() === 'work' ? ' work' : ' other';
+
+        card.innerHTML = `
+            <span class="address-type${addressTypeClass}">${address.addressType}</span>
+            <div class="address-details">
+                <div class="address-text">
+                    ${address.detail}<br>
+                    ${address.wardName}, ${address.districtName}<br>
+                    ${address.provinceName}
+                </div>
+            </div>
+            <div class="address-actions">
+                <button class="btn-address secondary" onclick="deleteAddress('${address.addressId}')">Delete</button>
+            </div>
+        `;
+        return card;
+    }
+
+    // Show loading state
+    function showLoading(show) {
+        const loadingState = document.getElementById('loadingState');
+        const addressContainer = document.getElementById('addressListContainer');
+        const emptyState = document.getElementById('emptyState');
+
+        if (show) {
+            loadingState.style.display = 'block';
+            addressContainer.style.display = 'none';
+            emptyState.style.display = 'none';
+        } else {
+            loadingState.style.display = 'none';
+            addressContainer.style.display = 'block';
+        }
+    }
+
+    // Show success message
+    function showSuccess(message) {
+        const messageContainer = document.getElementById('messageContainer');
+        messageContainer.innerHTML = `<div class="success-message">${message}</div>`;
+        setTimeout(clearMessages, 5000);
+    }
+
+    // Show error message
+    function showError(message) {
+        const messageContainer = document.getElementById('messageContainer');
+        messageContainer.innerHTML = `<div class="error-message">${message}</div>`;
+        setTimeout(clearMessages, 5000);
+    }
+
+    // Clear messages
+    function clearMessages() {
+        const messageContainer = document.getElementById('messageContainer');
+        messageContainer.innerHTML = '';
+    }
+
+    // Address management functions
+    function addNewAddress() {
+        // Redirect to add address page or open another modal
+        window.location.href = '${pageContext.request.contextPath}/add-address.jsp';
     }
 
     function deleteAddress(addressId) {
         if (confirm('Are you sure you want to delete this address?')) {
-            alert('Delete address ID: ' + addressId);
-            // Implement delete functionality
-            // You can make AJAX call to delete address
+            fetch('${pageContext.request.contextPath}/address?action=delete&addressId=' + addressId, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showSuccess(data.message);
+                        loadAddresses(); // Reload addresses
+                    } else {
+                        showError(data.message || 'Failed to delete address');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error deleting address:', error);
+                    showError('Failed to delete address. Please try again.');
+                });
         }
     }
 
     function setDefaultAddress(addressId) {
-        alert('Set default address ID: ' + addressId);
-        // Implement set default functionality
-        // Make AJAX call to set default address
-        // Then refresh the modal content
+        const formData = new FormData();
+        formData.append('action', 'setDefault');
+        formData.append('addressId', addressId);
+
+        fetch('${pageContext.request.contextPath}/address', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showSuccess(data.message);
+                    loadAddresses(); // Reload addresses
+                } else {
+                    showError(data.message || 'Failed to set default address');
+                }
+            })
+            .catch(error => {
+                console.error('Error setting default address:', error);
+                showError('Failed to set default address. Please try again.');
+            });
     }
 
-    // Close dropdown when clicking elsewhere
     document.addEventListener('click', function(event) {
         var dropdown = document.querySelector('.profile-dropdown');
         if (!dropdown.contains(event.target)) {
