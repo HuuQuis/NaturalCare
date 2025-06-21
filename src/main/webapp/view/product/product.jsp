@@ -63,7 +63,7 @@
                         <input type="hidden" name="index" value="${param.index}">
                         <label for="sort" style="font-weight:bold;">Sort by:</label>
                         <select id="sort" name="sort" class="form-control" style="width:auto;display:inline-block;">
-                            <option value="">-- Select --</option>
+                            <option value="">Default</option>
                             <option value="name-asc" ${sort == 'name-asc' ? 'selected' : ''}>Sort Product Name From A to Z</option>
                             <option value="name-desc" ${sort == 'name-desc' ? 'selected' : ''}>Sort Product Name From Z to A</option>
                             <option value="price-asc" ${sort == 'price-asc' ? 'selected' : ''}>Sort Product by Price ascending</option>
@@ -104,15 +104,6 @@
                                                     </c:otherwise>
                                                 </c:choose>
                                             </div>
-
-                                            <c:if test="${product.imageUrls != null && product.imageUrls.size() > 1}">
-                                                <a class="left carousel-control" href="#carousel-${product.id}" data-slide="prev">
-                                                    <span class="glyphicon glyphicon-chevron-left"></span>
-                                                </a>
-                                                <a class="right carousel-control" href="#carousel-${product.id}" data-slide="next">
-                                                    <span class="glyphicon glyphicon-chevron-right"></span>
-                                                </a>
-                                            </c:if>
                                         </div>
                                         <p>${product.name}</p>
                                         <c:if test="${product.minPrice > 0}">
@@ -149,10 +140,10 @@
                             <li class="${empty param.index || param.index == 1 ? 'disabled' : ''}">
                                 <c:choose>
                                     <c:when test="${not empty selectedSubCategoryId}">
-                                        <a href="products?index=1&subcategory=${selectedSubCategoryId}">&laquo;</a>
+                                        <a href="products?index=1&subcategory=${selectedSubCategoryId}<c:if test='${not empty sort}'>&sort=${sort}</c:if>">&laquo;</a>
                                     </c:when>
                                     <c:when test="${not empty selectedCategoryId}">
-                                        <a href="products?index=1&category=${selectedCategoryId}">&laquo;</a>
+                                        <a href="products?index=1&category=${selectedCategoryId}<c:if test='${not empty sort}'>&sort=${sort}</c:if>">&laquo;</a>
                                     </c:when>
                                 </c:choose>
                             </li>
@@ -162,12 +153,12 @@
                             <c:choose>
                                 <c:when test="${not empty selectedSubCategoryId}">
                                     <li class="${empty param.index && page == 1 || param.index == page ? 'active' : ''}">
-                                        <a href="products?index=${page}&subcategory=${selectedSubCategoryId}">${page}</a>
+                                        <a href="products?index=${page}&subcategory=${selectedSubCategoryId}<c:if test='${not empty sort}'>&sort=${sort}</c:if>">${page}</a>
                                     </li>
                                 </c:when>
                                 <c:when test="${not empty selectedCategoryId}">
                                     <li class="${empty param.index && page == 1 || param.index == page ? 'active' : ''}">
-                                        <a href="products?index=${page}&category=${selectedCategoryId}">${page}</a>
+                                        <a href="products?index=${page}&category=${selectedCategoryId}<c:if test='${not empty sort}'>&sort=${sort}</c:if>">${page}</a>
                                     </li>
                                 </c:when>
                             </c:choose>
@@ -178,10 +169,10 @@
                             <li class="${param.index == endPage ? 'disabled' : ''}">
                                 <c:choose>
                                     <c:when test="${not empty selectedSubCategoryId}">
-                                        <a href="products?index=${endPage}&subcategory=${selectedSubCategoryId}">&raquo;</a>
+                                        <a href="products?index=${endPage}&subcategory=${selectedSubCategoryId}<c:if test='${not empty sort}'>&sort=${sort}</c:if>">&raquo;</a>
                                     </c:when>
                                     <c:when test="${not empty selectedCategoryId}">
-                                        <a href="products?index=${endPage}&category=${selectedCategoryId}">&raquo;</a>
+                                        <a href="products?index=${endPage}&category=${selectedCategoryId}<c:if test='${not empty sort}'>&sort=${sort}</c:if>">&raquo;</a>
                                     </c:when>
                                 </c:choose>
                             </li>
