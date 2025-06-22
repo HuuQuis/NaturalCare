@@ -18,7 +18,7 @@ import utils.PropertiesUtils;
  */
 public class DBContext {
 
-    protected Connection connection;        // Kết nối đến cơ sở dữ liệu
+    public Connection connection;        // Kết nối đến cơ sở dữ liệu
     protected PreparedStatement stm;        // Thực hiện câu lệnh SQL
     protected ResultSet rs;                 // Kết quả truy vấn SELECT
     protected String sql;                   // Câu lệnh SQL
