@@ -21,10 +21,11 @@
         </div>
         <div class="form-group">
           <label>Detail Address</label>
-          <input type="text" name="detail" placeholder="e.g. 123 Street, Block 4" required />
+          <textarea name="detail" rows="3" placeholder="e.g. 123 Street, Block 4" required></textarea>
         </div>
         <button type="submit" class="btn-address">Save</button>
       </form>
     </div>
   </div>
 </div>
+

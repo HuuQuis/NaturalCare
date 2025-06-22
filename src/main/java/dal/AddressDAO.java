@@ -66,43 +66,73 @@ public class AddressDAO extends DBContext {
     }
 
 
+
     public boolean addAddress(Address address, int userId) {
+        String checkUserSQL = "SELECT user_id FROM user WHERE user_id = ?";
         String insertAddressSQL = "INSERT INTO address (province_code, district_code, ward_code, detail, distance_km) VALUES (?, ?, ?, ?, ?)";
         String insertUserAddressSQL = "INSERT INTO userAddress (user_id, address_id) VALUES (?, ?)";
 
-        double distanceKm = 0;
         try {
+            connection.setAutoCommit(false);
+
+            stm = connection.prepareStatement(checkUserSQL);
+            stm.setInt(1, userId);
+            rs = stm.executeQuery();
+
+            if (!rs.next()) {
+                connection.rollback();
+                return false;
+            }
+
+            // Calculate distance
+            double distanceKm = 0;
             Ward ward = new WardDAO().getWardByCode(address.getWardCode());
-            if (ward != null && ward.getLatitude() != null && ward.getLongitude() != null) {
+            if (ward == null) {
+                System.out.println("Ward not found for code: " + address.getWardCode());
+            } else if (ward.getLatitude() == null || ward.getLongitude() == null) {
+                System.out.println("Ward latitude/longitude missing for code: " + address.getWardCode());
+            } else {
                 distanceKm = calculateDistance(FPT_LAT, FPT_LNG, ward.getLatitude(), ward.getLongitude());
             }
 
-            connection.setAutoCommit(false);
-
-            // 1. Insert into address
             PreparedStatement insertAddress = connection.prepareStatement(insertAddressSQL, Statement.RETURN_GENERATED_KEYS);
             insertAddress.setString(1, address.getProvinceCode());
             insertAddress.setString(2, address.getDistrictCode());
             insertAddress.setString(3, address.getWardCode());
             insertAddress.setString(4, address.getDetail());
             insertAddress.setDouble(5, distanceKm);
-            insertAddress.executeUpdate();
+            int affectedRows = insertAddress.executeUpdate();
+
+            if (affectedRows == 0) {
+                System.out.println("Insert address failed, no rows affected.");
+                connection.rollback();
+                return false;
+            }
 
             ResultSet generatedKeys = insertAddress.getGeneratedKeys();
             if (generatedKeys.next()) {
                 int addressId = generatedKeys.getInt(1);
 
-                // 2. Insert into userAddress
+                // Insert into userAddress table
                 PreparedStatement insertUserAddress = connection.prepareStatement(insertUserAddressSQL);
                 insertUserAddress.setInt(1, userId);
                 insertUserAddress.setInt(2, addressId);
-                insertUserAddress.executeUpdate();
+                int uaRows = insertUserAddress.executeUpdate();
+
+                if (uaRows == 0) {
+                    System.out.println("Insert userAddress failed, no rows affected.");
+                    connection.rollback();
+                    return false;
+                }
 
                 connection.commit();
                 return true;
+            } else {
+                System.out.println("No generated key for address insert.");
             }
 
             connection.rollback();
+            return false;
         } catch (Exception e) {
             try {
                 connection.rollback();
@@ -110,11 +140,15 @@ public class AddressDAO extends DBContext {
                 se.printStackTrace();
             }
             e.printStackTrace();
+            return false;
         } finally {
+            try {
+                connection.setAutoCommit(true);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
             close();
         }
-
-        return false;
     }
 
     public boolean deleteAddress(int addressId, int userId) {

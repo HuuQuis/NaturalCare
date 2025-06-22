@@ -10,11 +10,13 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.annotation.MultipartConfig;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+@MultipartConfig
 @WebServlet("/address")
 public class AddressServlet extends HttpServlet {
 
@@ -25,10 +27,13 @@ public class AddressServlet extends HttpServlet {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
 
+        // Debug: Print user and ID
         if (user == null) {
             response.sendRedirect("login");
             return;
         }
+
+        int userId = user.getId();
 
         String action = request.getParameter("action");
         if (action == null) action = "list";
@@ -37,10 +42,10 @@ public class AddressServlet extends HttpServlet {
 
         switch (action) {
             case "list":
-                handleListAddresses(request, response, addressDAO, user.getId());
+                handleListAddresses(request, response, addressDAO, userId);
                 break;
             case "delete":
-                handleDeleteAddress(request, response, addressDAO, user.getId());
+                handleDeleteAddress(request, response, addressDAO, userId);
                 break;
             default:
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid action");
@@ -55,10 +60,13 @@ public class AddressServlet extends HttpServlet {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
 
+        // Debug: Print user and ID
         if (user == null) {
             response.sendRedirect("login");
             return;
         }
+
+        int userId = user.getId();
 
         String action = request.getParameter("action");
 
@@ -66,7 +74,7 @@ public class AddressServlet extends HttpServlet {
 
         switch (action) {
             case "add":
-                handleAddAddress(request, response, addressDAO, user.getId());
+                handleAddAddress(request, response, addressDAO, userId);
                 break;
             default:
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid action");
@@ -133,6 +141,12 @@ public class AddressServlet extends HttpServlet {
         String districtCode = request.getParameter("districtCode");
         String wardCode = request.getParameter("wardCode");
         String detail = request.getParameter("detail");
+
+        System.out.println("==> provinceCode: " + provinceCode);
+        System.out.println("==> districtCode: " + districtCode);
+        System.out.println("==> wardCode: " + wardCode);
+        System.out.println("==> detail: " + detail);
+
 
         Address newAddress = new Address();
         newAddress.setProvinceCode(provinceCode);
