@@ -9,8 +9,6 @@ public class User {
     private String email;
     private String phone;
     private int role;
-    private String address;
-    private int skill;
     private String avatar;
 
     public User() {
@@ -78,22 +76,6 @@ public class User {
 
     public void setRole(int role) {
         this.role = role;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public int getSkill() {
-        return skill;
-    }
-
-    public void setSkill(int skill) {
-        this.skill = skill;
     }
 
     public String getAvatar() {
