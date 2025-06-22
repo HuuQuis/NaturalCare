@@ -32,4 +32,14 @@ public class EmailUtils {
         message.setText("Click this link to reset your password: " + resetLink);
         Transport.send(message);
     }
+
+    public static void sendOTPEmail(String to, String otp) throws MessagingException {
+        Message message = new MimeMessage(getSession());
+        message.setFrom(new InternetAddress(senderEmail));
+        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
+        message.setSubject("Your OTP Code");
+        message.setText("Your OTP code is: " + otp + "\nThis code is valid for 5 minutes.");
+        Transport.send(message);
+    }
+
 }
