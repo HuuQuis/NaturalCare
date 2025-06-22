@@ -95,17 +95,11 @@ CREATE TABLE user
     email              VARCHAR(255) NOT NULL,
     phone_number       VARCHAR(20)  NOT NULL,
     role_id            INT          NOT NULL,
-    address_id         INT,
-    skill_id           INT,
     user_image         TEXT,
     reset_token        VARCHAR(255),
     reset_token_expiry DATETIME,
     FOREIGN KEY (role_id)
-        REFERENCES role (role_id),
-    FOREIGN KEY (address_id)
-        REFERENCES address (address_id),
-    FOREIGN KEY (skill_id)
-        REFERENCES skill (skill_id)
+        REFERENCES role (role_id)
 );
 
 CREATE TABLE userAddress
