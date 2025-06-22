@@ -7,8 +7,7 @@ function loadProvinces() {
             const provinceSelect = document.getElementById('provinceSelect');
             provinceSelect.innerHTML = '<option value="">-- Select Province --</option>';
             provinces.forEach(p => {
-                const paddedCode = String(p.code).padStart(2, '0'); // ví dụ: 1 -> "01"
-                provinceSelect.add(new Option(p.name, paddedCode));
+                provinceSelect.add(new Option(p.name, p.code));
             });
         });
 }
@@ -28,17 +27,27 @@ function closeAddressModal() {
 }
 
 function addNewAddress() {
+    closeAddressModal(); // Ẩn modal danh sách địa chỉ
     document.getElementById('addAddressModal').style.display = 'block';
     document.body.classList.add('modal-open');
     loadProvinces();
 }
 
+
 function closeAddAddressModal() {
+    if (isAddAddressFormDirty()) {
+        const confirmLeave = confirm("You have unsaved changes. Data will be lost. Do you want to go back?");
+        if (!confirmLeave) return;
+    }
+
     document.getElementById('addAddressModal').style.display = 'none';
     document.body.classList.remove('modal-open');
     document.getElementById('addAddressForm').reset();
     document.getElementById('districtSelect').innerHTML = '';
     document.getElementById('wardSelect').innerHTML = '';
+
+    // Quay lại address list
+    openAddressModal();
 }
 
 function loadAddresses() {
@@ -98,7 +107,7 @@ function createAddressCard(address) {
 }
 
 function deleteAddress(id) {
-    if (!confirm('Are you sure?')) return;
+    if (!confirm('Are you sure to delete this address?')) return;
     fetch('address?action=delete&addressId=' + id)
         .then(res => res.json())
         .then(data => {
@@ -110,6 +119,15 @@ function deleteAddress(id) {
             }
         })
         .catch(() => showError('Failed to delete address.'));
+}
+
+function isAddAddressFormDirty() {
+    const province = document.getElementById('provinceSelect').value;
+    const district = document.getElementById('districtSelect').value;
+    const ward = document.getElementById('wardSelect').value;
+    const detail = document.getElementById('detail').value.trim();
+
+    return province || district || ward || detail;
 }
 
 function showLoading(show) {
@@ -146,14 +164,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 .then(res => res.json())
                 .then(data => {
                     districtSelect.innerHTML = '<option value="">-- Select District --</option>';
-                    data.districts.forEach(d => {
-                        const paddedCode = String(d.code).padStart(3, '0'); // ví dụ: 1 -> "001"
-                        districtSelect.add(new Option(d.name, paddedCode));
-                    });
+                    data.districts.forEach(d => districtSelect.add(new Option(d.name, d.code)));
                     wardSelect.innerHTML = '';
                 });
         });
-
     }
 
     if (districtSelect) {
@@ -162,13 +176,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 .then(res => res.json())
                 .then(data => {
                     wardSelect.innerHTML = '<option value="">-- Select Ward --</option>';
-                    data.wards.forEach(w => {
-                        const paddedCode = String(w.code).padStart(5, '0'); // ví dụ: 1 -> "00001"
-                        wardSelect.add(new Option(w.name, paddedCode));
-                    });
+                    data.wards.forEach(w => wardSelect.add(new Option(w.name, w.code)));
                 });
         });
-
     }
 
     if (addAddressForm) {
@@ -189,7 +199,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (data.success) {
                         showSuccess(data.message);
                         closeAddAddressModal();
-                        loadAddresses();
+                        openAddressModal(); // reopen and reload list
                     } else {
                         showError(data.message);
                     }

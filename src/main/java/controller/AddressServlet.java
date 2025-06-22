@@ -142,12 +142,6 @@ public class AddressServlet extends HttpServlet {
         String wardCode = request.getParameter("wardCode");
         String detail = request.getParameter("detail");
 
-        System.out.println("==> provinceCode: " + provinceCode);
-        System.out.println("==> districtCode: " + districtCode);
-        System.out.println("==> wardCode: " + wardCode);
-        System.out.println("==> detail: " + detail);
-
-
         Address newAddress = new Address();
         newAddress.setProvinceCode(provinceCode);
         newAddress.setDistrictCode(districtCode);
