@@ -86,7 +86,9 @@ function createAddressCard(address) {
         <div class="address-details">
             <div class="address-text">
                 ${address.detail}<br>
-                <span class="ward-district-province">Loading...</span>
+                <span class="ward-district-province">
+                    ${address.wardName}, ${address.districtName}, ${address.provinceName}
+                </span>
             </div>
             <div><strong>Distance:</strong> ${address.distanceKm} km</div>
         </div>
@@ -94,15 +96,6 @@ function createAddressCard(address) {
             <button class="btn-address secondary" onclick="deleteAddress('${address.addressId}')">Delete</button>
         </div>
     `;
-    fetch(`https://provinces.open-api.vn/api/w/${address.wardCode}?depth=2`)
-        .then(res => res.json())
-        .then(ward => {
-            card.querySelector('.ward-district-province').textContent =
-                `${ward.name}, ${ward.district.name}, ${ward.district.province.name}`;
-        })
-        .catch(() => {
-            card.querySelector('.ward-district-province').textContent = "Unknown location";
-        });
     return card;
 }
 
@@ -198,9 +191,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 .then(data => {
                     if (data.success) {
                         showSuccess(data.message);
+
+                        // Reset thủ công các trường
+                        document.getElementById('addAddressForm').reset();
+                        document.getElementById('districtSelect').innerHTML = '';
+                        document.getElementById('wardSelect').innerHTML = '';
+
                         closeAddAddressModal();
                         openAddressModal(); // reopen and reload list
-                    } else {
+                    }else {
                         showError(data.message);
                     }
                 })

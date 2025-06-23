@@ -130,6 +130,7 @@ public class AddressServlet extends HttpServlet {
         json.append("]}");
 
         response.getWriter().write(json.toString());
+
     }
 
 

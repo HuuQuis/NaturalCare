@@ -54,8 +54,13 @@ public class AddressDAO extends DBContext {
                 a.setDistrict(district);
                 a.setWard(ward);
 
+                a.setProvinceCode(province.getCode());
+                a.setDistrictCode(district.getCode());
+                a.setWardCode(ward.getCode());
+
                 list.add(a);
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -64,8 +69,6 @@ public class AddressDAO extends DBContext {
 
         return list;
     }
-
-
 
     public boolean addAddress(Address address, int userId) {
         String checkUserSQL = "SELECT user_id FROM user WHERE user_id = ?";
