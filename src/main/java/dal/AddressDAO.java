@@ -231,6 +231,9 @@ public class AddressDAO extends DBContext {
             // Calculate distance
             double distanceKm = 0;
             Ward ward = new WardDAO().getWardByCode(address.getWardCode());
+            if (ward.getLatitude() == 0 || ward.getLongitude() == 0) {
+                distanceKm = 0; // If latitude is 0, set distance to 0
+            }
             if (ward != null && ward.getLatitude() != null && ward.getLongitude() != null) {
                 distanceKm = calculateDistance(FPT_LAT, FPT_LNG, ward.getLatitude(), ward.getLongitude());
             }

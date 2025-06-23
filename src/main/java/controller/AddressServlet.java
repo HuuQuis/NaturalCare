@@ -34,7 +34,6 @@ public class AddressServlet extends HttpServlet {
         }
 
         int userId = user.getId();
-
         String action = request.getParameter("action");
         if (action == null) action = "list";
 
@@ -52,7 +51,6 @@ public class AddressServlet extends HttpServlet {
                 break;
             default:
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid action");
-                break;
         }
     }
 
@@ -63,16 +61,13 @@ public class AddressServlet extends HttpServlet {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
 
-        // Debug: Print user and ID
         if (user == null) {
             response.sendRedirect("login");
             return;
         }
 
         int userId = user.getId();
-
         String action = request.getParameter("action");
-
         AddressDAO addressDAO = new AddressDAO();
 
         switch (action) {
@@ -84,8 +79,53 @@ public class AddressServlet extends HttpServlet {
                 break;
             default:
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid action");
-                break;
         }
+    }
+
+    private void handleListAddresses(HttpServletRequest request, HttpServletResponse response,
+                                     AddressDAO addressDAO, int userId) throws IOException {
+
+        List<Address> addresses;
+        try {
+            addresses = addressDAO.getAddressesByUserId(userId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().write("{\"success\":false,\"message\":\"Error retrieving addresses\"}");
+            return;
+        }
+
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        StringBuilder json = new StringBuilder("{\"addresses\":[");
+        for (int i = 0; i < addresses.size(); i++) {
+            Address addr = addresses.get(i);
+
+            String provinceName = (addr.getProvince() != null) ? addr.getProvince().getName() : "";
+            String districtName = (addr.getDistrict() != null) ? addr.getDistrict().getName() : "";
+            String wardName = (addr.getWard() != null) ? addr.getWard().getName() : "";
+
+            json.append("{")
+                    .append("\"addressId\":").append(addr.getAddressId()).append(",")
+                    .append("\"provinceCode\":\"").append(addr.getProvinceCode()).append("\",")
+                    .append("\"provinceName\":\"").append(escapeJson(provinceName)).append("\",")
+                    .append("\"districtCode\":\"").append(addr.getDistrictCode()).append("\",")
+                    .append("\"districtName\":\"").append(escapeJson(districtName)).append("\",")
+                    .append("\"wardCode\":\"").append(addr.getWardCode()).append("\",")
+                    .append("\"wardName\":\"").append(escapeJson(wardName)).append("\",")
+                    .append("\"detail\":\"").append(escapeJson(addr.getDetail())).append("\",")
+                    .append("\"distanceKm\":").append(addr.getDistanceKm())
+                    .append("}");
+
+            if (i < addresses.size() - 1) {
+                json.append(",");
+            }
+        }
+        json.append("]}");
+
+        response.getWriter().write(json.toString());
     }
 
     private void handleGetAddress(HttpServletRequest request, HttpServletResponse response,
@@ -125,77 +165,30 @@ public class AddressServlet extends HttpServlet {
         }
     }
 
-    private void handleListAddresses(HttpServletRequest request, HttpServletResponse response,
-                                     AddressDAO addressDAO, int userId)
-            throws IOException {
-
-        List<Address> addresses = new ArrayList<>();
-        try {
-            addresses = addressDAO.getAddressesByUserId(userId);
-        } catch (Exception e) {
-            e.printStackTrace();
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-            response.getWriter().write("{\"success\":false,\"message\":\"Error retrieving addresses\"}");
-            return;
-        }
-
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-
-        StringBuilder json = new StringBuilder();
-        json.append("{\"addresses\":[");
-
-        for (int i = 0; i < addresses.size(); i++) {
-            Address addr = addresses.get(i);
-
-            String provinceName = (addr.getProvince() != null) ? addr.getProvince().getName() : "";
-            String districtName = (addr.getDistrict() != null) ? addr.getDistrict().getName() : "";
-            String wardName = (addr.getWard() != null) ? addr.getWard().getName() : "";
-
-            json.append("{");
-            json.append("\"addressId\":").append(addr.getAddressId()).append(",");
-            json.append("\"provinceCode\":\"").append(addr.getProvinceCode()).append("\",");
-            json.append("\"provinceName\":\"").append(escapeJson(provinceName)).append("\",");
-            json.append("\"districtCode\":\"").append(addr.getDistrictCode()).append("\",");
-            json.append("\"districtName\":\"").append(escapeJson(districtName)).append("\",");
-            json.append("\"wardCode\":\"").append(addr.getWardCode()).append("\",");
-            json.append("\"wardName\":\"").append(escapeJson(wardName)).append("\",");
-            json.append("\"detail\":\"").append(escapeJson(addr.getDetail())).append("\",");
-            json.append("\"distanceKm\":").append(addr.getDistanceKm());
-            json.append("}");
-
-            if (i < addresses.size() - 1) {
-                json.append(",");
-            }
-        }
-
-        json.append("]}");
-
-        response.getWriter().write(json.toString());
-
-    }
-
-
     private void handleAddAddress(HttpServletRequest request, HttpServletResponse response,
-                                  AddressDAO addressDAO, int userId)
-            throws IOException {
+                                  AddressDAO addressDAO, int userId) throws IOException {
 
         String provinceCode = request.getParameter("provinceCode");
         String districtCode = request.getParameter("districtCode");
         String wardCode = request.getParameter("wardCode");
         String detail = request.getParameter("detail");
 
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        String validationError = validateDetail(detail);
+        if (validationError != null) {
+            response.getWriter().write("{\"success\":false,\"message\":\"" + escapeJson(validationError) + "\"}");
+            return;
+        }
+
         Address newAddress = new Address();
         newAddress.setProvinceCode(provinceCode);
         newAddress.setDistrictCode(districtCode);
         newAddress.setWardCode(wardCode);
-        newAddress.setDetail(detail);
+        newAddress.setDetail(detail.trim());
 
         boolean success = addressDAO.addAddress(newAddress, userId);
-
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
 
         if (success) {
             response.getWriter().write("{\"success\":true,\"message\":\"Address added successfully\"}");
@@ -221,6 +214,12 @@ public class AddressServlet extends HttpServlet {
             return;
         }
 
+        String validationError = validateDetail(detail);
+        if (validationError != null) {
+            response.getWriter().write("{\"success\":false,\"message\":\"" + escapeJson(validationError) + "\"}");
+            return;
+        }
+
         try {
             int addressId = Integer.parseInt(addressIdStr);
 
@@ -229,7 +228,7 @@ public class AddressServlet extends HttpServlet {
             address.setProvinceCode(provinceCode);
             address.setDistrictCode(districtCode);
             address.setWardCode(wardCode);
-            address.setDetail(detail);
+            address.setDetail(detail.trim());
 
             boolean updated = addressDAO.updateAddress(address, userId);
 
@@ -246,11 +245,9 @@ public class AddressServlet extends HttpServlet {
     }
 
     private void handleDeleteAddress(HttpServletRequest request, HttpServletResponse response,
-                                     AddressDAO addressDAO, int userId)
-            throws IOException {
+                                     AddressDAO addressDAO, int userId) throws IOException {
 
         int addressId = Integer.parseInt(request.getParameter("addressId"));
-
         boolean success = addressDAO.deleteAddress(addressId, userId);
 
         response.setContentType("application/json");
@@ -261,6 +258,19 @@ public class AddressServlet extends HttpServlet {
         } else {
             response.getWriter().write("{\"success\":false,\"message\":\"Failed to delete address\"}");
         }
+    }
+
+    private String validateDetail(String detail) {
+        if (detail == null || detail.trim().isEmpty()) {
+            return "Detail must not be empty or whitespace only.";
+        }
+        if (detail.trim().length() > 100) {
+            return "Detail must not exceed 100 characters.";
+        }
+        if (!detail.matches("^[a-zA-Z0-9À-ỹ\\s]+$")) {
+            return "Detail can only contain letters, numbers, and spaces.";
+        }
+        return null;
     }
 
     private String escapeJson(String input) {
