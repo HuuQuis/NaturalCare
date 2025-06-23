@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.annotation.MultipartConfig;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,7 +28,6 @@ public class AddressServlet extends HttpServlet {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
 
-        // Debug: Print user and ID
         if (user == null) {
             response.sendRedirect("login");
             return;
@@ -43,6 +43,9 @@ public class AddressServlet extends HttpServlet {
         switch (action) {
             case "list":
                 handleListAddresses(request, response, addressDAO, userId);
+                break;
+            case "get":
+                handleGetAddress(request, response, addressDAO, userId);
                 break;
             case "delete":
                 handleDeleteAddress(request, response, addressDAO, userId);
@@ -76,9 +79,49 @@ public class AddressServlet extends HttpServlet {
             case "add":
                 handleAddAddress(request, response, addressDAO, userId);
                 break;
+            case "update":
+                handleUpdateAddress(request, response, addressDAO, userId);
+                break;
             default:
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid action");
                 break;
+        }
+    }
+
+    private void handleGetAddress(HttpServletRequest request, HttpServletResponse response,
+                                  AddressDAO addressDAO, int userId) throws IOException {
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        try {
+            int addressId = Integer.parseInt(request.getParameter("addressId"));
+            Address address = addressDAO.getAddressById(addressId, userId);
+
+            if (address == null) {
+                response.getWriter().write("{\"success\":false,\"message\":\"Address not found\"}");
+                return;
+            }
+
+            JSONObject addressJson = new JSONObject();
+            addressJson.put("addressId", address.getAddressId());
+            addressJson.put("provinceCode", address.getProvinceCode());
+            addressJson.put("provinceName", address.getProvince() != null ? address.getProvince().getName() : "");
+            addressJson.put("districtCode", address.getDistrictCode());
+            addressJson.put("districtName", address.getDistrict() != null ? address.getDistrict().getName() : "");
+            addressJson.put("wardCode", address.getWardCode());
+            addressJson.put("wardName", address.getWard() != null ? address.getWard().getName() : "");
+            addressJson.put("detail", address.getDetail());
+            addressJson.put("distanceKm", address.getDistanceKm());
+
+            JSONObject responseJson = new JSONObject();
+            responseJson.put("success", true);
+            responseJson.put("address", addressJson);
+
+            response.getWriter().write(responseJson.toString());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.getWriter().write("{\"success\":false,\"message\":\"Failed to retrieve address\"}");
         }
     }
 
@@ -158,6 +201,47 @@ public class AddressServlet extends HttpServlet {
             response.getWriter().write("{\"success\":true,\"message\":\"Address added successfully\"}");
         } else {
             response.getWriter().write("{\"success\":false,\"message\":\"Failed to add address\"}");
+        }
+    }
+
+    private void handleUpdateAddress(HttpServletRequest request, HttpServletResponse response,
+                                     AddressDAO addressDAO, int userId) throws IOException {
+
+        String addressIdStr = request.getParameter("addressId");
+        String provinceCode = request.getParameter("provinceCode");
+        String districtCode = request.getParameter("districtCode");
+        String wardCode = request.getParameter("wardCode");
+        String detail = request.getParameter("detail");
+
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        if (addressIdStr == null) {
+            response.getWriter().write("{\"success\":false,\"message\":\"Missing address ID\"}");
+            return;
+        }
+
+        try {
+            int addressId = Integer.parseInt(addressIdStr);
+
+            Address address = new Address();
+            address.setAddressId(addressId);
+            address.setProvinceCode(provinceCode);
+            address.setDistrictCode(districtCode);
+            address.setWardCode(wardCode);
+            address.setDetail(detail);
+
+            boolean updated = addressDAO.updateAddress(address, userId);
+
+            if (updated) {
+                response.getWriter().write("{\"success\":true,\"message\":\"Address updated successfully\"}");
+            } else {
+                response.getWriter().write("{\"success\":false,\"message\":\"Failed to update address\"}");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.getWriter().write("{\"success\":false,\"message\":\"Invalid input or internal error\"}");
         }
     }
 

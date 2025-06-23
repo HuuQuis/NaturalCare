@@ -1,4 +1,5 @@
 let addresses = [];
+let editingId = null;
 
 function loadProvinces() {
     fetch('https://provinces.open-api.vn/api/p/')
@@ -27,7 +28,7 @@ function closeAddressModal() {
 }
 
 function addNewAddress() {
-    closeAddressModal(); // Ẩn modal danh sách địa chỉ
+    closeAddressModal();
     document.getElementById('addAddressModal').style.display = 'block';
     document.body.classList.add('modal-open');
     loadProvinces();
@@ -93,10 +94,83 @@ function createAddressCard(address) {
             <div><strong>Distance:</strong> ${address.distanceKm} km</div>
         </div>
         <div class="address-actions">
+            <button class="btn-address primary" onclick="editAddress('${address.addressId}')">Edit</button>
             <button class="btn-address secondary" onclick="deleteAddress('${address.addressId}')">Delete</button>
         </div>
     `;
     return card;
+}
+
+function editAddress(id) {
+    fetch('address?action=get&addressId=' + id)
+        .then(res => res.json())
+        .then(data => {
+            if (!data.success) {
+                showError(data.message);
+                return;
+            }
+
+            const address = data.address;
+            editingId = address.addressId;
+
+            // 1. Hiển thị modal form
+            document.getElementById('addressModal').style.display = 'none';
+            document.getElementById('addAddressModal').style.display = 'block';
+            document.body.classList.add('modal-open');
+
+            // 2. Gán detail
+            document.getElementById('detail').value = address.detail;
+
+            // 3. Load provinces
+            fetch('https://provinces.open-api.vn/api/p/')
+                .then(res => res.json())
+                .then(provinces => {
+                    const provinceSelect = document.getElementById('provinceSelect');
+                    provinceSelect.innerHTML = '<option value="">-- Select Province --</option>';
+                    provinces.forEach(p => provinceSelect.add(new Option(p.name, p.code)));
+
+                    provinceSelect.value = String(address.provinceCode);
+
+                    // 4. Load districts của province đã chọn
+                    return fetch(`https://provinces.open-api.vn/api/p/${address.provinceCode}?depth=2`);
+                })
+                .then(res => res.json())
+                .then(provinceData => {
+                    if (!provinceData.districts || provinceData.districts.length === 0) {
+                        throw new Error("Districts not found in province data.");
+                    }
+
+                    const districtSelect = document.getElementById('districtSelect');
+                    districtSelect.innerHTML = '<option value="">-- Select District --</option>';
+                    provinceData.districts.forEach(d => districtSelect.add(new Option(d.name, d.code)));
+
+                    districtSelect.value = String(address.districtCode);
+
+                    // 5. Load wards của district đã chọn
+                    return fetch(`https://provinces.open-api.vn/api/d/${address.districtCode}?depth=2`);
+                })
+                .then(res => res.json())
+                .then(districtData => {
+                    if (!districtData.wards || districtData.wards.length === 0) {
+                        throw new Error("Wards not found in district data.");
+                    }
+
+                    const wardSelect = document.getElementById('wardSelect');
+                    wardSelect.innerHTML = '<option value="">-- Select Ward --</option>';
+                    districtData.wards.forEach(w => wardSelect.add(new Option(w.name, w.code)));
+
+                    wardSelect.value = String(address.wardCode);
+                })
+                .catch(err => {
+                    console.error("Error during province/district/ward loading:", err);
+                    showError("Failed to load province/district/ward details.");
+                });
+
+        })
+        .catch(err => {
+            console.error("Failed to fetch address details:", err);
+            showError('Failed to load address details.');
+        });
 }
 
 function deleteAddress(id) {
@@ -183,7 +257,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            fetch('address?action=add', {
+            const action = editingId ? 'update' : 'add';
+            if (editingId) formData.append('addressId', editingId);
+
+            fetch('address?action=' + action, {
                 method: 'POST',
                 body: formData
             })
@@ -198,7 +275,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         document.getElementById('wardSelect').innerHTML = '';
 
                         closeAddAddressModal();
-                        openAddressModal(); // reopen and reload list
+                        openAddressModal();
+                        editingId = null;
                     }else {
                         showError(data.message);
                     }

@@ -70,6 +70,62 @@ public class AddressDAO extends DBContext {
         return list;
     }
 
+    public Address getAddressById(int addressId, int userId) {
+        sql = "SELECT a.*, " +
+                "p.code AS province_code, p.name AS province_name, " +
+                "d.code AS district_code, d.name AS district_name, " +
+                "w.code AS ward_code, w.name AS ward_name " +
+                "FROM address a " +
+                "JOIN userAddress ua ON a.address_id = ua.address_id " +
+                "JOIN province p ON a.province_code = p.code " +
+                "JOIN district d ON a.district_code = d.code " +
+                "JOIN ward w ON a.ward_code = w.code " +
+                "WHERE a.address_id = ? AND ua.user_id = ?";
+
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setInt(1, addressId);
+            stm.setInt(2, userId);
+            rs = stm.executeQuery();
+
+            if (rs.next()) {
+                Address a = new Address();
+                a.setAddressId(rs.getInt("address_id"));
+                a.setDetail(rs.getString("detail"));
+                a.setDistanceKm(rs.getDouble("distance_km"));
+
+                Province province = new Province();
+                province.setCode(rs.getString("province_code"));
+                province.setName(rs.getString("province_name"));
+
+                District district = new District();
+                district.setCode(rs.getString("district_code"));
+                district.setName(rs.getString("district_name"));
+
+                Ward ward = new Ward();
+                ward.setCode(rs.getString("ward_code"));
+                ward.setName(rs.getString("ward_name"));
+
+                a.setProvince(province);
+                a.setDistrict(district);
+                a.setWard(ward);
+
+                a.setProvinceCode(province.getCode());
+                a.setDistrictCode(district.getCode());
+                a.setWardCode(ward.getCode());
+
+                return a;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            close();
+        }
+
+        return null;
+    }
+
     public boolean addAddress(Address address, int userId) {
         String checkUserSQL = "SELECT user_id FROM user WHERE user_id = ?";
         String insertAddressSQL = "INSERT INTO address (province_code, district_code, ward_code, detail, distance_km) VALUES (?, ?, ?, ?, ?)";
@@ -136,6 +192,67 @@ public class AddressDAO extends DBContext {
 
             connection.rollback();
             return false;
+        } catch (Exception e) {
+            try {
+                connection.rollback();
+            } catch (SQLException se) {
+                se.printStackTrace();
+            }
+            e.printStackTrace();
+            return false;
+        } finally {
+            try {
+                connection.setAutoCommit(true);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            close();
+        }
+    }
+
+    public boolean updateAddress(Address address, int userId) {
+        String checkOwnershipSQL = "SELECT * FROM userAddress WHERE user_id = ? AND address_id = ?";
+        String updateSQL = "UPDATE address SET province_code = ?, district_code = ?, ward_code = ?, detail = ?, distance_km = ? WHERE address_id = ?";
+
+        try {
+            connection.setAutoCommit(false);
+
+            // Check ownership
+            PreparedStatement checkStmt = connection.prepareStatement(checkOwnershipSQL);
+            checkStmt.setInt(1, userId);
+            checkStmt.setInt(2, address.getAddressId());
+            ResultSet rsCheck = checkStmt.executeQuery();
+
+            if (!rsCheck.next()) {
+                connection.rollback();
+                return false;
+            }
+
+            // Calculate distance
+            double distanceKm = 0;
+            Ward ward = new WardDAO().getWardByCode(address.getWardCode());
+            if (ward != null && ward.getLatitude() != null && ward.getLongitude() != null) {
+                distanceKm = calculateDistance(FPT_LAT, FPT_LNG, ward.getLatitude(), ward.getLongitude());
+            }
+
+            PreparedStatement updateStmt = connection.prepareStatement(updateSQL);
+            updateStmt.setString(1, address.getProvinceCode());
+            updateStmt.setString(2, address.getDistrictCode());
+            updateStmt.setString(3, address.getWardCode());
+            updateStmt.setString(4, address.getDetail());
+            updateStmt.setDouble(5, distanceKm);
+            updateStmt.setInt(6, address.getAddressId());
+
+            int updatedRows = updateStmt.executeUpdate();
+
+            if (updatedRows == 0) {
+                connection.rollback();
+                return false;
+            }
+
+            connection.commit();
+            return true;
+
         } catch (Exception e) {
             try {
                 connection.rollback();
