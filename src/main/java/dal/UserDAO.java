@@ -120,7 +120,7 @@ public class UserDAO extends DBContext {
     //Register a new user
     public void registerUser(String username, String password, String email, String firstName, String lastName, String phone) throws SQLException {
         try {
-            sql = "INSERT INTO natural_care.user (username, password, email, first_name, last_name, phone_number) VALUES (?, ?, ?, ?, ?, ?)";
+            sql = "INSERT INTO natural_care.user (username, password, email, first_name, last_name, phone_number, role_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
             stm = connection.prepareStatement(sql);
             stm.setString(1, username);
             stm.setString(2, password);
@@ -128,6 +128,7 @@ public class UserDAO extends DBContext {
             stm.setString(4, firstName);
             stm.setString(5, lastName);
             stm.setString(6, phone);
+            stm.setInt(7, 1); // customer default role
             stm.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

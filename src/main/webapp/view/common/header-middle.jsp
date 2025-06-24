@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <head>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/address-modals.css">
 </head>
@@ -89,7 +90,9 @@
                                 <li><a href="logout" aria-label="Logout"><i class="fa fa-lock"></i> Logout</a></li>
                             </c:when>
                             <c:otherwise>
-                                <li><a href="login" aria-label="Login"><i class="fa fa-lock"></i> Login</a></li>
+                                <c:if test="${not fn:contains(pageContext.request.requestURI, 'login')}">
+                                    <li><a href="login" aria-label="Login"><i class="fa fa-lock"></i> Login</a></li>
+                                </c:if>
                                 <li><a href="cart" aria-label="Shopping Cart"><i class="fa fa-shopping-cart"></i>
                                     Cart</a></li>
                             </c:otherwise>
