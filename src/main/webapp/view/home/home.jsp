@@ -18,7 +18,7 @@
     <!--[if lt IE 9]>
     <script src="${pageContext.request.contextPath}/js/html5shiv.js"></script>
     <![endif]-->
-</head><!--/head-->
+</head>
 
 <body>
 <header id="header"><!--header-->
@@ -151,8 +151,6 @@
 <!--Footer-->
 <jsp:include page="/view/common/footer.jsp"></jsp:include>
 <!--/Footer--><!--/Footer-->
-
-
 
 <script src="${pageContext.request.contextPath}/js/jquery.js"></script>
 <script src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>

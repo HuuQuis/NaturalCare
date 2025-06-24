@@ -43,16 +43,40 @@ CREATE TABLE role
     role_name VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE address
-(
-    address_id    INT AUTO_INCREMENT PRIMARY KEY,
-    province_code INT,
-    province_name VARCHAR(100),
-    district_code INT,
-    district_name VARCHAR(100),
-    ward_code     INT,
-    ward_name     VARCHAR(100),
-    detail        TEXT
+CREATE TABLE province (
+    code VARCHAR(10) PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    full_name VARCHAR(100)
+);
+
+CREATE TABLE district (
+    code VARCHAR(10) PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    full_name VARCHAR(100),
+    province_code VARCHAR(10) NOT NULL,
+    FOREIGN KEY (province_code) REFERENCES province(code)
+);
+
+CREATE TABLE ward (
+    code VARCHAR(10) PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    full_name VARCHAR(100),
+    district_code VARCHAR(10) NOT NULL,
+    latitude DOUBLE,
+    longitude DOUBLE,
+    FOREIGN KEY (district_code) REFERENCES district(code)
+);
+
+CREATE TABLE address (
+    address_id     INT AUTO_INCREMENT PRIMARY KEY,
+    province_code  VARCHAR(10),
+    district_code  VARCHAR(10),
+    ward_code      VARCHAR(10),
+    detail         TEXT,
+    distance_km DOUBLE,
+    FOREIGN KEY (province_code) REFERENCES province(code),
+    FOREIGN KEY (district_code) REFERENCES district(code),
+    FOREIGN KEY (ward_code) REFERENCES ward(code)
 );
 
 CREATE TABLE skill
@@ -71,17 +95,22 @@ CREATE TABLE user
     email              VARCHAR(255) NOT NULL,
     phone_number       VARCHAR(20)  NOT NULL,
     role_id            INT          NOT NULL,
-    address_id         INT,
-    skill_id           INT,
     user_image         TEXT,
     reset_token        VARCHAR(255),
     reset_token_expiry DATETIME,
     FOREIGN KEY (role_id)
-        REFERENCES role (role_id),
+        REFERENCES role (role_id)
+);
+
+CREATE TABLE userAddress
+(
+    user_id    INT NOT NULL,
+    address_id INT NOT NULL,
+    PRIMARY KEY (user_id, address_id),
+    FOREIGN KEY (user_id)
+        REFERENCES user (user_id),
     FOREIGN KEY (address_id)
-        REFERENCES address (address_id),
-    FOREIGN KEY (skill_id)
-        REFERENCES skill (skill_id)
+        REFERENCES address (address_id)
 );
 
 CREATE TABLE blog_comment
@@ -96,16 +125,7 @@ CREATE TABLE blog_comment
         REFERENCES blog (blog_id)
 );
 
-CREATE TABLE userAddress
-(
-    user_id    INT NOT NULL,
-    address_id INT NOT NULL,
-    PRIMARY KEY (user_id, address_id),
-    FOREIGN KEY (user_id)
-        REFERENCES user (user_id),
-    FOREIGN KEY (address_id)
-        REFERENCES address (address_id)
-);
+
 
 CREATE TABLE expertSkill
 (

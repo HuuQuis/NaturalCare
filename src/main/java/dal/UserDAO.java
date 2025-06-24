@@ -36,6 +36,7 @@ public class UserDAO extends DBContext {
             rs = stm.executeQuery();
             if (rs.next()) {
                 User user = new User();
+                user.setId(rs.getInt("user_id"));
                 user.setUsername(rs.getString("username"));
                 user.setPassword(rs.getString("password"));
                 user.setRole(rs.getInt("role_id"));

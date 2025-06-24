@@ -34,58 +34,71 @@ public class ProductServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) 
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-            String indexPage = request.getParameter("index");
-            if (indexPage == null || indexPage.isEmpty()) {
-                indexPage = "1"; // Default to the first page if not specified
-            }
-            int index = Integer.parseInt(indexPage);
-            String categoryId = request.getParameter("category");
-            String subCategoryId = request.getParameter("subcategory");
-            String sort = request.getParameter("sort");
-            List<Product> products;
+
+        String indexPage = request.getParameter("index");
+        if (indexPage == null || indexPage.isEmpty()) {
+            indexPage = "1";
+        }
+        int index = Integer.parseInt(indexPage);
+
+        String categoryId = request.getParameter("category");
+        String subCategoryId = request.getParameter("subcategory");
+        String sort = request.getParameter("sort");
+
+        List<Product> products = new ArrayList<>(); // Initialize with empty list
 
         boolean hasCategory = categoryId != null && !categoryId.isEmpty();
         boolean hasSubCategory = subCategoryId != null && !subCategoryId.isEmpty();
 
-        if (hasCategory) {
-            if (hasSubCategory) {
-                products = productDAO.getProductsBySubCategoryIdSorted(Integer.parseInt(subCategoryId), index, sort);
-                request.setAttribute("selectedCategoryId", categoryId);
-                request.setAttribute("selectedSubCategoryId", subCategoryId);
-            } else {
-                products = productDAO.getProductsByCategoryIdSorted(Integer.parseInt(categoryId), index, sort);
-                request.setAttribute("selectedCategoryId", categoryId);
-            }
-            request.setAttribute("products", products);
-        } else if (hasSubCategory) {
+        // Handle different scenarios
+        if (hasSubCategory) {
+            // Subcategory has priority over category
             products = productDAO.getProductsBySubCategoryIdSorted(Integer.parseInt(subCategoryId), index, sort);
             request.setAttribute("selectedSubCategoryId", subCategoryId);
-            request.setAttribute("products", products);
+
+            // If we have both category and subcategory, still set the category for navigation
+            if (hasCategory) {
+                request.setAttribute("selectedCategoryId", categoryId);
+            }
+        } else if (hasCategory) {
+            // Only category is selected
+            products = productDAO.getProductsByCategoryIdSorted(Integer.parseInt(categoryId), index, sort);
+            request.setAttribute("selectedCategoryId", categoryId);
+        }
+        // If neither category nor subcategory is selected, products remains empty
+
+        // Always set products attribute (even if empty)
+        request.setAttribute("products", products);
+
+        // Load categories and subcategories for sidebar
+        List<ProductCategory> categories = categoryDAO.getAllProductCategories();
+        List<BlogCategory> blogCategories = blogCategoryDAO.getAllBlogCategories();
+        List<SubProductCategory> subCategories = new ArrayList<>();
+        for (ProductCategory category : categories) {
+            subCategories.addAll(subProductCategoryDAO.getSubCategoriesByCategoryId(category.getId()));
         }
 
+        // Calculate pagination
+        int count = 0;
+        if (hasSubCategory) {
+            count = productDAO.getTotalProductsCountBySubCategory(Integer.parseInt(subCategoryId));
+        } else if (hasCategory) {
+            count = productDAO.getTotalProductsCountByCategory(Integer.parseInt(categoryId));
+        }
 
-            List<ProductCategory> categories = categoryDAO.getAllProductCategories();
-            List<BlogCategory> blogCategories = blogCategoryDAO.getAllBlogCategories();
-            List<SubProductCategory> subCategories = new ArrayList<>();
-            for (ProductCategory category : categories) {
-                subCategories.addAll(subProductCategoryDAO.getSubCategoriesByCategoryId(category.getId()));
-            }
-
-        int count = hasCategory ? productDAO.getTotalProductsCountByCategory(Integer.parseInt(categoryId))
-                : hasSubCategory ? productDAO.getTotalProductsCountBySubCategory(Integer.parseInt(subCategoryId))
-                : 0;
         int endPage = count / 6;
-        if( count % 6 != 0) {
+        if (count % 6 != 0) {
             endPage++;
         }
+
+        // Set all attributes
         request.setAttribute("endPage", endPage);
         request.setAttribute("categories", categories);
         request.setAttribute("blogCategories", blogCategories);
         request.setAttribute("subCategories", subCategories);
         request.setAttribute("sort", sort);
-
         request.getRequestDispatcher("/view/product/product.jsp").forward(request, response);
     }
 }
