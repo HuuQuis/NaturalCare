@@ -77,6 +77,9 @@ public class AddressServlet extends HttpServlet {
             case "update":
                 handleUpdateAddress(request, response, addressDAO, userId);
                 break;
+                case "setDefault":
+                    handleSetDefaultAddress(request, response, addressDAO, userId);
+                    break;
             default:
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid action");
         }
@@ -116,7 +119,8 @@ public class AddressServlet extends HttpServlet {
                     .append("\"wardCode\":\"").append(addr.getWardCode()).append("\",")
                     .append("\"wardName\":\"").append(escapeJson(wardName)).append("\",")
                     .append("\"detail\":\"").append(escapeJson(addr.getDetail())).append("\",")
-                    .append("\"distanceKm\":").append(addr.getDistanceKm())
+                    .append("\"distanceKm\":").append(addr.getDistanceKm()).append(",")
+                    .append("\"isDefault\":").append(addr.isDefault())
                     .append("}");
 
             if (i < addresses.size() - 1) {
@@ -259,6 +263,29 @@ public class AddressServlet extends HttpServlet {
             response.getWriter().write("{\"success\":false,\"message\":\"Failed to delete address\"}");
         }
     }
+
+    private void handleSetDefaultAddress(HttpServletRequest request, HttpServletResponse response,
+                                  AddressDAO addressDAO, int userId) throws IOException {
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        try {
+            int addressId = Integer.parseInt(request.getParameter("addressId"));
+
+            boolean result = addressDAO.setDefaultAddress(userId, addressId);
+
+            if (result) {
+                response.getWriter().write("{\"success\":true,\"message\":\"Set as default successfully\"}");
+            } else {
+                response.getWriter().write("{\"success\":false,\"message\":\"Failed to set default address\"}");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.getWriter().write("{\"success\":false,\"message\":\"Invalid input or internal error\"}");
+        }
+    }
+
 
     private String validateDetail(String detail) {
         if (detail == null || detail.trim().isEmpty()) {

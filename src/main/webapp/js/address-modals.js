@@ -82,22 +82,66 @@ function renderAddresses(list) {
 function createAddressCard(address) {
     const card = document.createElement('div');
     card.className = 'address-card';
+    card.setAttribute('data-id', address.addressId);
+
+    const leafIconHtml = address.isDefault
+        ? `<span class="default-leaf active" title="Default address">🍃</span>`
+        : '';
+
     card.innerHTML = `
         <div class="address-details">
-            <div class="address-text">
-                ${address.detail}<br>
-                <span class="ward-district-province">
-                    ${address.wardName}, ${address.districtName}, ${address.provinceName}
-                </span>
+            <div class="address-header">
+                <div class="address-text">
+                    ${address.detail}<br>
+                    <span class="ward-district-province">
+                        ${address.wardName}, ${address.districtName}, ${address.provinceName}
+                    </span>
+                </div>
+                ${leafIconHtml}
             </div>
             <div><strong>Distance:</strong> ${parseFloat(address.distanceKm).toFixed(2)} km</div>
         </div>
         <div class="address-actions">
             <button class="btn-address primary" onclick="editAddress('${address.addressId}')">Edit</button>
             <button class="btn-address secondary" onclick="deleteAddress('${address.addressId}')">Delete</button>
+            ${!address.isDefault ? `
+                <button class="btn-leaf" onclick="setDefaultAddress(${address.addressId})">
+                    Set as default
+                </button>
+            ` : ''}
         </div>
     `;
+
     return card;
+}
+
+function setDefaultAddress(addressId) {
+    fetch('address?action=setDefault&addressId=' + addressId, {
+        method: 'POST'
+    })
+        .then(res => res.json())
+        .then(data => {
+            if (!data.success) return showError(data.message);
+
+            addresses.forEach(addr => {
+                addr.isDefault = addr.addressId === addressId;
+            });
+
+            const container = document.getElementById('addressListContainer');
+            container.innerHTML = '';
+            addresses.forEach(addr => container.appendChild(createAddressCard(addr)));
+
+            const newDefaultCard = document.querySelector(`.address-card[data-id="${addressId}"]`);
+            if (newDefaultCard) {
+                const leaf = newDefaultCard.querySelector('.default-leaf');
+                if (leaf) {
+                    leaf.classList.add('active');
+                }
+            }
+
+            showSuccess("Set default address successfully.");
+        })
+        .catch(() => showError("Failed to set default address."));
 }
 
 function editAddress(id) {

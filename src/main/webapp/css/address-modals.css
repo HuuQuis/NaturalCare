@@ -125,7 +125,7 @@ body.modal-open {
 
 .address-actions {
     margin-top: 10px;
-    padding-top: 10px;
+    padding-top: 15px;
     border-top: 1px solid #e0e0e0;
 }
 
@@ -221,4 +221,52 @@ body.modal-open {
     background-color: #d4edda;
     color: #155724;
     border: 1px solid #c3e6cb;
+}
+
+/* Biểu tượng lá cho địa chỉ mặc định */
+.default-leaf {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    color: #28a745;
+}
+
+/* Bọc phần đầu mỗi thẻ địa chỉ để có vị trí tương đối */
+.address-header {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+}
+
+/* Nút set default */
+.btn-leaf {
+    background-color: #e0f7e9;
+    color: #28a745;
+    border: 1px solid #28a745;
+    padding: 5.5px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.btn-leaf:hover {
+    background-color: #28a745;
+    color: white;
+}
+
+.default-leaf {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    color: #28a745;
+    opacity: 0;
+    transform: scale(0.5) rotate(-30deg);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.default-leaf.active {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
 }
