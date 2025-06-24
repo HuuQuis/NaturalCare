@@ -60,6 +60,7 @@ public class RegisterServlet extends HttpServlet {
         // invalid otp
         if (!otpParam.equals(sessionOtp)) {
             request.setAttribute("error", "Invalid OTP! Please try again!");
+            session.invalidate();
             request.getRequestDispatcher("view/login/otp.jsp").forward(request, response);
             return;
         }
