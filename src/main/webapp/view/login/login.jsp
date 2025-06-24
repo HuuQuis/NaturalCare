@@ -56,14 +56,13 @@
                     Username: <input name="username" type="text" placeholder="Username" required/>
                     Password: <input name="password" type="password" placeholder="Password" required/>
                     <span>
-								<input name="remember-account" type="checkbox" class="checkbox" checked value="on">
+                        <input name="remember-account" type="checkbox" class="checkbox" checked value="on">
 								Keep me signed in
-							</span>
-
-                    <br>
-                    <br>
+                    </span>
                     <c:if test="${not empty error}">
-                        <i class="alert alert-danger">${error}</i>
+                        <span style="color: #a94442; background-color: #f2dede; border: 1px  #ebccd1; padding: 8px 15px; border-radius: 4px; display: table; margin-top: 10px;">
+                            <strong>${error}</strong>
+                        </span>
                     </c:if>
 
                     <div style="display: flex; gap: 10px; margin-top: 10px;">
@@ -96,18 +95,5 @@
 <script src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>
 <script src="${pageContext.request.contextPath}/js/jquery.prettyPhoto.js"></script>
 <script src="${pageContext.request.contextPath}/js/main.js"></script>
-<script>
-    document.querySelector('form').addEventListener('submit', function (event) {
-        const username = document.querySelector('input[name="username"]').value;
-        const password = document.querySelector('input[name="password"]').value;
-
-        // Check if any field contains only whitespace
-        if (username.trim() === '' || password.trim() === '') {
-            event.preventDefault();
-            alert("Please do not enter only spaces in any field!");
-            return;
-        }
-    });
-</script>
 </body>
 </html>
