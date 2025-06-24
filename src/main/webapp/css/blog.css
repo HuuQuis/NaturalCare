@@ -1,5 +1,6 @@
 .blog-card {
-    max-width: 750px;
+    width: 100%;
+    max-width: 800px;
     margin: 0 auto 40px;
     padding: 20px;
     border-radius: 10px;
@@ -7,12 +8,13 @@
     box-shadow: 0 0 10px rgba(0,0,0,0.05);
 }
 
-.blog-card img {
+.blog-card-img {
     width: 100%;
-    height: auto;
-    border-radius: 10px;
+    height: 500px;
     object-fit: cover;
-    margin-bottom: 15px;
+    border-radius: 10px;
+    display: block;
+    margin: 0 auto;
 }
 
 .blog-card h5 {
@@ -44,5 +46,7 @@
 }
 
 .pagination {
+    display: flex;
     justify-content: center;
+    margin-top: 30px;
 }

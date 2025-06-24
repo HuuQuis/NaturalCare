@@ -32,6 +32,26 @@
     <!--/header-bottom-->
 </header><!--/header-->
 
+<div class="container mt-3">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-white p-2 rounded">
+            <li class="breadcrumb-item">
+                <a href="${pageContext.request.contextPath}/">
+                    <i class="fa fa-home"></i> Homepage
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="${pageContext.request.contextPath}/blogs">Blogs</a>
+            </li>
+            <c:if test="${not empty selectedCategory}">
+                <li class="breadcrumb-item active" aria-current="page">
+                        ${selectedCategory.name}
+                </li>
+            </c:if>
+        </ol>
+    </nav>
+</div>
+
 <div class="container mt-5">
     <c:choose>
         <c:when test="${empty blogList}">
@@ -40,8 +60,7 @@
         <c:otherwise>
             <c:forEach var="blog" items="${blogList}">
                 <div class="blog-card">
-                    <img src="${pageContext.request.contextPath}/images/blog_default.jpg" alt="${blog.blogTitle}">
-
+                    <img src="${pageContext.request.contextPath}/${blog.imageUrl}" alt="${blog.blogTitle}" class="blog-card-img" />
                     <div class="view-count">
                         <i class="fa fa-eye"></i> 227 lượt xem
                     </div>
