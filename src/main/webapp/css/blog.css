@@ -1,0 +1,48 @@
+.blog-card {
+    max-width: 750px;
+    margin: 0 auto 40px;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+
+.blog-card img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    object-fit: cover;
+    margin-bottom: 15px;
+}
+
+.blog-card h5 {
+    font-size: 22px;
+    font-weight: bold;
+    color: #333;
+    margin-top: 10px;
+}
+
+.blog-card p {
+    font-size: 16px;
+    line-height: 1.6;
+    color: #555;
+}
+
+.blog-card .view-count {
+    color: #6aa84f;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.blog-card .btn-view {
+    background-color: #c8d6b9;
+    color: #2d3a2f;
+    font-weight: bold;
+    border: none;
+    padding: 6px 20px;
+    border-radius: 5px;
+}
+
+.pagination {
+    justify-content: center;
+}
