@@ -9,100 +9,15 @@ import java.util.List;
 
 public class BlogDAO extends DBContext {
 
-    private BlogCategoryDAO categoryDAO = new BlogCategoryDAO();
-
-    // Lấy danh sách tất cả blog
-    public List<Blog> getAllBlogs() {
-        List<Blog> list = new ArrayList<>();
-        String sql = "SELECT * FROM blog";
-
-        try (PreparedStatement ps = connection.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-
-            while (rs.next()) {
-                int categoryId = rs.getInt("blog_category_id");
-                BlogCategory category = categoryDAO.getAllBlogCategories().stream()
-                        .filter(c -> c.getId() == categoryId)
-                        .findFirst().orElse(null);
-
-                Blog blog = new Blog(
-                        rs.getInt("blog_id"),
-                        rs.getString("blog_title"),
-                        rs.getString("blog_description"),
-                        rs.getTimestamp("date_published"),
-                        category
-                );
-
-                list.add(blog);
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return list;
-    }
-
-    // Lấy blog theo ID
-    public Blog getBlogById(int id) {
-        String sql = "SELECT * FROM blog WHERE blog_id = ?";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, id);
-            ResultSet rs = ps.executeQuery();
-
-            if (rs.next()) {
-                int categoryId = rs.getInt("blog_category_id");
-                BlogCategory category = categoryDAO.getAllBlogCategories().stream()
-                        .filter(c -> c.getId() == categoryId)
-                        .findFirst().orElse(null);
-
-                return new Blog(
-                        rs.getInt("blog_id"),
-                        rs.getString("blog_title"),
-                        rs.getString("blog_description"),
-                        rs.getTimestamp("date_published"),
-                        category
-                );
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
-    //lọc blog theo category
-    public List<Blog> getBlogsByCategoryId(int categoryId) {
-        List<Blog> list = new ArrayList<>();
-        String sql = "SELECT * FROM blog WHERE blog_category_id = ?";
-
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, categoryId);
-            ResultSet rs = ps.executeQuery();
-
-            while (rs.next()) {
-                BlogCategory category = categoryDAO.getCategoryById(categoryId);
-
-                Blog blog = new Blog(
-                        rs.getInt("blog_id"),
-                        rs.getString("blog_title"),
-                        rs.getString("blog_description"),
-                        rs.getTimestamp("date_published"),
-                        category
-                );
-                list.add(blog);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return list;
-    }
+    private final BlogCategoryDAO categoryDAO = new BlogCategoryDAO();
 
     public List<Blog> getBlogsByPage(int pageIndex, int pageSize) {
         List<Blog> list = new ArrayList<>();
-        String sql = "SELECT * FROM blog ORDER BY date_published DESC LIMIT ? OFFSET ?";
+        String sql = "SELECT b.*, i.blog_image " +
+                "FROM blog b " +
+                "LEFT JOIN blog_image i ON b.blog_id = i.blog_id " +
+                "ORDER BY b.date_published DESC " +
+                "LIMIT ? OFFSET ?";
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, pageSize);
@@ -111,13 +26,48 @@ public class BlogDAO extends DBContext {
 
             while (rs.next()) {
                 BlogCategory category = categoryDAO.getCategoryById(rs.getInt("blog_category_id"));
-                list.add(new Blog(
+                Blog blog = new Blog(
                         rs.getInt("blog_id"),
                         rs.getString("blog_title"),
                         rs.getString("blog_description"),
                         rs.getTimestamp("date_published"),
                         category
-                ));
+                );
+                blog.setImageUrl(rs.getString("blog_image"));
+                list.add(blog);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public List<Blog> getBlogsByCategoryIdAndPage(int categoryId, int pageIndex, int pageSize) {
+        List<Blog> list = new ArrayList<>();
+        String sql = "SELECT b.*, i.blog_image " +
+                "FROM blog b " +
+                "LEFT JOIN blog_image i ON b.blog_id = i.blog_id " +
+                "WHERE b.blog_category_id = ? " +
+                "ORDER BY b.date_published DESC " +
+                "LIMIT ? OFFSET ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, categoryId);
+            ps.setInt(2, pageSize);
+            ps.setInt(3, (pageIndex - 1) * pageSize);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                BlogCategory category = categoryDAO.getCategoryById(categoryId);
+                Blog blog = new Blog(
+                        rs.getInt("blog_id"),
+                        rs.getString("blog_title"),
+                        rs.getString("blog_description"),
+                        rs.getTimestamp("date_published"),
+                        category
+                );
+                blog.setImageUrl(rs.getString("blog_image"));
+                list.add(blog);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -127,16 +77,27 @@ public class BlogDAO extends DBContext {
 
     public int getTotalBlogCount() {
         String sql = "SELECT COUNT(*) FROM blog";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return rs.getInt(1);
-            }
+        try (PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) return rs.getInt(1);
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return 0;
     }
+
+    public int getBlogCountByCategory(int categoryId) {
+        String sql = "SELECT COUNT(*) FROM blog WHERE blog_category_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, categoryId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) return rs.getInt(1);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
 
     // Thêm blog mới
     public void addBlog(Blog blog) {

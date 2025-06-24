@@ -29,23 +29,21 @@ public class BlogCategoryDAO extends DBContext {
         return list;
     }
 
-    // Lấy category theo ID
     public BlogCategory getCategoryById(int id) {
         String sql = "SELECT * FROM blog_category WHERE blog_category_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
-
             if (rs.next()) {
-                return new BlogCategory(
-                        rs.getInt("blog_category_id"),
-                        rs.getString("blog_category_name")
-                );
+                BlogCategory cat = new BlogCategory();
+                cat.setId(rs.getInt("blog_category_id"));
+                cat.setName(rs.getString("blog_category_name"));
+                return cat;
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         return null;
     }
+
 }

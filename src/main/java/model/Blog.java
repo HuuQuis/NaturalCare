@@ -8,6 +8,7 @@ public class Blog {
     private String blogDescription;
     private Timestamp datePublished;
     private BlogCategory blogCategory;
+    private String imageUrl;
 
     // Constructors
     public Blog() {
@@ -60,5 +61,12 @@ public class Blog {
 
     public void setBlogCategory(BlogCategory blogCategory) {
         this.blogCategory = blogCategory;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

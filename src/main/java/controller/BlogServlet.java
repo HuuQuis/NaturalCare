@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.Blog;
+import model.BlogCategory;
 
 import java.io.IOException;
 import java.util.List;
@@ -21,7 +22,6 @@ public class BlogServlet extends HttpServlet {
 
         int page = 1;
         int size = 10;
-
         String pageParam = request.getParameter("page");
         if (pageParam != null) {
             try {
@@ -29,13 +29,32 @@ public class BlogServlet extends HttpServlet {
             } catch (NumberFormatException ignored) {}
         }
 
+        String blogCategoryParam = request.getParameter("blogCategory");
+
         BlogDAO blogDAO = new BlogDAO();
         BlogCategoryDAO cateDAO = new BlogCategoryDAO();
 
-        int totalBlogs = blogDAO.getTotalBlogCount();
-        int totalPages = (int) Math.ceil((double) totalBlogs / size);
+        List<Blog> blogList;
+        int totalBlogs;
+        BlogCategory selectedCategory = null;
 
-        List<Blog> blogList = blogDAO.getBlogsByPage(page, size);
+        if (blogCategoryParam != null) {
+            try {
+                int categoryId = Integer.parseInt(blogCategoryParam);
+                blogList = blogDAO.getBlogsByCategoryIdAndPage(categoryId, page, size);
+                totalBlogs = blogDAO.getBlogCountByCategory(categoryId);
+                selectedCategory = cateDAO.getCategoryById(categoryId);
+                request.setAttribute("selectedCategory", selectedCategory);
+            } catch (NumberFormatException e) {
+                blogList = blogDAO.getBlogsByPage(page, size);
+                totalBlogs = blogDAO.getTotalBlogCount();
+            }
+        } else {
+            blogList = blogDAO.getBlogsByPage(page, size);
+            totalBlogs = blogDAO.getTotalBlogCount();
+        }
+
+        int totalPages = (int) Math.ceil((double) totalBlogs / size);
 
         request.setAttribute("blogList", blogList);
         request.setAttribute("currentPage", page);
