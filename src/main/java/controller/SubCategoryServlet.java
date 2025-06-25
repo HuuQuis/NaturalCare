@@ -97,6 +97,6 @@ public class SubCategoryServlet extends HttpServlet {
             return;
         }
 
-        resp.sendRedirect("category");
+        resp.sendRedirect("subcategory");
     }
 }
