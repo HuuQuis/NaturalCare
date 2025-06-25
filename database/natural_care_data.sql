@@ -79,6 +79,12 @@ INSERT INTO sub_product_category (sub_product_category_id, sub_product_category_
                                                                                                                        (33, 'Acerola Skin Care Set', 10, TRUE);
 
 INSERT INTO user (username, password, first_name, last_name, email, phone_number, role_id)
+VALUES ('staff', 'staff', 'test', 'staff', 'test@gmail.com', '0123456789', 2);
+
+INSERT INTO user (username, password, first_name, last_name, email, phone_number, role_id)
+VALUES ('shipper', 'shipper', 'test', 'shipper', 'test@gmail.com', '0123456789', 7);
+
+INSERT INTO user (username, password, first_name, last_name, email, phone_number, role_id)
 VALUES ('admin', 'admin', 'test', 'admin', 'test@gmail.com', '0123456789', 3);
 
 INSERT INTO user (username, password, first_name, last_name, email, phone_number, role_id)
