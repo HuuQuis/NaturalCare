@@ -6,6 +6,7 @@
       <h2><i class="fa fa-plus"></i> Add New Address</h2>
       <button type="button" class="close" onclick="closeAddAddressModal()">×</button>
     </div>
+    <div id="messageContainer"></div>
     <div class="modal-body">
       <form id="addAddressForm">
         <div class="form-group">

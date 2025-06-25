@@ -106,6 +106,7 @@ CREATE TABLE userAddress
 (
     user_id    INT NOT NULL,
     address_id INT NOT NULL,
+    is_default boolean default false,
     PRIMARY KEY (user_id, address_id),
     FOREIGN KEY (user_id)
         REFERENCES user (user_id),

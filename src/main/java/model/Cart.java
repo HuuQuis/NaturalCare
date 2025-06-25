@@ -1,22 +1,26 @@
 package model;
 
 public class Cart {
-    private Product product;
+    private ProductVariation variation;
     private int quantity;
 
-    public Cart(Product product, int quantity) {
-        this.product = product;
+    public Cart(ProductVariation variation, int quantity) {
+        this.variation = variation;
         this.quantity = quantity;
     }
-    public Product getProduct() {
-        return product;
+
+    public ProductVariation getVariation() {
+        return variation;
     }
-    public void setProduct(Product product) {
-        this.product = product;
+
+    public void setVariation(ProductVariation variation) {
+        this.variation = variation;
     }
+
     public int getQuantity() {
         return quantity;
     }
+
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
