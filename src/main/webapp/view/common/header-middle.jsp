@@ -3,119 +3,8 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <head>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/address-modals.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/cart.css">
 </head>
-<style>
-    .profile-dropdown {
-        position: relative;
-        display: inline-block;
-    }
-
-    .dropdown-content {
-        display: none;
-        position: absolute;
-        background-color: #f9f9f9;
-        min-width: 200px;
-        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-        z-index: 1000;
-        padding: 12px;
-        border-radius: 4px;
-        right: 0;
-    }
-
-    .profile-dropdown:hover .dropdown-content {
-        display: block;
-    }
-
-    .user-info {
-        padding: 10px;
-        border-bottom: 1px solid #ddd;
-    }
-
-    .address-list {
-        padding: 10px;
-    }
-
-    .dropdown-content a {
-        text-decoration: none;
-        color: #333;
-        display: block;
-        padding: 8px 0;
-    }
-
-    .dropdown-content a:hover {
-        color: #fe980f;
-    }
-
-    #cart-modal {
-        position: absolute;
-        top: 100%;
-        right: 0;
-        width: 320px;
-        max-height: 400px;
-        background: #fff;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-        display: none;
-        flex-direction: column;
-        z-index: 1000;
-    }
-
-    #cart-modal.show {
-        display: flex;
-    }
-
-    .cart-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 12px 16px;
-        background: #f8f8f8;
-        border-bottom: 1px solid #ddd;
-        font-weight: bold;
-    }
-
-    body.modal-open {
-        overflow: hidden;
-    }
-
-    #cart-close-btn {
-        background: none;
-        border: none;
-        font-size: 18px;
-        cursor: pointer;
-    }
-
-    .cart-body {
-        overflow-y: auto;
-        padding: 12px 16px;
-        flex: 1;
-        max-height: 300px;
-    }
-
-    /* Spinner trong cart modal body */
-    .cart-spinner {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100px;
-    }
-
-    .cart-spinner::after {
-        content: "";
-        width: 30px;
-        height: 30px;
-        border: 4px solid #f3f3f3;
-        border-top: 4px solid #ff9800; /* màu cam */
-        border-radius: 50%;
-        animation: spin 0.8s linear infinite;
-    }
-
-    @keyframes spin {
-        to { transform: rotate(360deg); }
-    }
-</style>
-
 <div class="header-middle">
     <div class="container">
         <div class="row">
@@ -161,6 +50,7 @@
                             <a href="cart" id="cart-icon" aria-label="Shopping Cart">
                                 <i class="fa fa-shopping-cart"></i> Cart
                             </a>
+                            <div id="cart-overlay" class="cart-overlay"></div>
                             <div id="cart-loading"></div>
                             <div id="cart-modal">
                                 <div class="cart-header">
@@ -181,56 +71,4 @@
 <jsp:include page="/view/address/address-list.jsp" />
 <jsp:include page="/view/address/address-add.jsp" />
 <script src="${pageContext.request.contextPath}/js/address-modals.js" defer></script>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const cartIcon = document.getElementById("cart-icon");
-        const cartModal = document.getElementById("cart-modal");
-        const closeBtn = document.getElementById("cart-close-btn");
-        const cartItems = document.getElementById("cart-items");
-
-        let hoverTimer;
-
-        cartIcon.addEventListener("mouseenter", function () {
-            hoverTimer = setTimeout(() => {
-                cartModal.classList.add("show");
-                document.body.classList.add("modal-open");
-
-                cartItems.innerHTML = `<div class="cart-spinner"></div>`;
-
-                setTimeout(() => {
-                    loadCartItems();
-                }, 500);
-            }, 500);
-        });
-
-        cartIcon.addEventListener("mouseleave", function () {
-            clearTimeout(hoverTimer);
-        });
-
-        closeBtn.addEventListener("click", closeCartModal);
-        cartModal.addEventListener("mouseleave", () => {
-            setTimeout(closeCartModal, 500);
-        });
-
-        function closeCartModal() {
-            cartModal.classList.remove("show");
-            document.body.classList.remove("modal-open");
-        }
-
-        function loadCartItems() {
-            fetch("cart-items")
-                .then(res => res.text())
-                .then(html => {
-                    cartItems.innerHTML = html;
-                });
-        }
-
-        function refreshCartIfOpen() {
-            if (cartModal.classList.contains("show")) {
-                loadCartItems();
-            }
-        }
-
-        document.addEventListener("product-added", refreshCartIfOpen);
-    });
-</script>
+<script src="${pageContext.request.contextPath}/js/cart-modal.js"></script>
