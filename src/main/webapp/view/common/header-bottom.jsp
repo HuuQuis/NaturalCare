@@ -35,7 +35,8 @@
                         </c:forEach>
                         <li><a href="${pageContext.request.contextPath}/view/contact-us.jsp" >Contact</a></li>
                         <li><a href="${pageContext.request.contextPath}/view/about-us.jsp">About Us</a></li>
-                        <li class="dropdown"><a href="#">Blog<i class="fa fa-angle-down"></i></a>
+                        <li class="dropdown">
+                            <a href="${pageContext.request.contextPath}/blogs">Blog <i class="fa fa-angle-down"></i></a>
                             <ul role="menu" class="sub-menu">
                                 <c:forEach items="${blogCategories}" var="blogCategory">
                                     <li>

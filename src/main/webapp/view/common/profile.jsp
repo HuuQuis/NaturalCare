@@ -20,7 +20,6 @@
 </head>
 <body>
 
-<jsp:include page="/view/common/header-middle.jsp"/>
 
 <div class="form-profile py-5">
   <div class="container">
@@ -29,9 +28,18 @@
       <div class="col-lg-4">
         <div class="card mb-4 text-center">
           <div class="card-body">
-            <img src=""
-                 alt="avatar"
-                 class="rounded-circle profile-img"/>
+            <c:choose>
+              <c:when test="${not empty user.avatarUrl}">
+                <img src="${user.avatarUrl}"
+                     alt="avatar"
+                     class="rounded-circle profile-img"/>
+              </c:when>
+              <c:otherwise>
+                <img src="https://www.w3schools.com/howto/img_avatar.png"
+                     alt="avatar"
+                     class="rounded-circle profile-img"/>
+              </c:otherwise>
+            </c:choose>
             <h5 class="mt-3">${user.firstName} ${user.lastName}</h5>
           </div>
         </div>
@@ -71,8 +79,18 @@
             <hr/>
             <div class="row mb-2">
               <div class="col-sm-3"><p>Vai trò</p></div>
-              <div class="col-sm-9"><p class="text-muted">${user.role.name}</p></div>
+              <div class="col-sm-9">
+                <p class="text-muted">
+                  <c:choose>
+                    <c:when test="${not empty user.role}">
+                      ${user.role.name}
+                    </c:when>
+                    <c:otherwise>Khách</c:otherwise>
+                  </c:choose>
+                </p>
+              </div>
             </div>
+
             <hr/>
             <a href="changePassword.jsp" class="btn btn-warning">Change Password</a>
           </div>
@@ -82,7 +100,7 @@
   </div>
 </div>
 
-<jsp:include page="/view/common/footer.jsp"/>
+<%--<jsp:include page="/view/common/footer.jsp"/>--%>
 <script src="${pageContext.request.contextPath}/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
