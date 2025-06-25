@@ -138,21 +138,6 @@
                     <ul class="nav navbar-nav">
                         <c:choose>
                             <c:when test="${not empty user}">
-                                <li id="cart-icon-wrapper" style="position: relative;">
-                                    <a href="cart" id="cart-icon" aria-label="Shopping Cart">
-                                        <i class="fa fa-shopping-cart"></i> Cart
-                                    </a>
-                                    <div id="cart-loading"></div>
-                                    <div id="cart-modal">
-                                        <div class="cart-header">
-                                            <span>My Cart</span>
-                                            <button id="cart-close-btn">&times;</button>
-                                        </div>
-                                        <div class="cart-body" id="cart-items">
-                                            <p>Loading...</p>
-                                        </div>
-                                    </div>
-                                </li>
                                 <li class="profile-dropdown">
                                     <a href="" aria-label="User Profile"><i class="fa fa-user"></i>${user.username}</a>
                                     <div class="dropdown-content">
@@ -170,24 +155,23 @@
                                 <c:if test="${not fn:contains(pageContext.request.requestURI, 'login')}">
                                     <li><a href="login" aria-label="Login"><i class="fa fa-lock"></i> Login</a></li>
                                 </c:if>
-                                <li id="cart-icon-wrapper" style="position: relative;">
-                                    <a href="cart" id="cart-icon" aria-label="Shopping Cart">
-                                        <i class="fa fa-shopping-cart"></i> Cart
-                                    </a>
-                                    <div id="cart-loading"></div>
-                                    <div id="cart-modal">
-                                        <div class="cart-header">
-                                            <span>My Cart</span>
-                                            <button id="cart-close-btn">&times;</button>
-                                        </div>
-                                        <div class="cart-body" id="cart-items">
-                                            <p>Loading...</p>
-                                        </div>
-                                    </div>
-                                </li>
-
                             </c:otherwise>
                         </c:choose>
+                        <li id="cart-icon-wrapper" style="position: relative;">
+                            <a href="cart" id="cart-icon" aria-label="Shopping Cart">
+                                <i class="fa fa-shopping-cart"></i> Cart
+                            </a>
+                            <div id="cart-loading"></div>
+                            <div id="cart-modal">
+                                <div class="cart-header">
+                                    <span>My Cart</span>
+                                    <button id="cart-close-btn">&times;</button>
+                                </div>
+                                <div class="cart-body" id="cart-items">
+                                    <p>Loading...</p>
+                                </div>
+                            </div>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -209,7 +193,7 @@
         cartIcon.addEventListener("mouseenter", function () {
             hoverTimer = setTimeout(() => {
                 cartModal.classList.add("show");
-                document.body.classList.add("modal-open"); // ✅ Chặn scroll nền
+                document.body.classList.add("modal-open");
 
                 cartItems.innerHTML = `<div class="cart-spinner"></div>`;
 
@@ -240,5 +224,13 @@
                     cartItems.innerHTML = html;
                 });
         }
+
+        function refreshCartIfOpen() {
+            if (cartModal.classList.contains("show")) {
+                loadCartItems();
+            }
+        }
+
+        document.addEventListener("product-added", refreshCartIfOpen);
     });
 </script>

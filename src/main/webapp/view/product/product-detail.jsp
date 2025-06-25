@@ -164,12 +164,16 @@
                                         <p>Price: <span id="price">N/A</span></p>
                                         <p>In Stock: <span id="stock">N/A</span></p>
                                         <p>Sold: <span id="sold">N/A</span></p>
+                                        <button id="add-to-cart-btn" class="btn btn-primary mt-3" disabled>
+                                            <i class="fa fa-shopping-cart"></i> Add to Cart
+                                        </button>
                                     </div>
 
                                     <!-- Hidden variation data with image URLs -->
                                     <div class="variation-details" style="display: none;">
                                         <c:forEach items="${product.variations}" var="variation">
                                             <div class="variation-item"
+                                                 data-variation-id="${variation.variationId}"
                                                  data-color="${variation.colorId}"
                                                  data-size="${variation.sizeId}"
                                                  data-image="${variation.imageUrl}">
@@ -305,6 +309,7 @@
 
     function updateVariationInfo() {
         const variationInfo = document.getElementById('variation-info');
+        const addToCartBtn = document.getElementById('add-to-cart-btn');
         variationInfo.style.display = 'block';
         let found = false;
 
@@ -324,6 +329,11 @@
 
         if (!found) {
             ['price', 'stock', 'sold'].forEach(id => document.getElementById(id).textContent = 'N/A');
+        }
+
+        // Enable or disable the button
+        if (addToCartBtn) {
+            addToCartBtn.disabled = !found;
         }
     }
 
@@ -376,6 +386,49 @@
                 shortText.style.display = isExpanded ? 'inline' : 'none';
                 toggle.textContent = isExpanded ? 'View More' : 'View Less';
             });
+        });
+
+        function getSelectedVariationId() {
+            let selectedId = null;
+
+            document.querySelectorAll('.variation-item').forEach(item => {
+                const color = item.dataset.color;
+                const size = item.dataset.size;
+
+                const colorMatch = !selectedColor || color === selectedColor;
+                const sizeMatch = !selectedSize || size === selectedSize;
+
+                if (colorMatch && sizeMatch && !selectedId) {
+                    selectedId = item.getAttribute('data-variation-id');
+                }
+            });
+
+            return selectedId;
+        }
+
+        document.getElementById('add-to-cart-btn')?.addEventListener('click', function () {
+            const variationId = getSelectedVariationId();
+            if (!variationId) {
+                alert("Please choose variant before adding to cart.");
+                return;
+            }
+            console.log(variationId);
+            fetch(contextPath + "/add-to-cart", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    variationId: variationId,
+                    quantity: 1
+                })
+            })
+                .then(res => {
+                    if (!res.ok) throw new Error();
+                    return res.text();
+                })
+                .then(text => alert("Product added to cart successfully!"))
+                .catch(err => alert("Failed to add product to cart."));
         });
     });
 </script>
