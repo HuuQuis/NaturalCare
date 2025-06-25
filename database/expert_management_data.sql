@@ -1,3 +1,5 @@
+USE natural_care;
+
 -- 1. Thêm 20 chuyên gia vào bảng user
 INSERT INTO user (username, password, first_name, last_name, email, phone_number, role_id)
 VALUES
