@@ -24,6 +24,17 @@
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
     <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
+
+    <style>
+        .error-message {
+            color: #a94442;
+            padding: 5px;
+            border-radius: 4px;
+            margin-top: 5px;
+            display: block;
+        }
+    </style>
+
 </head>
 
 <body>
@@ -41,17 +52,23 @@
                     <h2>Reset Password</h2>
                     <form action="${pageContext.request.contextPath}/reset" method="POST">
                         <input type="hidden" name="token" value="${token}">
-
-                        <input name="password" type="password" placeholder="Enter new password" required minlength="6"/>
-                        <input name="confirmPassword" type="password" placeholder="Confirm new password" required
-                               minlength="6"/>
+                        New password:
+                        <input name="password" type="password" placeholder="Enter new password" required/>
+                        <div class="error-message" id="passwordError"></div>
+                        Confirm new password:
+                        <input name="confirmPassword" type="password" placeholder="Confirm new password" required/>
+                        <div class="error-message" id="confirmError"></div>
 
                         <br>
                         <c:if test="${not empty message}">
-                            <div class="alert alert-success">${message}</div>
+                        <span style="color: #a94442; background-color: #f2dede; border: 1px solid #ebccd1; padding: 8px 15px; border-radius: 4px; display: table;">
+                            <strong>${error}</strong>
+                        </span>
                         </c:if>
                         <c:if test="${not empty error}">
-                            <div class="alert alert-danger">${error}</div>
+                        <span style="color: #a94442; background-color: #f2dede; border: 1px solid #ebccd1; padding: 8px 15px; border-radius: 4px; display: table;">
+                            <strong>${error}</strong>
+                        </span>
                         </c:if>
 
                         <div style="display: flex; gap: 10px; margin-top: 10px;">
@@ -71,25 +88,42 @@
 <jsp:include page="../common/footer.jsp"></jsp:include>
 
 <script>
-    document.querySelector('form').addEventListener('submit', function (event) {
-        const password = document.querySelector('input[name="password"]').value;
-        const confirmPassword = document.querySelector('input[name="confirmPassword"]').value;
+    document.querySelector('form')?.addEventListener('submit', function (event) {
+        event.preventDefault(); // Tạm thời chặn để kiểm tra validate
 
-        // Validate password length
-        if (password.length < 6) {
-            event.preventDefault();
-            alert("Password must be at least 6 characters long!");
-            return;
+        const password = document.querySelector('input[name="password"]').value.trim();
+        const confirmPassword = document.querySelector('input[name="confirmPassword"]').value.trim();
+
+        let hasError = false;
+
+        // Xóa lỗi cũ
+        document.getElementById('passwordError').textContent = '';
+        document.getElementById('confirmError').textContent = '';
+
+        // Kiểm tra mật khẩu rỗng hoặc toàn dấu cách
+        if (password === '') {
+            document.getElementById('passwordError').textContent = 'Please enter a valid password.';
+            hasError = true;
+        } else if (password.length < 6) {
+            document.getElementById('passwordError').textContent = 'Password must be at least 6 characters.';
+            hasError = true;
         }
 
-        // Validate password match
-        if (password !== confirmPassword) {
-            event.preventDefault();
-            alert("Passwords do not match!");
-            return;
+        // Kiểm tra xác nhận mật khẩu
+        if (confirmPassword === '') {
+            document.getElementById('confirmError').textContent = 'Please confirm your password.';
+            hasError = true;
+        } else if (password !== confirmPassword) {
+            document.getElementById('confirmError').textContent = 'Passwords do not match!';
+            hasError = true;
+        }
+
+        if (!hasError) {
+            this.submit(); // Submit form nếu không có lỗi
         }
     });
 </script>
+
 
 <script src="${pageContext.request.contextPath}/js/jquery.js"></script>
 <script src="${pageContext.request.contextPath}/js/price-range.js"></script>

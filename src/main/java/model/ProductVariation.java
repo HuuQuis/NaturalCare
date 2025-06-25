@@ -12,6 +12,7 @@ public class ProductVariation {
     private int productId;
     private String colorName;
     private String sizeName;
+    private String productName;
 
     public ProductVariation() {
     }
@@ -67,5 +68,11 @@ public class ProductVariation {
     }
     public void setSizeName(String sizeName) {
         this.sizeName = sizeName;
+    }
+    public String getProductName() {
+        return productName;
+    }
+    public void setProductName(String productName) {
+        this.productName = productName;
     }
 }
