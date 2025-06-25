@@ -96,7 +96,6 @@
                                                             </div>
                                                         </c:forEach>
                                                     </c:when>
-
                                                     <c:otherwise>
                                                         <div class="item active">
                                                             <img src="${pageContext.request.contextPath}/images/default-product.png" alt="No Image Available" />
@@ -112,11 +111,7 @@
                                     </div>
                                     <div class="product-overlay">
                                         <div class="overlay-content">
-                                            <p>${product.name}</p>
-                                            <p>${product.description}</p>
-                                            <a href="#" class="btn btn-default add-to-cart">
-                                                <i class="fa fa-shopping-cart"></i>Add to cart
-                                            </a>
+
                                             <a href="productDetail?product_id=${product.id}" class="btn btn-default product-details">
                                                 <i class="fa fa-info"></i>Product details
                                             </a>
@@ -186,7 +181,7 @@
 
 <!--Footer-->
 <jsp:include page="/view/common/footer.jsp"></jsp:include>
-<!--/Footer--><!--/Footer--><!--/Footer-->
+<!--/Footer-->
 
 <script src="${pageContext.request.contextPath}/js/jquery.js"></script>
 <script src="${pageContext.request.contextPath}/js/jquery.scrollUp.min.js"></script>

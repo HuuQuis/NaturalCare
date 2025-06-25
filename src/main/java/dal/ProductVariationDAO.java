@@ -163,6 +163,4 @@ public class ProductVariationDAO extends DBContext{
 
         return false;
     }
-
-
 }
