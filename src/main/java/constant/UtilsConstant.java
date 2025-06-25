@@ -10,4 +10,6 @@ public class UtilsConstant {
 
     public static final long OTP_EXPIRY_TIME = 5 * 60 * 1000;
 
+    public static final int MAX_OTP_ATTEMPTS = 3;
+
 }

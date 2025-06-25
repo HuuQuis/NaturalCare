@@ -48,6 +48,19 @@ public class RegisterServlet extends HttpServlet {
         // get otp
         String sessionOtp = (String) session.getAttribute("otp");
         Long otpTime = (Long) session.getAttribute("otpTime");
+        Integer otpAttempts = (Integer) session.getAttribute("otpAttempts");
+
+        if (otpAttempts == null) {
+            otpAttempts = 0; // Initialize attempts if not set
+        }
+
+        // check otp attempts
+        if (otpAttempts >= UtilsConstant.MAX_OTP_ATTEMPTS) {
+            request.setAttribute("error", "Maximum OTP attempts exceeded! Please try again later.");
+            session.invalidate();
+            request.getRequestDispatcher("view/login/register.jsp").forward(request, response);
+            return;
+        }
 
         // expired otp
         if (!isValidOtp(sessionOtp, otpTime)) {
@@ -59,8 +72,8 @@ public class RegisterServlet extends HttpServlet {
 
         // invalid otp
         if (!otpParam.equals(sessionOtp)) {
+            session.setAttribute("otpAttempts", otpAttempts + 1);
             request.setAttribute("error", "Invalid OTP! Please try again!");
-            session.invalidate();
             request.getRequestDispatcher("view/login/otp.jsp").forward(request, response);
             return;
         }
@@ -116,7 +129,14 @@ public class RegisterServlet extends HttpServlet {
         // create OTP
         String otp = generateOtp();
         try {
-            EmailUtils.sendOTPEmail(email, otp);
+            // async send OTP email
+            new Thread(() -> {
+                try {
+                    EmailUtils.sendOTPEmail(email, otp);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }).start();
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("error", "Failed to send OTP email! Please try again!");
