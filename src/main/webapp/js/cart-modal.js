@@ -41,6 +41,10 @@ function attachCartEventListeners() {
                 }
 
                 updateCartTotal();
+
+                if (typeof updateVariationInfo === "function") {
+                    updateVariationInfo(); // Cập nhật lại maxStock trong product-detail
+                }
             })
             .catch(err => {
                 alert("Error when updating cart. Please try again later.");
@@ -72,14 +76,22 @@ function attachCartEventListeners() {
             const input = this.parentElement.querySelector(".quantity-input");
             let quantity = parseInt(input.value);
             const variationId = input.dataset.variationId;
+            const max = parseInt(input.dataset.max);
 
             if (this.classList.contains("plus")) {
-                quantity++;
-                input.value = quantity;
-                updateCart(variationId, quantity, input);
+                if (quantity < max) {
+                    quantity++;
+                    input.value = quantity;
+                    updateCart(variationId, quantity, input);
+                } else {
+                    alert("You cannot add more than the available stock.");
+                    if (typeof updateVariationInfo === "function") {
+                        updateVariationInfo();
+                    }
+                }
             } else if (this.classList.contains("minus")) {
                 if (quantity === 1) {
-                    const confirmDelete = confirm("Bạn có chắc muốn xoá sản phẩm khỏi giỏ hàng?");
+                    const confirmDelete = confirm("Are you sure you want to remove this item from cart?");
                     if (confirmDelete) {
                         quantity = 0;
                         input.value = quantity;
@@ -96,22 +108,31 @@ function attachCartEventListeners() {
 
     // Nhập thủ công
     document.querySelectorAll(".quantity-input").forEach(input => {
-        input.addEventListener("change", function () {
+        input.addEventListener("input", function () {
             let quantity = parseInt(this.value);
             const variationId = this.dataset.variationId;
+            const max = parseInt(this.dataset.max);
 
             if (isNaN(quantity) || quantity < 0) {
                 quantity = 1;
                 this.value = quantity;
             } else if (quantity === 0) {
-                const confirmDelete = confirm("Bạn có chắc muốn xoá sản phẩm khỏi giỏ hàng?");
+                const confirmDelete = confirm("Are you sure you want to remove this item from cart?");
                 if (!confirmDelete) {
                     quantity = 1;
                     this.value = quantity;
                 }
+            } else if (quantity > max) {
+                alert("Overtaking quantity is not allowed. Maximum quantity is " + max + ".");
+                quantity = max;
+                this.value = quantity;
             }
 
             updateCart(variationId, quantity, this);
+
+            if (typeof updateVariationInfo === "function") {
+                updateVariationInfo();
+            }
         });
     });
 }
@@ -122,7 +143,6 @@ function showCartLoadingSpinner() {
         cartItems.innerHTML = `<div class="cart-spinner"></div>`;
     }
 }
-
 
 function closeCartModal() {
     document.getElementById("cart-modal").classList.remove("show");
@@ -155,4 +175,3 @@ document.addEventListener("DOMContentLoaded", function () {
 
     closeBtn.addEventListener("click", closeCartModal);
 });
-

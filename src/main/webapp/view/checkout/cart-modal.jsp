@@ -19,7 +19,9 @@
         <input type="number" class="quantity-input"
                value="${item.quantity}"
                data-price="${item.variation.sell_price}"
-               data-variation-id="${item.variation.variationId}" />
+               data-variation-id="${item.variation.variationId}"
+               data-max="${item.variation.qtyInStock}"
+        />
         <button class="qty-btn plus">+</button>
       </div>
       <span class="unit-price">

@@ -1,0 +1,86 @@
+.color-option, .size-option {
+    margin: 5px;
+    padding: 8px 12px;
+    border: 2px solid #ddd;
+    background: #fff;
+    cursor: pointer;
+    border-radius: 4px;
+}
+.color-option.selected, .size-option.selected {
+    border-color: #007bff;
+    background-color: #007bff;
+    color: white;
+}
+.variation-info {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+.variation-info h4 {
+    margin-bottom: 10px;
+    color: #333;
+}
+.variation-info p {
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+.carousel-inner .item img {
+    max-width: 100%;
+    height: auto;
+    transition: opacity 0.3s ease;
+}
+
+.add-cart-wrapper {
+    display: flex;
+    align-items: center;
+    background-color: #FE980F;
+    border-radius: 999px;
+    padding: 5px 10px;
+    width: fit-content;
+    height: 44px;
+    overflow: hidden;
+}
+
+.quantity-wrapper {
+    display: flex;
+    align-items: center;
+    background: white;
+    border-radius: 999px;
+    padding: 2px 10px;
+    margin-right: 8px;
+}
+
+.qty-input {
+    width: 20px;
+    text-align: center;
+    border: none;
+    outline: none;
+    font-weight: bold;
+    font-size: 14px;
+    background: transparent;
+    color: #000;
+    margin: 0 4px;
+}
+
+/* Ẩn mũi tên số lượng */
+.qty-input::-webkit-inner-spin-button,
+.qty-input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.qty-input[type=number] {
+    -moz-appearance: textfield;
+}
+
+.cart-btn {
+    background: transparent;
+    border: none;
+    color: white;
+    font-weight: bold;
+    font-size: 15px;
+    cursor: pointer;
+    white-space: nowrap;
+}

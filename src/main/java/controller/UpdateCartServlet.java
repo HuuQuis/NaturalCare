@@ -6,8 +6,14 @@ import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.util.*;
 
+import dal.ProductVariationDAO;
+import model.ProductVariation;
+// ...
+
 @WebServlet("/update-cart")
 public class UpdateCartServlet extends HttpServlet {
+    private final ProductVariationDAO productVariationDAO = new ProductVariationDAO();
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         request.setCharacterEncoding("UTF-8");
@@ -23,6 +29,21 @@ public class UpdateCartServlet extends HttpServlet {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             response.setContentType("text/plain");
             response.getWriter().write("Invalid parameters");
+            return;
+        }
+
+        ProductVariation variation = productVariationDAO.getProductVariationById(variationId);
+        if (variation == null) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            response.getWriter().write("Variation not found");
+            return;
+        }
+
+        int inStock = variation.getQtyInStock();
+        if (quantity > inStock) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.setContentType("text/plain");
+            response.getWriter().write("Số lượng yêu cầu vượt quá tồn kho (" + inStock + ")");
             return;
         }
 
