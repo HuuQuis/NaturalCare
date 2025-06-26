@@ -14,7 +14,7 @@ public class User {
     public User() {
     }
 
-    public User(int id, String username, String password, String firstName, String lastName, String email, String phone, int role, String avatar) {
+    public User(int id, String username, String password, String firstName, String lastName, String email, String phone, int role) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -23,9 +23,8 @@ public class User {
         this.email = email;
         this.phone = phone;
         this.role = role;
-        this.avatar = avatar;
     }
-
+    
     public int getId() {
         return id;
     }
