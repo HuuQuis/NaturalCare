@@ -182,7 +182,7 @@ public class SubProductCategoryDAO extends DBContext {
             sqlBuilder.append(" AND LOWER(s.sub_product_category_name) LIKE ?");
             params.add("%" + keyword.toLowerCase() + "%");
         }
-        sqlBuilder.append(" ORDER BY s.sub_product_category_name");
+        sqlBuilder.append(" ORDER BY s.sub_product_category_id DESC");
 
         try (PreparedStatement stm = connection.prepareStatement(sqlBuilder.toString())) {
             for (int i = 0; i < params.size(); i++) {
@@ -202,5 +202,77 @@ public class SubProductCategoryDAO extends DBContext {
             e.printStackTrace();
         }
         return list;
+    }
+
+    public List<SubProductCategory> getFilteredSubcategoriesByPage(String keyword, Integer categoryId, int pageIndex, int pageSize) {
+        List<SubProductCategory> list = new ArrayList<>();
+        StringBuilder sqlBuilder = new StringBuilder(
+                "SELECT s.sub_product_category_id, s.sub_product_category_name, s.product_category_id, c.product_category_name " +
+                        "FROM sub_product_category s " +
+                        "JOIN product_category c ON s.product_category_id = c.product_category_id " +
+                        "WHERE s.status = TRUE"
+        );
+
+        List<Object> params = new ArrayList<>();
+        if (categoryId != null) {
+            sqlBuilder.append(" AND s.product_category_id = ?");
+            params.add(categoryId);
+        }
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sqlBuilder.append(" AND LOWER(s.sub_product_category_name) LIKE ?");
+            params.add("%" + keyword.toLowerCase() + "%");
+        }
+
+        sqlBuilder.append(" ORDER BY s.sub_product_category_id DESC LIMIT ? OFFSET ?");
+        int offset = (pageIndex - 1) * pageSize;
+        params.add(pageSize);
+        params.add(offset);
+
+        try (PreparedStatement stm = connection.prepareStatement(sqlBuilder.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                stm.setObject(i + 1, params.get(i));
+            }
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    SubProductCategory s = new SubProductCategory();
+                    s.setId(rs.getInt("sub_product_category_id"));
+                    s.setName(rs.getString("sub_product_category_name"));
+                    s.setProductCategoryId(rs.getInt("product_category_id"));
+                    s.setCategoryName(rs.getString("product_category_name"));
+                    list.add(s);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public int countFilteredSubcategories(String keyword, Integer categoryId) {
+        StringBuilder sqlBuilder = new StringBuilder(
+                "SELECT COUNT(*) FROM sub_product_category s WHERE s.status = TRUE"
+        );
+
+        List<Object> params = new ArrayList<>();
+        if (categoryId != null) {
+            sqlBuilder.append(" AND s.product_category_id = ?");
+            params.add(categoryId);
+        }
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sqlBuilder.append(" AND LOWER(s.sub_product_category_name) LIKE ?");
+            params.add("%" + keyword.toLowerCase() + "%");
+        }
+
+        try (PreparedStatement stm = connection.prepareStatement(sqlBuilder.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                stm.setObject(i + 1, params.get(i));
+            }
+            try (ResultSet rs = stm.executeQuery()) {
+                if (rs.next()) return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 }
