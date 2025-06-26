@@ -31,6 +31,16 @@
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
     <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
+    
+    <style>
+        .error-message-red {
+            color: #a94442;
+            padding: 5px;
+            border-radius: 4px;
+            margin-top: 5px;
+            display: block;
+        }
+    </style>
 </head><!--/head-->
 
 <body>
@@ -52,9 +62,11 @@
             <!--login form-->
             <div class="login-form">
                 <h2>Login to your account</h2>
-                <form action="${pageContext.request.contextPath}/login" method="POST">
+                <form action="${pageContext.request.contextPath}/login" method="POST" id="loginForm">
                     Username: <input name="username" type="text" placeholder="Username" required/>
+                    <div class="error-message-red" id="usernameError"></div>
                     Password: <input name="password" type="password" placeholder="Password" required/>
+                    <div class="error-message-red" id="passwordError"></div>
                     <span>
                         <input name="remember-account" type="checkbox" class="checkbox" checked value="on">
 								Keep me signed in
@@ -66,7 +78,7 @@
                     </c:if>
 
                     <div style="display: flex; gap: 10px; margin-top: 10px;">
-                        <button type="submit" class="btn btn-default">Login</button>
+                        <button type="button" onclick="validateLoginForm()" class="btn btn-default">Login</button>
                         <button type="button" class="btn btn-default"
                                 onclick="window.location.href='${pageContext.request.contextPath}/forgot'">Forgot
                             Password
@@ -95,5 +107,6 @@
 <script src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>
 <script src="${pageContext.request.contextPath}/js/jquery.prettyPhoto.js"></script>
 <script src="${pageContext.request.contextPath}/js/main.js"></script>
+<script src="${pageContext.request.contextPath}/js/validate.js"></script>
 </body>
 </html>
