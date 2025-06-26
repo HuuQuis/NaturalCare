@@ -210,14 +210,28 @@ public class UserDAO extends DBContext {
                     rs.getString("last_name"),
                     rs.getString("email"),
                     rs.getString("phone_number"),
-                    rs.getInt("role_id"),
-                    rs.getString("avatar")
+                    rs.getInt("role_id")
                 ));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return list;
+    }
+    
+    public String getUserNameById(int userId) {
+        String sql = "SELECT username FROM user WHERE user_id = ?";
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setInt(1, userId);
+            rs = stm.executeQuery();
+            if (rs.next()) {
+                return rs.getString("username");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return "";
     }
     
 }
