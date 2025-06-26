@@ -195,4 +195,29 @@ public class UserDAO extends DBContext {
         }
     }
 
+    public List<User> getAllShippers() {
+        List<User> list = new ArrayList<>();
+        String sql = "SELECT * FROM user WHERE role_id = 7";
+        try {
+            stm = connection.prepareStatement(sql);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                list.add(new User(
+                    rs.getInt("user_id"),
+                    rs.getString("username"),
+                    rs.getString("password"),
+                    rs.getString("first_name"),
+                    rs.getString("last_name"),
+                    rs.getString("email"),
+                    rs.getString("phone_number"),
+                    rs.getInt("role_id"),
+                    rs.getString("avatar")
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+    
 }
