@@ -42,7 +42,7 @@ public class AddressDAO extends DBContext {
                 address.setWardCode(rs.getString("ward_code"));
                 address.setDetail(rs.getString("detail"));
                 address.setDistanceKm(rs.getDouble("distance_km"));
-                address.setDefault(rs.getBoolean("is_default"));
+                address.setDefaultAddress(rs.getBoolean("is_default"));
 
                 // Gán tên tỉnh/huyện/xã nếu dùng object
                 Province province = new Province();

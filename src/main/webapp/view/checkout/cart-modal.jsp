@@ -1,5 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
 <div id="cart-scroll-content" style="max-height: 300px; overflow-y: auto;">
 <c:forEach var="item" items="${cartItems}">
   <div class="cart-item" style="display: flex; margin-bottom: 12px;">
@@ -19,7 +20,9 @@
         <input type="number" class="quantity-input"
                value="${item.quantity}"
                data-price="${item.variation.sell_price}"
-               data-variation-id="${item.variation.variationId}" />
+               data-variation-id="${item.variation.variationId}"
+               data-max="${item.variation.qtyInStock}"
+        />
         <button class="qty-btn plus">+</button>
       </div>
       <span class="unit-price">

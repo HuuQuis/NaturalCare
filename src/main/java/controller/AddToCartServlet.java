@@ -37,7 +37,6 @@ public class AddToCartServlet extends HttpServlet {
             return;
         }
 
-        // Xử lý giỏ hàng với cookie như cũ
         Map<Integer, Integer> cartMap = new HashMap<>();
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {

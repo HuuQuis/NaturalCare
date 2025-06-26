@@ -2,8 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <head>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/address-modals.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/cart.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/combined-modal.css">
 </head>
 <div class="header-middle">
     <div class="container">
@@ -47,7 +46,7 @@
                             </c:otherwise>
                         </c:choose>
                         <li id="cart-icon-wrapper" style="position: relative;">
-                            <a href="cart" id="cart-icon" aria-label="Shopping Cart">
+                            <a href="checkout" id="cart-icon" aria-label="Shopping Cart">
                                 <i class="fa fa-shopping-cart"></i> Cart
                             </a>
                             <div id="cart-overlay" class="cart-overlay"></div>
@@ -71,4 +70,4 @@
 <jsp:include page="/view/address/address-list.jsp" />
 <jsp:include page="/view/address/address-add.jsp" />
 <script src="${pageContext.request.contextPath}/js/address-modals.js" defer></script>
-<script src="${pageContext.request.contextPath}/js/cart-modal.js"></script>
+<script src="${pageContext.request.contextPath}/js/cart-modal.js" defer></script>
