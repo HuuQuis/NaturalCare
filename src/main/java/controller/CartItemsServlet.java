@@ -19,6 +19,8 @@ public class CartItemsServlet extends HttpServlet {
         ProductVariationDAO dao = new ProductVariationDAO();
 
         List<Cart> cartItems = new ArrayList<>();
+        int cartTotal = 0;
+
         for (Map.Entry<Integer, Integer> entry : cartMap.entrySet()) {
             int variationId = entry.getKey();
             int quantity = entry.getValue();
@@ -26,12 +28,13 @@ public class CartItemsServlet extends HttpServlet {
             ProductVariation variation = dao.getProductVariationById(variationId);
             if (variation != null) {
                 cartItems.add(new Cart(variation, quantity));
+                cartTotal += variation.getSell_price() * quantity;
             }
         }
 
         request.setAttribute("cartItems", cartItems);
-        request.getRequestDispatcher("/view/home/cart-modal.jsp").forward(request, response);
-
+        request.setAttribute("cartTotal", cartTotal);
+        request.getRequestDispatcher("/view/checkout/cart-modal.jsp").forward(request, response);
     }
 
     private Map<Integer, Integer> readCartFromCookie(HttpServletRequest request) {
@@ -44,7 +47,11 @@ public class CartItemsServlet extends HttpServlet {
                     for (String item : items) {
                         String[] parts = item.split(":");
                         if (parts.length == 2) {
-                            map.put(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]));
+                            try {
+                                int id = Integer.parseInt(parts[0]);
+                                int qty = Integer.parseInt(parts[1]);
+                                map.put(id, qty);
+                            } catch (NumberFormatException ignored) {}
                         }
                     }
                 }

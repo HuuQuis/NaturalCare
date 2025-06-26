@@ -120,7 +120,7 @@ public class AddressServlet extends HttpServlet {
                     .append("\"wardName\":\"").append(escapeJson(wardName)).append("\",")
                     .append("\"detail\":\"").append(escapeJson(addr.getDetail())).append("\",")
                     .append("\"distanceKm\":").append(addr.getDistanceKm()).append(",")
-                    .append("\"isDefault\":").append(addr.isDefault())
+                    .append("\"isDefault\":").append(addr.isDefaultAddress())
                     .append("}");
 
             if (i < addresses.size() - 1) {
