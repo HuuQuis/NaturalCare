@@ -8,7 +8,6 @@
   <link href="${pageContext.request.contextPath}/css/bootstrap.min.css" rel="stylesheet">
   <link href="${pageContext.request.contextPath}/css/main.css" rel="stylesheet">
   <style>
-    /* Layout chung */
     .staff-dashboard {
       display: flex;
       margin: 40px auto;
@@ -239,7 +238,11 @@
           <c:forEach var="order" items="${orders}" varStatus="loop">
             <tr>
               <td>${loop.index + 1}</td>
-              <td>${order.orderId}</td>
+              <td>
+                <a href="OrderDetail?orderId=${order.orderId}">
+                  ${order.orderId}
+                </a>
+              </td>
               <td>${order.userId}</td>
               <td>${order.createdAt}</td>
               <td>
