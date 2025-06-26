@@ -76,7 +76,7 @@ public class ProductCategoryDAO extends DBContext {
 
     public List<ProductCategory> getCategoriesByPage(int pageIndex, int pageSize) {
         List<ProductCategory> list = new ArrayList<>();
-        String sql = "SELECT * FROM product_category WHERE status = TRUE ORDER BY product_category_id LIMIT ? OFFSET ?";
+        String sql = "SELECT * FROM product_category WHERE status = TRUE ORDER BY product_category_id DESC LIMIT ? OFFSET ?";
         int offset = (pageIndex - 1) * pageSize;
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
