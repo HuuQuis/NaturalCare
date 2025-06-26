@@ -350,6 +350,60 @@ public class AddressDAO extends DBContext {
             return false;
         }
     }
+    
+    public List<Address> getAllAddresses() {
+        List<Address> list = new ArrayList<>();
+
+        String sql = "SELECT a.*, " +
+                "p.name AS province_name, " +
+                "d.name AS district_name, " +
+                "w.name AS ward_name " +
+                "FROM address a " +
+                "LEFT JOIN province p ON a.province_code = p.code " +
+                "LEFT JOIN district d ON a.district_code = d.code " +
+                "LEFT JOIN ward w ON a.ward_code = w.code " +
+                "ORDER BY a.address_id DESC";
+
+        try {
+            stm = connection.prepareStatement(sql);
+            rs = stm.executeQuery();
+
+            while (rs.next()) {
+                Address address = new Address();
+                address.setAddressId(rs.getInt("address_id"));
+                address.setProvinceCode(rs.getString("province_code"));
+                address.setDistrictCode(rs.getString("district_code"));
+                address.setWardCode(rs.getString("ward_code"));
+                address.setDetail(rs.getString("detail"));
+                address.setDistanceKm(rs.getDouble("distance_km"));
+
+                Province province = new Province();
+                province.setCode(rs.getString("province_code"));
+                province.setName(rs.getString("province_name"));
+                address.setProvince(province);
+
+                District district = new District();
+                district.setCode(rs.getString("district_code"));
+                district.setName(rs.getString("district_name"));
+                address.setDistrict(district);
+
+                Ward ward = new Ward();
+                ward.setCode(rs.getString("ward_code"));
+                ward.setName(rs.getString("ward_name"));
+                address.setWard(ward);
+
+                list.add(address);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            close();
+        }
+
+        return list;
+    }
+
 
 
     private double calculateDistance(double lat1, double lng1, double lat2, double lng2) {

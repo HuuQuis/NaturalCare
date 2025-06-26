@@ -168,6 +168,38 @@
       color: white;
       border-color: #4caf50;
     }
+    
+    form label {
+        display: block;
+        margin-top: 15px;
+        font-weight: 500;
+      }
+
+      form input[type="text"],
+      form select {
+        width: 100%;
+        padding: 8px 12px;
+        margin-top: 5px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 14px;
+      }
+
+      form button {
+        margin-top: 20px;
+        background-color: #1e88e5;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 6px;
+        font-size: 14px;
+        cursor: pointer;
+      }
+
+      form button:hover {
+        background-color: #1565c0;
+      }
+
 
     @media (max-width: 768px) {
       .staff-dashboard {
@@ -186,103 +218,77 @@
 <jsp:include page="/view/common/header-middle.jsp" />
 
 <div class="container">
-  <div class="staff-dashboard">
-    <!-- Sidebar -->
-    <div class="staff-sidebar">
-      <h3>Staff Dashboard</h3>
-      <a href="${pageContext.request.contextPath}/orderManagement">📦 Order Management</a>
-      <a href="${pageContext.request.contextPath}/userManagement">👥 Manage Users</a>
-    </div>
+  <h2>Order Detail - ID: ${order.orderId}</h2>
 
-    <!-- Nội dung chính -->
-    <div class="staff-content">
-      <h1>Order Management</h1>
+    <form method="post" action="OrderDetail">
+      <input type="hidden" name="orderId" value="${order.orderId}">
 
-      <form method="get" class="filter-section">
-        <input type="text" name="search" placeholder="Search..." value="${search}">
-        <select name="status">
-          <option value="">-- All status --</option>
-          <option value="1" ${status == '1' ? 'selected' : ''}>Pending</option>
-          <option value="2" ${status == '2' ? 'selected' : ''}>Processing</option>
-          <!-- ... other statuses -->
-        </select>
-        <input type="date" name="fromDate" value="${fromDate}">
-        <input type="date" name="toDate" value="${toDate}">
-        <button type="submit">Filter</button>
-        <a href="orderManagement" class="reset">Reset</a>
-      </form>
+        <p><strong>Customer:</strong> ${userName}</p>
+        <p><strong>Created At:</strong> ${order.createdAt}</p>
+        
+      <label>Note:</label>
+      <input type="text" name="note" value="${order.note}"><br>
 
-      <c:if test="${not empty message}">
-        <div style="color: green;">${message}</div>
-      </c:if>
-      <c:if test="${not empty error}">
-        <div style="color: red;">${error}</div>
-      </c:if>
-
-      <table>
-        <thead>
-          <tr>
-            <th>No.</th>
-            <th>Order ID</th>
-            <th>Customer</th>
-            <th>Date</th>
-            <th>Status</th>
-            <th>Note</th>
-            <th>Shipper</th>
-            <th>Address</th>
-            <th>Coupon</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <c:forEach var="order" items="${orders}" varStatus="loop">
-            <tr>
-              <td>${loop.index + 1}</td>
-              <td>
-                <a href="OrderDetail?orderId=${order.orderId}">
-                  ${order.orderId}
-                </a>
-              </td>
-              <td>${order.userId}</td>
-              <td>${order.createdAt}</td>
-              <td>
-                <c:choose>
-                  <c:when test="${order.statusId == 1}">Pending</c:when>
-                  <c:when test="${order.statusId == 2}">Processing</c:when>
-                  <c:otherwise>${order.statusId}</c:otherwise>
-                </c:choose>
-              </td>
-              <td>${order.note}</td>
-              <td>${order.shipperId}</td>
-              <td>${order.addressId}</td>
-              <td>${order.couponId}</td>
-              <td class="actions">
-                <c:if test="${order.statusId == 1 || order.statusId == 2}">
-                  <form method="post" style="display:inline;">
-                    <input type="hidden" name="action" value="delete">
-                    <input type="hidden" name="orderId" value="${order.orderId}">
-                    <button type="submit" onclick="return confirm('Delete this order?')">Delete</button>
-                  </form>
-                </c:if>
-              </td>
-            </tr>
-          </c:forEach>
-        </tbody>
-      </table>
-
-      <div class="pagination">
-        <c:forEach var="i" begin="1" end="${totalPages}">
-          <div class="${i == currentPage ? 'active' : ''}">
-            <a href="orderManagement?page=${i}&search=${search}&status=${status}&fromDate=${fromDate}&toDate=${toDate}">${i}</a>
-          </div>
+      <label>Status:</label>
+      <select name="statusId" id="statusId" onchange="toggleShipper()">
+        <c:forEach var="status" items="${statusList}">
+          <option value="${status.statusId}" ${status.statusId == order.statusId ? "selected" : ""}>
+            ${status.statusName}
+          </option>
         </c:forEach>
+      </select><br>
+
+      <div id="shipperSection" style="display:none;">
+        <label>Shipper:</label>
+        <select name="shipperId">
+          <option value="">-- Select --</option>
+          <c:forEach var="s" items="${shippers}">
+            <option value="${s.id}" ${s.id == order.shipperId ? "selected" : ""}>
+              ${s.firstName} ${s.lastName}
+            </option>
+          </c:forEach>
+        </select><br>
       </div>
-    </div>
-  </div>
+
+      <label>Address:</label>
+      <select name="addressId">
+        <c:forEach var="addr" items="${addresses}">
+            <option value="${addr.addressId}"
+                <c:if test="${addr.addressId == order.addressId}">selected</c:if>>
+                ${addr.province.name}, ${addr.district.name}, ${addr.ward.name} - ${addr.detail}
+            </option>
+        </c:forEach>
+    </select><br>
+
+      <label>Coupon:</label>
+      <select name="couponId">
+        <option value="">-- None --</option>
+        <c:forEach var="cp" items="${coupons}">
+          <option value="${cp.couponId}" ${cp.couponId == order.couponId ? "selected" : ""}>
+            ${cp.code}
+          </option>
+        </c:forEach>
+      </select><br>
+
+      <button type="submit">Update</button>
+    </form>
+
+    <br>
+    <a href="http://localhost:8080/NaturalCare/orderManagement">← Back to Order Management</a>
+
 </div>
 
 <jsp:include page="/view/common/footer.jsp" />
 <script src="${pageContext.request.contextPath}/js/jquery.js"></script>
 <script src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>
+<script>
+  function toggleShipper() {
+    const statusId = parseInt(document.getElementById("statusId").value);
+    const show = statusId >= 3;
+    document.getElementById("shipperSection").style.display = show ? "block" : "none";
+  }
+
+  toggleShipper();
+</script>
 </body>
 </html>

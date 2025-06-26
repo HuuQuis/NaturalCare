@@ -8,20 +8,19 @@ public class SubProductCategoryDAO extends DBContext {
 
     public List<SubProductCategory> getSubCategoriesByCategoryId(int categoryId) {
         List<SubProductCategory> list = new ArrayList<>();
-        sql = "SELECT * FROM sub_product_category WHERE product_category_id = ? AND status = TRUE";
+        String sql = "SELECT * FROM sub_product_category WHERE product_category_id = ? AND status = TRUE";
 
-        try {
-            stm = connection.prepareStatement(sql);
+        try (PreparedStatement stm = connection.prepareStatement(sql)) {
             stm.setInt(1, categoryId);
-            rs = stm.executeQuery();
-
-            while (rs.next()) {
-                SubProductCategory subCategory = new SubProductCategory(
-                        rs.getInt("sub_product_category_id"),
-                        rs.getString("sub_product_category_name"),
-                        rs.getInt("product_category_id")
-                );
-                list.add(subCategory);
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    SubProductCategory subCategory = new SubProductCategory(
+                            rs.getInt("sub_product_category_id"),
+                            rs.getString("sub_product_category_name"),
+                            rs.getInt("product_category_id")
+                    );
+                    list.add(subCategory);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -31,12 +30,10 @@ public class SubProductCategoryDAO extends DBContext {
 
     public List<SubProductCategory> getAllSubProductCategories() {
         List<SubProductCategory> list = new ArrayList<>();
-        sql = "SELECT * FROM sub_product_category WHERE status = TRUE";
+        String sql = "SELECT * FROM sub_product_category WHERE status = TRUE";
 
-        try {
-            stm = connection.prepareStatement(sql);
-            rs = stm.executeQuery();
-
+        try (PreparedStatement stm = connection.prepareStatement(sql);
+             ResultSet rs = stm.executeQuery()) {
             while (rs.next()) {
                 SubProductCategory subCategory = new SubProductCategory(
                         rs.getInt("sub_product_category_id"),
@@ -83,32 +80,41 @@ public class SubProductCategoryDAO extends DBContext {
         }
     }
 
-    public void hideSubCategory(int id) throws SQLException {
+    public void hideSubCategory(int id) {
         String sql = "UPDATE sub_product_category SET status = FALSE WHERE sub_product_category_id = ?";
-        PreparedStatement ps = connection.prepareStatement(sql);
-        ps.setInt(1, id);
-        ps.executeUpdate();
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
-    public boolean hasProductDependency(int subCategoryId) throws SQLException {
+    public boolean hasProductDependency(int subCategoryId) {
         String sql = "SELECT COUNT(*) FROM product WHERE sub_product_category_id = ?";
-        PreparedStatement ps = connection.prepareStatement(sql);
-        ps.setInt(1, subCategoryId);
-        ResultSet rs = ps.executeQuery();
-        return rs.next() && rs.getInt(1) > 0;
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, subCategoryId);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() && rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     public SubProductCategory getById(int id) {
         String sql = "SELECT * FROM sub_product_category WHERE sub_product_category_id = ?";
         try (PreparedStatement stm = connection.prepareStatement(sql)) {
             stm.setInt(1, id);
-            ResultSet rs = stm.executeQuery();
-            if (rs.next()) {
-                return new SubProductCategory(
-                        rs.getInt("sub_product_category_id"),
-                        rs.getString("sub_product_category_name"),
-                        rs.getInt("product_category_id")
-                );
+            try (ResultSet rs = stm.executeQuery()) {
+                if (rs.next()) {
+                    return new SubProductCategory(
+                            rs.getInt("sub_product_category_id"),
+                            rs.getString("sub_product_category_name"),
+                            rs.getInt("product_category_id")
+                    );
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -121,20 +127,22 @@ public class SubProductCategoryDAO extends DBContext {
         try (PreparedStatement stm = connection.prepareStatement(sql)) {
             stm.setString(1, name);
             stm.setInt(2, categoryId);
-            ResultSet rs = stm.executeQuery();
-            return rs.next(); // tồn tại → true
+            try (ResultSet rs = stm.executeQuery()) {
+                return rs.next();
+            }
         } catch (SQLException e) {
             e.printStackTrace();
-            return false;
         }
+        return false;
     }
 
     public boolean isSubNameExistsInAnyCategory(String name) {
         String sql = "SELECT 1 FROM sub_product_category WHERE LOWER(sub_product_category_name) = LOWER(?) AND status = TRUE";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, name);
-            ResultSet rs = ps.executeQuery();
-            return rs.next();
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -147,12 +155,13 @@ public class SubProductCategoryDAO extends DBContext {
             stm.setString(1, name);
             stm.setInt(2, categoryId);
             stm.setInt(3, excludeId);
-            ResultSet rs = stm.executeQuery();
-            return rs.next();
+            try (ResultSet rs = stm.executeQuery()) {
+                return rs.next();
+            }
         } catch (SQLException e) {
             e.printStackTrace();
-            return false;
         }
+        return false;
     }
 
     public List<SubProductCategory> getFilteredSubcategories(String keyword, Integer categoryId) {
@@ -165,38 +174,33 @@ public class SubProductCategoryDAO extends DBContext {
         );
 
         List<Object> params = new ArrayList<>();
-
         if (categoryId != null) {
             sqlBuilder.append(" AND s.product_category_id = ?");
             params.add(categoryId);
         }
-
         if (keyword != null && !keyword.trim().isEmpty()) {
             sqlBuilder.append(" AND LOWER(s.sub_product_category_name) LIKE ?");
             params.add("%" + keyword.toLowerCase() + "%");
         }
-
         sqlBuilder.append(" ORDER BY s.sub_product_category_name");
 
         try (PreparedStatement stm = connection.prepareStatement(sqlBuilder.toString())) {
             for (int i = 0; i < params.size(); i++) {
                 stm.setObject(i + 1, params.get(i));
             }
-
-            ResultSet rs = stm.executeQuery();
-            while (rs.next()) {
-                SubProductCategory s = new SubProductCategory();
-                s.setId(rs.getInt("sub_product_category_id"));
-                s.setName(rs.getString("sub_product_category_name"));
-                s.setProductCategoryId(rs.getInt("product_category_id"));
-                s.setCategoryName(rs.getString("product_category_name")); //\
-                list.add(s);
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    SubProductCategory s = new SubProductCategory();
+                    s.setId(rs.getInt("sub_product_category_id"));
+                    s.setName(rs.getString("sub_product_category_name"));
+                    s.setProductCategoryId(rs.getInt("product_category_id"));
+                    s.setCategoryName(rs.getString("product_category_name"));
+                    list.add(s);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         return list;
     }
-
 }
