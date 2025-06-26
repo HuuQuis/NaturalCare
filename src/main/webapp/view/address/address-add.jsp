@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<div id="addAddressModal" class="modal">
+<div id="addAddressModal" class="modal-address">
   <div class="modal-content">
     <div class="modal-header">
       <span class="close" onclick="closeAddAddressModal()">&times;</span>

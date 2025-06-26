@@ -1,5 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
 <div id="cart-scroll-content" style="max-height: 300px; overflow-y: auto;">
 <c:forEach var="item" items="${cartItems}">
   <div class="cart-item" style="display: flex; margin-bottom: 12px;">

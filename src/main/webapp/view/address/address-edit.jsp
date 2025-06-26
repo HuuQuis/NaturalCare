@@ -1,6 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 
-<div id="addAddressModal" class="modal" style="display: none;">
+<div id="addAddressModal" class="modal-address" style="display: none;">
   <div class="modal-content">
     <div class="modal-header">
       <h5>Edit Address</h5>
