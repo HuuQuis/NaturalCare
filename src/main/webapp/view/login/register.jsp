@@ -33,7 +33,7 @@
     <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
 
     <style>
-        .error-message {
+        .error-message-red {
             color: #a94442;
             padding: 5px;
             border-radius: 4px;
@@ -68,33 +68,33 @@
                     <div class="col-sm-6">
                         Username:<input type="text" name="username" id="username" placeholder="Username" required
                                         minlength="6"/>
-                        <div class="error-message" id="usernameError"></div>
+                        <div class="error-message-red" id="usernameError"></div>
 
                         Password:<input type="password" name="password" id="password" placeholder="Password" required/>
-                        <div class="error-message" id="passwordError"></div>
+                        <div class="error-message-red" id="passwordError"></div>
 
                         Confirm Password:<input type="password" name="password-confirm" id="confirmPassword"
                                                 placeholder="Re-enter your password" required/>
-                        <div class="error-message" id="confirmPasswordError"></div>
+                        <div class="error-message-red" id="confirmPasswordError"></div>
                     </div>
                     <!-- Cột phải -->
                     <div class="col-sm-6">
                         First Name:<input type="text" name="firstName" id="firstName" placeholder="First Name" required
                                           value="${param.firstName}"/>
-                        <div class="error-message" id="firstNameError"></div>
+                        <div class="error-message-red" id="firstNameError"></div>
 
                         Last Name:<input type="text" name="lastName" id="lastName" placeholder="Last Name" required
                                          value="${param.lastName}"/>
-                        <div class="error-message" id="lastNameError"></div>
+                        <div class="error-message-red" id="lastNameError"></div>
 
                         Email:<input type="email" name="email" id="email" placeholder="Email Address" required
                                      value="${param.email}"/>
-                        <div class="error-message" id="emailError"></div>
+                        <div class="error-message-red" id="emailError"></div>
                     </div>
                 </div>
                 Phone:<input type="text" name="phone" id="phone" placeholder="Phone Number" required
                              value="${param.phone}"/>
-                <div class="error-message" id="phoneError"></div>
+                <div class="error-message-red" id="phoneError"></div>
 
                 <c:if test="${not empty error}">
                     <span style="color: #a94442; background-color: #f2dede; border: 1px solid #ebccd1; padding: 8px 15px; border-radius: 4px; display: table;">
@@ -102,7 +102,7 @@
                     </span>
                 </c:if>
 
-                <button style="margin-top: 20px" type="submit" onclick="validateForm()" class="btn btn-default">Signup</button>
+                <button style="margin-top: 20px" type="button" onclick="validateForm()" class="btn btn-default">Signup</button>
 
                 <hr>
                 <p class="message">Already registered? <a
@@ -153,7 +153,7 @@
         // Basic empty check
         for (const [key, input] of Object.entries(inputs)) {
             if (input.value.trim() === '') {
-                errorMessages.push({field: errors[key], message: `${capitalize(key)} cannot be empty!`});
+                errorMessages.push({field: errors[key], message: capitalize(key) + ' cannot be empty!'});
                 hasError = true;
             }
         }
@@ -212,8 +212,9 @@
             errorMessages.forEach(error => {
                 error.field.textContent = error.message;
             });
+            return false;
         } else {
-            form.submit(); // ✅ Submit an toàn khi không có lỗi
+            form.submit();
         }
     }
 
