@@ -64,7 +64,9 @@
                                 <input type="hidden" name="action" value="delete"/>
                                 <input type="hidden" name="id" value="${s.id}"/>
                                 <input type="hidden" name="page" value="${page}"/>
-                                <input type="hidden" name="productCategoryId" value="${param.productCategoryId}"/>
+                                <c:if test="${not empty param.productCategoryId}">
+                                    <input type="hidden" name="productCategoryId" value="${param.productCategoryId}"/>
+                                </c:if>
                                 <input type="hidden" name="search" value="${param.search}"/>
                                 <button type="submit" class="btn btn-link p-0">
                                     <i class="fa fa-trash text-danger"></i>
@@ -116,7 +118,7 @@
                 <input type="hidden" name="id" id="subId">
                 <input type="hidden" name="page" value="${page}"/>
                 <input type="hidden" name="search" value="${param.search}"/>
-                <input type="hidden" name="productCategoryId" value="${param.productCategoryId}"/>
+                <%--<input type="hidden" name="productCategoryId" value="${param.productCategoryId}"/>--%>
                 <div class="mb-3">
                     <label for="subName" class="form-label">Subcategory Name</label>
                     <input type="text" class="form-control" name="name" id="subName" required maxlength="15">
