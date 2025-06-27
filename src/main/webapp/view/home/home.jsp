@@ -146,7 +146,14 @@
             </div>
         </div>
     </div>
+    
+<button class="btn btn-primary">
+        <a href="/NaturalCare/OrderHistory?userId=${sessionScope.user.id}" style="color: white; text-decoration: none;">
+          Go to Order History
+        </a>
+</button>
 </section>
+
 
 <!--Footer-->
 <jsp:include page="/view/common/footer.jsp"></jsp:include>
