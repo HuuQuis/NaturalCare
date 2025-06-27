@@ -59,6 +59,12 @@ public class SubCategoryServlet extends HttpServlet {
         int catId = parseIntOrDefault(req.getParameter("productCategoryId"), -1);
         int currentPage = parseIntOrDefault(req.getParameter("page"), 1);
         String search = req.getParameter("search") != null ? req.getParameter("search") : "";
+        if ((action.equals("add") || action.equals("update")) && catId == -1) {
+            req.getSession().setAttribute("message", "Please select a category.");
+            req.getSession().setAttribute("messageType", "danger");
+            resp.sendRedirect("subcategory?page=" + currentPage);
+            return;
+        }
 
         String redirectUrl = "subcategory?page=";
         boolean redirectWithFilter = true;
@@ -74,6 +80,7 @@ public class SubCategoryServlet extends HttpServlet {
                     req.getSession().setAttribute("messageType", "success");
                 }
                 redirectUrl += "1"; // Always redirect to page 1 after add
+                redirectWithFilter = false;
                 break;
             case "update":
                 if (subDao.isSubNameExistsForOtherId(name, catId, id) || catDao.isCategoryNameExists(name)) {
@@ -86,6 +93,7 @@ public class SubCategoryServlet extends HttpServlet {
                     req.getSession().setAttribute("updatedSubCategoryId", id);
                 }
                 redirectUrl += currentPage;
+                redirectWithFilter = false;
                 break;
             case "delete":
                 if (subDao.hasProductDependency(id)) {
@@ -109,7 +117,7 @@ public class SubCategoryServlet extends HttpServlet {
         }
 
         if (redirectWithFilter) {
-            if (catId != -1) {
+            if (catId > 0) { // chỉ thêm nếu là category hợp lệ (>0)
                 redirectUrl += "&productCategoryId=" + catId;
             }
             if (!search.isEmpty()) {
