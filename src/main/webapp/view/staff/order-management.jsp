@@ -4,101 +4,133 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Order Management</title>
+  <title>Order Management | Nature Care</title>
+  <link href="${pageContext.request.contextPath}/css/bootstrap.min.css" rel="stylesheet">
+  <link href="${pageContext.request.contextPath}/css/main.css" rel="stylesheet">
   <style>
-    :root {
-      --green: #28a745;
-      --green-dark: #218838;
-      --green-light: #d4edda;
-      --gray: #f8f9fa;
-      --text-dark: #212529;
-      --border: #dee2e6;
-      --danger: #dc3545;
-      --danger-dark: #c82333;
+    .staff-dashboard {
+      display: flex;
+      margin: 40px auto;
+      max-width: 1200px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      overflow: hidden;
     }
 
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      margin: 30px;
-      background-color: var(--gray);
-      color: var(--text-dark);
+    .staff-sidebar {
+      width: 220px;
+      background-color: #f0f0e9;
+      padding: 20px;
+      border-right: 1px solid #ddd;
     }
 
-    h2 {
-      margin-bottom: 25px;
+    .staff-sidebar h3 {
+      font-size: 20px;
+      color: #2d3436;
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
+
+    .staff-sidebar a {
+      display: block;
+      color: #2d3436;
+      padding: 10px 15px;
+      border-radius: 5px;
+      margin-bottom: 10px;
+      text-decoration: none;
+      transition: 0.3s;
+      background-color: #ffffff;
+      border: 1px solid #e0e0e0;
+    }
+
+    .staff-sidebar a:hover {
+      background-color: #e3f2fd;
+      color: #0d47a1;
+      border-color: #90caf9;
+    }
+
+    .staff-content {
+      flex-grow: 1;
+      padding: 40px;
+    }
+
+    /* Nội dung Order Management */
+    h1 {
       font-size: 28px;
-      color: var(--green);
+      font-weight: bold;
+      color: #1e3d59;
     }
 
     .filter-section {
       display: flex;
       flex-wrap: wrap;
       gap: 15px;
-      margin-bottom: 25px;
+      margin: 25px 0;
       align-items: center;
     }
 
     .filter-section input,
     .filter-section select {
       padding: 8px 12px;
-      border: 1px solid var(--border);
+      border: 1px solid #ccc;
       border-radius: 6px;
       font-size: 14px;
       min-width: 180px;
     }
 
-    .filter-section button {
+    .filter-section button,
+    .filter-section a.reset {
       padding: 8px 16px;
-      border: none;
       border-radius: 6px;
       font-size: 14px;
-      background-color: var(--green);
-      color: white;
       cursor: pointer;
-      transition: background-color 0.3s ease;
+      text-decoration: none;
+    }
+
+    .filter-section button {
+      background-color: #4caf50;
+      border: none;
+      color: white;
     }
 
     .filter-section button:hover {
-      background-color: var(--green-dark);
+      background-color: #43a047;
     }
 
     .filter-section a.reset {
-      background-color: var(--danger);
-      padding: 8px 16px;
+      background-color: #dc3545;
       color: white;
-      text-decoration: none;
-      border-radius: 6px;
-      transition: background-color 0.3s ease;
     }
 
     .filter-section a.reset:hover {
-      background-color: var(--danger-dark);
+      background-color: #c82333;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      background-color: white;
+      margin-top: 20px;
+      background-color: #fff;
       border-radius: 8px;
       overflow: hidden;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
     }
 
     th, td {
       padding: 14px;
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1px solid #ddd;
       text-align: left;
       font-size: 14px;
     }
 
     th {
-      background-color: var(--green-light);
-      color: var(--text-dark);
+      background-color: #e8f5e9;
       font-weight: 600;
     }
 
     tr:hover {
-      background-color: #e8f5e9;
+      background-color: #f1f8e9;
     }
 
     .actions button {
@@ -106,17 +138,12 @@
       border: none;
       border-radius: 4px;
       font-size: 13px;
-      cursor: pointer;
-    }
-
-    .actions .delete {
-      background-color: var(--danger);
+      background-color: #dc3545;
       color: white;
-      transition: background-color 0.3s ease;
     }
 
-    .actions .delete:hover {
-      background-color: var(--danger-dark);
+    .actions button:hover {
+      background-color: #c82333;
     }
 
     .pagination {
@@ -124,121 +151,138 @@
       display: flex;
       justify-content: center;
       gap: 8px;
-      flex-wrap: wrap;
     }
 
     .pagination a {
       padding: 8px 14px;
-      border: 1px solid var(--border);
+      border: 1px solid #ccc;
       border-radius: 4px;
       background-color: white;
       text-decoration: none;
-      color: var(--green);
+      color: #4caf50;
       font-weight: 500;
-      transition: background-color 0.3s ease;
     }
 
     .pagination .active a {
-      background-color: var(--green);
+      background-color: #4caf50;
       color: white;
-      border-color: var(--green);
+      border-color: #4caf50;
     }
 
-    .pagination a:hover {
-      background-color: #e2fbe5;
+    @media (max-width: 768px) {
+      .staff-dashboard {
+        flex-direction: column;
+      }
+      .staff-sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #ddd;
+      }
     }
-
   </style>
 </head>
 <body>
-<h2>Order Management</h2>
+<jsp:include page="/view/common/header-top.jsp" />
+<jsp:include page="/view/common/header-middle.jsp" />
 
-<form method="get" class="filter-section">
-  <input type="text" name="search" placeholder="Search by ID, UserName,..." value="${search}">
-  <select name="status">
-    <option value="">-- All status --</option>
-    <option value="1" ${status == '1' ? 'selected' : ''}>Pending</option>
-    <option value="2" ${status == '2' ? 'selected' : ''}>Processing</option>
-    <option value="3" ${status == '3' ? 'selected' : ''}>Assigned to Shipper</option>
-    <option value="4" ${status == '4' ? 'selected' : ''}>Shipped</option>
-    <option value="5" ${status == '5' ? 'selected' : ''}>Delivered</option>
-    <option value="6" ${status == '6' ? 'selected' : ''}>Cancelled</option>
-    <option value="7" ${status == '7' ? 'selected' : ''}>Returned</option>
-    <option value="8" ${status == '8' ? 'selected' : ''}>Refunded</option>
-  </select>
-  <input type="date" name="fromDate" value="${fromDate}">
-  <input type="date" name="toDate" value="${toDate}">
-  <button type="submit">Filter</button>
-  <a href="orderManagement" class="reset">Delete filter</a>
-</form>
-
-<c:if test="${not empty message}">
-  <div style="color: var(--green); margin-bottom: 10px;">${message}</div>
-</c:if>
-<c:if test="${not empty error}">
-  <div style="color: var(--danger); margin-bottom: 10px;">${error}</div>
-</c:if>
-
-<table>
-  <thead>
-    <tr>
-      <th>No.</th>
-      <th>Order ID</th>
-      <th>Customer</th>
-      <th>Created Date</th>
-      <th>Status</th>
-      <th>Note</th>
-      <th>Shipper</th>
-      <th>Address</th>
-      <th>Discount Code</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    <c:forEach var="order" items="${orders}" varStatus="loop">
-      <tr>
-        <td>${loop.index + 1}</td>
-        <td>#${order.orderId}</td>
-        <td>${order.userId}</td>
-        <td>${order.createdAt}</td>
-        <td>
-          <c:choose>
-            <c:when test="${order.statusId == 1}">Pending</c:when>
-            <c:when test="${order.statusId == 2}">Processing</c:when>
-            <c:when test="${order.statusId == 3}">Assigned to Shipper</c:when>
-            <c:when test="${order.statusId == 4}">Shipped</c:when>
-            <c:when test="${order.statusId == 5}">Delivered</c:when>
-            <c:when test="${order.statusId == 6}">Cancelled</c:when>
-            <c:when test="${order.statusId == 7}">Returned</c:when>
-            <c:when test="${order.statusId == 8}">Refunded</c:when>
-            <c:otherwise>Unknown</c:otherwise>
-          </c:choose>
-        </td>
-        <td>${order.note}</td>
-        <td><c:if test="${not empty order.shipperId}">${order.shipperId}</c:if></td>
-        <td>${order.addressId}</td>
-        <td><c:if test="${not empty order.couponId}">${order.couponId}</c:if></td>
-        <td class="actions">
-          <c:if test="${order.statusId == 1 || order.statusId == 2}">
-            <form method="post" style="display:inline;">
-              <input type="hidden" name="action" value="delete">
-              <input type="hidden" name="orderId" value="${order.orderId}">
-              <button type="submit" class="delete" onclick="return confirm('Are you sure to delete this order?')">Delete</button>
-            </form>
-          </c:if>
-        </td>
-      </tr>
-    </c:forEach>
-  </tbody>
-</table>
-
-<div class="pagination">
-  <c:forEach var="i" begin="1" end="${totalPages}">
-    <div class="${i == currentPage ? 'active' : ''}">
-      <a href="orderManagement?page=${i}&search=${search}&status=${status}&fromDate=${fromDate}&toDate=${toDate}">${i}</a>
+<div class="container">
+  <div class="staff-dashboard">
+    <!-- Sidebar -->
+    <div class="staff-sidebar">
+      <h3>Staff Dashboard</h3>
+      <a href="${pageContext.request.contextPath}/orderManagement">📦 Order Management</a>
+      <a href="${pageContext.request.contextPath}/userManagement">👥 Manage Users</a>
     </div>
-  </c:forEach>
+
+    <!-- Nội dung chính -->
+    <div class="staff-content">
+      <h1>Order Management</h1>
+
+      <form method="get" class="filter-section">
+        <input type="text" name="search" placeholder="Search..." value="${search}">
+        <select name="status">
+          <option value="">-- All status --</option>
+          <option value="1" ${status == '1' ? 'selected' : ''}>Pending</option>
+          <option value="2" ${status == '2' ? 'selected' : ''}>Processing</option>
+          <!-- ... other statuses -->
+        </select>
+        <input type="date" name="fromDate" value="${fromDate}">
+        <input type="date" name="toDate" value="${toDate}">
+        <button type="submit">Filter</button>
+        <a href="orderManagement" class="reset">Reset</a>
+      </form>
+
+      <c:if test="${not empty message}">
+        <div style="color: green;">${message}</div>
+      </c:if>
+      <c:if test="${not empty error}">
+        <div style="color: red;">${error}</div>
+      </c:if>
+
+      <table>
+        <thead>
+          <tr>
+            <th>No.</th>
+            <th>Order ID</th>
+            <th>Customer</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Note</th>
+            <th>Shipper</th>
+            <th>Address</th>
+            <th>Coupon</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <c:forEach var="order" items="${orders}" varStatus="loop">
+            <tr>
+              <td>${loop.index + 1}</td>
+              <td>
+                <a href="OrderDetail?orderId=${order.orderId}">
+                  ${order.orderId}
+                </a>
+              </td>
+              <td>${order.customerName}</td>
+              <td>${order.createdAt}</td>
+              <td>
+                <c:choose>
+                  <c:when test="${order.statusId == 1}">Pending</c:when>
+                  <c:when test="${order.statusId == 2}">Processing</c:when>
+                  <c:otherwise>${order.statusId}</c:otherwise>
+                </c:choose>
+              </td>
+              <td>${order.note}</td>
+                <td>${order.shipperName}</td>
+                <td>${order.addressDisplay}</td>
+                <td>${order.couponCode}</td>
+              <td class="actions">
+                <c:if test="${order.statusId == 1 || order.statusId == 2}">
+                  <form method="post" style="display:inline;">
+                    <input type="hidden" name="action" value="delete">
+                    <input type="hidden" name="orderId" value="${order.orderId}">
+                    <button type="submit" onclick="return confirm('Delete this order?')">Delete</button>
+                  </form>
+                </c:if>
+              </td>
+            </tr>
+          </c:forEach>
+        </tbody>
+      </table>
+
+      <div class="pagination">
+        <c:forEach var="i" begin="1" end="${totalPages}">
+          <div class="${i == currentPage ? 'active' : ''}">
+            <a href="orderManagement?page=${i}&search=${search}&status=${status}&fromDate=${fromDate}&toDate=${toDate}">${i}</a>
+          </div>
+        </c:forEach>
+      </div>
+    </div>
+  </div>
 </div>
 
+<jsp:include page="/view/common/footer.jsp" />
+<script src="${pageContext.request.contextPath}/js/jquery.js"></script>
+<script src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>
 </body>
 </html>

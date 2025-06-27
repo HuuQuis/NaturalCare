@@ -163,4 +163,26 @@ public class ProductOrderDAO extends DBContext {
             e.printStackTrace();
         }
     }
+    
+    public void updateOrder(int orderId, String note, int statusId, Integer shipperId, int addressId, Integer couponId) {
+        String sql = "UPDATE product_order SET order_note = ?, status_id = ?, shipper_id = ?, address_id = ?, coupon_id = ? WHERE order_id = ?";
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setString(1, note);
+            stm.setInt(2, statusId);
+
+            if (shipperId != null) stm.setInt(3, shipperId);
+            else stm.setNull(3, Types.INTEGER);
+
+            stm.setInt(4, addressId);
+
+            if (couponId != null) stm.setInt(5, couponId);
+            else stm.setNull(5, Types.INTEGER);
+
+            stm.setInt(6, orderId);
+            stm.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

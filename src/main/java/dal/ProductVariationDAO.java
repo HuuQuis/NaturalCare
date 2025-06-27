@@ -72,13 +72,18 @@ public class ProductVariationDAO extends DBContext{
     }
 
     public ProductVariation getProductVariationById(int variationId) {
-        sql = "SELECT * FROM product_variation WHERE variation_id = ?";
+        sql = "SELECT pv.*, p.product_name, c.color_name, s.size_name " +
+                "FROM product_variation pv " +
+                "JOIN product p ON pv.product_id = p.product_id " +
+                "LEFT JOIN color c ON pv.color_id = c.color_id " +
+                "LEFT JOIN size s ON pv.size_id = s.size_id " +
+                "WHERE pv.variation_id = ?";
         try {
             stm = connection.prepareStatement(sql);
             stm.setInt(1, variationId);
             rs = stm.executeQuery();
             if (rs.next()) {
-                return new ProductVariation(
+                ProductVariation pv = new ProductVariation(
                         rs.getInt("variation_id"),
                         rs.getInt("product_id"),
                         rs.getString("product_image"),
@@ -88,12 +93,18 @@ public class ProductVariationDAO extends DBContext{
                         rs.getInt("sell_price"),
                         rs.getInt("qty_in_stock")
                 );
+                pv.setColorName(rs.getString("color_name"));
+                pv.setSizeName(rs.getString("size_name"));
+                pv.setProductName(rs.getString("product_name"));
+                return pv;
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;
     }
+
+
     public boolean isDuplicateColor(int productId, int colorId, Integer excludeVariationId) {
         sql = "SELECT COUNT(*) FROM product_variation WHERE product_id = ? AND " +
                 "((color_id = ?) OR (color_id IS NULL AND ? = 0))";
@@ -152,6 +163,4 @@ public class ProductVariationDAO extends DBContext{
 
         return false;
     }
-
-
 }

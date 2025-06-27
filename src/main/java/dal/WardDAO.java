@@ -15,8 +15,17 @@ public class WardDAO extends DBContext {
                 ward.setCode(rs.getString("code"));
                 ward.setName(rs.getString("name"));
                 ward.setDistrictCode(rs.getString("district_code"));
-                ward.setLatitude(rs.getDouble("latitude"));
-                ward.setLongitude(rs.getDouble("longitude"));
+
+                double lat = rs.getDouble("latitude");
+                if (!rs.wasNull()) {
+                    ward.setLatitude(lat);
+                }
+
+                double lng = rs.getDouble("longitude");
+                if (!rs.wasNull()) {
+                    ward.setLongitude(lng);
+                }
+
                 return ward;
             }
         } catch (Exception e) {

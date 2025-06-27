@@ -7,6 +7,7 @@ public class Address {
     private String wardCode;
     private String detail;
     private Double distanceKm;
+    private boolean defaultAddress;
 
     // Optional: Province/District/Ward objects (if you want nested info)
     private Province province;
@@ -34,6 +35,14 @@ public class Address {
 
     public Double getDistanceKm() { return distanceKm; }
     public void setDistanceKm(Double distanceKm) { this.distanceKm = distanceKm; }
+
+    public boolean isDefaultAddress() {
+        return defaultAddress;
+    }
+
+    public void setDefaultAddress(boolean defaultAddress) {
+        this.defaultAddress = defaultAddress;
+    }
 
     public Province getProvince() { return province; }
     public void setProvince(Province province) { this.province = province; }

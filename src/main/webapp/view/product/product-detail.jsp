@@ -16,47 +16,13 @@
     <link href="${pageContext.request.contextPath}/css/animate.css" rel="stylesheet">
     <link href="${pageContext.request.contextPath}/css/main.css" rel="stylesheet">
     <link href="${pageContext.request.contextPath}/css/responsive.css" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/css/product-detail.css" rel="stylesheet">
     <!--[if lt IE 9]>
     <script src="${pageContext.request.contextPath}/js/html5shiv.js"></script>
     <![endif]-->
-    <style>
-        .color-option, .size-option {
-            margin: 5px;
-            padding: 8px 12px;
-            border: 2px solid #ddd;
-            background: #fff;
-            cursor: pointer;
-            border-radius: 4px;
-        }
-        .color-option.selected, .size-option.selected {
-            border-color: #007bff;
-            background-color: #007bff;
-            color: white;
-        }
-        .variation-info {
-            margin-top: 20px;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            background-color: #f9f9f9;
-        }
-        .variation-info h4 {
-            margin-bottom: 10px;
-            color: #333;
-        }
-        .variation-info p {
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        .carousel-inner .item img {
-            max-width: 100%;
-            height: auto;
-            transition: opacity 0.3s ease;
-        }
-    </style>
 </head><!--/head-->
 
-<body>
+<body data-page="product-detail">
 <header id="header"><!--header-->
     <!--header_top-->
     <jsp:include page="/view/common/header-top.jsp"></jsp:include>
@@ -164,16 +130,30 @@
                                         <p>Price: <span id="price">N/A</span></p>
                                         <p>In Stock: <span id="stock">N/A</span></p>
                                         <p>Sold: <span id="sold">N/A</span></p>
+                                        <div class="d-flex align-items-center mt-3">
+                                            <div class="add-cart-wrapper">
+                                                <div class="quantity-wrapper">
+                                                    <button class="qty-btn minus">−</button>
+                                                    <input type="number" id="cart-quantity" class="qty-input" value="1" min="1">
+                                                    <button class="qty-btn plus">+</button>
+                                                </div>
+                                                <button id="add-to-cart-btn" class="cart-btn" disabled>
+                                                    Thêm vào giỏ hàng
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
 
                                     <!-- Hidden variation data with image URLs -->
                                     <div class="variation-details" style="display: none;">
                                         <c:forEach items="${product.variations}" var="variation">
                                             <div class="variation-item"
+                                                 data-variation-id="${variation.variationId}"
                                                  data-color="${variation.colorId}"
                                                  data-size="${variation.sizeId}"
-                                                 data-image="${variation.imageUrl}">
-                                                <span class="price-data">${variation.sell_price}</span>
+                                                 data-image="${variation.imageUrl}"
+                                                 data-cart-qty="${cartQuantities[variation.variationId] != null ? cartQuantities[variation.variationId] : 0}">
+                                            <span class="price-data">${variation.sell_price}</span>
                                                 <span class="stock-data">${variation.qtyInStock}</span>
                                                 <span class="sold-data">${variation.sold}</span>
                                                 <span class="image-data">${variation.imageUrl}</span>
@@ -269,115 +249,6 @@
     const contextPath = "${pageContext.request.contextPath}";
 </script>
 <script src="${pageContext.request.contextPath}/js/search.js"></script>
-<script>
-    let selectedColor = null;
-    let selectedSize = null;
-    const defaultImageUrl = '${not empty product.variations ? product.variations[0].imageUrl : ""}';
-
-    document.querySelectorAll('.color-option').forEach(button => {
-        button.addEventListener('click', function () {
-            document.querySelectorAll('.color-option').forEach(btn => btn.classList.remove('selected'));
-            this.classList.add('selected');
-            selectedColor = this.dataset.color;
-            updateVariationInfo();
-            updateProductImages();
-        });
-    });
-
-    document.querySelectorAll('.size-option').forEach(button => {
-        button.addEventListener('click', function () {
-            document.querySelectorAll('.size-option').forEach(btn => btn.classList.remove('selected'));
-            this.classList.add('selected');
-            selectedSize = this.dataset.size;
-            updateVariationInfo();
-            updateProductImages();
-        });
-    });
-
-    function formatNumber(num) {
-        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    }
-
-    function formatPrice(price) {
-        const numPrice = parseFloat(price);
-        return isNaN(numPrice) ? 'N/A' : formatNumber(numPrice) + ' VND';
-    }
-
-    function updateVariationInfo() {
-        const variationInfo = document.getElementById('variation-info');
-        variationInfo.style.display = 'block';
-        let found = false;
-
-        document.querySelectorAll('.variation-item').forEach(item => {
-            const color = item.dataset.color;
-            const size = item.dataset.size;
-            const colorMatch = !selectedColor || color === selectedColor;
-            const sizeMatch = !selectedSize || size === selectedSize;
-
-            if (colorMatch && sizeMatch) {
-                document.getElementById('price').textContent = formatPrice(item.querySelector('.price-data').textContent);
-                document.getElementById('stock').textContent = formatNumber(item.querySelector('.stock-data').textContent);
-                document.getElementById('sold').textContent = formatNumber(item.querySelector('.sold-data').textContent);
-                found = true;
-            }
-        });
-
-        if (!found) {
-            ['price', 'stock', 'sold'].forEach(id => document.getElementById(id).textContent = 'N/A');
-        }
-    }
-
-    function updateProductImages() {
-        const carouselImg = document.querySelector('#carousel-${product.id} .carousel-inner .item img');
-        let found = false;
-        let newImageUrl = null;
-
-        document.querySelectorAll('.variation-item').forEach(item => {
-            const color = item.dataset.color;
-            const size = item.dataset.size;
-            const colorMatch = !selectedColor || color === selectedColor;
-            const sizeMatch = !selectedSize || size === selectedSize;
-
-            if (colorMatch && sizeMatch && !found) {
-                const imgText = item.querySelector('.image-data')?.textContent?.trim();
-                if (imgText) {
-                    newImageUrl = imgText;
-                    found = true;
-                }
-            }
-        });
-
-        if (carouselImg) {
-            carouselImg.src = contextPath + (found && newImageUrl ? newImageUrl : defaultImageUrl);
-        }
-    }
-
-    function resetSelection() {
-        selectedColor = null;
-        selectedSize = null;
-        document.querySelectorAll('.color-option.selected, .size-option.selected').forEach(btn => btn.classList.remove('selected'));
-        document.getElementById('variation-info').style.display = 'none';
-
-        const carouselImg = document.querySelector('#carousel-${product.id} .carousel-inner .item img');
-        if (defaultImageUrl && carouselImg) {
-            carouselImg.src = contextPath + defaultImageUrl;
-        }
-    }
-
-    document.addEventListener('DOMContentLoaded', function () {
-        document.querySelectorAll('.view-toggle').forEach(toggle => {
-            toggle.addEventListener('click', function () {
-                const parent = toggle.closest('p');
-                const shortText = parent.querySelector('.short-text');
-                const fullText = parent.querySelector('.full-text');
-                const isExpanded = fullText.style.display !== 'none';
-
-                fullText.style.display = isExpanded ? 'none' : 'inline';
-                shortText.style.display = isExpanded ? 'inline' : 'none';
-                toggle.textContent = isExpanded ? 'View More' : 'View Less';
-            });
-        });
-    });
-</script>
+<script src="${pageContext.request.contextPath}/js/product-detail.js"></script>
 </body>
 </html>

@@ -55,8 +55,21 @@
                 <% if ("subcategory".equals(view)) { %>
                 <jsp:include page="../category/list.jsp" />
                 <% } %>
+                    <% if ("category".equals(view)) { %>
+                    <jsp:include page="../category/category-list.jsp" />
+                    <% } %>
 
-                <% if ("product".equals(view)) { %>
+                    <% if ("blog-category".equals(view)) { %>
+                    <jsp:include page="../blog/blog-category.jsp" />
+                    <% } %>
+                    <% if ("blog-manage".equals(view)) { %>
+                    <jsp:include page="../blog/blog-manage.jsp" />
+                    <% } %>
+                    <% if ("blog-form".equals(view)) { %>
+                    <jsp:include page="../blog/blog-form.jsp" />
+                    <% } %>
+
+                    <% if ("product".equals(view)) { %>
                 <jsp:include page="../manage/product-manage.jsp" />
                 <% } %>
             </div>

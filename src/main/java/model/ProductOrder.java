@@ -25,6 +25,44 @@ public class ProductOrder {
         this.addressId = addressId;
         this.couponId = couponId;
     }
+    
+    private String customerName;
+    private String shipperName;
+    private String addressDisplay;
+    private String couponCode;
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+
+    public String getShipperName() {
+        return shipperName;
+    }
+
+    public void setShipperName(String shipperName) {
+        this.shipperName = shipperName;
+    }
+
+    public String getAddressDisplay() {
+        return addressDisplay;
+    }
+
+    public void setAddressDisplay(String addressDisplay) {
+        this.addressDisplay = addressDisplay;
+    }
+
+    public String getCouponCode() {
+        return couponCode;
+    }
+
+    public void setCouponCode(String couponCode) {
+        this.couponCode = couponCode;
+    }
+
 
     // Getters and setters
     public int getOrderId() {
