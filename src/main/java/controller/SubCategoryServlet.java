@@ -93,6 +93,7 @@ public class SubCategoryServlet extends HttpServlet {
                     req.getSession().setAttribute("updatedSubCategoryId", id);
                 }
                 redirectUrl += currentPage;
+                redirectWithFilter = false;
                 break;
             case "delete":
                 if (subDao.hasProductDependency(id)) {

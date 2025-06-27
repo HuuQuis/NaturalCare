@@ -55,7 +55,7 @@
                 <% if ("subcategory".equals(view)) { %>
                 <jsp:include page="../category/list.jsp" />
                 <% } %>
-                    <% if ("category".equals(view)) { %>
+                    <% if ("productCategory".equals(view)) { %>
                     <jsp:include page="../category/category-list.jsp" />
                     <% } %>
 
