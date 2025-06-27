@@ -87,5 +87,12 @@
                 </ul>
             </div>
         </li>
+        
+        <li class="nav-item">
+            <a class="nav-link" href="${pageContext.request.contextPath}/expertListManage">
+                <i class="mdi mdi-format-list-bulleted menu-icon"></i>
+                <span class="menu-title">Expert Management</span>
+            </a>
+        </li>
     </ul>
 </nav>

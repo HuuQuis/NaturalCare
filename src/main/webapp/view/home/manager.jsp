@@ -68,6 +68,11 @@
                     <% if ("blog-form".equals(view)) { %>
                     <jsp:include page="../blog/blog-form.jsp" />
                     <% } %>
+                    
+                    <% if ("expert-skill".equals(view)) { %>
+                        <jsp:include page="../manage/expert-management.jsp" />
+                    <% } %>
+
 
                     <% if ("product".equals(view)) { %>
                 <jsp:include page="../manage/product-manage.jsp" />
