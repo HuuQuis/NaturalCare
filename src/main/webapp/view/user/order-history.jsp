@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Order Management | Nature Care</title>
+  <title>Order History | Nature Care</title>
   <link href="${pageContext.request.contextPath}/css/bootstrap.min.css" rel="stylesheet">
   <link href="${pageContext.request.contextPath}/css/main.css" rel="stylesheet">
   <style>
@@ -187,16 +187,10 @@
 
 <div class="container">
   <div class="staff-dashboard">
-    <!-- Sidebar -->
-    <div class="staff-sidebar">
-      <h3>Staff Dashboard</h3>
-      <a href="${pageContext.request.contextPath}/orderManagement">📦 Order Management</a>
-      <a href="${pageContext.request.contextPath}/userManagement">👥 Manage Users</a>
-    </div>
 
     <!-- Nội dung chính -->
     <div class="staff-content">
-      <h1>Order Management</h1>
+      <h1>Order History</h1>
 
       <form method="get" class="filter-section">
         <input type="text" name="search" placeholder="Search..." value="${search}">
@@ -222,49 +216,38 @@
       <table>
         <thead>
           <tr>
-            <th>No.</th>
             <th>Order ID</th>
-            <th>Customer</th>
             <th>Date</th>
             <th>Status</th>
-            <th>Note</th>
             <th>Shipper</th>
             <th>Address</th>
             <th>Coupon</th>
-            <th>Actions</th>
+            <th>Note</th>
           </tr>
         </thead>
         <tbody>
-          <c:forEach var="order" items="${orders}" varStatus="loop">
+          <c:forEach var="order" items="${orders}">
             <tr>
-              <td>${loop.index + 1}</td>
               <td>
-                <a href="OrderDetail?orderId=${order.orderId}">
+                <a href="OrderHistoryDetail?orderId=${order.orderId}">
                   ${order.orderId}
                 </a>
               </td>
-              <td>${order.customerName}</td>
               <td>${order.createdAt}</td>
               <td>
                 <c:choose>
                   <c:when test="${order.statusId == 1}">Pending</c:when>
                   <c:when test="${order.statusId == 2}">Processing</c:when>
+                  <c:when test="${order.statusId == 3}">Shipped</c:when>
+                  <c:when test="${order.statusId == 4}">Completed</c:when>
+                  <c:when test="${order.statusId == 5}">Cancelled</c:when>
                   <c:otherwise>${order.statusId}</c:otherwise>
                 </c:choose>
               </td>
+              <td>${order.shipperName}</td>
+              <td>${order.addressDisplay}</td>
+              <td>${order.couponCode}</td>
               <td>${order.note}</td>
-                <td>${order.shipperName}</td>
-                <td>${order.addressDisplay}</td>
-                <td>${order.couponCode}</td>
-              <td class="actions">
-                <c:if test="${order.statusId == 1 || order.statusId == 2}">
-                  <form method="post" style="display:inline;">
-                    <input type="hidden" name="action" value="delete">
-                    <input type="hidden" name="orderId" value="${order.orderId}">
-                    <button type="submit" onclick="return confirm('Delete this order?')">Delete</button>
-                  </form>
-                </c:if>
-              </td>
             </tr>
           </c:forEach>
         </tbody>
@@ -273,7 +256,7 @@
       <div class="pagination">
         <c:forEach var="i" begin="1" end="${totalPages}">
           <div class="${i == currentPage ? 'active' : ''}">
-            <a href="orderManagement?page=${i}&search=${search}&status=${status}&fromDate=${fromDate}&toDate=${toDate}">${i}</a>
+            <a href="OrderHistory?userId=${userId}&page=${i}&search=${search}&status=${status}&fromDate=${fromDate}&toDate=${toDate}">${i}</a>
           </div>
         </c:forEach>
       </div>

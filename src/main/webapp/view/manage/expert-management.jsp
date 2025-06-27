@@ -5,10 +5,60 @@
 <head>
   <meta charset="UTF-8">
   <title>Expert Management</title>
-  <style>
+  
+</head>
+<body>
+<h2>Expert Management</h2>
+
+<form method="get" class="filter-section">
+  <input type="text" name="search" placeholder="Find by Name" value="${search}">
+  <input type="text" name="skill" placeholder="Find by Skill" value="${skill}">
+  <button type="submit">Filter</button>
+  <a href="expertListManage" class="reset">Delete filter</a>
+  <a href="expertInsert">Add new expert</a>
+</form>
+
+<c:if test="${not empty message}">
+  <div class="message-success">${message}</div>
+</c:if>
+<c:if test="${not empty error}">
+  <div class="message-error">${error}</div>
+</c:if>
+
+<table>
+  <thead>
+    <tr>
+      <th>No.</th>
+      <th>Expert ID</th>
+      <th>Expert Name</th>
+      <th>Skill ID</th>
+      <th>Skill Name</th>
+    </tr>
+  </thead>
+  <tbody>
+    <c:forEach var="expert" items="${experts}" varStatus="loop">
+      <tr>
+        <td>${loop.index + 1}</td>
+        <td><a href="expertDetail?user_id=${expert.getUser_id()}">#${expert.getUser_id()}</a></td>
+        <td>${expert.getUser_name()}</td>
+        <td>${expert.getSkill_id()}</td>
+        <td>${expert.getSkill_name()}</td>
+      </tr>
+    </c:forEach>
+  </tbody>
+</table>
+
+<div class="pagination">
+  <c:forEach var="i" begin="1" end="${totalPages}">
+    <div class="${i == currentPage ? 'active' : ''}">
+      <a href="expertListManage?page=${i}&search=${search}&skill=${skill}">${i}</a>
+    </div>
+  </c:forEach>
+</div>
+</body>
+<style>
     body {
       font-family: Arial, sans-serif;
-      margin: 20px;
       background-color: #f9f9f9;
     }
 
@@ -137,55 +187,4 @@
       font-weight: bold;
     }
   </style>
-</head>
-<body>
-<h2>Expert Management</h2>
-
-<form method="get" class="filter-section">
-  <input type="text" name="search" placeholder="Find by Name" value="${search}">
-  <input type="text" name="skill" placeholder="Find by Skill" value="${skill}">
-  <button type="submit">Filter</button>
-  <a href="expertListManage" class="reset">Delete filter</a>
-  <a href="expertInsert">Add new expert</a>
-</form>
-
-<c:if test="${not empty message}">
-  <div class="message-success">${message}</div>
-</c:if>
-<c:if test="${not empty error}">
-  <div class="message-error">${error}</div>
-</c:if>
-
-<table>
-  <thead>
-    <tr>
-      <th>No.</th>
-      <th>Expert ID</th>
-      <th>Expert Name</th>
-      <th>Skill ID</th>
-      <th>Skill Name</th>
-    </tr>
-  </thead>
-  <tbody>
-    <c:forEach var="expert" items="${experts}" varStatus="loop">
-      <tr>
-        <td>${loop.index + 1}</td>
-        <td><a href="expertDetail?user_id=${expert.getUser_id()}">#${expert.getUser_id()}</a></td>
-        <td>${expert.getUser_name()}</td>
-        <td>${expert.getSkill_id()}</td>
-        <td>${expert.getSkill_name()}</td>
-      </tr>
-    </c:forEach>
-  </tbody>
-</table>
-
-<div class="pagination">
-  <c:forEach var="i" begin="1" end="${totalPages}">
-    <div class="${i == currentPage ? 'active' : ''}">
-      <a href="expertListManage?page=${i}&search=${search}&skill=${skill}">${i}</a>
-    </div>
-  </c:forEach>
-</div>
-
-</body>
 </html>

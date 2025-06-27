@@ -27,4 +27,20 @@ public class CouponDAO extends DBContext {
         }
         return list;
     }
+    
+    public String getCouponCodeById(int couponId) {
+        String sql = "SELECT code FROM coupon WHERE coupon_id = ?";
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setInt(1, couponId);
+            rs = stm.executeQuery();
+            if (rs.next()) {
+                return rs.getString("code");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
 }
