@@ -63,6 +63,7 @@ public class LoginServlet extends HttpServlet {
             }
         } else {
             request.setAttribute("error", "Invalid username or password.");
+            request.setAttribute("username", username);
             request.getRequestDispatcher("view/login/login.jsp").forward(request, response);
         }
     }
