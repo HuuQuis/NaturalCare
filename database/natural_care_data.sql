@@ -201,7 +201,15 @@ INSERT INTO product_variation (product_id, product_image, color_id, size_id, pri
 VALUES (7, '/images/product/lipstick-pink.jpg',2, null, 100000,200000, 100),
        (7, '/images/product/lipstick-red.jpg',1, null, 90000,190000, 100),
        (9, '/images/product/foundation-diro.jpg', 3, null, 110000,210000, 100),
-       (9, '/images/product/foundation-este.jpg', 2, null, 150000,250000, 100);
+       (9, '/images/product/foundation-este.jpg', 2, null, 150000,250000, 100),
+       (6, '/images/product/lip-balm-shea.jpg', NULL, NULL, 120000, 250000, 80),          
+        (6, '/images/product/lip-balm-aloe.jpg', NULL, NULL, 95000, 190000, 70),           
+        (8, '/images/product/lip-scrub-mint.jpg', NULL, NULL, 85000, 200000, 60),          
+        (8, '/images/product/lip-scrub-sugar.jpg', NULL, NULL, 95000, 210000, 60),         
+        (9, '/images/product/foundation-medium.jpg', 1, NULL, 105000, 210000, 100),        
+        (10, '/images/product/peach-blush.jpg', NULL, NULL, 100000, 200000, 90),           
+        (11, '/images/product/shampoo-herbal.jpg', NULL, NULL, 90000, 190000, 100),        
+        (12, '/images/product/conditioner-argan.jpg', NULL, NULL, 95000, 190000, 100);
 
 
 INSERT INTO blog (blog_title, blog_description, blog_category_id) VALUES
