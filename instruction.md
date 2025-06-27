@@ -72,14 +72,9 @@ SOURCE path/to/NaturalCare/database/natural_care_schema.sql;
 
 ### Bước 2: Import dữ liệu mẫu
 ```sql
--- Import dữ liệu cơ bản
+-- Import dữ liệu 
 SOURCE path/to/NaturalCare/database/natural_care_data.sql;
 
--- Import dữ liệu expert management
-SOURCE path/to/NaturalCare/database/expert_management_data.sql;
-
--- Import dữ liệu order management
-SOURCE path/to/NaturalCare/database/order_management_data.sql;
 ```
 
 ### Bước 3: Tạo user database (tùy chọn)
@@ -221,9 +216,7 @@ Không thể kết nối CSDL!
 
 ### Cấu trúc database:
 - **natural_care_schema.sql:** Tạo bảng và cấu trúc
-- **natural_care_data.sql:** Dữ liệu sản phẩm, danh mục
-- **expert_management_data.sql:** Dữ liệu chuyên gia  
-- **order_management_data.sql:** Dữ liệu đơn hàng
+- **natural_care_data.sql:** Dữ liệu mẫu
 
 ### Công nghệ sử dụng:
 - **Backend:** Java Servlet, JSP, JSTL
