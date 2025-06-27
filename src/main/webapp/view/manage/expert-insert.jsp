@@ -5,6 +5,50 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Expert Insert</title>
+    
+</head>
+<body>
+    <h3>Add New Expert</h3>
+    <form method="post" action="expertDetail">
+        <input type="hidden" name="action" value="add" />
+
+        <label for="username_new">Username:</label>
+        <input type="text" id="username_new" name="username" required/>
+
+        <label for="password_new">Password:</label>
+        <input type="password" id="password_new" name="password" required/>
+
+        <label for="first_name_new">First Name:</label>
+        <input type="text" id="first_name_new" name="first_name" required/>
+
+        <label for="last_name_new">Last Name:</label>
+        <input type="text" id="last_name_new" name="last_name" required/>
+
+        <label for="email_new">Email:</label>
+        <input type="email" id="email_new" name="email" required/>
+
+        <label for="phone_number_new">Phone Number:</label>
+        <input type="tel" id="phone_number_new" name="phone_number" required/>
+
+        <label for="skill_id_new">Select Skill:</label>
+        
+        <select name="skill_id" id="skill_id_update" required>
+            <c:forEach var="skill" items="${allSkills}">
+    <option value="${skill.getSkillId()}">${skill.getSkillName()}</option>
+</c:forEach>
+                </select>
+
+        <button type="submit">Add Expert</button>
+    <c:if test="${not empty error}">
+    <p style="color: red;">${error}</p>
+</c:if>
+<c:if test="${not empty message}">
+    <p style="color: green;">${message}</p>
+</c:if>
+    </form>
+
+    <p><a href="expertListManage">Back to Expert List</a></p>
+    
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -83,47 +127,5 @@
             color: #27ae60;
         }
     </style>
-</head>
-<body>
-    <h3>Add New Expert</h3>
-    <form method="post" action="expertDetail">
-        <input type="hidden" name="action" value="add" />
-
-        <label for="username_new">Username:</label>
-        <input type="text" id="username_new" name="username" required/>
-
-        <label for="password_new">Password:</label>
-        <input type="password" id="password_new" name="password" required/>
-
-        <label for="first_name_new">First Name:</label>
-        <input type="text" id="first_name_new" name="first_name" required/>
-
-        <label for="last_name_new">Last Name:</label>
-        <input type="text" id="last_name_new" name="last_name" required/>
-
-        <label for="email_new">Email:</label>
-        <input type="email" id="email_new" name="email" required/>
-
-        <label for="phone_number_new">Phone Number:</label>
-        <input type="tel" id="phone_number_new" name="phone_number" required/>
-
-        <label for="skill_id_new">Select Skill:</label>
-        
-        <select name="skill_id" id="skill_id_update" required>
-            <c:forEach var="skill" items="${allSkills}">
-    <option value="${skill.getSkillId()}">${skill.getSkillName()}</option>
-</c:forEach>
-                </select>
-
-        <button type="submit">Add Expert</button>
-    <c:if test="${not empty error}">
-    <p style="color: red;">${error}</p>
-</c:if>
-<c:if test="${not empty message}">
-    <p style="color: green;">${message}</p>
-</c:if>
-    </form>
-
-    <p><a href="expertListManage">Back to Expert List</a></p>
 </body>
 </html>
