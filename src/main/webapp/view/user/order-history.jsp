@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Order Management | Nature Care</title>
+  <title>Order History | Nature Care</title>
   <link href="${pageContext.request.contextPath}/css/bootstrap.min.css" rel="stylesheet">
   <link href="${pageContext.request.contextPath}/css/main.css" rel="stylesheet">
   <style>
@@ -187,15 +187,10 @@
 
 <div class="container">
   <div class="staff-dashboard">
-    <!-- Sidebar -->
-    <div class="staff-sidebar">
-      <h3>Staff Dashboard</h3>
-      <a href="${pageContext.request.contextPath}/orderManagement">📦 Order Management</a>
-    </div>
 
     <!-- Nội dung chính -->
     <div class="staff-content">
-      <h1>Order Management</h1>
+      <h1>Order History</h1>
 
       <form method="get" class="filter-section">
         <input type="text" name="search" placeholder="Search..." value="${search}">
@@ -233,7 +228,11 @@
         <tbody>
           <c:forEach var="order" items="${orders}">
             <tr>
-              <td>${order.orderId}</td>
+              <td>
+                <a href="OrderHistoryDetail?orderId=${order.orderId}">
+                  ${order.orderId}
+                </a>
+              </td>
               <td>${order.createdAt}</td>
               <td>
                 <c:choose>
