@@ -32,8 +32,10 @@
                         <option value="${c.id}" ${param.productCategoryId == c.id ? 'selected' : ''}>${c.name}</option>
                     </c:forEach>
                 </select>
-                <input type="text" name="search" class="form-control ms-auto" placeholder="Search by Sub Category name..." style="max-width: 300px;" value="${param.search}"/>
+                &nbsp;&nbsp;
                 <button class="btn btn-primary" type="submit">Filter</button>
+                &nbsp;&nbsp;
+                <input type="text" name="search" class="form-control ms-auto" placeholder="Search by Sub Category name..." style="max-width: 300px;" value="${param.search}"/>
             </div>
         </form>
 
