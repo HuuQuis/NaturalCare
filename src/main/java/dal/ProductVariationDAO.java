@@ -163,4 +163,18 @@ public class ProductVariationDAO extends DBContext{
 
         return false;
     }
+
+    public void updateStockAfterOrder(int variationId, int quantityOrdered) {
+        sql = "UPDATE product_variation SET qty_in_stock = qty_in_stock - ?, sold = sold + ? WHERE variation_id = ?";
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setInt(1, quantityOrdered);
+            stm.setInt(2, quantityOrdered);
+            stm.setInt(3, variationId);
+            stm.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }

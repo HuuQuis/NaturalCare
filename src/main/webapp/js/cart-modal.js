@@ -166,7 +166,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             document.getElementById("cart-items").innerHTML = `<div class="cart-spinner"></div>`;
             setTimeout(loadCartItems, 500);
-        }, 500);
+        }, 1500);
     });
 
     cartIcon.addEventListener("mouseleave", function () {
