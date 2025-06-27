@@ -1,12 +1,12 @@
 package controller;
 
-import dal.ProductOrderDAO;
+import dal.*;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import model.ProductOrder;
+import model.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -32,6 +32,23 @@ public class OrderManagementServlet extends HttpServlet {
         int totalPages = (int) Math.ceil((double) totalOrders / PAGE_SIZE);
 
         List<ProductOrder> orders = orderDAO.getOrdersWithPagination(search, status, fromDate, toDate, page, PAGE_SIZE);
+        
+        UserDAO userDAO = new UserDAO();
+        CouponDAO couponDAO = new CouponDAO();
+        AddressDAO addressDAO = new AddressDAO();
+
+        for (ProductOrder order : orders) {
+            order.setCustomerName(userDAO.getUserNameById(order.getUserId()));
+
+            if (order.getShipperId() != null && order.getShipperId() != 0)
+                order.setShipperName(userDAO.getUserNameById(order.getShipperId()));
+
+            if (order.getCouponId() != null && order.getCouponId() != 0)
+                order.setCouponCode(couponDAO.getCouponCodeById(order.getCouponId()));
+
+            if (order.getAddressId() != 0)
+                order.setAddressDisplay(addressDAO.getAddressDisplayById(order.getAddressId()));
+        }
 
         request.setAttribute("orders", orders);
         request.setAttribute("totalPages", totalPages);

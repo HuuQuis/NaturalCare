@@ -403,6 +403,30 @@ public class AddressDAO extends DBContext {
 
         return list;
     }
+    
+    public String getAddressDisplayById(int addressId) {
+        String sql = "SELECT a.detail, w.name as ward_name, d.name as district_name, p.name as province_name " +
+                     "FROM address a " +
+                     "LEFT JOIN ward w ON a.ward_code = w.code " +
+                     "LEFT JOIN district d ON a.district_code = d.code " +
+                     "LEFT JOIN province p ON a.province_code = p.code " +
+                     "WHERE a.address_id = ?";
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setInt(1, addressId);
+            rs = stm.executeQuery();
+            if (rs.next()) {
+                return rs.getString("detail") + ", " +
+                       rs.getString("ward_name") + ", " +
+                       rs.getString("district_name") + ", " +
+                       rs.getString("province_name");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
 
 
 

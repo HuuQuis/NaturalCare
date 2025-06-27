@@ -243,7 +243,7 @@
                   ${order.orderId}
                 </a>
               </td>
-              <td>${order.userId}</td>
+              <td>${order.customerName}</td>
               <td>${order.createdAt}</td>
               <td>
                 <c:choose>
@@ -253,9 +253,9 @@
                 </c:choose>
               </td>
               <td>${order.note}</td>
-              <td>${order.shipperId}</td>
-              <td>${order.addressId}</td>
-              <td>${order.couponId}</td>
+                <td>${order.shipperName}</td>
+                <td>${order.addressDisplay}</td>
+                <td>${order.couponCode}</td>
               <td class="actions">
                 <c:if test="${order.statusId == 1 || order.statusId == 2}">
                   <form method="post" style="display:inline;">
