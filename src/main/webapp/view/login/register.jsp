@@ -121,16 +121,106 @@
 
 <!--/Footer-->
 <script>
-    // Main validation function for this form
     function validateForm() {
-        return validateRegistrationForm('registerForm');
+        const form = document.getElementById('registerForm');
+
+        const inputs = {
+            username: form.querySelector('input[name="username"]'),
+            password: form.querySelector('input[name="password"]'),
+            confirmPassword: form.querySelector('input[name="password-confirm"]'),
+            firstName: form.querySelector('input[name="firstName"]'),
+            lastName: form.querySelector('input[name="lastName"]'),
+            email: form.querySelector('input[name="email"]'),
+            phone: form.querySelector('input[name="phone"]'),
+        };
+
+        const errors = {
+            username: document.querySelector('#usernameError'),
+            password: document.querySelector('#passwordError'),
+            confirmPassword: document.querySelector('#confirmPasswordError'),
+            firstName: document.querySelector('#firstNameError'),
+            lastName: document.querySelector('#lastNameError'),
+            email: document.querySelector('#emailError'),
+            phone: document.querySelector('#phoneError'),
+        };
+
+        // Clear all old errors
+        Object.values(errors).forEach(error => error.textContent = '');
+
+        let hasError = false;
+        const errorMessages = [];
+
+        // Basic empty check
+        for (const [key, input] of Object.entries(inputs)) {
+            if (input.value.trim() === '') {
+                errorMessages.push({field: errors[key], message: capitalize(key) + ' cannot be empty!'});
+                hasError = true;
+            }
+        }
+
+        // Username & password checks
+        if (/\s/.test(inputs.username.value)) {
+            errorMessages.push({field: errors.username, message: 'Username cannot contain spaces!'});
+            hasError = true;
+        }
+        if (inputs.username.value.length < 6) {
+            errorMessages.push({field: errors.username, message: 'Username must be at least 6 characters!'});
+            hasError = true;
+        }
+
+        if (/\s/.test(inputs.password.value)) {
+            errorMessages.push({field: errors.password, message: 'Password cannot contain spaces!'});
+            hasError = true;
+        }
+        if (inputs.password.value.length < 6) {
+            errorMessages.push({field: errors.password, message: 'Password must be at least 6 characters!'});
+            hasError = true;
+        }
+
+        // Password confirmation
+        if (inputs.password.value !== inputs.confirmPassword.value) {
+            errorMessages.push({field: errors.confirmPassword, message: 'Passwords do not match!'});
+            hasError = true;
+        }
+
+        // Name length
+        if (inputs.firstName.value.length < 2) {
+            errorMessages.push({field: errors.firstName, message: 'First Name must be at least 2 characters!'});
+            hasError = true;
+        }
+        if (inputs.lastName.value.length < 2) {
+            errorMessages.push({field: errors.lastName, message: 'Last Name must be at least 2 characters!'});
+            hasError = true;
+        }
+
+        // Email format
+        const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!emailPattern.test(inputs.email.value)) {
+            errorMessages.push({field: errors.email, message: 'Please enter a valid email address!'});
+            hasError = true;
+        }
+
+        // Phone format: starts with 0, 10 digits
+        const phonePattern = /^0\d{9}$/;
+        if (!phonePattern.test(inputs.phone.value)) {
+            errorMessages.push({field: errors.phone, message: 'Phone must start with 0 and be 10 digits!'});
+            hasError = true;
+        }
+
+        // Show all collected errors
+        if (hasError) {
+            errorMessages.forEach(error => {
+                error.field.textContent = error.message;
+            });
+            return false;
+        } else {
+            form.submit();
+        }
     }
 
-    // Optional: Enable real-time validation
-    // Uncomment the line below to enable validation on blur events
-    // document.addEventListener('DOMContentLoaded', function() {
-    //     enableRealTimeValidation('registerForm');
-    // });
+    function capitalize(str) {
+        return str.charAt(0).toUpperCase() + str.slice(1);
+    }
 </script>
 
 
@@ -140,6 +230,5 @@
 <script src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>
 <script src="${pageContext.request.contextPath}/js/jquery.prettyPhoto.js"></script>
 <script src="${pageContext.request.contextPath}/js/main.js"></script>
-<script src="${pageContext.request.contextPath}/js/validate.js"></script>
 </body>
 </html>
