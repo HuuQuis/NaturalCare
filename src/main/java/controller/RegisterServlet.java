@@ -1,7 +1,9 @@
 package controller;
 
 import java.io.*;
+import java.security.SecureRandom;
 
+import constant.UtilsConstant;
 import dal.UserDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.*;
@@ -10,6 +12,8 @@ import utils.EmailUtils;
 
 @WebServlet(name = "RegisterServlet", urlPatterns = {"/register"})
 public class RegisterServlet extends HttpServlet {
+    private final UserDAO userDAO = new UserDAO();
+    private final SecureRandom secureRandom = new SecureRandom();
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
@@ -31,50 +35,68 @@ public class RegisterServlet extends HttpServlet {
         HttpSession session = request.getSession();
         String otpParam = request.getParameter("otp");
 
-        //Validate exist OTP
         if (otpParam != null) {
-            String sessionOtp = (String) session.getAttribute("otp");
-            //OTP expired check
-            long otpTime = session.getAttribute("otpTime") != null ? (long) session.getAttribute("otpTime") : 0;
-            long now = System.currentTimeMillis();
+            // Verify OTP
+            verifyOTP(request, response, session, otpParam);
+        } else {
+            // Register logic
+            handleRegister(request, response, session);
+        }
+    }
 
-            //OTP null or after 5 mins
-            if (sessionOtp == null || now - otpTime > 5 * 60 * 1000) {
-                request.setAttribute("error", "OTP expired. Please register again.");
-                session.invalidate();
-                request.getRequestDispatcher("view/login/register.jsp").forward(request, response);
-                return;
-            }
+    private void verifyOTP(HttpServletRequest request, HttpServletResponse response, HttpSession session, String otpParam) throws ServletException, IOException {
+        // get otp
+        String sessionOtp = (String) session.getAttribute("otp");
+        Long otpTime = (Long) session.getAttribute("otpTime");
+        Integer otpAttempts = (Integer) session.getAttribute("otpAttempts");
 
-            //Invalid OTP
-            if (!otpParam.equals(sessionOtp)) {
-                request.setAttribute("error", "Invalid OTP. Please try again.");
-                request.getRequestDispatcher("view/login/otp.jsp").forward(request, response);
-                return;
-            }
+        if (otpAttempts == null) {
+            otpAttempts = 0; // Initialize attempts if not set
+        }
 
-            // OTP valid -> get user details from session
-            String username = (String) session.getAttribute("reg_username");
-            String password = (String) session.getAttribute("reg_password");
-            String email = (String) session.getAttribute("reg_email");
-            String firstName = (String) session.getAttribute("reg_firstName");
-            String lastName = (String) session.getAttribute("reg_lastName");
-            String phone = (String) session.getAttribute("reg_phone");
-
-            // Back to register logic
-            UserDAO userDAO = new UserDAO();
-            try {
-                userDAO.registerUser(username, password, email, firstName, lastName, phone);
-                session.invalidate();
-                request.getRequestDispatcher("view/login/login.jsp").forward(request, response);
-            } catch (Exception e) {
-                e.printStackTrace();
-                request.setAttribute("error", "Registration failed. Please try again.");
-                request.getRequestDispatcher("view/login/register.jsp").forward(request, response);
-            }
+        // check otp attempts
+        if (otpAttempts >= UtilsConstant.MAX_OTP_ATTEMPTS) {
+            request.setAttribute("error", "Maximum OTP attempts exceeded! Please try again later.");
+            session.invalidate();
+            request.getRequestDispatcher("view/login/register.jsp").forward(request, response);
             return;
         }
 
+        // expired otp
+        if (!isValidOtp(sessionOtp, otpTime)) {
+            request.setAttribute("error", "Expired OTP! Please try again!");
+            session.invalidate();
+            request.getRequestDispatcher("view/login/register.jsp").forward(request, response);
+            return;
+        }
+
+        // invalid otp
+        if (!otpParam.equals(sessionOtp)) {
+            session.setAttribute("otpAttempts", otpAttempts + 1);
+            request.setAttribute("error", "Invalid OTP! Please try again!");
+            request.getRequestDispatcher("view/login/otp.jsp").forward(request, response);
+            return;
+        }
+
+        // valid OTP -> register user
+        String username = (String) session.getAttribute("reg_username");
+        String password = (String) session.getAttribute("reg_password");
+        String email = (String) session.getAttribute("reg_email");
+        String firstName = (String) session.getAttribute("reg_firstName");
+        String lastName = (String) session.getAttribute("reg_lastName");
+        String phone = (String) session.getAttribute("reg_phone");
+        try {
+            userDAO.registerUser(username, password, email, firstName, lastName, phone);
+            session.invalidate();
+            request.getRequestDispatcher("view/login/login.jsp").forward(request, response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("error", "Failed to register user! Please try again!");
+            request.getRequestDispatcher("view/login/register.jsp").forward(request, response);
+        }
+    }
+
+    private void handleRegister(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws ServletException, IOException {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
         String email = request.getParameter("email");
@@ -82,11 +104,9 @@ public class RegisterServlet extends HttpServlet {
         String lastName = request.getParameter("lastName");
         String phone = request.getParameter("phone");
 
-        UserDAO userDAO = new UserDAO();
-
-        // Check if username already exists
+        // existed user
         if (userDAO.checkUsernameExists(username)) {
-            request.setAttribute("error", "Username already exists.");
+            request.setAttribute("error", "This username already exists!");
             request.setAttribute("email", email);
             request.setAttribute("firstName", firstName);
             request.setAttribute("lastName", lastName);
@@ -95,10 +115,10 @@ public class RegisterServlet extends HttpServlet {
             return;
         }
 
-        // Check if email already exists
+        // existed email
         if (userDAO.checkEmail(email)) {
-            request.setAttribute("error", "Email is already registered.");
-            request.setAttribute("username", username);
+            request.setAttribute("error", "This email already exists!");
+            request.setAttribute("email", email);
             request.setAttribute("firstName", firstName);
             request.setAttribute("lastName", lastName);
             request.setAttribute("phone", phone);
@@ -106,16 +126,25 @@ public class RegisterServlet extends HttpServlet {
             return;
         }
 
-        String otp = String.valueOf((int) (Math.random() * 900000) + 100000); // 6-digit OTP
+        // create OTP
+        String otp = generateOtp();
         try {
-            EmailUtils.sendOTPEmail(email, otp);
+            // async send OTP email
+            new Thread(() -> {
+                try {
+                    EmailUtils.sendOTPEmail(email, otp);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }).start();
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("error", "Failed to send OTP. Please try again.");
+            request.setAttribute("error", "Failed to send OTP email! Please try again!");
             request.getRequestDispatcher("view/login/register.jsp").forward(request, response);
             return;
         }
 
+        // save user to session
         session.setAttribute("reg_username", username);
         session.setAttribute("reg_password", password);
         session.setAttribute("reg_email", email);
@@ -124,8 +153,20 @@ public class RegisterServlet extends HttpServlet {
         session.setAttribute("reg_phone", phone);
         session.setAttribute("otp", otp);
         session.setAttribute("otpTime", System.currentTimeMillis());
-
         request.getRequestDispatcher("view/login/otp.jsp").forward(request, response);
+    }
+
+    private boolean isValidOtp(String sessionOtp, Long otpTime) {
+        if (sessionOtp == null || otpTime == null) {
+            return false;
+        }
+        long now = System.currentTimeMillis();
+        return now - otpTime <= UtilsConstant.OTP_EXPIRY_TIME;
+    }
+
+    private String generateOtp() {
+        int otp = 100000 + secureRandom.nextInt(900000); //6-digit
+        return String.valueOf(otp);
     }
 
     @Override

@@ -33,7 +33,7 @@
     <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
 
     <style>
-        .error-message {
+        .error-message-red {
             color: #a94442;
             padding: 5px;
             border-radius: 4px;
@@ -68,34 +68,33 @@
                     <div class="col-sm-6">
                         Username:<input type="text" name="username" id="username" placeholder="Username" required
                                         minlength="6"/>
-                        <div class="error-message" id="usernameError"></div>
+                        <div class="error-message-red" id="usernameError"></div>
 
-                        Password:<input type="password" name="password" id="password" placeholder="Password" required
-                                        minlength="6"/>
-                        <div class="error-message" id="passwordError"></div>
+                        Password:<input type="password" name="password" id="password" placeholder="Password" required/>
+                        <div class="error-message-red" id="passwordError"></div>
 
                         Confirm Password:<input type="password" name="password-confirm" id="confirmPassword"
                                                 placeholder="Re-enter your password" required/>
-                        <div class="error-message" id="confirmPasswordError"></div>
+                        <div class="error-message-red" id="confirmPasswordError"></div>
                     </div>
                     <!-- Cột phải -->
                     <div class="col-sm-6">
                         First Name:<input type="text" name="firstName" id="firstName" placeholder="First Name" required
                                           value="${param.firstName}"/>
-                        <div class="error-message" id="firstNameError"></div>
+                        <div class="error-message-red" id="firstNameError"></div>
 
                         Last Name:<input type="text" name="lastName" id="lastName" placeholder="Last Name" required
                                          value="${param.lastName}"/>
-                        <div class="error-message" id="lastNameError"></div>
+                        <div class="error-message-red" id="lastNameError"></div>
 
                         Email:<input type="email" name="email" id="email" placeholder="Email Address" required
                                      value="${param.email}"/>
-                        <div class="error-message" id="emailError"></div>
+                        <div class="error-message-red" id="emailError"></div>
                     </div>
                 </div>
                 Phone:<input type="text" name="phone" id="phone" placeholder="Phone Number" required
                              value="${param.phone}"/>
-                <div class="error-message" id="phoneError"></div>
+                <div class="error-message-red" id="phoneError"></div>
 
                 <c:if test="${not empty error}">
                     <span style="color: #a94442; background-color: #f2dede; border: 1px solid #ebccd1; padding: 8px 15px; border-radius: 4px; display: table;">
@@ -103,7 +102,7 @@
                     </span>
                 </c:if>
 
-                <button style="margin-top: 20px" type="submit" class="btn btn-default">Signup</button>
+                <button style="margin-top: 20px" type="button" onclick="validateForm()" class="btn btn-default">Signup</button>
 
                 <hr>
                 <p class="message">Already registered? <a
@@ -122,18 +121,17 @@
 
 <!--/Footer-->
 <script>
-    document.querySelector('form')?.addEventListener('submit', function (event) {
-        event.preventDefault(); // Prevent form submission to handle validation
-
+    function validateForm() {
+        const form = document.getElementById('registerForm');
 
         const inputs = {
-            username: document.querySelector('input[name="username"]'),
-            password: document.querySelector('input[name="password"]'),
-            confirmPassword: document.querySelector('input[name="password-confirm"]'),
-            firstName: document.querySelector('input[name="firstName"]'),
-            lastName: document.querySelector('input[name="lastName"]'),
-            email: document.querySelector('input[name="email"]'),
-            phone: document.querySelector('input[name="phone"]'),
+            username: form.querySelector('input[name="username"]'),
+            password: form.querySelector('input[name="password"]'),
+            confirmPassword: form.querySelector('input[name="password-confirm"]'),
+            firstName: form.querySelector('input[name="firstName"]'),
+            lastName: form.querySelector('input[name="lastName"]'),
+            email: form.querySelector('input[name="email"]'),
+            phone: form.querySelector('input[name="phone"]'),
         };
 
         const errors = {
@@ -146,76 +144,85 @@
             phone: document.querySelector('#phoneError'),
         };
 
-        for (const [key, input] of Object.entries(inputs)) {
-            if (!input || !errors[key]) {
-                console.error(`${key} input or error element not found!`);
-                return;
-            }
-        }
-
+        // Clear all old errors
         Object.values(errors).forEach(error => error.textContent = '');
 
         let hasError = false;
         const errorMessages = [];
 
+        // Basic empty check
         for (const [key, input] of Object.entries(inputs)) {
             if (input.value.trim() === '') {
-                errorMessages.push({field: errors[key], message: `${key} cannot be empty!`});
+                errorMessages.push({field: errors[key], message: capitalize(key) + ' cannot be empty!'});
                 hasError = true;
             }
         }
 
-        // Check for whitespaces in username and password
+        // Username & password checks
         if (/\s/.test(inputs.username.value)) {
             errorMessages.push({field: errors.username, message: 'Username cannot contain spaces!'});
             hasError = true;
         }
+        if (inputs.username.value.length < 6) {
+            errorMessages.push({field: errors.username, message: 'Username must be at least 6 characters!'});
+            hasError = true;
+        }
+
         if (/\s/.test(inputs.password.value)) {
             errorMessages.push({field: errors.password, message: 'Password cannot contain spaces!'});
             hasError = true;
         }
-
-        // Check for minimum length of username and password
         if (inputs.password.value.length < 6) {
-            errorMessages.push({field: errors.password, message: 'Password must be at least 6 characters long!'});
+            errorMessages.push({field: errors.password, message: 'Password must be at least 6 characters!'});
             hasError = true;
         }
 
-        // Check for minimum length of first and last names
-        if (inputs.firstName.value.length < 2) {
-            errorMessages.push({field: errors.firstName, message: 'First Name must be at least 2 characters long!'});
-            hasError = true;
-        }
-        if (inputs.lastName.value.length < 2) {
-            errorMessages.push({field: errors.lastName, message: 'Last Name must be at least 2 characters long!'});
-            hasError = true;
-        }
-
-        // Check if passwords match
+        // Password confirmation
         if (inputs.password.value !== inputs.confirmPassword.value) {
             errorMessages.push({field: errors.confirmPassword, message: 'Passwords do not match!'});
             hasError = true;
         }
 
-        // Validate email and phone formats
+        // Name length
+        if (inputs.firstName.value.length < 2) {
+            errorMessages.push({field: errors.firstName, message: 'First Name must be at least 2 characters!'});
+            hasError = true;
+        }
+        if (inputs.lastName.value.length < 2) {
+            errorMessages.push({field: errors.lastName, message: 'Last Name must be at least 2 characters!'});
+            hasError = true;
+        }
+
+        // Email format
         const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         if (!emailPattern.test(inputs.email.value)) {
             errorMessages.push({field: errors.email, message: 'Please enter a valid email address!'});
             hasError = true;
         }
+
+        // Phone format: starts with 0, 10 digits
         const phonePattern = /^0\d{9}$/;
         if (!phonePattern.test(inputs.phone.value)) {
-            errorMessages.push({field: errors.phone, message: 'Phone number must start with 0 and be 10 digits long!'});
+            errorMessages.push({field: errors.phone, message: 'Phone must start with 0 and be 10 digits!'});
             hasError = true;
         }
 
+        // Show all collected errors
         if (hasError) {
-            errorMessages.forEach(error => error.field.textContent = error.message);
+            errorMessages.forEach(error => {
+                error.field.textContent = error.message;
+            });
+            return false;
         } else {
-            this.submit();
+            form.submit();
         }
-    });
+    }
+
+    function capitalize(str) {
+        return str.charAt(0).toUpperCase() + str.slice(1);
+    }
 </script>
+
 
 <script src="${pageContext.request.contextPath}/js/jquery.js"></script>
 <script src="${pageContext.request.contextPath}/js/price-range.js"></script>

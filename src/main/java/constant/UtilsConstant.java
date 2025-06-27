@@ -8,4 +8,8 @@ public class UtilsConstant {
     public static final int ITEMS_PER_PAGE = 10;
     public static final int MAX_VISIBLE_PAGES = 5;
 
+    public static final long OTP_EXPIRY_TIME = 5 * 60 * 1000;
+
+    public static final int MAX_OTP_ATTEMPTS = 3;
+
 }
