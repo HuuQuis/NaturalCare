@@ -411,6 +411,44 @@ public class ProductDAO extends DBContext {
         return productList;
     }
 
+    public List<Product> getTop10BestSellingProducts() {
+        List<Product> list = new ArrayList<>();
+        sql = "SELECT p.product_id, p.product_name, " +
+                "       SUM(pv.sold) AS total_sold, " +
+                "       MIN(pv.product_image) AS product_image, " +
+                "       MIN(pv.sell_price) AS min_price " +
+                "FROM product p " +
+                "JOIN product_variation pv ON p.product_id = pv.product_id " +
+                "GROUP BY p.product_id, p.product_name " +
+                "ORDER BY total_sold DESC " +
+                "LIMIT 10";
+
+        try {
+            stm = connection.prepareStatement(sql);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                Product p = new Product();
+                p.setId(rs.getInt("product_id"));
+                p.setName(rs.getString("product_name"));
+                p.setTotalSold(rs.getInt("total_sold"));
+
+                String imageUrl = rs.getString("product_image");
+                if (imageUrl != null) {
+                    p.addImageUrl(imageUrl);
+                    p.setImageUrl(imageUrl);
+                }
+
+                int minPrice = rs.getInt("min_price");
+                p.setMinPrice(minPrice);
+
+                list.add(p);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
     public List<Product> searchProductsByText(String keyword) {
         List<Product> products = new ArrayList<>();
         sql = "SELECT * FROM product WHERE product_name LIKE ?";
