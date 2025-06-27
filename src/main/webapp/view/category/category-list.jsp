@@ -44,7 +44,7 @@
               <a href="javascript:void(0)" onclick="openEditModal(${c.id}, '${c.name}')">
                 <i class="fa fa-edit text-primary me-2"></i>
               </a>
-              <form method="post" action="category" style="display:inline;" onsubmit="return confirm('Delete this category?');">
+              <form method="post" action="productCategory" style="display:inline;" onsubmit="return confirm('Delete this category?');">
                 <input type="hidden" name="action" value="delete"/>
                 <input type="hidden" name="id" value="${c.id}"/>
                 <input type="hidden" name="page" value="${page}"/>
@@ -65,7 +65,7 @@
         <ul class="pagination">
           <c:forEach var="i" begin="1" end="${totalPage}">
             <li class="page-item ${i == page ? 'active' : ''}">
-              <a class="page-link" href="category?page=${i}">${i}</a>
+              <a class="page-link" href="productCategory?page=${i}">${i}</a>
             </li>
           </c:forEach>
         </ul>
@@ -77,7 +77,7 @@
 <!-- Modal -->
 <div class="modal fade" id="categoryModal" tabindex="-1" aria-labelledby="categoryModalLabel" aria-hidden="true">
   <div class="modal-dialog">
-    <form action="category" method="post" class="modal-content" onsubmit="return validateCategoryForm();">
+    <form action="productCategory" method="post" class="modal-content" onsubmit="return validateCategoryForm();">
       <div class="modal-header">
         <h5 class="modal-title" id="categoryModalLabel">Add New Category</h5>
         <button type="button" class="btn" data-bs-dismiss="modal" aria-label="Close">
