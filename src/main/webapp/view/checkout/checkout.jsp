@@ -76,19 +76,19 @@
                 <div class="row mb-3">
                     <div class="col-md-6 mb-3">
                         <input type="text" class="form-control" placeholder="First name" name="firstName"
-                               value="${user.firstName}">
+                               value="${user.firstName}" disabled>
                     </div>
                     <div class="col-md-6 mb-3">
                         <input type="text" class="form-control" placeholder="Last name" name="lastName"
-                               value="${user.lastName}">
+                               value="${user.lastName}" disabled>
                     </div>
                     <div class="col-md-12 mb-3">
                         <input type="text" class="form-control" placeholder="Phone number" name="phone"
-                               value="${user.phone}">
+                               value="${user.phone}" disabled>
                     </div>
                     <div class="col-md-12 mb-3">
                         <input type="email" class="form-control" placeholder="Email address" name="email"
-                               value="${user.email}">
+                               value="${user.email}" disabled>
                     </div>
                     <div class="col-md-12">
                         <textarea class="form-control" placeholder="Note (e.g. Preferred delivery time)" name="note" rows="3"></textarea>

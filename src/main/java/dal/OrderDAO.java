@@ -2,16 +2,13 @@ package dal;
 
 import model.Order;
 import model.OrderDetail;
-
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class OrderDAO extends DBContext{
     public int insertOrder(int userId, String note, int addressId) {
-        String sql = "INSERT INTO product_order (user_id, order_note, address_id) VALUES (?, ?, ?)";
+        sql = "INSERT INTO product_order (user_id, order_note, address_id) VALUES (?, ?, ?)";
         try {
             stm = connection.prepareStatement(sql);
             stm.setInt(1, userId);
@@ -22,8 +19,6 @@ public class OrderDAO extends DBContext{
             if (rs.next()) return rs.getInt(1);
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            close(); // từ DBContext
         }
         return -1;
     }
@@ -39,16 +34,15 @@ public class OrderDAO extends DBContext{
             stm.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            close();
         }
     }
 
     public Order getOrderById(int orderId) {
-        String sql = "SELECT * FROM product_order WHERE order_id = ?";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, orderId);
-            try (ResultSet rs = ps.executeQuery()) {
+        sql = "SELECT * FROM product_order WHERE order_id = ?";
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setInt(1, orderId);
+            rs = stm.executeQuery();
                 if (rs.next()) {
                     Order order = new Order();
                     order.setOrderId(rs.getInt("order_id"));
@@ -66,7 +60,6 @@ public class OrderDAO extends DBContext{
 
                     return order;
                 }
-            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -75,10 +68,11 @@ public class OrderDAO extends DBContext{
 
     public List<OrderDetail> getOrderDetails(int orderId) {
         List<OrderDetail> list = new ArrayList<>();
-        String sql = "SELECT * FROM order_detail WHERE order_id = ?";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, orderId);
-            try (ResultSet rs = ps.executeQuery()) {
+        sql = "SELECT * FROM order_detail WHERE order_id = ?";
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setInt(1, orderId);
+            rs = stm.executeQuery();
                 while (rs.next()) {
                     OrderDetail detail = new OrderDetail();
                     detail.setOrderDetailId(rs.getInt("order_detail_id"));
@@ -87,23 +81,10 @@ public class OrderDAO extends DBContext{
                     detail.setQuantity(rs.getInt("quantity"));
                     detail.setPrice(rs.getLong("price"));
                     list.add(detail);
-                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return list;
     }
-
-
-    public void close() {
-        try {
-            if (rs != null) rs.close();
-            if (stm != null) stm.close();
-            if (connection != null) connection.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
 }
