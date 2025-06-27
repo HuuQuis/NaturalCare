@@ -185,4 +185,136 @@ public class ProductOrderDAO extends DBContext {
             e.printStackTrace();
         }
     }
+    
+    public List<ProductOrder> getOrdersByUserId(int userId) {
+        List<ProductOrder> list = new ArrayList<>();
+        String sql = "SELECT * FROM product_order WHERE user_id = ? ORDER BY create_at DESC";
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setInt(1, userId);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                ProductOrder order = new ProductOrder(
+                        rs.getInt("order_id"),
+                        rs.getInt("user_id"),
+                        rs.getString("order_note"),
+                        rs.getInt("status_id"),
+                        rs.getTimestamp("create_at"),
+                        rs.getObject("shipper_id") != null ? rs.getInt("shipper_id") : null,
+                        rs.getInt("address_id"),
+                        rs.getObject("coupon_id") != null ? rs.getInt("coupon_id") : null);
+                list.add(order);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } 
+        return list;
+    }
+    
+    public int countOrdersByUser(int userId, String search, String status, String fromDate, String toDate) {
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM product_order WHERE user_id = ?");
+        List<Object> params = new ArrayList<>();
+        params.add(userId);
+
+        if (search != null && !search.isEmpty()) {
+            sql.append(" AND order_note LIKE ?");
+            params.add("%" + search + "%");
+        }
+        if (status != null && !status.isEmpty()) {
+            sql.append(" AND status_id = ?");
+            params.add(Integer.parseInt(status));
+        }
+        if (fromDate != null && !fromDate.isEmpty()) {
+            sql.append(" AND create_at >= ?");
+            params.add(Date.valueOf(fromDate));
+        }
+        if (toDate != null && !toDate.isEmpty()) {
+            sql.append(" AND create_at <= ?");
+            params.add(Date.valueOf(toDate));
+        }
+
+        try {
+            PreparedStatement stm = connection.prepareStatement(sql.toString());
+            for (int i = 0; i < params.size(); i++) {
+                stm.setObject(i + 1, params.get(i));
+            }
+            ResultSet rs = stm.executeQuery();
+            if (rs.next()) return rs.getInt(1);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public List<ProductOrder> getOrdersByUserWithPagination(
+            int userId, String search, String status, String fromDate, String toDate, int page, int pageSize) {
+
+        List<ProductOrder> list = new ArrayList<>();
+        StringBuilder sql = new StringBuilder(
+                "SELECT po.order_id, po.user_id, po.order_note, po.status_id, " +
+                        "po.create_at, po.shipper_id, po.address_id, po.coupon_id " +
+                        "FROM product_order po " +
+                        "LEFT JOIN user u ON po.user_id = u.user_id " +
+                        "WHERE po.user_id = ? "
+        );
+
+        List<Object> params = new ArrayList<>();
+        params.add(userId); // Bắt buộc có điều kiện user
+
+        if (search != null && !search.isEmpty()) {
+            sql.append("AND CONCAT(po.order_id, ' ', IFNULL(po.order_note, ''), ' ', u.username) LIKE ? ");
+            params.add("%" + search + "%");
+        }
+        if (status != null && !status.isEmpty()) {
+            sql.append("AND po.status_id = ? ");
+            params.add(Integer.parseInt(status));
+        }
+        if (fromDate != null && !fromDate.isEmpty()) {
+            sql.append("AND DATE(po.create_at) >= ? ");
+            params.add(fromDate);
+        }
+        if (toDate != null && !toDate.isEmpty()) {
+            sql.append("AND DATE(po.create_at) <= ? ");
+            params.add(toDate);
+        }
+
+        sql.append("ORDER BY po.create_at ASC LIMIT ? OFFSET ?");
+        int offset = (page - 1) * pageSize;
+        params.add(pageSize);
+        params.add(offset);
+
+        try {
+            stm = connection.prepareStatement(sql.toString());
+
+            for (int i = 0; i < params.size(); i++) {
+                Object param = params.get(i);
+                if (param instanceof String) {
+                    stm.setString(i + 1, (String) param);
+                } else {
+                    stm.setInt(i + 1, (Integer) param);
+                }
+            }
+
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                ProductOrder order = new ProductOrder(
+                        rs.getInt("order_id"),
+                        rs.getInt("user_id"),
+                        rs.getString("order_note"),
+                        rs.getInt("status_id"),
+                        rs.getTimestamp("create_at"),
+                        rs.getObject("shipper_id") != null ? rs.getInt("shipper_id") : null,
+                        rs.getInt("address_id"),
+                        rs.getObject("coupon_id") != null ? rs.getInt("coupon_id") : null
+                );
+                list.add(order);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+
+
 }
