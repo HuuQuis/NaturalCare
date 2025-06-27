@@ -119,7 +119,9 @@ public class ExpertDetailServlet extends HttpServlet {
             request.setAttribute("phone_number", phone);
             request.setAttribute("selectedSkillId", skillId);
             request.setAttribute("allSkills", expertDAO.getAllSkills());
-            request.getRequestDispatcher("/view/manage/expert-insert.jsp").forward(request, response);
+            
+            request.setAttribute("view", "expert-insert");
+            request.getRequestDispatcher("/view/home/manager.jsp").forward(request, response);
             return;
         }
 
@@ -129,6 +131,8 @@ public class ExpertDetailServlet extends HttpServlet {
         // Hiển thị lại trang với thông báo thành công
         request.setAttribute("message", "Expert added successfully!");
         request.setAttribute("allSkills", expertDAO.getAllSkills());
-        request.getRequestDispatcher("/view/manage/expert-insert.jsp").forward(request, response);
+        
+        request.setAttribute("view", "expert-insert");
+        request.getRequestDispatcher("/view/home/manager.jsp").forward(request, response);
     }
 }
