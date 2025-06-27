@@ -9,6 +9,7 @@ public class Order {
     private int statusId;
     private String note;
     private Timestamp createAt;
+    String statusName;
 
     private Integer shipperId;
     private Integer couponId;
@@ -67,17 +68,26 @@ public class Order {
     public void setCreateAt(Timestamp createAt) {
         this.createAt = createAt;
     }
-    public int getCouponId() {
-        return couponId;
+    public String getShipperInfo() {
+        return shipperId == null ? "Not assigned" : "Shipper ID: " + shipperId;
     }
+
+    public String getCouponInfo() {
+        return couponId == null ? "None" : "Coupon ID: " + couponId;
+    }
+
     public void setCouponId(int couponId) {
         this.couponId = couponId;
     }
 
-    public int getShipperId() {
-        return shipperId;
-    }
     public void setShipperId(int shipperId) {
         this.shipperId = shipperId;
+    }
+
+    public String getStatusName() {
+        return statusName;
+    }
+    public void setStatusName(String statusName) {
+        this.statusName = statusName;
     }
 }

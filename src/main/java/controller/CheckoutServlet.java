@@ -136,7 +136,7 @@ public class CheckoutServlet extends HttpServlet {
         for (Cart item : cartItems) {
             orderDAO.insertOrderDetail(orderId,
                     item.getVariation().getVariationId(),
-                    item.getVariation().getQtyInStock(),
+                    item.getQuantity(),
                     item.getVariation().getSell_price());
 
             // Trừ tồn kho (nếu muốn cập nhật)

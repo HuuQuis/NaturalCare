@@ -59,6 +59,12 @@
     .add-new-address:hover {
         text-decoration: underline;
     }
+
+    .checkout-form .form-control{
+        margin-bottom: 16px !important;
+        height: 40px !important;
+    }
+
 </style>
 <body>
 <header id="header">
@@ -111,7 +117,9 @@
                     </c:forEach>
                 </div>
                 <div class="text-end mt-4">
-                    <button type="submit" class="btn btn-success px-4 py-2">
+                    <button type="submit"
+                            class="btn btn-success px-4 py-2"
+                            <c:if test="${empty cartItems}">disabled</c:if>>
                         <i class="fa fa-shopping-cart"></i> Place Order
                     </button>
                 </div>
