@@ -8,10 +8,9 @@ import java.util.*;
 
 public class ProductDAO extends DBContext {
 
-    public List<Product> getProductsByCategoryId(int categoryId, int pageIndex) {
-        int offset = (pageIndex - 1) * 6;
-        int limit = 6;
-        sql = "SELECT p.*, MIN(pv.product_image) AS product_image, MIN(pv.sell_price) AS min_price " +
+    public List<Product> getProductsByCategoryId(int categoryId, int pageIndex, int pageSize) {
+        int offset = (pageIndex - 1) * pageSize;
+        sql = "SELECT p.*, MIN(pv.product_image) AS product_image, COALESCE(MIN(pv.sell_price), 0) AS min_price " +
                 "FROM product p " +
                 "INNER JOIN sub_product_category s ON p.sub_product_category_id = s.sub_product_category_id " +
                 "INNER JOIN product_category pc ON s.product_category_id = pc.product_category_id " +
@@ -20,22 +19,19 @@ public class ProductDAO extends DBContext {
                 "GROUP BY p.product_id " +
                 "ORDER BY p.product_id " +
                 "LIMIT ?, ?";
-        return fetchProductsByQuery(sql, categoryId, offset, limit);
+        return fetchProductsByQuery(sql, categoryId, offset, pageSize);
     }
 
-    public List<Product> getProductsBySubCategoryId(int subCategoryId, int pageIndex) {
-        int offset = (pageIndex - 1) * 6;
-        int limit = 6;
-        sql = "SELECT p.*, MIN(pv.product_image) AS product_image, MIN(pv.sell_price) AS min_price " +
+    public List<Product> getProductsBySubCategoryId(int subCategoryId, int pageIndex, int pageSize) {
+        int offset = (pageIndex - 1) * pageSize;
+        sql = "SELECT p.*, MIN(pv.product_image) AS product_image, COALESCE(MIN(pv.sell_price), 0) AS min_price " +
                 "FROM product p " +
-                "INNER JOIN sub_product_category s ON p.sub_product_category_id = s.sub_product_category_id " +
-                "INNER JOIN product_category pc ON s.product_category_id = pc.product_category_id " +
                 "LEFT JOIN product_variation pv ON pv.product_id = p.product_id " +
                 "WHERE p.sub_product_category_id = ? " +
                 "GROUP BY p.product_id " +
                 "ORDER BY p.product_id " +
                 "LIMIT ?, ?";
-        return fetchProductsByQuery(sql, subCategoryId, offset, limit);
+        return fetchProductsByQuery(sql, subCategoryId, offset, pageSize);
     }
 
     public Product getProductById(int productId) {
@@ -322,36 +318,34 @@ public class ProductDAO extends DBContext {
          return false;
    }
 
-    public List<Product> getProductsByCategoryIdSorted(int categoryId, int pageIndex, String sort) {
-        int offset = (pageIndex - 1) * 6;
-        int limit = 6;
+    public List<Product> getProductsByCategoryIdSorted(int categoryId, int pageIndex, int pageSize, String sort) {
+        int offset = (pageIndex - 1) * pageSize;
         String orderBy = getOrderByClause(sort);
 
         sql = "SELECT p.*, " +
                 "       (SELECT MIN(pv1.product_image) FROM product_variation pv1 WHERE pv1.product_id = p.product_id) AS product_image, " +
-                "       NULLIF((SELECT MIN(pv2.sell_price) FROM product_variation pv2 WHERE pv2.product_id = p.product_id), 0) AS min_price " +
+                "       COALESCE((SELECT MIN(pv2.sell_price) FROM product_variation pv2 WHERE pv2.product_id = p.product_id), 0) AS min_price " +
                 "FROM product p " +
                 "INNER JOIN sub_product_category s ON p.sub_product_category_id = s.sub_product_category_id " +
                 "INNER JOIN product_category pc ON s.product_category_id = pc.product_category_id " +
                 "WHERE pc.product_category_id = ? " +
                 orderBy + " LIMIT ?, ?";
 
-        return fetchProductsByQuery(sql, categoryId, offset, limit);
+        return fetchProductsByQuery(sql, categoryId, offset, pageSize);
     }
 
-    public List<Product> getProductsBySubCategoryIdSorted(int subCategoryId, int pageIndex, String sort) {
-        int offset = (pageIndex - 1) * 6;
-        int limit = 6;
+    public List<Product> getProductsBySubCategoryIdSorted(int subCategoryId, int pageIndex, int pageSize, String sort) {
+        int offset = (pageIndex - 1) * pageSize;
         String orderBy = getOrderByClause(sort);
 
         sql = "SELECT p.*, " +
                 "       (SELECT MIN(pv1.product_image) FROM product_variation pv1 WHERE pv1.product_id = p.product_id) AS product_image, " +
-                "       NULLIF((SELECT MIN(pv2.sell_price) FROM product_variation pv2 WHERE pv2.product_id = p.product_id), 0) AS min_price " +
+                "       COALESCE((SELECT MIN(pv2.sell_price) FROM product_variation pv2 WHERE pv2.product_id = p.product_id), 0) AS min_price " +
                 "FROM product p " +
                 "WHERE p.sub_product_category_id = ? " +
                 orderBy + " LIMIT ?, ?";
 
-        return fetchProductsByQuery(sql, subCategoryId, offset, limit);
+        return fetchProductsByQuery(sql, subCategoryId, offset, pageSize);
     }
 
     private String getOrderByClause(String sort) {
@@ -363,11 +357,9 @@ public class ProductDAO extends DBContext {
             case "name-desc":
                 return "ORDER BY p.product_name DESC";
             case "price-asc":
-                // Put products with NULL min_price (no price) at the end
-                return "ORDER BY (min_price IS NULL), min_price ASC";
+                return "ORDER BY min_price ASC";
             case "price-desc":
-                // Put products with NULL min_price (no price) at the end
-                return "ORDER BY (min_price IS NULL), min_price DESC";
+                return "ORDER BY min_price DESC";
             default:
                 return "ORDER BY p.product_id";
         }
@@ -385,7 +377,7 @@ public class ProductDAO extends DBContext {
             while (rs.next()) {
                 int productId = rs.getInt("product_id");
                 String imageUrl = rs.getString("product_image");
-                int minPrice = rs.getObject("min_price") == null ? 0 : rs.getInt("min_price");
+                int minPrice = rs.getInt("min_price");
 
                 Product product = new Product(
                         productId,
@@ -398,7 +390,6 @@ public class ProductDAO extends DBContext {
                         minPrice
                 );
 
-                // Chỉ add một hình ảnh duy nhất
                 if (imageUrl != null) {
                     product.addImageUrl(imageUrl);
                 }
@@ -480,4 +471,98 @@ public class ProductDAO extends DBContext {
         }
         return products;
     }
+
+    public List<Product> searchProductsAdvanced(String keyword, Integer categoryId, Integer subCategoryId, int pageIndex, int pageSize, String sort) {
+        List<Product> products = new ArrayList<>();
+        int offset = (pageIndex - 1) * pageSize;
+        String orderBy = getOrderByClause(sort);
+
+        StringBuilder sqlBuilder = new StringBuilder();
+        sqlBuilder.append("SELECT p.*, ")
+                .append("(SELECT MIN(pv.product_image) FROM product_variation pv WHERE pv.product_id = p.product_id) AS product_image, ")
+                .append("COALESCE((SELECT MIN(pv.sell_price) FROM product_variation pv WHERE pv.product_id = p.product_id), 0) AS min_price ")
+                .append("FROM product p ")
+                .append("JOIN sub_product_category spc ON p.sub_product_category_id = spc.sub_product_category_id ")
+                .append("JOIN product_category pc ON spc.product_category_id = pc.product_category_id ")
+                .append("WHERE p.product_name LIKE ? ");
+
+        List<Object> params = new ArrayList<>();
+        params.add("%" + keyword + "%");
+
+        if (subCategoryId != null) {
+            sqlBuilder.append("AND p.sub_product_category_id = ? ");
+            params.add(subCategoryId);
+        } else if (categoryId != null) {
+            sqlBuilder.append("AND pc.product_category_id = ? ");
+            params.add(categoryId);
+        }
+
+        sqlBuilder.append(orderBy).append(" LIMIT ? OFFSET ?");
+        params.add(pageSize);
+        params.add(offset);
+
+        String sql = sqlBuilder.toString();
+
+        try {
+            stm = connection.prepareStatement(sql);
+            for (int i = 0; i < params.size(); i++) {
+                stm.setObject(i + 1, params.get(i));
+            }
+
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                Product p = new Product(
+                        rs.getInt("product_id"),
+                        rs.getString("product_name"),
+                        rs.getString("product_short_description"),
+                        rs.getString("product_information"),
+                        rs.getString("product_guideline"),
+                        null,
+                        rs.getInt("sub_product_category_id"),
+                        rs.getInt("min_price")
+                );
+                String imageUrl = rs.getString("product_image");
+                if (imageUrl != null) p.addImageUrl(imageUrl);
+                products.add(p);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return products;
+    }
+
+    public int countSearchProductsAdvanced(String keyword, Integer categoryId, Integer subCategoryId) {
+        StringBuilder sqlBuilder = new StringBuilder();
+        sqlBuilder.append("SELECT COUNT(*) FROM product p ")
+                .append("JOIN sub_product_category spc ON p.sub_product_category_id = spc.sub_product_category_id ")
+                .append("JOIN product_category pc ON spc.product_category_id = pc.product_category_id ")
+                .append("WHERE p.product_name LIKE ? ");
+
+        List<Object> params = new ArrayList<>();
+        params.add("%" + keyword + "%");
+
+        if (subCategoryId != null) {
+            sqlBuilder.append("AND p.sub_product_category_id = ? ");
+            params.add(subCategoryId);
+        } else if (categoryId != null) {
+            sqlBuilder.append("AND pc.product_category_id = ? ");
+            params.add(categoryId);
+        }
+
+        try {
+            stm = connection.prepareStatement(sqlBuilder.toString());
+            for (int i = 0; i < params.size(); i++) {
+                stm.setObject(i + 1, params.get(i));
+            }
+
+            rs = stm.executeQuery();
+            if (rs.next()) return rs.getInt(1);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
+
 }
