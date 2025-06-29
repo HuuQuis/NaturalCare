@@ -12,6 +12,7 @@ public class Product {
     private String imageUrl;
     private int subProductCategoryId;
     private int minPrice;
+    private int totalSold;
     private List<String> imageUrls;
     private List<ProductVariation> variations;
 
@@ -41,7 +42,6 @@ public class Product {
         this.subProductCategoryId = subProductCategoryId;
     }
 
-    // Fixed constructor with correct parameter order matching your usage
     public Product(int id, String name, String description, String information, String guideline, String imageUrl, int subProductCategoryId, int minPrice) {
         this();
         this.id = id;
@@ -49,7 +49,7 @@ public class Product {
         this.description = description;
         this.information = information;
         this.guideline = guideline;
-        this.imageUrl = imageUrl; // Fixed: parameter name consistency
+        this.imageUrl = imageUrl;
         this.subProductCategoryId = subProductCategoryId;
         this.minPrice = minPrice;
     }
@@ -125,6 +125,14 @@ public class Product {
 
     public void setImageUrls(List<String> imageUrls) {
         this.imageUrls = imageUrls;
+    }
+
+    public int getTotalSold() {
+        return totalSold;
+    }
+
+    public void setTotalSold(int totalSold) {
+        this.totalSold = totalSold;
     }
 
     public void addImageUrl(String imageUrl) {

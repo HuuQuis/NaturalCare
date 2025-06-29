@@ -46,7 +46,7 @@
 </c:if>
 
 <c:if test="${empty cartItems}">
-  <<div class="cart-footer" style="border-top: 1px solid #ddd; padding: 10px;">
+  <div class="cart-footer" style="border-top: 1px solid #ddd; padding: 10px;">
     <p>Empty Cart</p>
   </div>
 </c:if>

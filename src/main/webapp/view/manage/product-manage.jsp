@@ -45,34 +45,32 @@
                         <div class="search-set d-flex align-items-center flex-wrap" style="gap: 15px;">
                             <form id="filterForm" method="get" action="productManage"
                                   class="d-flex align-items-center flex-wrap" style="gap: 10px;">
-                                <select name="categoryId" id="categorySelect" class="form-select" style="width: 180px;">
+                                <input type="text" name="search" id="productSearchInput" class="form-control"
+                                       placeholder="Search by product name..." value="${searchKeyword}"
+                                       style="min-width: 250px;"/>
+                                <select name="categoryId" id="categorySelect" class="form-select"
+                                        style="width: fit-content; height: 35px">
                                     <option value="">All Categories</option>
                                     <c:forEach var="cat" items="${categories}">
                                         <option value="${cat.id}" ${cat.id == selectedCategoryId ? 'selected' : ''}>${cat.name}</option>
                                     </c:forEach>
                                 </select>
                                 <select name="subCategoryId" id="subCategorySelect" class="form-select"
-                                        style="width: 180px;">
+                                        style="width: fit-content; height: 35px">
                                     <option value="">All Subcategories</option>
                                     <c:forEach var="sub" items="${subCategories}">
                                         <option value="${sub.id}"
                                                 data-category="${sub.productCategoryId}" ${sub.id == selectedSubCategoryId ? 'selected' : ''}>${sub.name}</option>
                                     </c:forEach>
                                 </select>
-                                <button type="submit" class="btn btn-primary">Filter</button>
+                                <button type="submit" class="btn btn-primary" id="filterBtn">Filter</button>
+                                <button type="button" class="btn btn-secondary" onclick="window.location.href='${pageContext.request.contextPath}/productManage'">
+                                    Reset
+                                </button>
+
                             </form>
-
-                            <div class="position-relative">
-                                <input type="text" id="productSearchInput" class="form-control"
-                                       placeholder="Search by product name..."
-                                       style="padding-left: 30px; min-width: 250px;"/>
-                                <i class="mdi mdi-magnify position-absolute"
-                                   style="left: 10px; top: 50%; transform: translateY(-50%); pointer-events: none;"></i>
-                            </div>
                         </div>
-
                     </div>
-
                         <table class="table">
                             <thead>
                             <tr>
@@ -423,81 +421,70 @@
                 }
             });
         });
-        const searchInput = document.getElementById('productSearchInput');
-        const rows = document.querySelectorAll('tbody#variantAccordion tr');
 
-        searchInput.addEventListener('input', function () {
-            const searchTerm = this.value.trim().toLowerCase();
-
-            let currentMainRow = null;
-            rows.forEach((row, index) => {
-                if (row.hasAttribute('data-name')) {
-                    currentMainRow = row;
-                    const match = row.getAttribute('data-name').includes(searchTerm);
-
-                    // Hiển thị hoặc ẩn dòng chính
-                    row.style.display = match ? '' : 'none';
-
-                    // Ẩn luôn dòng phụ theo nó
-                    const variantRow = rows[index + 1];
-                    if (variantRow && variantRow.classList.contains('collapse')) {
-                        variantRow.style.display = match ? '' : 'none';
-                    }
-                }
-            });
-        });
         // Filter subcategories based on selected category
         const categorySelect = document.getElementById('categorySelect');
         const subCategorySelect = document.getElementById('subCategorySelect');
+        const searchInput = document.getElementById('productSearchInput');
+        const filterBtn = document.getElementById('filterBtn');
         const allSubOptions = Array.from(subCategorySelect.options);
 
+        // Cập nhật trạng thái của nút Filter
+        function updateFilterButtonState() {
+            const categoryVal = categorySelect.value;
+            const subCategoryVal = subCategorySelect.value;
+            const searchVal = searchInput.value.trim();
+            const hasFilter = categoryVal || subCategoryVal || searchVal;
+            filterBtn.disabled = !hasFilter;
+        }
+
+        // Lọc subcategory theo category
         function filterSubCategories() {
             const selectedCategory = categorySelect.value;
             const selectedSubCategory = subCategorySelect.getAttribute('data-selected');
             subCategorySelect.innerHTML = '';
-            // Always add "All Subcategories"
+
             const allOption = document.createElement('option');
             allOption.value = '';
             allOption.textContent = 'All Subcategories';
             subCategorySelect.appendChild(allOption);
 
             allSubOptions.forEach(opt => {
-                if (!opt.value) return; // skip the default "All Subcategories" from original
+                if (!opt.value) return;
                 if (!selectedCategory || opt.getAttribute('data-category') === selectedCategory) {
                     const newOpt = opt.cloneNode(true);
-                    // Restore selected subcategory if matches
                     if (selectedSubCategory && newOpt.value === selectedSubCategory) {
                         newOpt.selected = true;
                     }
                     subCategorySelect.appendChild(newOpt);
                 }
             });
+
+            updateFilterButtonState(); // cập nhật khi thay đổi subcategory
         }
 
-        // --- Fix: Set category if subcategory is selected ---
-        // If a subcategory is selected, set the category dropdown accordingly
+        // Set category nếu có subcategory được chọn sẵn
         const selectedSubCategoryOption = subCategorySelect.querySelector('option[selected]');
         if (selectedSubCategoryOption && selectedSubCategoryOption.value) {
             const subCatCategoryId = selectedSubCategoryOption.getAttribute('data-category');
             if (subCatCategoryId) {
                 categorySelect.value = subCatCategoryId;
             }
-            // Mark the selected subcategory for filterSubCategories
             subCategorySelect.setAttribute('data-selected', selectedSubCategoryOption.value);
         }
 
-        // Initial filter on page load
+        // Gọi lúc load trang
         filterSubCategories();
+        updateFilterButtonState();
 
-        // When category changes, filter subcategories
-        categorySelect.addEventListener('change', function () {
+        // Lắng nghe thay đổi
+        categorySelect.addEventListener('change', () => {
             subCategorySelect.removeAttribute('data-selected');
             filterSubCategories();
-            // Optionally reset subcategory selection
             subCategorySelect.selectedIndex = 0;
         });
+        subCategorySelect.addEventListener('change', updateFilterButtonState);
+        searchInput.addEventListener('input', updateFilterButtonState);
     });
 </script>
-
-
 </html>
