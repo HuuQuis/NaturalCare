@@ -247,14 +247,15 @@ public class UserDAO extends DBContext {
             rs = stm.executeQuery();
             while (rs.next()) {
                 list.add(new User(
-                    rs.getInt("user_id"),
-                    rs.getString("username"),
-                    rs.getString("password"),
-                    rs.getString("first_name"),
-                    rs.getString("last_name"),
-                    rs.getString("email"),
-                    rs.getString("phone_number"),
-                    rs.getInt("role_id")
+                        rs.getInt("user_id"),
+                        rs.getString("username"),
+                        rs.getString("password"),
+                        rs.getString("first_name"),
+                        rs.getString("last_name"),
+                        rs.getString("email"),
+                        rs.getString("phone_number"),
+                        rs.getInt("role_id"),
+                        rs.getString("user_image")
                 ));
             }
         } catch (SQLException e) {
@@ -262,7 +263,7 @@ public class UserDAO extends DBContext {
         }
         return list;
     }
-    
+
     public String getUserNameById(int userId) {
         String sql = "SELECT username FROM user WHERE user_id = ?";
         try {
@@ -277,5 +278,5 @@ public class UserDAO extends DBContext {
         }
         return "";
     }
-    
+
 }
