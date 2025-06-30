@@ -30,11 +30,13 @@ public class SubCategoryServlet extends HttpServlet {
 
         Integer categoryId = parseNullableInt(req.getParameter("productCategoryId"));
         String keyword = req.getParameter("search");
+        String sort = req.getParameter("sort");
+        String statusFilter = req.getParameter("status");
         int page = parseIntOrDefault(req.getParameter("page"), 1);
         int pageSize = 10;
 
-        List<SubProductCategory> subList = subDao.getFilteredSubcategoriesByPage(keyword, categoryId, page, pageSize);
-        int totalSub = subDao.countFilteredSubcategories(keyword, categoryId);
+        List<SubProductCategory> subList = subDao.getFilteredSubcategoriesByPage(keyword, categoryId, page, pageSize, sort, statusFilter);
+        int totalSub = subDao.countFilteredSubcategories(keyword, categoryId, statusFilter);
         int totalPage = (int) Math.ceil((double) totalSub / pageSize);
 
         req.setAttribute("subList", subList);
@@ -46,6 +48,8 @@ public class SubCategoryServlet extends HttpServlet {
         req.setAttribute("startIndex", (page - 1) * pageSize);
         req.setAttribute("filterKeyword", keyword);
         req.setAttribute("filterCategoryId", categoryId);
+        req.setAttribute("sort", sort);
+        req.setAttribute("statusFilter", statusFilter);
         req.setAttribute("view", "subcategory");
 
         req.getRequestDispatcher("/view/home/manager.jsp").forward(req, resp);
@@ -59,6 +63,10 @@ public class SubCategoryServlet extends HttpServlet {
         int catId = parseIntOrDefault(req.getParameter("productCategoryId"), -1);
         int currentPage = parseIntOrDefault(req.getParameter("page"), 1);
         String search = req.getParameter("search") != null ? req.getParameter("search") : "";
+        String sort = req.getParameter("sort");
+        String statusFilter = req.getParameter("status");
+        boolean status = Boolean.parseBoolean(req.getParameter("status"));
+
         if ((action.equals("add") || action.equals("update")) && catId == -1) {
             req.getSession().setAttribute("message", "Please select a category.");
             req.getSession().setAttribute("messageType", "danger");
@@ -71,7 +79,7 @@ public class SubCategoryServlet extends HttpServlet {
 
         switch (action) {
             case "add":
-                if (subDao.isSubNameExists(name, catId) || catDao.isCategoryNameExists(name)) {
+                if (subDao.isSubNameExistsInAnyCategory(name) || catDao.isCategoryNameExists(name)) {
                     req.getSession().setAttribute("message", "SubCategory name already exists in category or subcategory.");
                     req.getSession().setAttribute("messageType", "danger");
                 } else {
@@ -79,7 +87,7 @@ public class SubCategoryServlet extends HttpServlet {
                     req.getSession().setAttribute("message", "Subcategory added.");
                     req.getSession().setAttribute("messageType", "success");
                 }
-                redirectUrl += "1"; // Always redirect to page 1 after add
+                redirectUrl += "1";
                 redirectWithFilter = false;
                 break;
             case "update":
@@ -87,7 +95,7 @@ public class SubCategoryServlet extends HttpServlet {
                     req.getSession().setAttribute("message", "SubCategory name already exists in category or subcategory.");
                     req.getSession().setAttribute("messageType", "danger");
                 } else {
-                    subDao.updateSubCategory(id, name);
+                    subDao.updateSubCategory(id, name, status);
                     req.getSession().setAttribute("message", "Subcategory updated.");
                     req.getSession().setAttribute("messageType", "success");
                     req.getSession().setAttribute("updatedSubCategoryId", id);
@@ -97,10 +105,9 @@ public class SubCategoryServlet extends HttpServlet {
                 break;
             case "delete":
                 if (subDao.hasProductDependency(id)) {
-                    req.setAttribute("hasSubDependency", true);
-                    req.setAttribute("subCategoryIdToHide", id);
-                    doGet(req, resp);
-                    return;
+                    subDao.hideSubCategory(id);
+                    req.getSession().setAttribute("message", "Subcategory has product dependency and was hidden instead.");
+                    req.getSession().setAttribute("messageType", "warning");
                 } else {
                     subDao.deleteSubCategory(id);
                     req.getSession().setAttribute("message", "Subcategory deleted.");
@@ -117,11 +124,17 @@ public class SubCategoryServlet extends HttpServlet {
         }
 
         if (redirectWithFilter) {
-            if (catId > 0) { // chỉ thêm nếu là category hợp lệ (>0)
+            if (catId > 0) {
                 redirectUrl += "&productCategoryId=" + catId;
             }
             if (!search.isEmpty()) {
                 redirectUrl += "&search=" + URLEncoder.encode(search, StandardCharsets.UTF_8);
+            }
+            if (sort != null && !sort.isEmpty()) {
+                redirectUrl += "&sort=" + sort;
+            }
+            if (statusFilter != null && !statusFilter.isEmpty()) {
+                redirectUrl += "&status=" + statusFilter;
             }
         }
 
