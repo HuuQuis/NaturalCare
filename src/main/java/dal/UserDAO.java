@@ -2,6 +2,8 @@ package dal;
 
 import model.User;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +29,44 @@ public class UserDAO extends DBContext {
         return user;
     }
 
+    public User getUserById(int userId) {
+        String sql = "SELECT * FROM user WHERE user_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                User user = new User();
+                user.setId(rs.getInt("user_id"));
+                user.setUsername(rs.getString("username"));
+                user.setPassword(rs.getString("password"));
+                user.setFirstName(rs.getString("first_name"));
+                user.setLastName(rs.getString("last_name"));
+                user.setEmail(rs.getString("email"));
+                user.setPhone(rs.getString("phone_number"));
+                user.setRole(rs.getInt("role_id"));
+                user.setAvatar(rs.getString("user_image"));
+                return user;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public boolean updateUserProfile(User user) {
+        String sql = "UPDATE user SET first_name = ?, last_name = ?, phone_number = ? WHERE user_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, user.getFirstName());
+            ps.setString(2, user.getLastName());
+            ps.setString(3, user.getPhone());
+            ps.setInt(4, user.getId());
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public User checkUser(String username, String password) {
         try {
             sql = "SELECT * FROM natural_care.user WHERE username = ? AND password = ?";
@@ -39,6 +79,10 @@ public class UserDAO extends DBContext {
                 user.setId(rs.getInt("user_id"));
                 user.setUsername(rs.getString("username"));
                 user.setPassword(rs.getString("password"));
+                user.setFirstName(rs.getString("first_name"));
+                user.setLastName(rs.getString("last_name"));
+                user.setEmail(rs.getString("email"));
+                user.setPhone(rs.getString("phone_number"));
                 user.setRole(rs.getInt("role_id"));
                 return user;
             }

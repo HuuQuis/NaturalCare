@@ -5,138 +5,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Expert Management</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
-      background-color: #f9f9f9;
-    }
-
-    h2 {
-      margin-bottom: 20px;
-      color: #2e7d32;
-    }
-
-    .filter-section {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-
-    .filter-section input,
-    .filter-section select,
-    .filter-section button,
-    .filter-section a {
-      padding: 8px;
-      border: 1px solid #a5d6a7;
-      border-radius: 4px;
-      font-size: 14px;
-    }
-
-    .filter-section input:focus {
-      outline: none;
-      border-color: #66bb6a;
-      box-shadow: 0 0 5px rgba(102, 187, 106, 0.5);
-    }
-
-    .filter-section button {
-      background-color: #43a047;
-      color: white;
-      cursor: pointer;
-      border: none;
-      transition: background-color 0.3s ease;
-    }
-
-    .filter-section button:hover {
-      background-color: #2e7d32;
-    }
-
-    .filter-section a.reset {
-      background-color: #c62828;
-      color: white;
-      text-decoration: none;
-      border: none;
-    }
-
-    .filter-section a.reset:hover {
-      background-color: #8e0000;
-    }
-
-    .filter-section a {
-      text-decoration: none;
-      color: white;
-      background-color: #43a047;
-      transition: background-color 0.3s ease;
-    }
-
-    .filter-section a:hover {
-      background-color: #2e7d32;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background-color: white;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-
-    th, td {
-      padding: 12px;
-      border: 1px solid #ddd;
-      text-align: left;
-    }
-
-    th {
-      background-color: #e8f5e9;
-      color: #2e7d32;
-    }
-
-    td a {
-      color: #2e7d32;
-      font-weight: bold;
-      text-decoration: none;
-    }
-
-    td a:hover {
-      text-decoration: underline;
-    }
-
-    .pagination {
-      margin-top: 20px;
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-    }
-
-    .pagination a {
-      padding: 6px 12px;
-      border: 1px solid #a5d6a7;
-      background-color: white;
-      text-decoration: none;
-      color: #2e7d32;
-      font-weight: bold;
-      border-radius: 4px;
-    }
-
-    .pagination .active a {
-      background-color: #66bb6a;
-      color: white;
-      border-color: #388e3c;
-    }
-
-    .message-success {
-      color: #2e7d32;
-      margin-bottom: 10px;
-      font-weight: bold;
-    }
-
-    .message-error {
-      color: #c62828;
-      margin-bottom: 10px;
-      font-weight: bold;
-    }
-  </style>
+  
 </head>
 <body>
 <h2>Expert Management</h2>
@@ -186,6 +55,161 @@
     </div>
   </c:forEach>
 </div>
-
 </body>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f9f9f9;
+        margin: 0;
+    }
+
+    h2 {
+        margin-bottom: 20px;
+        color: #333;
+        font-size: 24px;
+    }
+
+    /* Filter section */
+    .filter-section {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 25px;
+        align-items: center;
+    }
+
+    .filter-section input {
+        padding: 10px 15px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+        min-width: 250px;
+    }
+
+    .filter-section button {
+        padding: 10px 20px;
+        background-color: #616eeb;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    .filter-section button:hover {
+        background-color: #2c3ac0;
+    }
+
+    .filter-section a {
+        padding: 10px 20px;
+        text-decoration: none;
+        border-radius: 4px;
+        font-size: 14px;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .filter-section a.reset {
+        background-color: #f44336;
+        color: white;
+    }
+
+    .filter-section a.reset:hover {
+        background-color: #d32f2f;
+    }
+
+    .filter-section a.add-new {
+        background-color: #4CAF50;
+        color: white;
+    }
+
+    .filter-section a.add-new:hover {
+        background-color: #388E3C;
+    }
+
+    /* Table styles */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: white;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        margin-bottom: 25px;
+    }
+
+    th, td {
+        padding: 15px;
+        border: 1px solid #e0e0e0;
+        text-align: left;
+    }
+
+    th {
+        background-color: #f5f5f5;
+        color: #333;
+        font-weight: 600;
+    }
+
+    tr:nth-child(even) {
+        background-color: #fafafa;
+    }
+
+    tr:hover {
+        background-color: #f1f1f1;
+    }
+
+    /* ID link style */
+    td a {
+        color: #3f50f6;
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    td a:hover {
+        text-decoration: underline;
+    }
+
+    /* Pagination */
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 25px;
+    }
+
+    .pagination div {
+        padding: 8px 15px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    .pagination a {
+        color: #ccc;
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .pagination div.active {
+        background-color: #616eeb;
+        color: white;
+        border-color: #3f50f6;
+    }
+
+    /* Message styles */
+    .message-success {
+        color: #4CAF50;
+        margin-bottom: 20px;
+        font-weight: 500;
+        padding: 10px;
+        background-color: #e8f5e9;
+        border-radius: 4px;
+    }
+
+    .message-error {
+        color: #f44336;
+        margin-bottom: 20px;
+        font-weight: 500;
+        padding: 10px;
+        background-color: #ffebee;
+        border-radius: 4px;
+    }
+</style>
 </html>

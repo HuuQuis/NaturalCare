@@ -36,7 +36,7 @@ public class ProductServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
+        int pageSize = 6;
         String indexPage = request.getParameter("index");
         if (indexPage == null || indexPage.isEmpty()) {
             indexPage = "1";
@@ -55,7 +55,7 @@ public class ProductServlet extends HttpServlet {
         // Handle different scenarios
         if (hasSubCategory) {
             // Subcategory has priority over category
-            products = productDAO.getProductsBySubCategoryIdSorted(Integer.parseInt(subCategoryId), index, sort);
+            products = productDAO.getProductsBySubCategoryIdSorted(Integer.parseInt(subCategoryId), index, pageSize, sort);
             request.setAttribute("selectedSubCategoryId", subCategoryId);
 
             // If we have both category and subcategory, still set the category for navigation
@@ -64,7 +64,7 @@ public class ProductServlet extends HttpServlet {
             }
         } else if (hasCategory) {
             // Only category is selected
-            products = productDAO.getProductsByCategoryIdSorted(Integer.parseInt(categoryId), index, sort);
+            products = productDAO.getProductsByCategoryIdSorted(Integer.parseInt(categoryId), index, pageSize, sort);
             request.setAttribute("selectedCategoryId", categoryId);
         }
         // If neither category nor subcategory is selected, products remains empty

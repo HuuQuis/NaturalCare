@@ -55,7 +55,7 @@
                 <% if ("subcategory".equals(view)) { %>
                 <jsp:include page="../category/list.jsp" />
                 <% } %>
-                    <% if ("category".equals(view)) { %>
+                    <% if ("productCategory".equals(view)) { %>
                     <jsp:include page="../category/category-list.jsp" />
                     <% } %>
 
@@ -67,6 +67,18 @@
                     <% } %>
                     <% if ("blog-form".equals(view)) { %>
                     <jsp:include page="../blog/blog-form.jsp" />
+                    <% } %>
+                    
+                    <% if ("expert-skill".equals(view)) { %>
+                        <jsp:include page="../manage/expert-management.jsp" />
+                    <% } %>
+                    
+                    <% if ("expert-insert".equals(view)) { %>
+                        <jsp:include page="../manage/expert-insert.jsp" />
+                    <% } %>
+                    
+                    <% if ("expert-detail".equals(view)) { %>
+                        <jsp:include page="../manage/expert-detail.jsp" />
                     <% } %>
 
                     <% if ("product".equals(view)) { %>

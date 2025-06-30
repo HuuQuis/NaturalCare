@@ -224,39 +224,39 @@ CREATE TABLE coupon
     is_user_specific BOOLEAN DEFAULT FALSE
 );
 
-CREATE TABLE product_order
-(
-    order_id   INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    user_id    INT NOT NULL,
-    order_note VARCHAR(255),
-    status_id  INT NOT NULL DEFAULT 1,
-    create_at  TIMESTAMP    DEFAULT CURRENT_TIMESTAMP,
-    shipper_id INT NULL,
-    address_id INT NOT NULL,
-    coupon_id  INT,
-    FOREIGN KEY (user_id)
-        REFERENCES user (user_id),
-    FOREIGN KEY (shipper_id)
-        REFERENCES user (user_id),
-    FOREIGN KEY (address_id)
-        REFERENCES address (address_id),
-    FOREIGN KEY (coupon_id)
-        REFERENCES coupon (coupon_id)
-);
+	CREATE TABLE product_order
+	(
+		order_id   INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+		user_id    INT NOT NULL,
+		order_note VARCHAR(255),
+		status_id  INT NOT NULL DEFAULT 1,
+		create_at  TIMESTAMP    DEFAULT CURRENT_TIMESTAMP,
+		shipper_id INT NULL,
+		address_id INT NOT NULL,
+		coupon_id  INT,
+		FOREIGN KEY (user_id)
+			REFERENCES user (user_id),
+		FOREIGN KEY (shipper_id)
+			REFERENCES user (user_id),
+		FOREIGN KEY (address_id)
+			REFERENCES address (address_id),
+		FOREIGN KEY (coupon_id)
+			REFERENCES coupon (coupon_id)
+	);
 
-CREATE TABLE order_detail
-(
-    order_detail_id INT    NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    order_id        INT    NOT NULL,
-    variation_id    INT    NOT NULL,
-    total_quantity  INT    NOT NULL,
-    total_price     BIGINT NOT NULL,
-    FOREIGN KEY (order_id)
-        REFERENCES product_order (order_id)
-        ON DELETE CASCADE,
-    FOREIGN KEY (variation_id)
-        REFERENCES product_variation (variation_id)
-);
+	CREATE TABLE order_detail
+	(
+		order_detail_id INT    NOT NULL AUTO_INCREMENT PRIMARY KEY,
+		order_id        INT    NOT NULL,
+		variation_id    INT    NOT NULL,
+		quantity  INT    NOT NULL,
+		price     BIGINT NOT NULL,
+		FOREIGN KEY (order_id)
+			REFERENCES product_order (order_id)
+			ON DELETE CASCADE,
+		FOREIGN KEY (variation_id)
+			REFERENCES product_variation (variation_id)
+	);
 
 CREATE TABLE delivery
 (

@@ -38,6 +38,8 @@ public class ExpertListManagementServlet extends HttpServlet {
         request.setAttribute("search", search);
         request.setAttribute("skill", skill);
 
-        request.getRequestDispatcher("/view/manage/expert-management.jsp").forward(request, response);
+        request.setAttribute("view", "expert-skill");
+        request.getRequestDispatcher("/view/home/manager.jsp").forward(request, response);
+
     }
 }

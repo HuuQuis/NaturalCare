@@ -125,13 +125,33 @@
 
                 <div class="recommended_items"><!--recommended_items-->
                     <h2 class="title text-center">Top Selling Products</h2>
-                    <div id="recommended-item-carousel" class="carousel slide" data-ride="carousel">
+                    <div id="recommended-item-carousel" class="carousel slide" data-ride="carousel" data-interval="2000" data-pause="hover">
                         <div class="carousel-inner">
                             <div class="item active">
-
-                            </div>
-                            <div class="item">
-
+                                <c:forEach var="product" items="${topProducts}" varStatus="loop">
+                                    <div class="col-sm-3">
+                                        <div class="product-image-wrapper">
+                                            <div class="single-products">
+                                                <div class="productinfo text-center">
+                                                    <a href="${pageContext.request.contextPath}/productDetail?product_id=${product.id}">
+                                                        <c:choose>
+                                                            <c:when test="${not empty product.imageUrls}">
+                                                                <img src="${pageContext.request.contextPath}/${product.imageUrls[0]}" alt="" style="width: 200px !important; height: 200px !important;" />
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <img src="${pageContext.request.contextPath}/images/product/default.jpg" alt="" style="width: 200px !important; height: 200px !important;" />
+                                                            </c:otherwise>
+                                                        </c:choose>
+                                                    </a>
+                                                    <h2>${product.minPrice}₫</h2>
+                                                    <a href="${pageContext.request.contextPath}/productDetail?product_id=${product.id}" style="text-decoration: none;">
+                                                        <p style="color: #333;">${product.name}</p>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </c:forEach>
                             </div>
                         </div>
                         <a class="left recommended-item-control" href="#recommended-item-carousel" data-slide="prev">
@@ -146,7 +166,14 @@
             </div>
         </div>
     </div>
+    
+<button class="btn btn-primary">
+        <a href="/NaturalCare/OrderHistory?userId=${sessionScope.user.id}" style="color: white; text-decoration: none;">
+          Go to Order History
+        </a>
+</button>
 </section>
+
 
 <!--Footer-->
 <jsp:include page="/view/common/footer.jsp"></jsp:include>

@@ -30,7 +30,7 @@
                                     <a href="" aria-label="User Profile"><i class="fa fa-user"></i>${user.username}</a>
                                     <div class="dropdown-content">
                                         <div class="user-info">
-                                            <a href="#" aria-label="User Profile"><i class="fa fa-user-circle"></i> My Profile</a>
+                                            <a href="${pageContext.request.contextPath}/profile" aria-label="User Profile"><i class="fa fa-user-circle"></i> My Profile</a>
                                         </div>
                                         <div class="address-list">
                                             <a href="#" onclick="openAddressModal()" aria-label="Address List"><i class="fa fa-map-marker"></i> Address List</a>

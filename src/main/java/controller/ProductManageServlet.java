@@ -14,7 +14,9 @@ import model.ProductVariation;
 import model.SubProductCategory;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @WebServlet(name = "ProductManageServlet", urlPatterns = {"/productManage"})
 public class ProductManageServlet extends HttpServlet {
@@ -38,8 +40,10 @@ public class ProductManageServlet extends HttpServlet {
         } else if ("add".equals(action)) {
             request.getRequestDispatcher("/view/manage/product-add.jsp").forward(request, response);
         } else {
-            // pagination & filter by category/subcategory
+            String keyword = request.getParameter("search");
             String pageRaw = request.getParameter("page");
+            String sort = request.getParameter("sort");
+
             int page = (pageRaw == null || pageRaw.isEmpty()) ? 1 : Integer.parseInt(pageRaw);
             int pageSize = 10;
 
@@ -50,12 +54,17 @@ public class ProductManageServlet extends HttpServlet {
 
             List<Product> products;
             int total;
-            if (subCategoryId != null) {
-                products = productDAO.getProductsBySubCategoryId(subCategoryId, page);
+
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                products = productDAO.searchProductsAdvanced(keyword.trim(), categoryId, subCategoryId, page, pageSize, sort);
+                total = productDAO.countSearchProductsAdvanced(keyword.trim(), categoryId, subCategoryId);
+                request.setAttribute("searchKeyword", keyword);
+            } else if (subCategoryId != null) {
+                products = productDAO.getProductsBySubCategoryIdSorted(subCategoryId, page, pageSize, sort);
                 total = productDAO.getTotalProductsCountBySubCategory(subCategoryId);
                 request.setAttribute("selectedSubCategoryId", subCategoryId);
             } else if (categoryId != null) {
-                products = productDAO.getProductsByCategoryId(categoryId, page);
+                products = productDAO.getProductsByCategoryIdSorted(categoryId, page, pageSize, sort);
                 total = productDAO.getTotalProductsCountByCategory(categoryId);
                 request.setAttribute("selectedCategoryId", categoryId);
             } else {
@@ -63,12 +72,14 @@ public class ProductManageServlet extends HttpServlet {
                 total = productDAO.countTotalProducts();
             }
 
+            int totalPage = (int) Math.ceil((double) total / pageSize);
+
             // --- Variant paging ---
             int variantPageSize = 5;
-            java.util.Map<Integer, Integer> variantPageMap = new java.util.HashMap<>();
-            java.util.Map<Integer, Integer> variantTotalMap = new java.util.HashMap<>();
-            java.util.Map<Integer, Integer> variantTotalPageMap = new java.util.HashMap<>();
-            java.util.Map<Integer, java.util.List<ProductVariation>> productVariantsMap = new java.util.HashMap<>();
+            Map<Integer, Integer> variantPageMap = new HashMap<>();
+            Map<Integer, Integer> variantTotalMap = new HashMap<>();
+            Map<Integer, Integer> variantTotalPageMap = new HashMap<>();
+            Map<Integer, List<ProductVariation>> productVariantsMap = new HashMap<>();
 
             for (Product p : products) {
                 String param = request.getParameter("variantPage" + p.getId());
@@ -76,6 +87,7 @@ public class ProductManageServlet extends HttpServlet {
                 try {
                     if (param != null) variantPage = Integer.parseInt(param);
                 } catch (Exception ignored) {}
+
                 int variantTotal = productDAO.countProductVariants(p.getId());
                 int variantTotalPage = (int) Math.ceil((double) variantTotal / variantPageSize);
                 List<ProductVariation> pagedVariants = productDAO.getProductVariationsByProductIdPaged(p.getId(), variantPage, variantPageSize);
@@ -85,8 +97,6 @@ public class ProductManageServlet extends HttpServlet {
                 variantTotalPageMap.put(p.getId(), variantTotalPage);
                 productVariantsMap.put(p.getId(), pagedVariants);
             }
-
-            int totalPage = (int) Math.ceil((double) total / pageSize);
 
             request.setAttribute("view", "product");
             request.setAttribute("products", products);
@@ -98,8 +108,10 @@ public class ProductManageServlet extends HttpServlet {
             request.setAttribute("page", page);
             request.setAttribute("pageSize", pageSize);
             request.setAttribute("totalPage", totalPage);
+            request.setAttribute("sort", sort);
             request.getRequestDispatcher("/view/home/manager.jsp").forward(request, response);
         }
+
     }
 
     @Override

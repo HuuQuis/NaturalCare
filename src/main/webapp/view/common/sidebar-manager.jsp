@@ -27,7 +27,7 @@
         </li>
 
         <%-- Check active state for category menu --%>
-        <c:set var="isCategoryPage" value="${fn:contains(pageContext.request.requestURI, '/category')}" />
+        <c:set var="isCategoryPage" value="${fn:contains(pageContext.request.requestURI, '/productCategory')}" />
         <c:set var="isSubPage" value="${fn:contains(pageContext.request.requestURI, '/subcategory')}" />
         <c:set var="isCatMenuActive" value="${isCategoryPage or isSubPage}" />
 
@@ -46,7 +46,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link ${isCategoryPage ? 'active' : ''}" href="${pageContext.request.contextPath}/category">
+                        <a class="nav-link ${isCategoryPage ? 'active' : ''}" href="${pageContext.request.contextPath}/productCategory">
                             Category List
                         </a>
                     </li>
@@ -86,6 +86,13 @@
                     </li>
                 </ul>
             </div>
+        </li>
+        
+        <li class="nav-item">
+            <a class="nav-link" href="${pageContext.request.contextPath}/expertListManage">
+                <i class="mdi mdi-format-list-bulleted menu-icon"></i>
+                <span class="menu-title">Expert Management</span>
+            </a>
         </li>
     </ul>
 </nav>

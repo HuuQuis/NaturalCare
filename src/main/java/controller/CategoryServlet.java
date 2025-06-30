@@ -12,7 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet("/category")
+@WebServlet("/productCategory")
 public class CategoryServlet extends HttpServlet {
     ProductCategoryDAO dao = new ProductCategoryDAO();
     SubProductCategoryDAO subDao = new SubProductCategoryDAO();
@@ -25,8 +25,8 @@ public class CategoryServlet extends HttpServlet {
 
         if ("edit".equals(action)) {
             int id = Integer.parseInt(req.getParameter("id"));
-            ProductCategory category = dao.getById(id);
-            req.setAttribute("editCategory", category); // hiển thị lên form nếu cần
+            ProductCategory productCategory = dao.getById(id);
+            req.setAttribute("editCategory", productCategory); // hiển thị lên form nếu cần
         }
 
         List<ProductCategory> list = dao.getCategoriesByPage(page, pageSize);
@@ -41,7 +41,7 @@ public class CategoryServlet extends HttpServlet {
         req.setAttribute("page", page);
         req.setAttribute("totalPage", totalPage);
         req.setAttribute("startIndex", startIndex);
-        req.setAttribute("view", "category");
+        req.setAttribute("view", "productCategory");
         req.getRequestDispatcher("/view/home/manager.jsp").forward(req, resp);
     }
 
@@ -57,12 +57,12 @@ public class CategoryServlet extends HttpServlet {
             case "add":
                 handleAddCategory(req, name);
                 // Quay lại trang 1 để thấy dòng vừa thêm mới đầu bảng
-                resp.sendRedirect("category?page=1");
+                resp.sendRedirect("productCategory?page=1");
                 return;
             case "update":
                 handleUpdateCategory(req, id, name);
                 // Quay lại đúng trang đang sửa
-                resp.sendRedirect("category?page=" + currentPage);
+                resp.sendRedirect("productCategory?page=" + currentPage);
                 return;
             case "delete":
                 handleDeleteCategory(req, id, req, resp, currentPage);
@@ -70,11 +70,11 @@ public class CategoryServlet extends HttpServlet {
             case "hide":
                 dao.hideCategory(id);
                 req.getSession().setAttribute("message", "Category hidden.");
-                resp.sendRedirect("category?page=" + currentPage);
+                resp.sendRedirect("productCategory?page=" + currentPage);
                 return;
         }
 
-        resp.sendRedirect("category");
+        resp.sendRedirect("productCategory");
     }
 
     private void handleAddCategory(HttpServletRequest req, String name) {
@@ -109,7 +109,7 @@ public class CategoryServlet extends HttpServlet {
             dao.deleteProductCategory(id);
             req.getSession().setAttribute("message", "Category deleted.");
             req.getSession().setAttribute("messageType", "success");
-            response.sendRedirect("category?page=" + page);
+            response.sendRedirect("productCategory?page=" + page);
         }
     }
 
