@@ -13,7 +13,7 @@
 
         <!-- Message -->
         <c:if test="${not empty sessionScope.message}">
-            <div id="autoAlert" class="alert alert-${sessionScope.messageType eq 'danger' ? 'danger' : 'success'} alert-dismissible fade show"
+            <div id="autoAlert" class="alert alert-${sessionScope.messageType eq 'danger' ? 'danger' : (sessionScope.messageType eq 'warning' ? 'warning' : 'success')} alert-dismissible fade show"
                  style="position: fixed; top: 20px; right: 20px; z-index: 1055; min-width: 500px;" role="alert">
                     ${sessionScope.message}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
@@ -32,7 +32,19 @@
                         <option value="${c.id}" ${param.productCategoryId == c.id ? 'selected' : ''}>${c.name}</option>
                     </c:forEach>
                 </select>
-                &nbsp;&nbsp;
+
+                <select name="sort" class="form-select" style="max-width: 180px;">
+                    <option value="">Sort by Name</option>
+                    <option value="asc" ${sort == 'asc' ? 'selected' : ''}>A → Z</option>
+                    <option value="desc" ${sort == 'desc' ? 'selected' : ''}>Z → A</option>
+                </select>
+
+                <select name="status" class="form-select" style="max-width: 180px;">
+                    <option value="">All Status</option>
+                    <option value="true" ${statusFilter == 'true' ? 'selected' : ''}>Active</option>
+                    <option value="false" ${statusFilter == 'false' ? 'selected' : ''}>Inactive</option>
+                </select>
+
                 <button class="btn btn-primary" type="submit">Filter</button>
                 &nbsp;&nbsp;
                 <input type="text" name="search" class="form-control ms-auto" placeholder="Search by Sub Category name..." style="max-width: 300px;" value="${param.search}"/>
@@ -46,6 +58,7 @@
                     <th>No.</th>
                     <th>Sub Category Name</th>
                     <th>Category</th>
+                    <th>Status</th>
                     <th>Actions</th>
                 </tr>
                 </thead>
@@ -57,7 +70,12 @@
                         <td>${s.name}</td>
                         <td>${s.categoryName}</td>
                         <td>
-                            <a href="javascript:void(0);" onclick="openEditSubModal(${s.id}, '${s.name}', ${s.productCategoryId})">
+                          <span class="badge ${s.status ? 'bg-success' : 'bg-secondary'}">
+                                  ${s.status ? 'Active' : 'Inactive'}
+                          </span>
+                        </td>
+                        <td>
+                            <a href="javascript:void(0);" onclick="openEditSubModal(${s.id}, '${s.name}', ${s.productCategoryId}, ${s.status})">
                                 <i class="fa fa-edit text-primary me-2"></i>
                             </a>
                             <form action="subcategory" method="post" style="display:inline;" onsubmit="return confirm('Delete this subcategory?');">
@@ -76,7 +94,7 @@
                     </tr>
                 </c:forEach>
                 <c:if test="${empty subList}">
-                    <tr><td colspan="4" class="text-center text-muted fst-italic">No subcategories found.</td></tr>
+                    <tr><td colspan="5" class="text-center text-muted fst-italic">No subcategories found.</td></tr>
                 </c:if>
                 </tbody>
                 <c:remove var="updatedSubCategoryId" scope="session"/>
@@ -89,8 +107,10 @@
                         <li class="page-item ${i == page ? 'active' : ''}">
                             <a class="page-link"
                                href="subcategory?page=${i}
-                   <c:if test='${not empty param.productCategoryId}'>&productCategoryId=${param.productCategoryId}</c:if>
-                   <c:if test='${not empty param.search}'>&search=${param.search}</c:if>">
+                               <c:if test='${not empty param.productCategoryId}'>&productCategoryId=${param.productCategoryId}</c:if>
+                               <c:if test='${not empty param.search}'>&search=${param.search}</c:if>
+                               <c:if test='${not empty param.sort}'>&sort=${param.sort}</c:if>
+                               <c:if test='${not empty param.status}'>&status=${param.status}</c:if>">
                                     ${i}
                             </a>
                         </li>
@@ -111,14 +131,13 @@
                 <button type="button" class="btn" data-bs-dismiss="modal" aria-label="Close">
                     <i class="fa fa-times"></i>
                 </button>
-
             </div>
             <div class="modal-body">
                 <input type="hidden" name="action" id="subAction" value="add">
                 <input type="hidden" name="id" id="subId">
                 <input type="hidden" name="page" value="${page}"/>
                 <input type="hidden" name="search" value="${param.search}"/>
-                <%--<input type="hidden" name="productCategoryId" value="${param.productCategoryId}"/>--%>
+                <input type="hidden" name="sort" value="${param.sort}"/>
                 <div class="mb-3">
                     <label for="subName" class="form-label">Subcategory Name</label>
                     <input type="text" class="form-control" name="name" id="subName" required maxlength="15">
@@ -131,7 +150,13 @@
                         </c:forEach>
                     </select>
                 </div>
-            </div>
+                <div class="mb-3" id="statusField" style="display: none;">
+                    <label for="subCategoryStatus" class="form-label">Status</label>
+                    <select class="form-select" name="status" id="subCategoryStatus">
+                        <option value="true">Active</option>
+                        <option value="false">Inactive</option>
+                    </select>
+                </div>
             <div class="modal-footer">
                 <button type="submit" class="btn btn-success">Save</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -147,18 +172,20 @@
         document.getElementById('subId').value = '';
         document.getElementById('subName').value = '';
         document.getElementById('subCategorySelect').value = productCategoryId || '';
+        document.getElementById('statusField').style.display = 'none'; // Ẩn status
         new bootstrap.Modal(document.getElementById('subModal')).show();
     }
 
-    function openEditSubModal(id, name, productCategoryId) {
+    function openEditSubModal(id, name, productCategoryId, status) {
         document.getElementById('subModalLabel').innerText = 'Edit Subcategory';
         document.getElementById('subAction').value = 'update';
         document.getElementById('subId').value = id;
         document.getElementById('subName').value = name;
         document.getElementById('subCategorySelect').value = productCategoryId;
+        document.getElementById('subCategoryStatus').value = status ? 'true' : 'false';
+        document.getElementById('statusField').style.display = 'block'; // Hiện status
         new bootstrap.Modal(document.getElementById('subModal')).show();
     }
-
     function validateSubForm() {
         const name = document.getElementById('subName').value.trim();
         const isOnlyDigits = /^\d+$/.test(name);
