@@ -97,7 +97,8 @@
                                                     <c:if test="${not empty variation.colorId and not empty variation.colorName}">
                                                         <button class="color-option"
                                                                 data-color="${variation.colorId}"
-                                                                data-color-name="${variation.colorName}">
+                                                                data-color-name="${variation.colorName}"
+                                                                <c:if test="${variation.qtyInStock == 0}">disabled class="out-of-stock"</c:if>>
                                                                 ${variation.colorName}
                                                         </button>
                                                     </c:if>
@@ -115,7 +116,8 @@
                                                     <c:if test="${not empty variation.sizeId and not empty variation.sizeName}">
                                                         <button class="size-option"
                                                                 data-size="${variation.sizeId}"
-                                                                data-size-name="${variation.sizeName}">
+                                                                data-size-name="${variation.sizeName}"
+                                                                <c:if test="${variation.qtyInStock == 0}">disabled class="out-of-stock"</c:if>>
                                                                 ${variation.sizeName}
                                                         </button>
                                                     </c:if>
@@ -138,7 +140,7 @@
                                                     <button class="qty-btn plus">+</button>
                                                 </div>
                                                 <button id="add-to-cart-btn" class="cart-btn" disabled>
-                                                    Thêm vào giỏ hàng
+                                                    Add to Cart
                                                 </button>
                                             </div>
                                         </div>

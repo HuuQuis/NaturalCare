@@ -432,13 +432,23 @@ public class ProductVariantManageServlet extends HttpServlet {
             return false;
         }
 
+        if (price > 99999999){
+            handleValidationError("Price must be less than 99,999,999.", request, response, tempProductVariant, isUpdate);
+            return false;
+        }
+
         if (sellPrice <= 0) {
             handleValidationError("Sell price must be greater than 0.", request, response, tempProductVariant, isUpdate);
             return false;
         }
 
+        if (sellPrice > 99999999){
+            handleValidationError("Sell price must be less than 99,999,999.", request, response, tempProductVariant, isUpdate);
+            return false;
+        }
+
         if (sellPrice < price) {
-            handleValidationError("Sell price must be greater than or equal to the price.", request, response, tempProductVariant, isUpdate);
+            handleValidationError("Sell price must be greater than origin price.", request, response, tempProductVariant, isUpdate);
             return false;
         }
 
