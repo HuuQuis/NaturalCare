@@ -33,8 +33,9 @@ public class ExpertDetailServlet extends HttpServlet {
 
         request.setAttribute("expertDetail", expertDetail);
         request.setAttribute("allSkills", allSkills);
-
-        request.getRequestDispatcher("/view/manage/expert-detail.jsp").forward(request, response);
+        
+        request.setAttribute("view", "expert-detail");
+        request.getRequestDispatcher("/view/home/manager.jsp").forward(request, response);
     }
 
     @Override

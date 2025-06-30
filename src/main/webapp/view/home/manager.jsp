@@ -76,7 +76,10 @@
                     <% if ("expert-insert".equals(view)) { %>
                         <jsp:include page="../manage/expert-insert.jsp" />
                     <% } %>
-
+                    
+                    <% if ("expert-detail".equals(view)) { %>
+                        <jsp:include page="../manage/expert-detail.jsp" />
+                    <% } %>
 
                     <% if ("product".equals(view)) { %>
                 <jsp:include page="../manage/product-manage.jsp" />
