@@ -30,15 +30,15 @@
           <li><a class="nav-link" href="${pageContext.request.contextPath}/recharge-history">Top-up History</a></li>
           <li><a class="nav-link" href="${pageContext.request.contextPath}/order-history">Order History</a></li>
           <li><a class="nav-link" href="${pageContext.request.contextPath}/purchase-history">Purchase History</a></li>
+          <li><a class="nav-link" href="#">Send Feedback</a></li>
         </c:if>
 
-        <c:if test="${sessionScope.user.role != 1}">
-          <li><a class="nav-link" href="${pageContext.request.contextPath}/user-manage">User Management</a></li>
-          <li><a class="nav-link" href="${pageContext.request.contextPath}/blog-manage">Blog Management</a></li>
-          <li><a class="nav-link" href="${pageContext.request.contextPath}/product-manage">Product Management</a></li>
-        </c:if>
+<%--        <c:if test="${sessionScope.user.role != 1}">--%>
+<%--          <li><a class="nav-link" href="${pageContext.request.contextPath}/user-manage">User Management</a></li>--%>
+<%--          <li><a class="nav-link" href="${pageContext.request.contextPath}/blog-manage">Blog Management</a></li>--%>
+<%--          <li><a class="nav-link" href="${pageContext.request.contextPath}/login">Product Management</a></li>--%>
+<%--        </c:if>--%>
 
-        <li><a class="nav-link" href="${pageContext.request.contextPath}/feedback">Send Feedback</a></li>
         <li><a class="nav-link" href="${pageContext.request.contextPath}/logout">Logout</a></li>
       </ul>
     </div>
