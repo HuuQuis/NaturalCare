@@ -21,21 +21,29 @@ public class BlogCategoryServlet extends HttpServlet {
         int id = parseIntOrDefault(req.getParameter("id"), -1);
         int page = parseIntOrDefault(req.getParameter("page"), 1);
         int pageSize = 10;
+        String keyword = req.getParameter("keyword");
+        String statusFilter = req.getParameter("status");
+        String sort = req.getParameter("sort");
 
         if ("edit".equals(action) && id != -1) {
             BlogCategory cat = dao.getCategoryById(id);
             req.setAttribute("editCategory", cat);
         }
 
-        List<BlogCategory> list = dao.getCategoriesByPage(page, pageSize);
-        int totalPage = (int) Math.ceil((double) dao.getTotalCategoryCount() / pageSize);
+        List<BlogCategory> list = dao.getCategoriesByPage(page, pageSize, keyword, sort, statusFilter);
+        int totalCount = dao.countTotalFilteredBlogCategories(keyword, statusFilter);
+        int totalPage = (int) Math.ceil((double) totalCount / pageSize);
         int startIndex = (page - 1) * pageSize;
 
         req.setAttribute("list", list);
         req.setAttribute("page", page);
         req.setAttribute("totalPage", totalPage);
         req.setAttribute("startIndex", startIndex);
+        req.setAttribute("keyword", keyword);
+        req.setAttribute("statusFilter", statusFilter);
+        req.setAttribute("sort", sort);
         req.setAttribute("view", "blog-category");
+
         req.getRequestDispatcher("/view/home/manager.jsp").forward(req, resp);
     }
 
@@ -45,43 +53,47 @@ public class BlogCategoryServlet extends HttpServlet {
         String name = req.getParameter("name") != null ? req.getParameter("name").trim() : null;
         int id = parseIntOrDefault(req.getParameter("id"), -1);
         int currentPage = parseIntOrDefault(req.getParameter("page"), 1);
+        String keyword = req.getParameter("keyword");
+        String statusFilter = req.getParameter("statusFilter");
+        String sort = req.getParameter("sort");
+        boolean status = true;
+        if ("update".equals(action)) {
+            status = "true".equalsIgnoreCase(req.getParameter("status"));
+        }
 
         switch (action) {
             case "add":
                 if (dao.isCategoryNameExists(name)) {
-                    req.getSession().setAttribute("message", "Blog category name already exists.");
-                    req.getSession().setAttribute("messageType", "danger");
+                    setMessage(req, "Blog category name already exists.", "danger");
                 } else {
-                    dao.addCategory(name);
-                    req.getSession().setAttribute("message", "Blog category added.");
-                    req.getSession().setAttribute("messageType", "success");
+                    dao.addCategory(name, status);
+                    setMessage(req, "Blog category added.", "success");
                 }
                 resp.sendRedirect("blog-category?page=1");
                 return;
+
             case "update":
                 if (dao.isCategoryNameExistsForOtherId(name, id)) {
-                    req.getSession().setAttribute("message", "Duplicate blog category name.");
-                    req.getSession().setAttribute("messageType", "danger");
+                    setMessage(req, "Duplicate blog category name.", "danger");
                 } else {
-                    dao.updateCategory(id, name);
-                    req.getSession().setAttribute("message", "Blog category updated.");
-                    req.getSession().setAttribute("messageType", "success");
+                    dao.updateCategory(id, name, status);
+                    setMessage(req, "Blog category updated.", "success");
                     req.getSession().setAttribute("updatedCategoryId", id);
                 }
-                resp.sendRedirect("blog-category?page=" + currentPage);
+                resp.sendRedirect(buildRedirectUrl(currentPage, keyword, statusFilter, sort));
                 return;
+
             case "delete":
                 if (dao.hasBlogDependency(id)) {
-                    req.getSession().setAttribute("message", "Cannot delete: This category is used by existing blog(s).");
-                    req.getSession().setAttribute("messageType", "danger");
+                    setMessage(req, "Cannot delete: This category is used by existing blog(s).", "danger");
                 } else {
                     dao.deleteCategory(id);
-                    req.getSession().setAttribute("message", "Blog category deleted successfully.");
-                    req.getSession().setAttribute("messageType", "success");
+                    setMessage(req, "Blog category deleted successfully.", "success");
                 }
-                resp.sendRedirect("blog-category?page=" + currentPage);
+                resp.sendRedirect(buildRedirectUrl(currentPage, keyword, statusFilter, sort));
                 return;
         }
+
         resp.sendRedirect("blog-category");
     }
 
@@ -91,5 +103,21 @@ public class BlogCategoryServlet extends HttpServlet {
         } catch (Exception e) {
             return defaultVal;
         }
+    }
+
+    private String encode(String value) {
+        return value == null ? "" : java.net.URLEncoder.encode(value, java.nio.charset.StandardCharsets.UTF_8);
+    }
+
+    private String buildRedirectUrl(int page, String keyword, String status, String sort) {
+        return "blog-category?page=" + page +
+                "&keyword=" + encode(keyword) +
+                "&status=" + encode(status) +
+                "&sort=" + encode(sort);
+    }
+
+    private void setMessage(HttpServletRequest req, String msg, String type) {
+        req.getSession().setAttribute("message", msg);
+        req.getSession().setAttribute("messageType", type);
     }
 }
