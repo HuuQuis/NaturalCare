@@ -26,7 +26,7 @@
     <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
 
     <style>
-        .error-message {
+        .error-message-red {
             color: #a94442;
             padding: 5px;
             border-radius: 4px;
@@ -54,10 +54,10 @@
                         <input type="hidden" name="token" value="${token}">
                         New password:
                         <input name="password" type="password" placeholder="Enter new password" required/>
-                        <div class="error-message" id="passwordError"></div>
+                        <div class="error-message-red" id="passwordError"></div>
                         Confirm new password:
                         <input name="confirmPassword" type="password" placeholder="Confirm new password" required/>
-                        <div class="error-message" id="confirmError"></div>
+                        <div class="error-message-red" id="confirmError"></div>
 
                         <br>
                         <c:if test="${not empty message}">
