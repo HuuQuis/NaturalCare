@@ -1,7 +1,10 @@
 package controller;
 
+import dal.ProductVariationDAO;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
+import model.ProductVariation;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,7 +16,7 @@ public class AddToCartServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         request.setCharacterEncoding("UTF-8");
-        response.setContentType("application/json");
+        response.setContentType("text/plain");
 
         StringBuilder jsonBuffer = new StringBuilder();
         String line;
@@ -28,15 +31,44 @@ public class AddToCartServlet extends HttpServlet {
         int variationId;
         int quantity;
         try {
-            org.json.JSONObject jsonObject = new org.json.JSONObject(json);
+            JSONObject jsonObject = new JSONObject(json);
             variationId = jsonObject.getInt("variationId");
             quantity = jsonObject.getInt("quantity");
         } catch (Exception e) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            response.getWriter().write("{\"message\": \"Invalid JSON input\"}");
+            response.getWriter().write("error|Invalid JSON input");
             return;
         }
 
+        ProductVariationDAO dao = new ProductVariationDAO();
+        ProductVariation variation = dao.getProductVariationById(variationId);
+
+        if (variation == null) {
+            response.getWriter().write("error|Product variation not found");
+            return;
+        }
+
+        if (variation.getQtyInStock() == 0) {
+            response.getWriter().write("error|This product is out of stock");
+            return;
+        }
+
+        Map<Integer, Integer> cartMap = readCartFromCookie(request);
+        int currentQty = cartMap.getOrDefault(variationId, 0);
+        int maxAllowed = variation.getQtyInStock();
+        int newQty = currentQty + quantity;
+
+        if (newQty > maxAllowed) {
+            response.getWriter().write("error|Cannot add more than " + (maxAllowed - currentQty) + " item(s) to cart");
+            return;
+        }
+
+        cartMap.put(variationId, newQty);
+        writeCartToCookie(response, cartMap);
+
+        response.getWriter().write("success");
+    }
+
+    private Map<Integer, Integer> readCartFromCookie(HttpServletRequest request) {
         Map<Integer, Integer> cartMap = new HashMap<>();
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
@@ -56,9 +88,10 @@ public class AddToCartServlet extends HttpServlet {
                 }
             }
         }
+        return cartMap;
+    }
 
-        cartMap.put(variationId, cartMap.getOrDefault(variationId, 0) + quantity);
-
+    private void writeCartToCookie(HttpServletResponse response, Map<Integer, Integer> cartMap) {
         StringBuilder cookieValue = new StringBuilder();
         for (Map.Entry<Integer, Integer> entry : cartMap.entrySet()) {
             if (cookieValue.length() > 0) cookieValue.append("|");
@@ -69,8 +102,5 @@ public class AddToCartServlet extends HttpServlet {
         newCookie.setPath("/");
         newCookie.setMaxAge(60 * 60 * 24 * 7);
         response.addCookie(newCookie);
-
-        response.getWriter().write("{\"message\": \"success\"}");
     }
 }
-

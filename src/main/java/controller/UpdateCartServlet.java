@@ -8,7 +8,6 @@ import java.util.*;
 
 import dal.ProductVariationDAO;
 import model.ProductVariation;
-// ...
 
 @WebServlet("/update-cart")
 public class UpdateCartServlet extends HttpServlet {
@@ -17,6 +16,7 @@ public class UpdateCartServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         request.setCharacterEncoding("UTF-8");
+        response.setContentType("text/plain");
 
         String variationIdStr = request.getParameter("variationId");
         String quantityStr = request.getParameter("quantity");
@@ -26,27 +26,42 @@ public class UpdateCartServlet extends HttpServlet {
             variationId = Integer.parseInt(variationIdStr);
             quantity = Integer.parseInt(quantityStr);
         } catch (NumberFormatException e) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            response.setContentType("text/plain");
-            response.getWriter().write("Invalid parameters");
+            response.getWriter().write("error|Invalid parameters");
             return;
         }
 
         ProductVariation variation = productVariationDAO.getProductVariationById(variationId);
         if (variation == null) {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            response.getWriter().write("Variation not found");
+            response.getWriter().write("error|Product variation not found");
             return;
         }
 
-        int inStock = variation.getQtyInStock();
-        if (quantity > inStock) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            response.setContentType("text/plain");
-            response.getWriter().write("Số lượng yêu cầu vượt quá tồn kho (" + inStock + ")");
+        if (variation.getQtyInStock() == 0) {
+            removeFromCartCookie(request, response, variationId);
+            response.getWriter().write("removed|" + variationId + "|0|This item is out of stock and has been removed from your cart.");
             return;
         }
 
+        if (quantity > variation.getQtyInStock()) {
+            response.getWriter().write("error|Requested quantity exceeds available stock (" + variation.getQtyInStock() + ")");
+            return;
+        }
+
+        Map<Integer, Integer> cartMap = readCartFromCookie(request);
+        String action;
+        if (quantity > 0) {
+            cartMap.put(variationId, quantity);
+            action = "updated";
+        } else {
+            cartMap.remove(variationId);
+            action = "removed";
+        }
+
+        writeCartToCookie(response, cartMap);
+        response.getWriter().write(action + "|" + variationId + "|" + quantity);
+    }
+
+    private Map<Integer, Integer> readCartFromCookie(HttpServletRequest request) {
         Map<Integer, Integer> cartMap = new HashMap<>();
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
@@ -66,16 +81,10 @@ public class UpdateCartServlet extends HttpServlet {
                 }
             }
         }
+        return cartMap;
+    }
 
-        String action;
-        if (quantity > 0) {
-            cartMap.put(variationId, quantity);
-            action = "updated";
-        } else {
-            cartMap.remove(variationId);
-            action = "removed";
-        }
-
+    private void writeCartToCookie(HttpServletResponse response, Map<Integer, Integer> cartMap) {
         StringBuilder cookieValue = new StringBuilder();
         for (Map.Entry<Integer, Integer> entry : cartMap.entrySet()) {
             if (cookieValue.length() > 0) cookieValue.append("|");
@@ -84,10 +93,13 @@ public class UpdateCartServlet extends HttpServlet {
 
         Cookie updatedCookie = new Cookie("cart", cookieValue.toString());
         updatedCookie.setPath("/");
-        updatedCookie.setMaxAge(60 * 60 * 24 * 7); // 7 ngày
+        updatedCookie.setMaxAge(60 * 60 * 24 * 7);
         response.addCookie(updatedCookie);
+    }
 
-        response.setContentType("text/plain");
-        response.getWriter().write(action + "|" + variationId + "|" + quantity);
+    private void removeFromCartCookie(HttpServletRequest request, HttpServletResponse response, int removeId) {
+        Map<Integer, Integer> cartMap = readCartFromCookie(request);
+        cartMap.remove(removeId);
+        writeCartToCookie(response, cartMap);
     }
 }
