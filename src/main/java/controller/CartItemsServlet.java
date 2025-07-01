@@ -21,15 +21,28 @@ public class CartItemsServlet extends HttpServlet {
         List<Cart> cartItems = new ArrayList<>();
         int cartTotal = 0;
 
+        // Danh sách các ID sản phẩm đã hết hàng cần xóa
+        List<Integer> toRemove = new ArrayList<>();
+
         for (Map.Entry<Integer, Integer> entry : cartMap.entrySet()) {
             int variationId = entry.getKey();
             int quantity = entry.getValue();
 
             ProductVariation variation = dao.getProductVariationById(variationId);
-            if (variation != null) {
+            if (variation != null && variation.getQtyInStock() > 0) {
                 cartItems.add(new Cart(variation, quantity));
                 cartTotal += variation.getSell_price() * quantity;
+            } else {
+                toRemove.add(variationId);
             }
+        }
+
+        // Cập nhật lại cookie nếu có sản phẩm hết hàng
+        if (!toRemove.isEmpty()) {
+            for (Integer removeId : toRemove) {
+                cartMap.remove(removeId);
+            }
+            writeCartToCookie(response, cartMap);
         }
 
         request.setAttribute("cartItems", cartItems);
@@ -59,4 +72,18 @@ public class CartItemsServlet extends HttpServlet {
         }
         return map;
     }
+
+    private void writeCartToCookie(HttpServletResponse response, Map<Integer, Integer> cartMap) {
+        StringBuilder cookieValue = new StringBuilder();
+        for (Map.Entry<Integer, Integer> entry : cartMap.entrySet()) {
+            if (cookieValue.length() > 0) cookieValue.append("|");
+            cookieValue.append(entry.getKey()).append(":").append(entry.getValue());
+        }
+
+        Cookie updatedCookie = new Cookie("cart", cookieValue.toString());
+        updatedCookie.setPath("/");
+        updatedCookie.setMaxAge(60 * 60 * 24 * 7);
+        response.addCookie(updatedCookie);
+    }
 }
+

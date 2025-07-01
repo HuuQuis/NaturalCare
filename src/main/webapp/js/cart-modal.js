@@ -3,7 +3,7 @@ function loadCartItems() {
         .then(res => res.text())
         .then(html => {
             document.getElementById("cart-items").innerHTML = html;
-            attachCartEventListeners(); // gắn lại sự kiện cho các nút trong giỏ
+            attachCartEventListeners(); // reattach event listeners
         });
 }
 
@@ -21,20 +21,26 @@ function attachCartEventListeners() {
                 quantity: quantity
             })
         })
-            .then(res => {
-                if (!res.ok) throw new Error("Server error or not found");
-                return res.text();
-            })
+            .then(res => res.text())
             .then(responseText => {
-                const [action, idStr, qtyStr] = responseText.split("|");
-                const id = parseInt(idStr);
-                const qty = parseInt(qtyStr);
+                const parts = responseText.split("|");
+                const action = parts[0];
+
+                if (action === "error") {
+                    const message = parts[1] || "Unexpected error occurred";
+                    alert(message);
+                    loadCartItems();
+                    return;
+                }
+
+                const id = parseInt(parts[1]);
+                const qty = parseInt(parts[2]);
 
                 if (action === "removed") {
+                    const message = parts[3] || "Item removed from cart.";
+                    alert(message);
                     showCartLoadingSpinner();
-                    setTimeout(() => {
-                        loadCartItems();
-                    }, 500);
+                    setTimeout(loadCartItems, 500);
                 } else if (action === "updated") {
                     const lineTotalEl = inputElement.closest(".cart-item-details").querySelector(".line-total");
                     lineTotalEl.textContent = formatCurrency(price * quantity);
@@ -43,11 +49,11 @@ function attachCartEventListeners() {
                 updateCartTotal();
 
                 if (typeof updateVariationInfo === "function") {
-                    updateVariationInfo(); // Cập nhật lại maxStock trong product-detail
+                    updateVariationInfo(); // update stock if needed
                 }
             })
             .catch(err => {
-                alert("Error when updating cart. Please try again later.");
+                alert("Error while updating cart. Please try again later.");
                 console.error(err);
             });
     }
@@ -70,7 +76,7 @@ function attachCartEventListeners() {
         }
     }
 
-    // Nút cộng/trừ
+    // Plus/minus buttons
     document.querySelectorAll(".qty-btn").forEach(btn => {
         btn.addEventListener("click", function () {
             const input = this.parentElement.querySelector(".quantity-input");
@@ -85,17 +91,13 @@ function attachCartEventListeners() {
                     updateCart(variationId, quantity, input);
                 } else {
                     alert("You cannot add more than the available stock.");
-                    if (typeof updateVariationInfo === "function") {
-                        updateVariationInfo();
-                    }
                 }
             } else if (this.classList.contains("minus")) {
                 if (quantity === 1) {
-                    const confirmDelete = confirm("Are you sure you want to remove this item from cart?");
+                    const confirmDelete = confirm("Are you sure you want to remove this item from your cart?");
                     if (confirmDelete) {
-                        quantity = 0;
-                        input.value = quantity;
-                        updateCart(variationId, quantity, input);
+                        input.value = 0;
+                        updateCart(variationId, 0, input);
                     }
                 } else {
                     quantity = Math.max(0, quantity - 1);
@@ -106,7 +108,7 @@ function attachCartEventListeners() {
         });
     });
 
-    // Nhập thủ công
+    // Manual input
     document.querySelectorAll(".quantity-input").forEach(input => {
         input.addEventListener("input", function () {
             let quantity = parseInt(this.value);
@@ -117,22 +119,18 @@ function attachCartEventListeners() {
                 quantity = 1;
                 this.value = quantity;
             } else if (quantity === 0) {
-                const confirmDelete = confirm("Are you sure you want to remove this item from cart?");
+                const confirmDelete = confirm("Are you sure you want to remove this item from your cart?");
                 if (!confirmDelete) {
                     quantity = 1;
                     this.value = quantity;
                 }
             } else if (quantity > max) {
-                alert("Overtaking quantity is not allowed. Maximum quantity is " + max + ".");
+                alert("Maximum available stock is " + max + ".");
                 quantity = max;
                 this.value = quantity;
             }
 
             updateCart(variationId, quantity, this);
-
-            if (typeof updateVariationInfo === "function") {
-                updateVariationInfo();
-            }
         });
     });
 }

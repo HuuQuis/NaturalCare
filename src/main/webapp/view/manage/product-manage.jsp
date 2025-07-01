@@ -87,7 +87,7 @@
                                 <tr data-name="${c.name.toLowerCase()}">
                                 <!-- Row chính -->
                                     <td>${(page - 1) * pageSize + loop.index + 1}</td>
-                                    <td style="word-break: break-word; white-space: normal;">
+                                    <td style="word-break: break-word; white-space: normal; max-width: 250px;">
                                             ${c.name}
                                         <button class="btn btn-link toggle-variant-btn" type="button"
                                                 data-target="#variations${c.id}">

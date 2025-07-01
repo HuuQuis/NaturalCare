@@ -1,14 +1,19 @@
 USE natural_care;
 
-INSERT INTO order_status (status_id, status_name)
-VALUES (1, 'Pending'),
-       (2, 'Processing'),
-       (3, 'Assigned to Shipper'),
-       (4, 'Shipped'),
-       (5, 'Delivered'),
-       (6, 'Cancelled'),
-       (7, 'Returned'),
-       (8, 'Refunded');
+INSERT INTO order_status (status_id, status_name, description) VALUES
+(1, 'pending', 'Chờ xử lý (chưa đóng gói)'),
+(2, 'processing', 'Đang xử lý (đóng gói, chuẩn bị giao)'),
+(3, 'shipping', 'Đang giao hàng'),
+(4, 'delivered', 'Giao hàng thành công'),
+(5, 'cancelled_by_user', 'Khách hủy đơn'),
+(6, 'cancelled_by_staff', 'Staff hủy đơn'),
+(7, 'returned', 'Đơn bị trả lại');
+
+INSERT INTO payment_status (payment_status_id, status_name, description) VALUES
+(1, 'pending', 'Chưa thanh toán'),
+(2, 'paid', 'Đã thanh toán'),
+(3, 'failed', 'Thanh toán thất bại'),
+(4, 'refunded', 'Đã hoàn tiền');
 
 INSERT INTO blog_category (blog_category_name)
 VALUES ('Lip Care'),
@@ -323,30 +328,6 @@ VALUES ((SELECT user_id FROM user WHERE username = 'expert1'), 1), -- Makeup
        ((SELECT user_id FROM user WHERE username = 'expert19'), 1),
 
        ((SELECT user_id FROM user WHERE username = 'expert20'), 2);
-
-INSERT INTO province (code, name, full_name)
-VALUES ('01', 'Hanoi', 'Thành phố Hà Nội');
-
-INSERT INTO district (code, name, full_name, province_code)
-VALUES ('001', 'Ba Dinh', 'Quận Ba Đình', '01'),
-       ('002', 'Dong Da', 'Quận Đống Đa', '01'),
-       ('003', 'Cau Giay', 'Quận Cầu Giấy', '01'),
-       ('004', 'Thanh Xuan', 'Quận Thanh Xuân', '01'),
-       ('005', 'Hoan Kiem', 'Quận Hoàn Kiếm', '01');
-
-INSERT INTO ward (code, name, full_name, district_code)
-VALUES ('0001', 'Phuc Xa', 'Phường Phúc Xá', '001'),
-       ('0002', 'Lang Ha', 'Phường Láng Hạ', '002'),
-       ('0003', 'Dich Vong', 'Phường Dịch Vọng', '003'),
-       ('0004', 'Khuong Thuong', 'Phường Khương Thượng', '004'),
-       ('0005', 'Hang Bac', 'Phường Hàng Bạc', '005');
-
-INSERT INTO address (province_code, district_code, ward_code, detail, distance_km)
-VALUES ('01', '001', '0001', '123 Main St', 2.5),
-       ('01', '002', '0002', '456 Second St', 3.2),
-       ('01', '003', '0003', '789 Third St', 1.8),
-       ('01', '004', '0004', '101 First Ave', 2.1),
-       ('01', '005', '0005', '202 Second Ave', 2.9);
 
 INSERT INTO coupon (code, discount_percent, min_order_amount, valid_from, valid_to, is_active, usage_limit, times_used,
                     is_user_specific)
