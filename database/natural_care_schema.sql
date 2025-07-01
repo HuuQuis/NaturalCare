@@ -10,21 +10,21 @@ CREATE TABLE order_status
     status_name VARCHAR(255)
 );
 
-CREATE TABLE blog_category
-(
-    blog_category_id   INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    blog_category_name VARCHAR(255)
+CREATE TABLE blog_category (
+                               blog_category_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                               blog_category_name VARCHAR(255) NOT NULL,
+                               status BOOLEAN DEFAULT TRUE
 );
 
-CREATE TABLE blog
-(
-    blog_id          INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    blog_title       VARCHAR(255),
-    blog_description MEDIUMTEXT,
-    date_published   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    blog_category_id INT NOT NULL,
-    FOREIGN KEY (blog_category_id)
-        REFERENCES blog_category (blog_category_id)
+CREATE TABLE blog (
+                      blog_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                      blog_title VARCHAR(255) NOT NULL,
+                      blog_description MEDIUMTEXT NOT NULL,
+                      date_published TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                      blog_category_id INT NOT NULL,
+                      view_count INT DEFAULT 0,
+                      status BOOLEAN DEFAULT TRUE,
+                      FOREIGN KEY (blog_category_id) REFERENCES blog_category(blog_category_id)
 );
 
 CREATE TABLE blog_image

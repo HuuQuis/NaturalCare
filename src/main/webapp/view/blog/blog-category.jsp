@@ -23,6 +23,28 @@
       <c:remove var="messageType" scope="session"/>
     </c:if>
 
+    <!-- Filter Form -->
+    <form method="get" action="blog-category">
+      <div class="d-flex flex-wrap gap-2 mb-3">
+        <select name="sort" class="form-select" style="max-width: 180px;">
+          <option value="">Sort by Name</option>
+          <option value="asc" ${sort == 'asc' ? 'selected' : ''}>A → Z</option>
+          <option value="desc" ${sort == 'desc' ? 'selected' : ''}>Z → A</option>
+        </select>
+
+        <select name="statusFilter" class="form-select" style="max-width: 180px;">
+          <option value="">All Status</option>
+          <option value="true" ${statusFilter == 'true' ? 'selected' : ''}>Active</option>
+          <option value="false" ${statusFilter == 'false' ? 'selected' : ''}>Inactive</option>
+        </select>
+
+        <button class="btn btn-primary" type="submit">Filter</button>
+
+        <input type="text" name="keyword" class="form-control ms-auto"
+               placeholder="Search by Category name..." style="max-width: 300px;" value="${keyword}" />
+      </div>
+    </form>
+
     <!-- Table -->
     <div class="table-responsive">
       <table class="table table-hover table-bordered rounded shadow-sm bg-white">
@@ -30,6 +52,8 @@
         <tr>
           <th>No.</th>
           <th>Blog Category Name</th>
+          <th>Blog Count</th>
+          <th>Status</th>
           <th>Actions</th>
         </tr>
         </thead>
@@ -39,9 +63,15 @@
           <tr class="${updatedId == c.id ? 'table-success' : ''}">
             <td>${startIndex + loop.index + 1}</td>
             <td>${c.name}</td>
+            <td>${c.blogCount}</td>
             <td>
-              <a href="javascript:void(0);" onclick="openEditModal(${c.id}, '${c.name}')">
-                <i class="fa fa-edit text-primary me-2"></i>
+              <span class="badge ${c.status ? 'bg-success' : 'bg-secondary'}">
+                  ${c.status ? 'Active' : 'Inactive'}
+              </span>
+            </td>
+            <td>
+              <a href="javascript:void(0);" onclick="openEditModal(${c.id}, '${c.name}', ${c.status})">
+              <i class="fa fa-edit text-primary me-2"></i>
               </a>
               <form action="blog-category" method="post" style="display:inline;" onsubmit="return confirm('Delete this blog category?');">
                 <input type="hidden" name="action" value="delete"/>
@@ -94,6 +124,13 @@
           <input type="text" class="form-control" name="name" id="blogCatName" required maxlength="255">
           <div class="invalid-feedback" id="blogCatError"></div>
         </div>
+        <div class="mb-3" id="statusField" style="display: none;">
+          <label for="categoryStatus" class="form-label">Status:</label>
+          <select class="form-select" name="status" id="categoryStatus" required>
+            <option value="true">Active</option>
+            <option value="false">Inactive</option>
+          </select>
+        </div>
       </div>
       <div class="modal-footer">
         <button type="submit" class="btn btn-success">Save</button>
@@ -140,14 +177,17 @@
     document.getElementById("blogCatAction").value = "add";
     document.getElementById("blogCatId").value = "";
     document.getElementById("blogCatName").value = "";
+    document.getElementById('statusField').style.display = 'none'; // Ẩn dropdown
     new bootstrap.Modal(document.getElementById("blogCatModal")).show();
   }
 
-  function openEditModal(id, name) {
+  function openEditModal(id, name, status) {
     document.getElementById("blogCatModalLabel").innerText = "Edit Blog Category";
     document.getElementById("blogCatAction").value = "update";
     document.getElementById("blogCatId").value = id;
     document.getElementById("blogCatName").value = name;
+    document.getElementById("categoryStatus").value = status === true || status === 'true' ? 'true' : 'false';
+    document.getElementById("statusField").style.display = "block";
     new bootstrap.Modal(document.getElementById("blogCatModal")).show();
   }
 

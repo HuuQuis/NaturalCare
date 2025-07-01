@@ -171,78 +171,75 @@ VALUES ('Ginseng Skin Care Combo', 'A luxurious set for radiant skin',
         'Apply during diaper changes.', 21),
        ('Peppermint Essential Oil', 'Invigorating scent', 'Pure oil for aromatherapy and massage.',
         'Dilute before use.', 22);
+        
+INSERT INTO color (color_id, color_name) VALUES
+(1, 'Red'),
+(2, 'Pink'),
+(3, 'Nude'),
+(4, 'Coral'),
+(5, 'Berry'),
+(6, 'Plum'),
+(7, 'Brown'),
+(8, 'Mauve'),
+(9, 'Orange'),
+(10, 'Wine');
 
-INSERT INTO color (color_id, color_name)
-VALUES (1, 'Red'),
-       (2, 'Pink'),
-       (3, 'Nude'),
-       (4, 'Coral'),
-       (5, 'Berry'),
-       (6, 'Plum'),
-       (7, 'Brown'),
-       (8, 'Mauve'),
-       (9, 'Orange'),
-       (10, 'Wine');
+INSERT INTO size (size_id, size_name) VALUES
+(1, '50ml'),
+(2, '100ml'),
+(3, '200ml'),
+(4, '300ml'),
+(5, '400ml'),
+(6, '500ml'),
+(7, '600ml'),
+(8, '700ml'),
+(9, '800ml'),
+(10, '900ml'),
+(11, '1000ml');
 
-INSERT INTO size (size_id, size_name)
-VALUES (1, '50ml'),
-       (2, '100ml'),
-       (3, '200ml'),
-       (4, '300ml'),
-       (5, '400ml'),
-       (6, '500ml'),
-       (7, '600ml'),
-       (8, '700ml'),
-       (9, '800ml'),
-       (10, '900ml'),
-       (11, '1000ml');
-
-INSERT INTO product_variation (product_id, product_image, color_id, size_id, price, sell_price, qty_in_stock)
-VALUES (7, '/images/product/lipstick-pink.jpg', 2, null, 100000, 200000, 100),
-       (7, '/images/product/lipstick-red.jpg', 1, null, 90000, 190000, 100),
-       (9, '/images/product/foundation-diro.jpg', 3, null, 110000, 210000, 100),
-       (9, '/images/product/foundation-este.jpg', 2, null, 150000, 250000, 100),
-       (6, '/images/product/lip-balm-shea.jpg', NULL, NULL, 120000, 250000, 80),
-       (6, '/images/product/lip-balm-aloe.jpg', NULL, NULL, 95000, 190000, 70),
-       (8, '/images/product/lip-scrub-mint.jpg', NULL, NULL, 85000, 200000, 60),
-       (8, '/images/product/lip-scrub-sugar.jpg', NULL, NULL, 95000, 210000, 60),
-       (9, '/images/product/foundation-medium.jpg', 1, NULL, 105000, 210000, 100),
-       (10, '/images/product/peach-blush.jpg', NULL, NULL, 100000, 200000, 90),
-       (11, '/images/product/shampoo-herbal.jpg', NULL, NULL, 90000, 190000, 100),
-       (12, '/images/product/conditioner-argan.jpg', NULL, NULL, 95000, 190000, 100);
-
-
-INSERT INTO blog (blog_title, blog_description, blog_category_id)
-VALUES ('08 Son Dưỡng Môi Sau Khi Xăm',
-        'Son dưỡng giúp môi lên màu đẹp sau xăm. Dưới đây là những dòng được chuyên gia khuyên dùng.', 1),
-       ('Top 5 Son Dưỡng Không Màu',
-        'Danh sách son không màu giúp môi mềm, không gây kích ứng, thích hợp dùng mỗi ngày.', 1),
-       ('Cách Tẩy Tế Bào Chết Môi', 'Tẩy tế bào chết giúp môi hồng hào, hỗ trợ son lên màu mượt hơn.', 1),
-       ('Dưỡng Môi Ban Đêm Với Dầu Thiên Nhiên', 'Dầu dừa, argan giúp dưỡng ẩm và giảm thâm môi hiệu quả.', 1),
-       ('So Sánh Các Dòng Son Dưỡng Có Màu', 'Tư vấn chọn son dưỡng có màu vừa làm đẹp vừa bảo vệ môi tốt.', 1);
+INSERT INTO product_variation (product_id, product_image, color_id, size_id, price,sell_price, qty_in_stock)
+VALUES (7, '/images/product/lipstick-pink.jpg',2, null, 100000,200000, 100),
+       (7, '/images/product/lipstick-red.jpg',1, null, 90000,190000, 100),
+       (9, '/images/product/foundation-diro.jpg', 3, null, 110000,210000, 100),
+       (9, '/images/product/foundation-este.jpg', 2, null, 150000,250000, 100),
+       (6, '/images/product/lip-balm-shea.jpg', NULL, NULL, 120000, 250000, 80),          
+        (6, '/images/product/lip-balm-aloe.jpg', NULL, NULL, 95000, 190000, 70),           
+        (8, '/images/product/lip-scrub-mint.jpg', NULL, NULL, 85000, 200000, 60),          
+        (8, '/images/product/lip-scrub-sugar.jpg', NULL, NULL, 95000, 210000, 60),         
+        (9, '/images/product/foundation-medium.jpg', 1, NULL, 105000, 210000, 100),        
+        (10, '/images/product/peach-blush.jpg', NULL, NULL, 100000, 200000, 90),           
+        (11, '/images/product/shampoo-herbal.jpg', NULL, NULL, 90000, 190000, 100),        
+        (12, '/images/product/conditioner-argan.jpg', NULL, NULL, 95000, 190000, 100);
 
 
-INSERT INTO blog (blog_title, blog_description, blog_category_id)
-VALUES ('Nên Uống Collagen Hay Viên Trắng Da?',
-        'So sánh ưu nhược điểm của collagen và viên trắng da để bạn chọn sản phẩm phù hợp.', 2),
-       ('Chăm Sóc Da Mùa Hè Đúng Cách',
-        'Nắng nóng khiến da dễ tổn thương, hãy áp dụng các bước sau để bảo vệ làn da của bạn.', 2),
-       ('Quy Trình Dưỡng Da Ban Đêm', 'Hướng dẫn chăm sóc da đúng cách vào ban đêm để da phục hồi tốt hơn.', 2),
-       ('Top 5 Mặt Nạ Cho Da Nhạy Cảm', 'Gợi ý mặt nạ thiên nhiên dịu nhẹ cho da dễ kích ứng.', 2),
-       ('Tẩy Trang Cho Da Dầu Không Mụn', 'Tẩy trang sạch là bước quan trọng để ngăn ngừa mụn. Đừng bỏ qua!', 2);
+INSERT INTO blog (blog_title, blog_description, blog_category_id, status) VALUES
+                                                                      ('08 Son Dưỡng Môi Sau Khi Xăm', 'Son dưỡng giúp môi lên màu đẹp sau xăm. Dưới đây là những dòng được chuyên gia khuyên dùng.', 1, TRUE),
+                                                                      ('Top 5 Son Dưỡng Không Màu', 'Danh sách son không màu giúp môi mềm, không gây kích ứng, thích hợp dùng mỗi ngày.', 1, TRUE),
+                                                                      ('Cách Tẩy Tế Bào Chết Môi', 'Tẩy tế bào chết giúp môi hồng hào, hỗ trợ son lên màu mượt hơn.', 1, TRUE),
+                                                                      ('Dưỡng Môi Ban Đêm Với Dầu Thiên Nhiên', 'Dầu dừa, argan giúp dưỡng ẩm và giảm thâm môi hiệu quả.', 1, TRUE),
+                                                                      ('So Sánh Các Dòng Son Dưỡng Có Màu', 'Tư vấn chọn son dưỡng có màu vừa làm đẹp vừa bảo vệ môi tốt.', 1, TRUE);
 
 
-INSERT INTO blog (blog_title, blog_description, blog_category_id)
-VALUES ('Cách Gội Đầu Giúp Tóc Chắc Khỏe', 'Gội sai cách khiến tóc rụng nhiều, đây là cách đúng để cải thiện.', 3),
-       ('Dưỡng Tóc Với Tinh Dầu Tự Nhiên', 'Dầu bưởi, argan và olive giúp tóc phục hồi rõ rệt.', 3),
-       ('Dấu Hiệu Nấm Da Đầu & Cách Trị', 'Ngứa da đầu có thể do nấm, hãy nhận biết và xử lý kịp thời.', 3),
-       ('Cách Làm Tóc Bóng Mượt Tự Nhiên', 'Không cần hấp – chỉ cần 5 phút mỗi ngày với mẹo này.', 3);
+INSERT INTO blog (blog_title, blog_description, blog_category_id, status) VALUES
+                                                                      ('Nên Uống Collagen Hay Viên Trắng Da?', 'So sánh ưu nhược điểm của collagen và viên trắng da để bạn chọn sản phẩm phù hợp.', 2, TRUE),
+                                                                      ('Chăm Sóc Da Mùa Hè Đúng Cách', 'Nắng nóng khiến da dễ tổn thương, hãy áp dụng các bước sau để bảo vệ làn da của bạn.', 2, TRUE),
+                                                                      ('Quy Trình Dưỡng Da Ban Đêm', 'Hướng dẫn chăm sóc da đúng cách vào ban đêm để da phục hồi tốt hơn.', 2, TRUE),
+                                                                      ('Top 5 Mặt Nạ Cho Da Nhạy Cảm', 'Gợi ý mặt nạ thiên nhiên dịu nhẹ cho da dễ kích ứng.', 2, TRUE),
+                                                                      ('Tẩy Trang Cho Da Dầu Không Mụn', 'Tẩy trang sạch là bước quan trọng để ngăn ngừa mụn. Đừng bỏ qua!', 2, TRUE);
 
 
-INSERT INTO blog (blog_title, blog_description, blog_category_id)
-VALUES ('Body Lotion Cho Da Khô', 'Chọn sản phẩm dưỡng thể có độ ẩm cao, chứa thành phần thiên nhiên.', 4),
-       ('Dưỡng Trắng Body Tại Nhà', 'Các bước dưỡng trắng toàn thân từ nguyên liệu dễ tìm.', 4),
-       ('Tẩy Da Chết Body Với Cà Phê', 'Công thức cực dễ mà cực kỳ hiệu quả!', 4);
+INSERT INTO blog (blog_title, blog_description, blog_category_id, status) VALUES
+                                                                      ('Cách Gội Đầu Giúp Tóc Chắc Khỏe', 'Gội sai cách khiến tóc rụng nhiều, đây là cách đúng để cải thiện.', 3, TRUE),
+                                                                      ('Dưỡng Tóc Với Tinh Dầu Tự Nhiên', 'Dầu bưởi, argan và olive giúp tóc phục hồi rõ rệt.', 3, TRUE),
+                                                                      ('Dấu Hiệu Nấm Da Đầu & Cách Trị', 'Ngứa da đầu có thể do nấm, hãy nhận biết và xử lý kịp thời.', 3, TRUE),
+                                                                      ('Cách Làm Tóc Bóng Mượt Tự Nhiên', 'Không cần hấp – chỉ cần 5 phút mỗi ngày với mẹo này.', 3, TRUE);
+
+
+INSERT INTO blog (blog_title, blog_description, blog_category_id, status) VALUES
+                                                                      ('Body Lotion Cho Da Khô', 'Chọn sản phẩm dưỡng thể có độ ẩm cao, chứa thành phần thiên nhiên.', 4, TRUE),
+                                                                      ('Dưỡng Trắng Body Tại Nhà', 'Các bước dưỡng trắng toàn thân từ nguyên liệu dễ tìm.', 4, TRUE),
+                                                                      ('Tẩy Da Chết Body Với Cà Phê', 'Công thức cực dễ mà cực kỳ hiệu quả!', 4, TRUE);
+
 
 INSERT INTO blog_image (blog_id, blog_image)
 VALUES (1, 'images/blog/son-duong.jpg'),
