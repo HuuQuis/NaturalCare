@@ -14,7 +14,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>Register | Natural Care</title>
+    <title>OTP Verification | Natural Care</title>
     <link href="${pageContext.request.contextPath}/css/bootstrap.min.css" rel="stylesheet">
     <link href="${pageContext.request.contextPath}/css/font-awesome.min.css" rel="stylesheet">
     <link href="${pageContext.request.contextPath}/css/prettyPhoto.css" rel="stylesheet">
