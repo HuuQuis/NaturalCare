@@ -103,6 +103,7 @@
         <div class="staff-sidebar">
             <h3>Staff Dashboard</h3>
             <a href="${pageContext.request.contextPath}/orderManagement">📦 Order Management</a>
+            <a href="${pageContext.request.contextPath}/staff">🏠 Dashboard</a>
             <!-- Future: <a href="#">👥 Manage Users</a> -->
         </div>
 

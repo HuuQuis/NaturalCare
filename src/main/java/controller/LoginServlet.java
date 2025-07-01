@@ -47,14 +47,14 @@ public class LoginServlet extends HttpServlet {
 
             // Redirect based on role
             switch (user.getRole()) {
-                case 2:
+                case 2: // Staff
                     response.sendRedirect("staffHome");
                     break;
-                case 3:
-                    response.sendRedirect("skill");
+                case 3: // Admin
+                    response.sendRedirect("view/home/manage.jsp");
                     break;
-                case 4:
-                    request.getRequestDispatcher("view/home/manager.jsp").forward(request, response);
+                case 4: // Manager
+                    request.getRequestDispatcher("view/home/manage.jsp").forward(request, response);
                     break;
                 default:
                     request.setAttribute("error", "");
@@ -63,6 +63,7 @@ public class LoginServlet extends HttpServlet {
             }
         } else {
             request.setAttribute("error", "Invalid username or password.");
+            request.setAttribute("username", username);
             request.getRequestDispatcher("view/login/login.jsp").forward(request, response);
         }
     }

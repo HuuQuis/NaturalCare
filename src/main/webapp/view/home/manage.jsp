@@ -84,6 +84,10 @@
                     <% if ("product".equals(view)) { %>
                 <jsp:include page="../manage/product-manage.jsp" />
                 <% } %>
+                
+                    <% if ("user-management".equals(view)) { %>
+                    <jsp:include page="../manage/user-manage.jsp" />
+                    <% } %>
             </div>
         </div>
 

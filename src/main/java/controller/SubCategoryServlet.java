@@ -52,7 +52,7 @@ public class SubCategoryServlet extends HttpServlet {
         req.setAttribute("statusFilter", statusFilter);
         req.setAttribute("view", "subcategory");
 
-        req.getRequestDispatcher("/view/home/manager.jsp").forward(req, resp);
+        req.getRequestDispatcher("/view/home/manage.jsp").forward(req, resp);
     }
 
     @Override
