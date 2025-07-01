@@ -197,19 +197,19 @@ VALUES (1, '50ml'),
        (10, '900ml'),
        (11, '1000ml');
 
-INSERT INTO product_variation (product_id, product_image, color_id, size_id, price,sell_price, qty_in_stock)
-VALUES (7, '/images/product/lipstick-pink.jpg',2, null, 100000,200000, 100),
-       (7, '/images/product/lipstick-red.jpg',1, null, 90000,190000, 100),
-       (9, '/images/product/foundation-diro.jpg', 3, null, 110000,210000, 100),
-       (9, '/images/product/foundation-este.jpg', 2, null, 150000,250000, 100),
-       (6, '/images/product/lip-balm-shea.jpg', NULL, NULL, 120000, 250000, 80),          
-        (6, '/images/product/lip-balm-aloe.jpg', NULL, NULL, 95000, 190000, 70),           
-        (8, '/images/product/lip-scrub-mint.jpg', NULL, NULL, 85000, 200000, 60),          
-        (8, '/images/product/lip-scrub-sugar.jpg', NULL, NULL, 95000, 210000, 60),         
-        (9, '/images/product/foundation-medium.jpg', 1, NULL, 105000, 210000, 100),        
-        (10, '/images/product/peach-blush.jpg', NULL, NULL, 100000, 200000, 90),           
-        (11, '/images/product/shampoo-herbal.jpg', NULL, NULL, 90000, 190000, 100),        
-        (12, '/images/product/conditioner-argan.jpg', NULL, NULL, 95000, 190000, 100);
+INSERT INTO product_variation (product_id, product_image, color_id, size_id, price, sell_price, qty_in_stock)
+VALUES (7, '/images/product/lipstick-pink.jpg', 2, null, 100000, 200000, 100),
+       (7, '/images/product/lipstick-red.jpg', 1, null, 90000, 190000, 100),
+       (9, '/images/product/foundation-diro.jpg', 3, null, 110000, 210000, 100),
+       (9, '/images/product/foundation-este.jpg', 2, null, 150000, 250000, 100),
+       (6, '/images/product/lip-balm-shea.jpg', NULL, NULL, 120000, 250000, 80),
+       (6, '/images/product/lip-balm-aloe.jpg', NULL, NULL, 95000, 190000, 70),
+       (8, '/images/product/lip-scrub-mint.jpg', NULL, NULL, 85000, 200000, 60),
+       (8, '/images/product/lip-scrub-sugar.jpg', NULL, NULL, 95000, 210000, 60),
+       (9, '/images/product/foundation-medium.jpg', 1, NULL, 105000, 210000, 100),
+       (10, '/images/product/peach-blush.jpg', NULL, NULL, 100000, 200000, 90),
+       (11, '/images/product/shampoo-herbal.jpg', NULL, NULL, 90000, 190000, 100),
+       (12, '/images/product/conditioner-argan.jpg', NULL, NULL, 95000, 190000, 100);
 
 
 INSERT INTO blog (blog_title, blog_description, blog_category_id)
@@ -368,7 +368,22 @@ VALUES ('customer1', 'pass1', 'John', 'Doe', 'john1@example.com', '0123456789', 
        ('customer2', 'pass2', 'Jane', 'Doe', 'jane2@example.com', '0987654321', 1),
        ('customer3', 'pass3', 'Jim', 'Beam', 'jim3@example.com', '0112233445', 1),
        ('customer4', 'pass4', 'Jack', 'Daniels', 'jack4@example.com', '0998877665', 1),
-       ('customer5', 'pass5', 'Jill', 'Valentine', 'jill5@example.com', '0223344556', 1);
+       ('customer5', 'pass5', 'Jill', 'Valentine', 'jill5@example.com', '0223344556', 1),
+       ('customer6', 'pass6', 'Alice', 'Smith', 'alice6@example.com', '0334455667', 1),
+       ('customer7', 'pass7', 'Bob', 'Johnson', 'bob7@example.com', '0445566778', 1),
+       ('customer8', 'pass8', 'Emma', 'Brown', 'emma8@example.com', '0556677889', 1),
+       ('customer9', 'pass9', 'Liam', 'Wilson', 'liam9@example.com', '0667788990', 1),
+       ('customer10', 'pass10', 'Olivia', 'Davis', 'olivia10@example.com', '0778899001', 1),
+       ('customer11', 'pass11', 'Noah', 'Clark', 'noah11@example.com', '0889900112', 1),
+       ('customer12', 'pass12', 'Sophia', 'Lewis', 'sophia12@example.com', '0990011223', 1),
+       ('customer13', 'pass13', 'James', 'Walker', 'james13@example.com', '0112233445', 1),
+       ('customer14', 'pass14', 'Ava', 'Hall', 'ava14@example.com', '0223344556', 1),
+       ('customer15', 'pass15', 'William', 'Allen', 'william15@example.com', '0334455667', 1),
+       ('customer16', 'pass16', 'Mia', 'Young', 'mia16@example.com', '0445566778', 1),
+       ('customer17', 'pass17', 'Henry', 'King', 'henry17@example.com', '0556677889', 1),
+       ('customer18', 'pass18', 'Charlotte', 'Scott', 'charlotte18@example.com', '0667788990', 1),
+       ('customer19', 'pass19', 'Elijah', 'Green', 'elijah19@example.com', '0778899001', 1),
+       ('customer20', 'pass20', 'Harper', 'Adams', 'harper20@example.com', '0889900112', 1);
 
 INSERT INTO userAddress (user_id, address_id, is_default)
 VALUES (2, 1, TRUE),
