@@ -55,17 +55,17 @@ public class PermissionFilter implements Filter {
 
     private boolean checkPermission(String path, int userRole) {
         // Staff
-        if (path.startsWith("/staff/")) {
+        if (path.startsWith("/staff")) {
             return userRole == 2;
         }
 
         // Admin
-        if (path.startsWith("/admin/")) {
+        if (path.startsWith("/admin")) {
             return userRole == 3;
         }
 
         // Manager
-        if (path.startsWith("/manager/")) {
+        if (path.startsWith("/manager")) {
             return userRole == 4;
         }
 
