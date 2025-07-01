@@ -66,13 +66,6 @@
         <c:set var="isBlogMenuActive" value="${isBlogPage or isBlogCatPage}" />
 
         <li class="nav-item">
-            <a class="nav-link" href="${pageContext.request.contextPath}/staff/customerList">
-                <i class="mdi mdi-account-multiple menu-icon"></i>
-                <span class="menu-title">User Management</span>
-            </a>
-        </li>
-
-        <li class="nav-item">
             <a class="nav-link ${isBlogMenuActive ? '' : 'collapsed'}" data-bs-toggle="collapse" href="#blogMenu"
                aria-expanded="${isBlogMenuActive}" aria-controls="blogMenu">
                 <i class="mdi mdi-note-text menu-icon"></i>
@@ -101,5 +94,23 @@
                 <span class="menu-title">Expert Management</span>
             </a>
         </li>
+
+        <c:if test="${sessionScope.user.role == 2 }">
+            <li class="nav-item">
+                <a class="nav-link" href="${pageContext.request.contextPath}/staff/customerList">
+                    <i class="mdi mdi-account-multiple menu-icon"></i>
+                    <span class="menu-title">Customer Management</span>
+                </a>
+            </li>
+        </c:if>
+
+        <c:if test="${sessionScope.user.role == 3}">
+            <li class="nav-item">
+                <a class="nav-link" href="${pageContext.request.contextPath}/admin/managerManage">
+                    <i class="mdi mdi-account-supervisor menu-icon"></i>
+                    <span class="menu-title">Manager Management</span>
+                </a>
+            </li>
+        </c:if>
     </ul>
 </nav>
