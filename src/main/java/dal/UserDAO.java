@@ -278,33 +278,7 @@ public class UserDAO extends DBContext {
         }
         return "";
     }
-
-    // Get all customers (Staff view)
-    public List<User> getAllCustomers() {
-        List<User> list = new ArrayList<>();
-        String sql = "SELECT * FROM user WHERE role_id = 1 ORDER BY user_id DESC";
-        try {
-            stm = connection.prepareStatement(sql);
-            rs = stm.executeQuery();
-            while (rs.next()) {
-                list.add(new User(
-                        rs.getInt("user_id"),
-                        rs.getString("username"),
-                        rs.getString("password"),
-                        rs.getString("first_name"),
-                        rs.getString("last_name"),
-                        rs.getString("email"),
-                        rs.getString("phone_number"),
-                        rs.getInt("role_id"),
-                        rs.getString("user_image")
-                ));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return list;
-    }
-
+    
     // Get customers with pagination and search
     public List<User> getAllCustomersWithPagination(String search, int offset, int limit) {
         List<User> list = new ArrayList<>();
@@ -390,4 +364,143 @@ public class UserDAO extends DBContext {
         return 0;
     }
 
+    // Get managers with pagination and search (for admin)
+    public List<User> getAllManagersWithPagination(String search, int offset, int limit) {
+        List<User> list = new ArrayList<>();
+        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM user WHERE role_id = 4");
+        
+        // Search conditions
+        if (search != null && !search.trim().isEmpty()) {
+            sqlBuilder.append(" AND (username LIKE ? OR email LIKE ? OR first_name LIKE ? OR last_name LIKE ? OR phone_number LIKE ?)");
+        }
+        
+        sqlBuilder.append(" ORDER BY user_id DESC LIMIT ? OFFSET ?");
+        String sql = sqlBuilder.toString();
+        
+        try {
+            stm = connection.prepareStatement(sql);
+            int paramIndex = 1;
+            
+            // Set search parameters
+            if (search != null && !search.trim().isEmpty()) {
+                String searchPattern = "%" + search.trim() + "%";
+                stm.setString(paramIndex++, searchPattern); // username
+                stm.setString(paramIndex++, searchPattern); // email
+                stm.setString(paramIndex++, searchPattern); // first_name
+                stm.setString(paramIndex++, searchPattern); // last_name
+                stm.setString(paramIndex++, searchPattern); // phone_number
+            }
+            
+            // Set pagination parameters
+            stm.setInt(paramIndex++, limit);
+            stm.setInt(paramIndex, offset);
+            
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                list.add(new User(
+                        rs.getInt("user_id"),
+                        rs.getString("username"),
+                        rs.getString("password"),
+                        rs.getString("first_name"),
+                        rs.getString("last_name"),
+                        rs.getString("email"),
+                        rs.getString("phone_number"),
+                        rs.getInt("role_id"),
+                        rs.getString("user_image")
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    // Count total managers (for pagination)
+    public int countManagers(String search) {
+        StringBuilder sqlBuilder = new StringBuilder("SELECT COUNT(*) FROM user WHERE role_id = 4");
+        
+        // Add search conditions
+        if (search != null && !search.trim().isEmpty()) {
+            sqlBuilder.append(" AND (username LIKE ? OR email LIKE ? OR first_name LIKE ? OR last_name LIKE ? OR phone_number LIKE ?)");
+        }
+        
+        String sql = sqlBuilder.toString();
+        
+        try {
+            stm = connection.prepareStatement(sql);
+            
+            // Set search parameters
+            if (search != null && !search.trim().isEmpty()) {
+                String searchPattern = "%" + search.trim() + "%";
+                stm.setString(1, searchPattern); // username
+                stm.setString(2, searchPattern); // email
+                stm.setString(3, searchPattern); // first_name
+                stm.setString(4, searchPattern); // last_name
+                stm.setString(5, searchPattern); // phone_number
+            }
+            
+            rs = stm.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    // Create manager
+    public boolean createManager(String username, String password, String email, String firstName, String lastName, String phone) {
+        String sql = "INSERT INTO user (username, password, email, first_name, last_name, phone_number, role_id) VALUES (?, ?, ?, ?, ?, ?, 4)";
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setString(1, username);
+            stm.setString(2, password); // In production, should hash password
+            stm.setString(3, email);
+            stm.setString(4, firstName);
+            stm.setString(5, lastName);
+            stm.setString(6, phone);
+            
+            int result = stm.executeUpdate();
+            return result > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    // Update manager
+    public boolean updateManager(int userId, String username, String email, String firstName, String lastName, String phone) {
+        String sql = "UPDATE user SET username = ?, email = ?, first_name = ?, last_name = ?, phone_number = ? WHERE user_id = ? AND role_id = 4";
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setString(1, username);
+            stm.setString(2, email);
+            stm.setString(3, firstName);
+            stm.setString(4, lastName);
+            stm.setString(5, phone);
+            stm.setInt(6, userId);
+            
+            int result = stm.executeUpdate();
+            return result > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    // Delete manager
+    public boolean deleteManager(int userId) {
+        String sql = "DELETE FROM user WHERE user_id = ? AND role_id = 4";
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setInt(1, userId);
+            
+            int result = stm.executeUpdate();
+            return result > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

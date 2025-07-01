@@ -14,22 +14,40 @@ import static constant.UtilsConstant.ITEMS_PER_PAGE;
 import static constant.UtilsConstant.MAX_VISIBLE_PAGES;
 
 @WebServlet(name = "UserManageServlet", urlPatterns = {"/staff/customerList"})
-public class UserManageServlet extends HttpServlet {
+public class UserManagementServlet extends HttpServlet {
 
     private UserDAO userDAO = new UserDAO();
 
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            out.println("<h1>Servlet UserManageServlet at " + request.getContextPath() + "</h1>");
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String action = request.getParameter("action");
+        if (action == null) action = "list";
+
+        switch (action) {
+            case "list":
+                showCustomerList(request, response);
+                break;
+            default:
+                showCustomerList(request, response);
+                break;
         }
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String action = request.getParameter("action");
 
+        switch (action) {
+            case "search":
+                handleSearch(request, response);
+                break;
+            default:
+                showCustomerList(request, response);
+                break;
+        }
+    }
+
+    private void showCustomerList(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // Get search parameter
         String search = request.getParameter("search");
         if (search == null) search = "";
@@ -78,10 +96,7 @@ public class UserManageServlet extends HttpServlet {
         request.getRequestDispatcher("/view/home/manage.jsp").forward(request, response);
     }
 
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException {
-        // Handle search form submission
+    private void handleSearch(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String search = request.getParameter("search");
         if (search == null) search = "";
 
@@ -95,7 +110,7 @@ public class UserManageServlet extends HttpServlet {
 
     @Override
     public String getServletInfo() {
-        return "Short description";
+        return "Staff Customer Management Servlet";
     }
 
 }
