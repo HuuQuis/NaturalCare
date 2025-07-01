@@ -4,10 +4,17 @@ CREATE DATABASE natural_care;
 
 USE natural_care;
 
-CREATE TABLE order_status
+CREATE TABLE order_status 
 (
-    status_id   INT NOT NULL PRIMARY KEY,
-    status_name VARCHAR(255)
+    status_id INT PRIMARY KEY,
+    status_name VARCHAR(50) NOT NULL,
+    description TEXT
+);
+
+CREATE TABLE payment_status (
+    payment_status_id INT PRIMARY KEY,
+    status_name VARCHAR(50) NOT NULL,
+    description TEXT
 );
 
 CREATE TABLE blog_category (
@@ -224,66 +231,77 @@ CREATE TABLE coupon
     is_user_specific BOOLEAN DEFAULT FALSE
 );
 
-	CREATE TABLE product_order
-	(
-		order_id   INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-		user_id    INT NOT NULL,
-		order_note VARCHAR(255),
-		status_id  INT NOT NULL DEFAULT 1,
-		create_at  TIMESTAMP    DEFAULT CURRENT_TIMESTAMP,
-		shipper_id INT NULL,
-		address_id INT NOT NULL,
-		coupon_id  INT,
-		FOREIGN KEY (user_id)
-			REFERENCES user (user_id),
-		FOREIGN KEY (shipper_id)
-			REFERENCES user (user_id),
-		FOREIGN KEY (address_id)
-			REFERENCES address (address_id),
-		FOREIGN KEY (coupon_id)
-			REFERENCES coupon (coupon_id)
-	);
-
-	CREATE TABLE order_detail
-	(
-		order_detail_id INT    NOT NULL AUTO_INCREMENT PRIMARY KEY,
-		order_id        INT    NOT NULL,
-		variation_id    INT    NOT NULL,
-		quantity  INT    NOT NULL,
-		price     BIGINT NOT NULL,
-		FOREIGN KEY (order_id)
-			REFERENCES product_order (order_id)
-			ON DELETE CASCADE,
-		FOREIGN KEY (variation_id)
-			REFERENCES product_variation (variation_id)
-	);
-
-CREATE TABLE delivery
-(
-    delivery_id   INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    order_id      INT NOT NULL,
-    shipper_id    INT NOT NULL,
-    status_id     INT NOT NULL DEFAULT 1,
-    delivery_date TIMESTAMP,
+CREATE TABLE product_order (
+    order_id           INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    user_id            INT NOT NULL,
+    order_note         VARCHAR(255),
+    status_id          INT NOT NULL DEFAULT 1, -- from `order_status`
+    payment_status_id  INT NOT NULL DEFAULT 1, -- from `payment_status`
+    create_at          TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    shipper_id         INT NULL,
+    address_id         INT NOT NULL,
+    coupon_id          INT,
+    payment_method ENUM('vnpay', 'momo', 'zalopay') NOT NULL,
+    payment_gateway_txn_ref VARCHAR(100),            -- Mã đơn hàng gửi sang cổng
+    payment_gateway_transaction_no VARCHAR(100),     -- Mã giao dịch trả về từ cổng
+    payment_time TIMESTAMP NULL,                    -- Thời điểm thanh toán
+    FOREIGN KEY (user_id)
+        REFERENCES user (user_id),
+    FOREIGN KEY (shipper_id)
+        REFERENCES user (user_id),
+    FOREIGN KEY (address_id)
+        REFERENCES address (address_id),
+    FOREIGN KEY (coupon_id)
+        REFERENCES coupon (coupon_id),
     FOREIGN KEY (status_id)
         REFERENCES order_status (status_id),
+    FOREIGN KEY (payment_status_id)
+        REFERENCES payment_status (payment_status_id)
+);
+
+
+CREATE TABLE order_detail (
+    order_detail_id INT    NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    order_id        INT    NOT NULL,
+    variation_id    INT    NOT NULL,
+    quantity        INT    NOT NULL,
+    price           BIGINT NOT NULL,
+
+    FOREIGN KEY (order_id)
+        REFERENCES product_order (order_id)
+        ON DELETE CASCADE,
+    FOREIGN KEY (variation_id)
+        REFERENCES product_variation (variation_id)
+);
+
+
+CREATE TABLE delivery (
+    delivery_id     INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    order_id        INT NOT NULL,
+    shipper_id      INT NOT NULL,
+    delivery_status_id INT NOT NULL DEFAULT 1, -- rõ hơn
+    delivery_date   TIMESTAMP,
+
     FOREIGN KEY (order_id)
         REFERENCES product_order (order_id)
         ON DELETE CASCADE,
     FOREIGN KEY (shipper_id)
-        REFERENCES user (user_id)
+        REFERENCES user (user_id),
+    FOREIGN KEY (delivery_status_id)
+        REFERENCES order_status (status_id) -- dùng lại order_status hoặc tạo bảng delivery_status riêng nếu cần
 );
 
-CREATE TABLE return_request
-(
+CREATE TABLE return_request (
     return_request_id INT  NOT NULL AUTO_INCREMENT PRIMARY KEY,
     order_id          INT  NOT NULL,
     user_id           INT  NOT NULL,
     reason            TEXT NOT NULL,
     request_at        TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    approved_by       INT  NOT NULL,
+    approved_by       INT NULL, -- NULL nếu chưa duyệt
+
     FOREIGN KEY (order_id)
-        REFERENCES product_order (order_id),
+        REFERENCES product_order (order_id)
+        ON DELETE CASCADE,
     FOREIGN KEY (user_id)
         REFERENCES user (user_id),
     FOREIGN KEY (approved_by)
