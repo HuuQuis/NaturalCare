@@ -36,8 +36,6 @@ public class BlogManageServlet extends HttpServlet {
         String keyword = req.getParameter("keyword");
         if (keyword == null) keyword = ""; // fix NULL
 
-        System.out.println("==> keyword = '" + keyword + "'");
-        System.out.println("==> categoryId = " + categoryId);
         int pageSize = 10;
 
         // Xử lý form (add hoặc edit)
@@ -54,7 +52,7 @@ public class BlogManageServlet extends HttpServlet {
             req.setAttribute("categories", categories);
             req.setAttribute("page", page);
             req.setAttribute("view", "blog-form");
-            req.getRequestDispatcher("/view/home/manager.jsp").forward(req, resp);
+            req.getRequestDispatcher("/view/home/manage.jsp").forward(req, resp);
             return;
         }
 
@@ -84,7 +82,7 @@ public class BlogManageServlet extends HttpServlet {
         req.setAttribute("totalPage", totalPage);
         req.setAttribute("startIndex", startIndex);
         req.setAttribute("view", "blog-manage");
-        req.getRequestDispatcher("/view/home/manager.jsp").forward(req, resp);
+        req.getRequestDispatcher("/view/home/manage.jsp").forward(req, resp);
     }
 
 
@@ -106,6 +104,7 @@ public class BlogManageServlet extends HttpServlet {
         if ("add".equals(action) || "update".equals(action)) {
             try {
                 Part filePart = req.getPart("image");
+                String oldImagePath = blogDAO.getImagePathByBlogId(id);
                 if (filePart != null && filePart.getSize() > 0) {
                     String fileName = System.currentTimeMillis() + "_" + filePart.getSubmittedFileName();
                     String uploadPath = getServletContext().getRealPath("/image/blog");
@@ -114,7 +113,6 @@ public class BlogManageServlet extends HttpServlet {
 
                     //  Xoá ảnh cũ nếu update
                     if ("update".equals(action)) {
-                        String oldImagePath = blogDAO.getImagePathByBlogId(id);
                         if (oldImagePath != null && !oldImagePath.isEmpty()) {
                             File oldFile = new File(getServletContext().getRealPath("/" + oldImagePath));
                             if (oldFile.exists()) Files.delete(oldFile.toPath());
@@ -123,6 +121,11 @@ public class BlogManageServlet extends HttpServlet {
 
                     filePart.write(uploadPath + File.separator + fileName);
                     imagePath = "image/blog/" + fileName;
+                } else {
+                    // nếu không upload ảnh mới khi update → giữ lại ảnh cũ
+                    if ("update".equals(action)) {
+                        imagePath = oldImagePath;
+                    }
                 }
             } catch (Exception ex) {
                 ex.printStackTrace(); // Hoặc log lỗi

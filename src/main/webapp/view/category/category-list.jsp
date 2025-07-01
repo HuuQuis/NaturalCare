@@ -24,6 +24,27 @@
       <c:remove var="messageType" scope="session"/>
     </c:if>
 
+    <form method="get" action="productCategory">
+      <div class="d-flex flex-wrap gap-2 mb-3">
+        <select name="sort" class="form-select" style="max-width: 180px;">
+          <option value="">Sort by Name</option>
+          <option value="asc" ${sort == 'asc' ? 'selected' : ''}>A → Z</option>
+          <option value="desc" ${sort == 'desc' ? 'selected' : ''}>Z → A</option>
+        </select>
+
+        <select name="status" class="form-select" style="max-width: 180px;">
+          <option value="">All Status</option>
+          <option value="true" ${statusFilter == 'true' ? 'selected' : ''}>Active</option>
+          <option value="false" ${statusFilter == 'false' ? 'selected' : ''}>Inactive</option>
+        </select>
+
+        <button class="btn btn-primary" type="submit">Filter</button>
+        &nbsp;&nbsp;
+        <input type="text" name="search" class="form-control ms-auto"
+               placeholder="Search by Category name..." style="max-width: 300px;" value="${search}"/>
+      </div>
+    </form>
+
     <!-- Bảng danh sách -->
     <div class="table-responsive">
       <table class="table table-hover table-bordered bg-white shadow-sm">
@@ -31,6 +52,7 @@
         <tr>
           <th>No.</th>
           <th>Category Name</th>
+          <th>Status</th>
           <th>Actions</th>
         </tr>
         </thead>
@@ -41,8 +63,13 @@
             <td>${startIndex + loop.index + 1}</td>
             <td>${c.name}</td>
             <td>
-              <a href="javascript:void(0)" onclick="openEditModal(${c.id}, '${c.name}')">
-                <i class="fa fa-edit text-primary me-2"></i>
+              <span class="badge ${c.status ? 'bg-success' : 'bg-secondary'}">
+                  ${c.status ? 'Active' : 'Inactive'}
+              </span>
+            </td>
+            <td>
+              <a href="javascript:void(0)" onclick="openEditModal(${c.id}, '${c.name}', ${c.status})">
+              <i class="fa fa-edit text-primary me-2"></i>
               </a>
               <form method="post" action="productCategory" style="display:inline;" onsubmit="return confirm('Delete this category?');">
                 <input type="hidden" name="action" value="delete"/>
@@ -65,7 +92,10 @@
         <ul class="pagination">
           <c:forEach var="i" begin="1" end="${totalPage}">
             <li class="page-item ${i == page ? 'active' : ''}">
-              <a class="page-link" href="productCategory?page=${i}">${i}</a>
+              <a class="page-link"
+                 href="productCategory?page=${i}&search=${search}&sort=${sort}&status=${param.status}">
+                  ${i}
+              </a>
             </li>
           </c:forEach>
         </ul>
@@ -92,6 +122,13 @@
           <label for="categoryName" class="form-label">Category Name:</label>
           <input type="text" class="form-control" name="name" id="categoryName" maxlength="15" required>
         </div>
+        <div class="mb-3" id="statusField">
+          <label for="categoryStatus" class="form-label">Status:</label>
+          <select class="form-select" name="status" id="categoryStatus" required>
+            <option value="true">Active</option>
+            <option value="false">Inactive</option>
+          </select>
+        </div>
       </div>
       <div class="modal-footer">
         <button type="submit" class="btn btn-success"><i class="fa fa-save"></i> Save</button>
@@ -107,14 +144,17 @@
     document.getElementById('categoryAction').value = 'add';
     document.getElementById('productCategoryId').value = '';
     document.getElementById('categoryName').value = '';
+    document.getElementById('statusField').style.display = 'none'; // ẩn status khi thêm mới
     new bootstrap.Modal(document.getElementById('categoryModal')).show();
   }
 
-  function openEditModal(id, name) {
+  function openEditModal(id, name, status) {
     document.getElementById('categoryModalLabel').innerText = 'Edit Category';
     document.getElementById('categoryAction').value = 'update';
     document.getElementById('productCategoryId').value = id;
     document.getElementById('categoryName').value = name;
+    document.getElementById('categoryStatus').value = status;
+    document.getElementById('statusField').style.display = 'block'; // hiện status khi edit
     new bootstrap.Modal(document.getElementById('categoryModal')).show();
   }
 

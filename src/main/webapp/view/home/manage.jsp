@@ -72,11 +72,22 @@
                     <% if ("expert-skill".equals(view)) { %>
                         <jsp:include page="../manage/expert-management.jsp" />
                     <% } %>
-
+                    
+                    <% if ("expert-insert".equals(view)) { %>
+                        <jsp:include page="../manage/expert-insert.jsp" />
+                    <% } %>
+                    
+                    <% if ("expert-detail".equals(view)) { %>
+                        <jsp:include page="../manage/expert-detail.jsp" />
+                    <% } %>
 
                     <% if ("product".equals(view)) { %>
                 <jsp:include page="../manage/product-manage.jsp" />
                 <% } %>
+                
+                    <% if ("user-management".equals(view)) { %>
+                    <jsp:include page="../manage/user-manage.jsp" />
+                    <% } %>
             </div>
         </div>
 
