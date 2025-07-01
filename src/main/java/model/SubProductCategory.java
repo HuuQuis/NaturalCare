@@ -5,6 +5,10 @@ public class SubProductCategory {
     private String name;
     private int productCategoryId;
     private String categoryName;
+    private boolean status;
+
+    public SubProductCategory() {
+    }
 
     public SubProductCategory(int id, String name, int productCategoryId) {
         this.id = id;
@@ -12,11 +16,12 @@ public class SubProductCategory {
         this.productCategoryId = productCategoryId;
     }
 
-    public SubProductCategory() {
+    public SubProductCategory(int id,  String name, int productCategoryId, String categoryName, boolean status) {
         this.id = id;
         this.name = name;
         this.productCategoryId = productCategoryId;
         this.categoryName = categoryName;
+        this.status = status;
     }
 
     public int getId() {
@@ -44,5 +49,13 @@ public class SubProductCategory {
 
     public void setCategoryName(String categoryName) {
         this.categoryName = categoryName;
+    }
+
+    public boolean isStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
     }
 }

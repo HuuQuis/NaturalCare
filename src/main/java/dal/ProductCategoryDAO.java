@@ -15,7 +15,8 @@ public class ProductCategoryDAO extends DBContext {
             while (rs.next()) {
                 list.add(new ProductCategory(
                         rs.getInt("product_category_id"),
-                        rs.getString("product_category_name")
+                        rs.getString("product_category_name"),
+                        rs.getBoolean("status")
                 ));
             }
         } catch (SQLException e) {
@@ -35,11 +36,12 @@ public class ProductCategoryDAO extends DBContext {
         }
     }
 
-    public void updateProductCategory(int id, String name) {
-        String sql = "UPDATE product_category SET product_category_name = ? WHERE product_category_id = ?";
+    public void updateProductCategory(int id, String name, boolean status) {
+        String sql = "UPDATE product_category SET product_category_name = ?, status = ? WHERE product_category_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, name);
-            ps.setInt(2, id);
+            ps.setBoolean(2, status);
+            ps.setInt(3, id);
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -64,7 +66,8 @@ public class ProductCategoryDAO extends DBContext {
                 if (rs.next()) {
                     return new ProductCategory(
                             rs.getInt("product_category_id"),
-                            rs.getString("product_category_name")
+                            rs.getString("product_category_name"),
+                            rs.getBoolean("status")
                     );
                 }
             }
@@ -74,19 +77,51 @@ public class ProductCategoryDAO extends DBContext {
         return null;
     }
 
-    public List<ProductCategory> getCategoriesByPage(int pageIndex, int pageSize) {
+    public List<ProductCategory> getCategoriesByPage(int pageIndex, int pageSize, String keyword, String sort, String statusFilter) {
         List<ProductCategory> list = new ArrayList<>();
-        String sql = "SELECT * FROM product_category WHERE status = TRUE ORDER BY product_category_id DESC LIMIT ? OFFSET ?";
         int offset = (pageIndex - 1) * pageSize;
 
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, pageSize);
-            ps.setInt(2, offset);
+        StringBuilder sqlBuilder = new StringBuilder(
+                "SELECT * FROM product_category WHERE 1=1"
+        );
+
+        List<Object> params = new ArrayList<>();
+
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sqlBuilder.append(" AND LOWER(product_category_name) LIKE ?");
+            params.add("%" + keyword.toLowerCase() + "%");
+        }
+
+        if ("true".equalsIgnoreCase(statusFilter) || "false".equalsIgnoreCase(statusFilter)) {
+            sqlBuilder.append(" AND status = ?");
+            params.add(Boolean.parseBoolean(statusFilter));
+        }
+
+        // Sort
+        if ("asc".equalsIgnoreCase(sort)) {
+            sqlBuilder.append(" ORDER BY product_category_name ASC");
+        } else if ("desc".equalsIgnoreCase(sort)) {
+            sqlBuilder.append(" ORDER BY product_category_name DESC");
+        } else {
+            // Mặc định: mới nhất lên đầu
+            sqlBuilder.append(" ORDER BY product_category_id DESC");
+        }
+
+        sqlBuilder.append(" LIMIT ? OFFSET ?");
+        params.add(pageSize);
+        params.add(offset);
+
+        try (PreparedStatement ps = connection.prepareStatement(sqlBuilder.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                ps.setObject(i + 1, params.get(i));
+            }
+
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     list.add(new ProductCategory(
                             rs.getInt("product_category_id"),
-                            rs.getString("product_category_name")
+                            rs.getString("product_category_name"),
+                            rs.getBoolean("status")
                     ));
                 }
             }
@@ -97,11 +132,17 @@ public class ProductCategoryDAO extends DBContext {
         return list;
     }
 
-    public int countTotalCategories() {
-        String sql = "SELECT COUNT(*) FROM product_category WHERE status = TRUE";
-        try (PreparedStatement ps = connection.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) return rs.getInt(1);
+    public int countTotalCategories(String keyword, String statusFilter) {
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM product_category WHERE LOWER(product_category_name) LIKE ?");
+        if ("true".equalsIgnoreCase(statusFilter) || "false".equalsIgnoreCase(statusFilter)) {
+            sql.append(" AND status = ").append(statusFilter);
+        }
+
+        try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+            ps.setString(1, "%" + (keyword != null ? keyword.toLowerCase() : "") + "%");
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getInt(1);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -109,7 +150,7 @@ public class ProductCategoryDAO extends DBContext {
     }
 
     public boolean isCategoryNameExists(String name) {
-        String sql = "SELECT 1 FROM product_category WHERE LOWER(product_category_name) = LOWER(?) AND status = TRUE";
+        String sql = "SELECT 1 FROM product_category WHERE LOWER(product_category_name) = LOWER(?)";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, name);
             try (ResultSet rs = ps.executeQuery()) {
