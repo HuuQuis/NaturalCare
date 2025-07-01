@@ -34,9 +34,19 @@
           <option value="${cat.id}" ${selectedCategory == cat.id ? 'selected' : ''}>${cat.name}</option>
         </c:forEach>
       </select>
-      &nbsp;&nbsp;
+      <select name="sort">
+        <option value="">Sort by Title</option>
+        <option value="asc" ${sort == 'asc' ? 'selected' : ''}>A → Z</option>
+        <option value="desc" ${sort == 'desc' ? 'selected' : ''}>Z → A</option>
+      </select>
+
+      <select name="status">
+        <option value="">All Status</option>
+        <option value="true" ${statusFilter == 'true' ? 'selected' : ''}>Active</option>
+        <option value="false" ${statusFilter == 'false' ? 'selected' : ''}>Inactive</option>
+      </select>
       <button type="submit" class="btn btn-primary">Filter</button>
-      &nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;
       <!-- Optional: Search by title -->
       <input type="text" name="keyword" class="form-control" placeholder="Search by title..." value="${param.keyword}" style="max-width: 300px;"/>
 
