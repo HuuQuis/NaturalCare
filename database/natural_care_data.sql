@@ -31,52 +31,52 @@ VALUES ('Makeup Expert'),
        ('Hair Care Experts'),
        ('Perfume Expert');
 
-INSERT INTO product_category (product_category_name, status) VALUES
-                                                                 ('Sale', TRUE),
-                                                                 ('Makeup', TRUE),
-                                                                 ('Skin', TRUE),
-                                                                 ('Hair', TRUE),
-                                                                 ('Beauty Drink', TRUE),
-                                                                 ('Body Care', TRUE),
-                                                                 ('Baby Care', TRUE),
-                                                                 ('Fragrance', TRUE),
-                                                                 ('Gifts', TRUE),
-                                                                 ('Product Sets', TRUE);
+INSERT INTO product_category (product_category_name, status)
+VALUES ('Sale', TRUE),
+       ('Makeup', TRUE),
+       ('Skin', TRUE),
+       ('Hair', TRUE),
+       ('Beauty Drink', TRUE),
+       ('Body Care', TRUE),
+       ('Baby Care', TRUE),
+       ('Fragrance', TRUE),
+       ('Gifts', TRUE),
+       ('Product Sets', TRUE);
 
-INSERT INTO sub_product_category (sub_product_category_id, sub_product_category_name, product_category_id, status) VALUES
-                                                                                                                       (1, 'Skin Care Combo', 1, TRUE),
-                                                                                                                       (2, 'Hair Care Combo', 1, TRUE),
-                                                                                                                       (3, 'Lip Care Combo', 1, TRUE),
-                                                                                                                       (4, 'Other Combos', 1, TRUE),
-                                                                                                                       (5, 'Black Green Day', 1, TRUE),
-                                                                                                                       (6, 'Lip Balm', 2, TRUE),
-                                                                                                                       (7, 'Colored Lipstick', 2, TRUE),
-                                                                                                                       (8, 'Lip Scrub', 2, TRUE),
-                                                                                                                       (9, 'Foundation', 2, TRUE),
-                                                                                                                       (10, 'Blush', 2, TRUE),
-                                                                                                                       (11, 'Shampoo', 4, TRUE),
-                                                                                                                       (12, 'Hair Conditioner', 4, TRUE),
-                                                                                                                       (13, 'Beauty Drink', 5, TRUE),
-                                                                                                                       (14, 'Natural Soap', 6, TRUE),
-                                                                                                                       (15, 'Natural Shower Gel', 6, TRUE),
-                                                                                                                       (16, 'Body Lotion', 6, TRUE),
-                                                                                                                       (17, 'Body Scrub', 6, TRUE),
-                                                                                                                       (18, 'Feminine Hygiene', 6, TRUE),
-                                                                                                                       (19, 'Oral Care', 6, TRUE),
-                                                                                                                       (20, 'Baby Bath', 7, TRUE),
-                                                                                                                       (21, 'Baby Care', 7, TRUE),
-                                                                                                                       (22, 'Pure Essential Oil', 8, TRUE),
-                                                                                                                       (23, 'Therapeutic Essential Oil', 8, TRUE),
-                                                                                                                       (24, 'Smart Hanging Oil', 8, TRUE),
-                                                                                                                       (25, 'Solid Perfume', 8, TRUE),
-                                                                                                                       (26, 'Spray Perfume', 8, TRUE),
-                                                                                                                       (27, 'Under 300k', 9, TRUE),
-                                                                                                                       (28, 'Under 500k', 9, TRUE),
-                                                                                                                       (29, 'Under 800k', 9, TRUE),
-                                                                                                                       (30, 'Anti-aging Ginseng Skin Care Set', 10, TRUE),
-                                                                                                                       (31, 'Centella Skin Care Set', 10, TRUE),
-                                                                                                                       (32, 'Silkworm Skin Care Set', 10, TRUE),
-                                                                                                                       (33, 'Acerola Skin Care Set', 10, TRUE);
+INSERT INTO sub_product_category (sub_product_category_id, sub_product_category_name, product_category_id, status)
+VALUES (1, 'Skin Care Combo', 1, TRUE),
+       (2, 'Hair Care Combo', 1, TRUE),
+       (3, 'Lip Care Combo', 1, TRUE),
+       (4, 'Other Combos', 1, TRUE),
+       (5, 'Black Green Day', 1, TRUE),
+       (6, 'Lip Balm', 2, TRUE),
+       (7, 'Colored Lipstick', 2, TRUE),
+       (8, 'Lip Scrub', 2, TRUE),
+       (9, 'Foundation', 2, TRUE),
+       (10, 'Blush', 2, TRUE),
+       (11, 'Shampoo', 4, TRUE),
+       (12, 'Hair Conditioner', 4, TRUE),
+       (13, 'Beauty Drink', 5, TRUE),
+       (14, 'Natural Soap', 6, TRUE),
+       (15, 'Natural Shower Gel', 6, TRUE),
+       (16, 'Body Lotion', 6, TRUE),
+       (17, 'Body Scrub', 6, TRUE),
+       (18, 'Feminine Hygiene', 6, TRUE),
+       (19, 'Oral Care', 6, TRUE),
+       (20, 'Baby Bath', 7, TRUE),
+       (21, 'Baby Care', 7, TRUE),
+       (22, 'Pure Essential Oil', 8, TRUE),
+       (23, 'Therapeutic Essential Oil', 8, TRUE),
+       (24, 'Smart Hanging Oil', 8, TRUE),
+       (25, 'Solid Perfume', 8, TRUE),
+       (26, 'Spray Perfume', 8, TRUE),
+       (27, 'Under 300k', 9, TRUE),
+       (28, 'Under 500k', 9, TRUE),
+       (29, 'Under 800k', 9, TRUE),
+       (30, 'Anti-aging Ginseng Skin Care Set', 10, TRUE),
+       (31, 'Centella Skin Care Set', 10, TRUE),
+       (32, 'Silkworm Skin Care Set', 10, TRUE),
+       (33, 'Acerola Skin Care Set', 10, TRUE);
 
 INSERT INTO user (username, password, first_name, last_name, email, phone_number, role_id)
 VALUES ('staff', 'staff', 'test', 'staff', 'test@gmail.com', '0123456789', 2);
@@ -240,6 +240,7 @@ INSERT INTO blog (blog_title, blog_description, blog_category_id, status) VALUES
                                                                       ('Dưỡng Trắng Body Tại Nhà', 'Các bước dưỡng trắng toàn thân từ nguyên liệu dễ tìm.', 4, TRUE),
                                                                       ('Tẩy Da Chết Body Với Cà Phê', 'Công thức cực dễ mà cực kỳ hiệu quả!', 4, TRUE);
 
+
 INSERT INTO blog_image (blog_id, blog_image)
 VALUES (1, 'images/blog/son-duong.jpg'),
        (2, 'images/blog/son-duong-khong-mau.jpg'),
@@ -256,5 +257,150 @@ VALUES (1, 'images/blog/son-duong.jpg'),
        (13, 'images/blog/cach-tri-nam-da-dau-tai-nha.jpg'),
        (14, 'images/blog/mem-muot-toc.jpg'),
        (15, 'images/blog/body-lotion.jpg'),
-       (16, 'images/blog/duong-trang-da.jpg'),
-       (17, 'images/blog/tay-te-bao-chet-cafe.jpg');
+       (16, 'images/blog/duong-trang-body.jpg'),
+       (17, 'images/blog/tay-da-chet-body.jpg');
+
+INSERT INTO user (username, password, first_name, last_name, email, phone_number, role_id)
+VALUES ('expert1', 'pass123', 'Nguyen', 'Anh', 'expert1@example.com', '0900000001', 6),
+       ('expert2', 'pass123', 'Tran', 'Binh', 'expert2@example.com', '0900000002', 6),
+       ('expert3', 'pass123', 'Le', 'Chi', 'expert3@example.com', '0900000003', 6),
+       ('expert4', 'pass123', 'Pham', 'Duc', 'expert4@example.com', '0900000004', 6),
+       ('expert5', 'pass123', 'Hoang', 'Em', 'expert5@example.com', '0900000005', 6),
+       ('expert6', 'pass123', 'Do', 'Hung', 'expert6@example.com', '0900000006', 6),
+       ('expert7', 'pass123', 'Vu', 'Khanh', 'expert7@example.com', '0900000007', 6),
+       ('expert8', 'pass123', 'Bui', 'Lam', 'expert8@example.com', '0900000008', 6),
+       ('expert9', 'pass123', 'Ngo', 'Minh', 'expert9@example.com', '0900000009', 6),
+       ('expert10', 'pass123', 'Dinh', 'Nam', 'expert10@example.com', '0900000010', 6),
+       ('expert11', 'pass123', 'Tran', 'Oanh', 'expert11@example.com', '0900000011', 6),
+       ('expert12', 'pass123', 'Le', 'Phuc', 'expert12@example.com', '0900000012', 6),
+       ('expert13', 'pass123', 'Pham', 'Quang', 'expert13@example.com', '0900000013', 6),
+       ('expert14', 'pass123', 'Hoang', 'Sang', 'expert14@example.com', '0900000014', 6),
+       ('expert15', 'pass123', 'Do', 'Thao', 'expert15@example.com', '0900000015', 6),
+       ('expert16', 'pass123', 'Vu', 'Uyen', 'expert16@example.com', '0900000016', 6),
+       ('expert17', 'pass123', 'Bui', 'Van', 'expert17@example.com', '0900000017', 6),
+       ('expert18', 'pass123', 'Ngo', 'Xuan', 'expert18@example.com', '0900000018', 6),
+       ('expert19', 'pass123', 'Dinh', 'Yen', 'expert19@example.com', '0900000019', 6),
+       ('expert20', 'pass123', 'Tran', 'Zan', 'expert20@example.com', '0900000020', 6);
+
+INSERT INTO expertSkill (user_id, skill_id)
+VALUES ((SELECT user_id FROM user WHERE username = 'expert1'), 1), -- Makeup
+
+       ((SELECT user_id FROM user WHERE username = 'expert2'), 2), -- Skin
+
+       ((SELECT user_id FROM user WHERE username = 'expert3'), 3), -- Hair Care
+
+       ((SELECT user_id FROM user WHERE username = 'expert4'), 4), -- Perfume
+
+       ((SELECT user_id FROM user WHERE username = 'expert5'), 1),
+
+       ((SELECT user_id FROM user WHERE username = 'expert6'), 3),
+
+       ((SELECT user_id FROM user WHERE username = 'expert7'), 1),
+       ((SELECT user_id FROM user WHERE username = 'expert7'), 4),
+
+       ((SELECT user_id FROM user WHERE username = 'expert8'), 2),
+
+       ((SELECT user_id FROM user WHERE username = 'expert9'), 3),
+
+       ((SELECT user_id FROM user WHERE username = 'expert10'), 4),
+
+       ((SELECT user_id FROM user WHERE username = 'expert11'), 1),
+
+       ((SELECT user_id FROM user WHERE username = 'expert12'), 2),
+
+       ((SELECT user_id FROM user WHERE username = 'expert13'), 3),
+
+       ((SELECT user_id FROM user WHERE username = 'expert14'), 4),
+
+       ((SELECT user_id FROM user WHERE username = 'expert15'), 1),
+
+       ((SELECT user_id FROM user WHERE username = 'expert16'), 2),
+
+       ((SELECT user_id FROM user WHERE username = 'expert17'), 3),
+
+       ((SELECT user_id FROM user WHERE username = 'expert18'), 4),
+
+       ((SELECT user_id FROM user WHERE username = 'expert19'), 1),
+
+       ((SELECT user_id FROM user WHERE username = 'expert20'), 2);
+
+INSERT INTO province (code, name, full_name)
+VALUES ('01', 'Hanoi', 'Thành phố Hà Nội');
+
+INSERT INTO district (code, name, full_name, province_code)
+VALUES ('001', 'Ba Dinh', 'Quận Ba Đình', '01'),
+       ('002', 'Dong Da', 'Quận Đống Đa', '01'),
+       ('003', 'Cau Giay', 'Quận Cầu Giấy', '01'),
+       ('004', 'Thanh Xuan', 'Quận Thanh Xuân', '01'),
+       ('005', 'Hoan Kiem', 'Quận Hoàn Kiếm', '01');
+
+INSERT INTO ward (code, name, full_name, district_code)
+VALUES ('0001', 'Phuc Xa', 'Phường Phúc Xá', '001'),
+       ('0002', 'Lang Ha', 'Phường Láng Hạ', '002'),
+       ('0003', 'Dich Vong', 'Phường Dịch Vọng', '003'),
+       ('0004', 'Khuong Thuong', 'Phường Khương Thượng', '004'),
+       ('0005', 'Hang Bac', 'Phường Hàng Bạc', '005');
+
+INSERT INTO address (province_code, district_code, ward_code, detail, distance_km)
+VALUES ('01', '001', '0001', '123 Main St', 2.5),
+       ('01', '002', '0002', '456 Second St', 3.2),
+       ('01', '003', '0003', '789 Third St', 1.8),
+       ('01', '004', '0004', '101 First Ave', 2.1),
+       ('01', '005', '0005', '202 Second Ave', 2.9);
+
+INSERT INTO coupon (code, discount_percent, min_order_amount, valid_from, valid_to, is_active, usage_limit, times_used,
+                    is_user_specific)
+VALUES ('DISCOUNT10', 10, 100000, '2025-01-01', '2025-12-31', TRUE, 100, 0, FALSE),
+       ('DISCOUNT20', 20, 200000, '2025-01-01', '2025-12-31', TRUE, 50, 0, FALSE),
+       ('DISCOUNT30', 30, 300000, '2025-06-01', '2025-12-31', TRUE, NULL, 0, TRUE);
+
+INSERT INTO user (username, password, first_name, last_name, email, phone_number, role_id)
+VALUES ('shipper1', 'passship1', 'Shipper', 'One', 'shipper1@example.com', '0333444555', 7);
+
+INSERT INTO userAddress (user_id, address_id, is_default)
+VALUES (1, 1, TRUE);
+
+INSERT INTO user (username, password, first_name, last_name, email, phone_number, role_id)
+VALUES ('customer1', 'pass1', 'John', 'Doe', 'john1@example.com', '0123456789', 1),
+       ('customer2', 'pass2', 'Jane', 'Doe', 'jane2@example.com', '0987654321', 1),
+       ('customer3', 'pass3', 'Jim', 'Beam', 'jim3@example.com', '0112233445', 1),
+       ('customer4', 'pass4', 'Jack', 'Daniels', 'jack4@example.com', '0998877665', 1),
+       ('customer5', 'pass5', 'Jill', 'Valentine', 'jill5@example.com', '0223344556', 1),
+       ('customer6', 'pass6', 'Alice', 'Smith', 'alice6@example.com', '0334455667', 1),
+       ('customer7', 'pass7', 'Bob', 'Johnson', 'bob7@example.com', '0445566778', 1),
+       ('customer8', 'pass8', 'Emma', 'Brown', 'emma8@example.com', '0556677889', 1),
+       ('customer9', 'pass9', 'Liam', 'Wilson', 'liam9@example.com', '0667788990', 1),
+       ('customer10', 'pass10', 'Olivia', 'Davis', 'olivia10@example.com', '0778899001', 1),
+       ('customer11', 'pass11', 'Noah', 'Clark', 'noah11@example.com', '0889900112', 1),
+       ('customer12', 'pass12', 'Sophia', 'Lewis', 'sophia12@example.com', '0990011223', 1),
+       ('customer13', 'pass13', 'James', 'Walker', 'james13@example.com', '0112233445', 1),
+       ('customer14', 'pass14', 'Ava', 'Hall', 'ava14@example.com', '0223344556', 1),
+       ('customer15', 'pass15', 'William', 'Allen', 'william15@example.com', '0334455667', 1),
+       ('customer16', 'pass16', 'Mia', 'Young', 'mia16@example.com', '0445566778', 1),
+       ('customer17', 'pass17', 'Henry', 'King', 'henry17@example.com', '0556677889', 1),
+       ('customer18', 'pass18', 'Charlotte', 'Scott', 'charlotte18@example.com', '0667788990', 1),
+       ('customer19', 'pass19', 'Elijah', 'Green', 'elijah19@example.com', '0778899001', 1),
+       ('customer20', 'pass20', 'Harper', 'Adams', 'harper20@example.com', '0889900112', 1);
+
+INSERT INTO userAddress (user_id, address_id, is_default)
+VALUES (2, 1, TRUE),
+       (3, 2, TRUE),
+       (4, 3, TRUE),
+       (5, 4, TRUE),
+       (6, 5, TRUE);
+
+INSERT INTO product_order (user_id, order_note, status_id, shipper_id, address_id, coupon_id)
+VALUES (2, 'Order note 1 - pending', 1, NULL, 1, NULL),
+       (2, 'Order note 2 - processing', 2, NULL, 1, NULL),
+       (2, 'Order note 3 - shipped', 4, 1, 1, NULL),
+
+       (3, 'Order note 4 - assigned to shipper', 3, 1, 2, 1),
+       (3, 'Order note 5 - delivered', 5, 1, 2, 2),
+
+       (4, 'Order note 6 - cancelled', 6, NULL, 3, NULL),
+       (4, 'Order note 7 - returned', 7, NULL, 3, NULL),
+
+       (5, 'Order note 8 - refunded', 8, NULL, 4, 3),
+
+       (6, 'Order note 9 - pending', 1, NULL, 5, NULL),
+       (6, 'Order note 10 - processing', 2, NULL, 5, NULL);

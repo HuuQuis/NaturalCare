@@ -48,7 +48,7 @@ public class CategoryServlet extends HttpServlet {
         req.setAttribute("sort", sort);
         req.setAttribute("statusFilter", statusFilter);
         req.setAttribute("view", "productCategory");
-        req.getRequestDispatcher("/view/home/manager.jsp").forward(req, resp);
+        req.getRequestDispatcher("/view/home/manage.jsp").forward(req, resp);
     }
 
     @Override

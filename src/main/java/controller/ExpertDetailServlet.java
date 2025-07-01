@@ -35,7 +35,7 @@ public class ExpertDetailServlet extends HttpServlet {
         request.setAttribute("allSkills", allSkills);
         
         request.setAttribute("view", "expert-detail");
-        request.getRequestDispatcher("/view/home/manager.jsp").forward(request, response);
+        request.getRequestDispatcher("/view/home/manage.jsp").forward(request, response);
     }
 
     @Override
@@ -122,7 +122,7 @@ public class ExpertDetailServlet extends HttpServlet {
             request.setAttribute("allSkills", expertDAO.getAllSkills());
             
             request.setAttribute("view", "expert-insert");
-            request.getRequestDispatcher("/view/home/manager.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/home/manage.jsp").forward(request, response);
             return;
         }
 
@@ -134,6 +134,6 @@ public class ExpertDetailServlet extends HttpServlet {
         request.setAttribute("allSkills", expertDAO.getAllSkills());
         
         request.setAttribute("view", "expert-insert");
-        request.getRequestDispatcher("/view/home/manager.jsp").forward(request, response);
+        request.getRequestDispatcher("/view/home/manage.jsp").forward(request, response);
     }
 }

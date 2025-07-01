@@ -109,7 +109,7 @@ public class ProductManageServlet extends HttpServlet {
             request.setAttribute("pageSize", pageSize);
             request.setAttribute("totalPage", totalPage);
             request.setAttribute("sort", sort);
-            request.getRequestDispatcher("/view/home/manager.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/home/manage.jsp").forward(request, response);
         }
 
     }

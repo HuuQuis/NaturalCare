@@ -6,7 +6,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
 
-@WebServlet(urlPatterns = {"/test"})
+@WebServlet(urlPatterns = {"/staff"})
 public class test extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
@@ -20,7 +20,8 @@ public class test extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
-        request.getRequestDispatcher("view/about-us.jsp").forward(request, response);
+        // Return manage page
+        request.getRequestDispatcher("/view/home/manage.jsp").forward(request, response);
     }
 
     @Override

@@ -66,6 +66,13 @@
         <c:set var="isBlogMenuActive" value="${isBlogPage or isBlogCatPage}" />
 
         <li class="nav-item">
+            <a class="nav-link" href="${pageContext.request.contextPath}/staff/customerList">
+                <i class="mdi mdi-account-multiple menu-icon"></i>
+                <span class="menu-title">User Management</span>
+            </a>
+        </li>
+
+        <li class="nav-item">
             <a class="nav-link ${isBlogMenuActive ? '' : 'collapsed'}" data-bs-toggle="collapse" href="#blogMenu"
                aria-expanded="${isBlogMenuActive}" aria-controls="blogMenu">
                 <i class="mdi mdi-note-text menu-icon"></i>
