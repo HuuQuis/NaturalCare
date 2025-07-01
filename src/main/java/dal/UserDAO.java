@@ -279,4 +279,115 @@ public class UserDAO extends DBContext {
         return "";
     }
 
+    // Get all customers (Staff view)
+    public List<User> getAllCustomers() {
+        List<User> list = new ArrayList<>();
+        String sql = "SELECT * FROM user WHERE role_id = 1 ORDER BY user_id DESC";
+        try {
+            stm = connection.prepareStatement(sql);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                list.add(new User(
+                        rs.getInt("user_id"),
+                        rs.getString("username"),
+                        rs.getString("password"),
+                        rs.getString("first_name"),
+                        rs.getString("last_name"),
+                        rs.getString("email"),
+                        rs.getString("phone_number"),
+                        rs.getInt("role_id"),
+                        rs.getString("user_image")
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    // Get customers with pagination and search
+    public List<User> getAllCustomersWithPagination(String search, int offset, int limit) {
+        List<User> list = new ArrayList<>();
+        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM user WHERE role_id = 1");
+        
+        // Search conditions
+        if (search != null && !search.trim().isEmpty()) {
+            sqlBuilder.append(" AND (username LIKE ? OR email LIKE ? OR first_name LIKE ? OR last_name LIKE ? OR phone_number LIKE ?)");
+        }
+        
+        sqlBuilder.append(" ORDER BY user_id DESC LIMIT ? OFFSET ?");
+        String sql = sqlBuilder.toString();
+        
+        try {
+            stm = connection.prepareStatement(sql);
+            int paramIndex = 1;
+            
+            // Set search parameters
+            if (search != null && !search.trim().isEmpty()) {
+                String searchPattern = "%" + search.trim() + "%";
+                stm.setString(paramIndex++, searchPattern); // username
+                stm.setString(paramIndex++, searchPattern); // email
+                stm.setString(paramIndex++, searchPattern); // first_name
+                stm.setString(paramIndex++, searchPattern); // last_name
+                stm.setString(paramIndex++, searchPattern); // phone_number
+            }
+            
+            // Set pagination parameters
+            stm.setInt(paramIndex++, limit);
+            stm.setInt(paramIndex, offset);
+            
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                list.add(new User(
+                        rs.getInt("user_id"),
+                        rs.getString("username"),
+                        rs.getString("password"),
+                        rs.getString("first_name"),
+                        rs.getString("last_name"),
+                        rs.getString("email"),
+                        rs.getString("phone_number"),
+                        rs.getInt("role_id"),
+                        rs.getString("user_image")
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    // Count total customers (for pagination)
+    public int countCustomers(String search) {
+        StringBuilder sqlBuilder = new StringBuilder("SELECT COUNT(*) FROM user WHERE role_id = 1");
+        
+        // Add search conditions
+        if (search != null && !search.trim().isEmpty()) {
+            sqlBuilder.append(" AND (username LIKE ? OR email LIKE ? OR first_name LIKE ? OR last_name LIKE ? OR phone_number LIKE ?)");
+        }
+        
+        String sql = sqlBuilder.toString();
+        
+        try {
+            stm = connection.prepareStatement(sql);
+            
+            // Set search parameters
+            if (search != null && !search.trim().isEmpty()) {
+                String searchPattern = "%" + search.trim() + "%";
+                stm.setString(1, searchPattern); // username
+                stm.setString(2, searchPattern); // email
+                stm.setString(3, searchPattern); // first_name
+                stm.setString(4, searchPattern); // last_name
+                stm.setString(5, searchPattern); // phone_number
+            }
+            
+            rs = stm.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
 }
