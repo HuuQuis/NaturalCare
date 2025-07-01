@@ -53,7 +53,7 @@
             <div class="login-form">
                 <h2>Login to your account</h2>
                 <form action="${pageContext.request.contextPath}/login" method="POST">
-                    Username: <input name="username" type="text" placeholder="Username" required/>
+                    Username: <input name="username" type="text" placeholder="Username" value="${param.username}" required/>
                     Password: <input name="password" type="password" placeholder="Password" required/>
                     <span>
                         <input name="remember-account" type="checkbox" class="checkbox" checked value="on">

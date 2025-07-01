@@ -36,7 +36,7 @@ public class BlogCategoryServlet extends HttpServlet {
         req.setAttribute("totalPage", totalPage);
         req.setAttribute("startIndex", startIndex);
         req.setAttribute("view", "blog-category");
-        req.getRequestDispatcher("/view/home/manager.jsp").forward(req, resp);
+        req.getRequestDispatcher("/view/home/manage.jsp").forward(req, resp);
     }
 
     @Override

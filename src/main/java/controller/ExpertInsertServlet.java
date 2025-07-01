@@ -68,7 +68,7 @@ public class ExpertInsertServlet extends HttpServlet {
         System.out.println(allSkills);
         
         request.setAttribute("view", "expert-insert");
-        request.getRequestDispatcher("/view/home/manager.jsp").forward(request, response);
+        request.getRequestDispatcher("/view/home/manage.jsp").forward(request, response);
     } 
 
     /** 
