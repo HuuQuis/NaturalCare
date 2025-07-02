@@ -10,19 +10,19 @@
             <div class="col-sm-4">
                 <div class="logo pull-left">
                     <a href=${pageContext.request.contextPath}/home><img
-                            src="https://naturalcare.vercel.app/naturalcare/NLC-Logo.png" alt=""
-                            style="max-height: 70px"/></a>
+                            src="${pageContext.request.contextPath}/images/home/logo.png" alt=""
+                            style="max-height: 100px"/></a>
                 </div>
             </div>
             <div class="col-sm-4">
-                <div class="search-box center-block">
+                <div class="search-box center-block" style="padding-top: 35px">
                     <input oninput="searchByName(this)" value="${txt}" id="searchInput" type="text" name="txt"
                            autocomplete="off" placeholder="Search products..."/>
                     <div id="searchList" class="search-list"></div>
                 </div>
             </div>
             <div class="col-sm-4">
-                <div class="shop-menu pull-right">
+                <div class="shop-menu pull-right" style="padding-top: 35px">
                     <ul class="nav navbar-nav">
                         <c:choose>
                             <c:when test="${not empty user}">

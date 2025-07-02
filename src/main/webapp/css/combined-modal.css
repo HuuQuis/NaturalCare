@@ -438,9 +438,7 @@ body.modal-open .modal-address {
     width: 25px;
     height: 25px;
     text-align: center;
-    border: 1px solid #ccc;
-    border-left: none;
-    border-right: none;
+    border: none;
     font-size: 16px;
     outline: none;
 }

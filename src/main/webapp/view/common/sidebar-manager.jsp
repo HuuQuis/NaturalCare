@@ -4,16 +4,11 @@
 
 <nav class="sidebar sidebar-offcanvas" id="sidebar">
     <div class="text-center sidebar-brand-wrapper d-flex align-items-center">
-        <a class="sidebar-brand brand-logo" href="">
-            <img src="${pageContext.request.contextPath}/adminassets/images/logo.svg" alt="logo"/>
-        </a>
-        <a class="sidebar-brand brand-logo-mini pl-4 pt-3" href="">
-            <img src="${pageContext.request.contextPath}/adminassets/images/logo-mini.svg" alt="logo"/>
-        </a>
+
     </div>
     <ul class="nav">
         <li class="nav-item">
-            <a class="nav-link" href="">
+            <a class="nav-link" href="#">
                 <i class="mdi mdi-home menu-icon"></i>
                 <span class="menu-title">Dashboard</span>
             </a>

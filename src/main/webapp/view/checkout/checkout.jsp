@@ -13,59 +13,8 @@
     <link href="${pageContext.request.contextPath}/css/animate.css" rel="stylesheet">
     <link href="${pageContext.request.contextPath}/css/main.css" rel="stylesheet">
     <link href="${pageContext.request.contextPath}/css/responsive.css" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/css/checkout.css" rel="stylesheet">
 </head>
-<style>
-    .checkout-form {
-        margin-bottom: 30px;
-    }
-    .address-section h3 {
-        font-size: 1.2rem;
-        margin-bottom: 10px;
-    }
-    .address-div {
-        display: flex;
-        width: fit-content;
-        align-items: flex-start;
-        gap: 12px;
-        padding: 12px 16px;
-        margin-bottom: 12px;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        background-color: #fff;
-        transition: border 0.3s;
-    }
-    .address-div.selected {
-        border-color: #28a745;
-        background-color: #f6fff7;
-    }
-    .address-div input[type="radio"] {
-        margin-top: 5px;
-    }
-    .address-div .badge {
-        background-color: #28a745;
-        color: white;
-        font-size: 0.75rem;
-        padding: 2px 6px;
-        border-radius: 4px;
-        margin-left: 10px;
-    }
-    .add-new-address {
-        display: inline-block;
-        margin-top: 10px;
-        color: #007bff;
-        text-decoration: none;
-        font-size: 0.9rem;
-    }
-    .add-new-address:hover {
-        text-decoration: underline;
-    }
-
-    .checkout-form .form-control{
-        margin-bottom: 16px !important;
-        height: 40px !important;
-    }
-
-</style>
 <body>
 <header id="header">
     <jsp:include page="/view/common/header-top.jsp"/>
@@ -116,9 +65,27 @@
                         </label>
                     </c:forEach>
                 </div>
+                <div class="payment-methods mb-4">
+                    <h4 class="fw-bold mb-2">Choose Payment Method</h4>
+                    <div class="payment-option">
+                        <label>
+                            <input type="radio" name="paymentMethod" value="zalopay" checked/>
+                            <img src="${pageContext.request.contextPath}/images/payment/shipcod-logo.jpg" alt="ZaloPay" />
+                            Thanh toán khi nhận hàng (COD)
+                        </label>
+                    </div>
+                    <div class="payment-option">
+                        <label>
+                            <input type="radio" name="paymentMethod" value="vnpay"/>
+                            <img src="${pageContext.request.contextPath}/images/payment/vnpay-logo.jpg" alt="VNPAY" />
+                            Thẻ ATM / Thẻ tín dụng / Thẻ ghi nợ (qua VNPAY)
+                        </label>
+                    </div>
+                </div>
                 <div class="text-end mt-4">
                     <button type="submit"
                             class="btn btn-success px-4 py-2"
+                            style="margin-top: 10px;"
                             <c:if test="${empty cartItems}">disabled</c:if>>
                         <i class="fa fa-shopping-cart"></i> Place Order
                     </button>

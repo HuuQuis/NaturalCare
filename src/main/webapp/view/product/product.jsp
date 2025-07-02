@@ -98,7 +98,7 @@
                                                     </c:when>
                                                     <c:otherwise>
                                                         <div class="item active">
-                                                            <img src="${pageContext.request.contextPath}/images/default-product.png" alt="No Image Available" />
+                                                            <img src="${pageContext.request.contextPath}/images/product/default-image.jpg" alt="No Image Available" />
                                                         </div>
                                                     </c:otherwise>
                                                 </c:choose>

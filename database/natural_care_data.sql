@@ -206,16 +206,8 @@ INSERT INTO product_variation (product_id, product_image, color_id, size_id, pri
 VALUES (7, '/images/product/lipstick-pink.jpg',2, null, 100000,200000, 100),
        (7, '/images/product/lipstick-red.jpg',1, null, 90000,190000, 100),
        (9, '/images/product/foundation-diro.jpg', 3, null, 110000,210000, 100),
-       (9, '/images/product/foundation-este.jpg', 2, null, 150000,250000, 100),
-       (6, '/images/product/lip-balm-shea.jpg', NULL, NULL, 120000, 250000, 80),          
-        (6, '/images/product/lip-balm-aloe.jpg', NULL, NULL, 95000, 190000, 70),           
-        (8, '/images/product/lip-scrub-mint.jpg', NULL, NULL, 85000, 200000, 60),          
-        (8, '/images/product/lip-scrub-sugar.jpg', NULL, NULL, 95000, 210000, 60),         
-        (9, '/images/product/foundation-medium.jpg', 1, NULL, 105000, 210000, 100),        
-        (10, '/images/product/peach-blush.jpg', NULL, NULL, 100000, 200000, 90),           
-        (11, '/images/product/shampoo-herbal.jpg', NULL, NULL, 90000, 190000, 100),        
-        (12, '/images/product/conditioner-argan.jpg', NULL, NULL, 95000, 190000, 100);
-
+       (9, '/images/product/foundation-este.jpg', 2, null, 150000,250000, 100),       
+        (9, '/images/product/foundation-medium.jpg', 1, NULL, 105000, 210000, 100);
 
 INSERT INTO blog (blog_title, blog_description, blog_category_id, status) VALUES
                                                                       ('08 Son Dưỡng Môi Sau Khi Xăm', 'Son dưỡng giúp môi lên màu đẹp sau xăm. Dưới đây là những dòng được chuyên gia khuyên dùng.', 1, TRUE),
@@ -338,9 +330,6 @@ VALUES ('DISCOUNT10', 10, 100000, '2025-01-01', '2025-12-31', TRUE, 100, 0, FALS
 INSERT INTO user (username, password, first_name, last_name, email, phone_number, role_id)
 VALUES ('shipper1', 'passship1', 'Shipper', 'One', 'shipper1@example.com', '0333444555', 7);
 
-INSERT INTO userAddress (user_id, address_id, is_default)
-VALUES (1, 1, TRUE);
-
 INSERT INTO user (username, password, first_name, last_name, email, phone_number, role_id)
 VALUES ('customer1', 'pass1', 'John', 'Doe', 'john1@example.com', '0123456789', 1),
        ('customer2', 'pass2', 'Jane', 'Doe', 'jane2@example.com', '0987654321', 1),
@@ -362,26 +351,3 @@ VALUES ('customer1', 'pass1', 'John', 'Doe', 'john1@example.com', '0123456789', 
        ('customer18', 'pass18', 'Charlotte', 'Scott', 'charlotte18@example.com', '0667788990', 1),
        ('customer19', 'pass19', 'Elijah', 'Green', 'elijah19@example.com', '0778899001', 1),
        ('customer20', 'pass20', 'Harper', 'Adams', 'harper20@example.com', '0889900112', 1);
-
-INSERT INTO userAddress (user_id, address_id, is_default)
-VALUES (2, 1, TRUE),
-       (3, 2, TRUE),
-       (4, 3, TRUE),
-       (5, 4, TRUE),
-       (6, 5, TRUE);
-
-INSERT INTO product_order (user_id, order_note, status_id, shipper_id, address_id, coupon_id)
-VALUES (2, 'Order note 1 - pending', 1, NULL, 1, NULL),
-       (2, 'Order note 2 - processing', 2, NULL, 1, NULL),
-       (2, 'Order note 3 - shipped', 4, 1, 1, NULL),
-
-       (3, 'Order note 4 - assigned to shipper', 3, 1, 2, 1),
-       (3, 'Order note 5 - delivered', 5, 1, 2, 2),
-
-       (4, 'Order note 6 - cancelled', 6, NULL, 3, NULL),
-       (4, 'Order note 7 - returned', 7, NULL, 3, NULL),
-
-       (5, 'Order note 8 - refunded', 8, NULL, 4, 3),
-
-       (6, 'Order note 9 - pending', 1, NULL, 5, NULL),
-       (6, 'Order note 10 - processing', 2, NULL, 5, NULL);
