@@ -1,15 +1,18 @@
 package utils;
 
+import constant.UtilsConstant;
 import jakarta.mail.*;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
-import utils.PropertiesUtils;
 
+import java.security.SecureRandom;
 import java.util.Properties;
 
-public class EmailUtils {
+public class UserAuthUtils {
     private static final String senderEmail = PropertiesUtils.get("config", "mail.username");
     private static final String senderPassword = PropertiesUtils.get("config", "mail.password");
+
+    private static final SecureRandom secureRandom = new SecureRandom();
 
     private static Session getSession() {
         Properties props = new Properties();
@@ -19,7 +22,7 @@ public class EmailUtils {
         props.put("mail.smtp.port", "587");
         props.put("mail.smtp.ssl.trust", "smtp.gmail.com");
         props.put("mail.smtp.ssl.protocols", "TLSv1.2");
-        
+
         return Session.getInstance(props, new Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(senderEmail, senderPassword);
@@ -44,6 +47,19 @@ public class EmailUtils {
         message.setSubject("Your OTP Code");
         message.setText("Your OTP code is: " + otp + "\nThis code is valid for 5 minutes.");
         Transport.send(message);
+    }
+
+    public static boolean isValidOtp(String sessionOtp, Long otpTime) {
+        if (sessionOtp == null || otpTime == null) {
+            return false;
+        }
+        long now = System.currentTimeMillis();
+        return now - otpTime <= UtilsConstant.OTP_EXPIRY_TIME;
+    }
+
+    public static String generateOtp() {
+        int otp = 100000 + secureRandom.nextInt(900000); //6-digit
+        return String.valueOf(otp);
     }
 
 }

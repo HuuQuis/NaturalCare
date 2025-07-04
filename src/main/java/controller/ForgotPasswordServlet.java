@@ -1,20 +1,16 @@
 package controller;
 
 import dal.UserDAO;
-import jakarta.mail.*;
-import jakarta.mail.internet.InternetAddress;
-import jakarta.mail.internet.MimeMessage;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import utils.EmailUtils;
+import utils.UserAuthUtils;
 import utils.PropertiesUtils;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Properties;
 import java.util.UUID;
 
 @WebServlet(urlPatterns = {"/forgot"})
@@ -48,7 +44,7 @@ public class ForgotPasswordServlet extends HttpServlet {
                 // Gửi email bất đồng bộ
                 new Thread(() -> {
                     try {
-                        EmailUtils.sendResetEmail(email, token, baseUrl);
+                        UserAuthUtils.sendResetEmail(email, token, baseUrl);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
