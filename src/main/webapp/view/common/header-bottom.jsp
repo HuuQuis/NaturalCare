@@ -12,27 +12,32 @@
                         <span class="icon-bar"></span>
                     </button>
                 </div>
-                <div class="mainmenu pull-left">
+                <div class="mainmenu" style="display: flex; justify-content: center;">
                     <ul class="nav navbar-nav collapse navbar-collapse">
                         <li><a href="home" class="active" >Home</a></li>
-                        <c:forEach items="${categories}" var="category">
-                            <li class="dropdown">
-                                <a href="${pageContext.request.contextPath}/products?category=${category.id}">
-                                    ${category.name}<i class="fa fa-angle-down"></i>
-                                </a>
-                                <ul role="menu" class="sub-menu">
-                                    <c:forEach items="${subCategories}" var="subcategory">
-                                        <c:if test="${subcategory.productCategoryId == category.id}">
-                                            <li>
-                                                <a href="${pageContext.request.contextPath}/products?subcategory=${subcategory.id}">
-                                                    ${subcategory.name}
-                                                </a>
-                                            </li>
-                                        </c:if>
-                                    </c:forEach>
-                                </ul>
-                            </li>
-                        </c:forEach>
+                        <li class="dropdown">
+                            <a href="${pageContext.request.contextPath}/products">Product <i class="fa fa-angle-down"></i></a>
+                            <ul role="menu" class="sub-menu">
+                                <c:forEach items="${categories}" var="category">
+                                    <li class="dropdown-submenu">
+                                        <a href="${pageContext.request.contextPath}/products?category=${category.id}">
+                                                ${category.name}
+                                        </a>
+                                        <ul class="sub-menu">
+                                            <c:forEach items="${subCategories}" var="subcategory">
+                                                <c:if test="${subcategory.productCategoryId == category.id}">
+                                                    <li>
+                                                        <a href="${pageContext.request.contextPath}/products?subcategory=${subcategory.id}">
+                                                                ${subcategory.name}
+                                                        </a>
+                                                    </li>
+                                                </c:if>
+                                            </c:forEach>
+                                        </ul>
+                                    </li>
+                                </c:forEach>
+                            </ul>
+                        </li>
                         <li><a href="${pageContext.request.contextPath}/view/contact-us.jsp" >Contact</a></li>
                         <li><a href="${pageContext.request.contextPath}/view/about-us.jsp">About Us</a></li>
                         <li class="dropdown">

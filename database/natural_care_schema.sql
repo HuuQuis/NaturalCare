@@ -172,6 +172,8 @@ CREATE TABLE product
     product_short_description VARCHAR(255),
     product_information       MEDIUMTEXT,
     product_guideline         TEXT,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     sub_product_category_id   INT          NOT NULL,
     FOREIGN KEY (sub_product_category_id)
         REFERENCES sub_product_category (sub_product_category_id)

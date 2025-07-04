@@ -140,10 +140,14 @@
                                     <c:when test="${not empty selectedCategoryId}">
                                         <a href="products?index=1&category=${selectedCategoryId}<c:if test='${not empty sort}'>&sort=${sort}</c:if>">&laquo;</a>
                                     </c:when>
+                                    <c:otherwise>
+                                        <a href="products?index=1<c:if test='${not empty sort}'>&sort=${sort}</c:if>">&laquo;</a>
+                                    </c:otherwise>
                                 </c:choose>
                             </li>
                         </c:if>
 
+                        <!-- Page numbers -->
                         <c:forEach begin="1" end="${endPage}" var="page">
                             <c:choose>
                                 <c:when test="${not empty selectedSubCategoryId}">
@@ -156,6 +160,11 @@
                                         <a href="products?index=${page}&category=${selectedCategoryId}<c:if test='${not empty sort}'>&sort=${sort}</c:if>">${page}</a>
                                     </li>
                                 </c:when>
+                                <c:otherwise>
+                                    <li class="${empty param.index && page == 1 || param.index == page ? 'active' : ''}">
+                                        <a href="products?index=${page}<c:if test='${not empty sort}'>&sort=${sort}</c:if>">${page}</a>
+                                    </li>
+                                </c:otherwise>
                             </c:choose>
                         </c:forEach>
 
@@ -169,6 +178,9 @@
                                     <c:when test="${not empty selectedCategoryId}">
                                         <a href="products?index=${endPage}&category=${selectedCategoryId}<c:if test='${not empty sort}'>&sort=${sort}</c:if>">&raquo;</a>
                                     </c:when>
+                                    <c:otherwise>
+                                        <a href="products?index=${endPage}<c:if test='${not empty sort}'>&sort=${sort}</c:if>">&raquo;</a>
+                                    </c:otherwise>
                                 </c:choose>
                             </li>
                         </c:if>

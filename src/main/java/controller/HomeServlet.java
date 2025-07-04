@@ -18,6 +18,8 @@ public class HomeServlet extends HttpServlet {
         ProductDAO dao = new ProductDAO();
         List<Product> topProducts = dao.getTop10BestSellingProducts();
         request.setAttribute("topProducts", topProducts);
+        List<Product> newProducts = dao.getTop10NewArriveProducts();
+        request.setAttribute("newProducts", newProducts);
         request.getRequestDispatcher("view/home/home.jsp").forward(request, response);
     }
 }

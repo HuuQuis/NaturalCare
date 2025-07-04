@@ -440,6 +440,44 @@ public class ProductDAO extends DBContext {
         return list;
     }
 
+    public List<Product> getTop10NewArriveProducts() {
+        List<Product> list = new ArrayList<>();
+        sql = "SELECT p.product_id, p.product_name, p.created_at, " +
+                "       MIN(pv.product_image) AS product_image, " +
+                "       MIN(pv.sell_price) AS min_price " +
+                "FROM product p " +
+                "JOIN product_variation pv ON p.product_id = pv.product_id " +
+                "GROUP BY p.product_id, p.product_name, p.created_at " +
+                "ORDER BY p.created_at DESC " +
+                "LIMIT 10";
+
+        try {
+            stm = connection.prepareStatement(sql);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                Product p = new Product();
+                p.setId(rs.getInt("product_id"));
+                p.setName(rs.getString("product_name"));
+                p.setCreatedAt(rs.getTimestamp("created_at"));
+
+                String imageUrl = rs.getString("product_image");
+                if (imageUrl != null) {
+                    p.addImageUrl(imageUrl);
+                    p.setImageUrl(imageUrl);
+                }
+
+                int minPrice = rs.getInt("min_price");
+                p.setMinPrice(minPrice);
+
+                list.add(p);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+
     public List<Product> searchProductsByText(String keyword) {
         List<Product> products = new ArrayList<>();
         sql = "SELECT * FROM product WHERE product_name LIKE ?";
@@ -531,6 +569,53 @@ public class ProductDAO extends DBContext {
 
         return products;
     }
+
+    public List<Product> getAllProductsSorted(int pageIndex, int pageSize, String sort) {
+        int offset = (pageIndex - 1) * pageSize;
+        String orderBy = getOrderByClause(sort);
+
+        String sql = "SELECT p.*, " +
+                "       (SELECT MIN(pv1.product_image) FROM product_variation pv1 WHERE pv1.product_id = p.product_id) AS product_image, " +
+                "       COALESCE((SELECT MIN(pv2.sell_price) FROM product_variation pv2 WHERE pv2.product_id = p.product_id), 0) AS min_price " +
+                "FROM product p " +
+                orderBy + " LIMIT ?, ?";
+
+        List<Product> productList = new ArrayList<>();
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setInt(1, offset);
+            stm.setInt(2, pageSize);
+            rs = stm.executeQuery();
+
+            while (rs.next()) {
+                int productId = rs.getInt("product_id");
+                String imageUrl = rs.getString("product_image");
+                int minPrice = rs.getInt("min_price");
+
+                Product product = new Product(
+                        productId,
+                        rs.getString("product_name"),
+                        rs.getString("product_short_description"),
+                        rs.getString("product_information"),
+                        rs.getString("product_guideline"),
+                        null,
+                        rs.getInt("sub_product_category_id"),
+                        minPrice
+                );
+
+                if (imageUrl != null) {
+                    product.addImageUrl(imageUrl);
+                }
+
+                productList.add(product);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return productList;
+    }
+
+
 
     public int countSearchProductsAdvanced(String keyword, Integer categoryId, Integer subCategoryId) {
         StringBuilder sqlBuilder = new StringBuilder();

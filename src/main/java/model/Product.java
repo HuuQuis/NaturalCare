@@ -1,5 +1,6 @@
 package model;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +14,9 @@ public class Product {
     private int subProductCategoryId;
     private int minPrice;
     private int totalSold;
+    private Timestamp createdAt;
+    private Timestamp updatedAt;
+
     private List<String> imageUrls;
     private List<ProductVariation> variations;
 
@@ -133,6 +137,20 @@ public class Product {
 
     public void setTotalSold(int totalSold) {
         this.totalSold = totalSold;
+    }
+
+    public Timestamp getCreatedAt() {
+        return createdAt;
+    }
+    public void setCreatedAt(Timestamp createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Timestamp getUpdatedAt() {
+        return updatedAt;
+    }
+    public void setUpdatedAt(Timestamp updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     public void addImageUrl(String imageUrl) {

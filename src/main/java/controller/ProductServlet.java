@@ -37,6 +37,7 @@ public class ProductServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         int pageSize = 6;
+        int count;
         String indexPage = request.getParameter("index");
         if (indexPage == null || indexPage.isEmpty()) {
             indexPage = "1";
@@ -66,8 +67,10 @@ public class ProductServlet extends HttpServlet {
             // Only category is selected
             products = productDAO.getProductsByCategoryIdSorted(Integer.parseInt(categoryId), index, pageSize, sort);
             request.setAttribute("selectedCategoryId", categoryId);
+        }else {
+            // No category or subcategory is selected, show all products
+            products = productDAO.getProductsByPage(index, pageSize);
         }
-        // If neither category nor subcategory is selected, products remains empty
 
         // Always set products attribute (even if empty)
         request.setAttribute("products", products);
@@ -81,11 +84,14 @@ public class ProductServlet extends HttpServlet {
         }
 
         // Calculate pagination
-        int count = 0;
+        count = 0;
         if (hasSubCategory) {
             count = productDAO.getTotalProductsCountBySubCategory(Integer.parseInt(subCategoryId));
         } else if (hasCategory) {
             count = productDAO.getTotalProductsCountByCategory(Integer.parseInt(categoryId));
+        }else {
+            // If no category or subcategory is selected, count all products
+            count = productDAO.countTotalProducts();
         }
 
         int endPage = count / 6;
