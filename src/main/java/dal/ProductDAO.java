@@ -615,6 +615,43 @@ public class ProductDAO extends DBContext {
         return productList;
     }
 
+    public Map<String, List<Product>> getAllProductsGroupedByCategory() {
+        Map<String, List<Product>> result = new LinkedHashMap<>();
+
+        sql = "SELECT pc.product_category_name, p.product_id, p.product_name, " +
+                "MIN(pv.product_image) AS product_image, " +
+                "COALESCE(MIN(pv.sell_price), 0) AS min_price " +
+                "FROM product_category pc " +
+                "JOIN sub_product_category spc ON pc.product_category_id = spc.product_category_id " +
+                "JOIN product p ON p.sub_product_category_id = spc.sub_product_category_id " +
+                "LEFT JOIN product_variation pv ON p.product_id = pv.product_id " +
+                "GROUP BY pc.product_category_name, p.product_id, p.product_name " +
+                "ORDER BY pc.product_category_name, p.product_id";
+
+        try {
+            stm = connection.prepareStatement(sql);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                String categoryName = rs.getString("product_category_name");
+
+                Product product = new Product();
+                product.setId(rs.getInt("product_id"));
+                product.setName(rs.getString("product_name"));
+                product.setMinPrice(rs.getInt("min_price"));
+
+                String imageUrl = rs.getString("product_image");
+                if (imageUrl != null) {
+                    product.addImageUrl(imageUrl);
+                }
+
+                result.computeIfAbsent(categoryName, k -> new ArrayList<>()).add(product);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
 
 
     public int countSearchProductsAdvanced(String keyword, Integer categoryId, Integer subCategoryId) {

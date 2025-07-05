@@ -255,4 +255,30 @@ public class SubProductCategoryDAO extends DBContext {
         }
         return 0;
     }
+
+    public SubProductCategory getSubCategoryById(int id) {
+        sql = "SELECT spc.sub_product_category_id, spc.sub_product_category_name, " +
+                "spc.product_category_id, pc.product_category_name, spc.status " +
+                "FROM sub_product_category spc " +
+                "JOIN product_category pc ON spc.product_category_id = pc.product_category_id " +
+                "WHERE spc.sub_product_category_id = ?";
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setInt(1, id);
+            rs = stm.executeQuery();
+            if (rs.next()) {
+                return new SubProductCategory(
+                        rs.getInt("sub_product_category_id"),
+                        rs.getString("sub_product_category_name"),
+                        rs.getInt("product_category_id"),
+                        rs.getString("product_category_name"),
+                        rs.getBoolean("status")
+                );
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }

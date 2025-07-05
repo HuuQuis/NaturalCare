@@ -55,15 +55,17 @@ public class ProductServlet extends HttpServlet {
 
         // Handle different scenarios
         if (hasSubCategory) {
-            // Subcategory has priority over category
-            products = productDAO.getProductsBySubCategoryIdSorted(Integer.parseInt(subCategoryId), index, pageSize, sort);
+            int subId = Integer.parseInt(subCategoryId);
+            products = productDAO.getProductsBySubCategoryIdSorted(subId, index, pageSize, sort);
             request.setAttribute("selectedSubCategoryId", subCategoryId);
 
-            // If we have both category and subcategory, still set the category for navigation
-            if (hasCategory) {
-                request.setAttribute("selectedCategoryId", categoryId);
+            // ✅ Tìm categoryId từ subcategory
+            SubProductCategory sub = subProductCategoryDAO.getSubCategoryById(subId);
+            if (sub != null) {
+                request.setAttribute("selectedCategoryId", sub.getProductCategoryId());
             }
-        } else if (hasCategory) {
+        }
+        else if (hasCategory) {
             // Only category is selected
             products = productDAO.getProductsByCategoryIdSorted(Integer.parseInt(categoryId), index, pageSize, sort);
             request.setAttribute("selectedCategoryId", categoryId);
