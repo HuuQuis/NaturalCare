@@ -687,4 +687,197 @@ public class ProductDAO extends DBContext {
         return 0;
     }
 
+    public List<Product> getProductsBySubCategoryIdSorted(int subCategoryId, int pageIndex, int pageSize, String sort, Double minPrice, Double maxPrice) {
+        int offset = (pageIndex - 1) * pageSize;
+        String orderBy = getOrderByClause(sort);
+
+        sql = "SELECT p.*, " +
+                "       (SELECT MIN(pv1.product_image) FROM product_variation pv1 WHERE pv1.product_id = p.product_id) AS product_image, " +
+                "       (SELECT MIN(pv2.sell_price) FROM product_variation pv2 WHERE pv2.product_id = p.product_id) AS min_price " +
+                "FROM product p " +
+                "LEFT JOIN product_variation pv ON pv.product_id = p.product_id " +
+                "WHERE p.sub_product_category_id = ? " +
+                "GROUP BY p.product_id HAVING " +
+                "      (min_price IS NULL OR (min_price >= ? AND min_price <= ?)) " +
+                orderBy + " LIMIT ?, ?";
+
+        return fetchProductsByQueryWithPrice(sql, subCategoryId, minPrice, maxPrice, offset, pageSize);
+    }
+
+    // 2. Product by Category + Price Range
+    public List<Product> getProductsByCategoryIdSorted(int categoryId, int pageIndex, int pageSize, String sort, Double minPrice, Double maxPrice) {
+        int offset = (pageIndex - 1) * pageSize;
+        String orderBy = getOrderByClause(sort);
+
+        sql = "SELECT p.*, " +
+                "       (SELECT MIN(pv1.product_image) FROM product_variation pv1 WHERE pv1.product_id = p.product_id) AS product_image, " +
+                "       (SELECT MIN(pv2.sell_price) FROM product_variation pv2 WHERE pv2.product_id = p.product_id) AS min_price " +
+                "FROM product p " +
+                "JOIN sub_product_category spc ON p.sub_product_category_id = spc.sub_product_category_id " +
+                "JOIN product_category pc ON spc.product_category_id = pc.product_category_id " +
+                "LEFT JOIN product_variation pv ON pv.product_id = p.product_id " +
+                "WHERE pc.product_category_id = ? " +
+                "GROUP BY p.product_id HAVING (min_price IS NULL OR (min_price >= ? AND min_price <= ?)) " +
+                orderBy + " LIMIT ?, ?";
+
+        return fetchProductsByQueryWithPrice(sql, categoryId, minPrice, maxPrice, offset, pageSize);
+    }
+
+    // 3. All Products + Price Filter
+    public List<Product> getProductsByPage(int pageIndex, int pageSize, String sort, Double minPrice, Double maxPrice) {
+        int offset = (pageIndex - 1) * pageSize;
+        String orderBy = getOrderByClause(sort);
+
+        sql = "SELECT p.*, " +
+                "       (SELECT MIN(pv1.product_image) FROM product_variation pv1 WHERE pv1.product_id = p.product_id) AS product_image, " +
+                "       (SELECT MIN(pv2.sell_price) FROM product_variation pv2 WHERE pv2.product_id = p.product_id) AS min_price " +
+                "FROM product p " +
+                "LEFT JOIN product_variation pv ON pv.product_id = p.product_id " +
+                "GROUP BY p.product_id HAVING (min_price IS NULL OR (min_price >= ? AND min_price <= ?)) " +
+                orderBy + " LIMIT ?, ?";
+
+        return fetchProductsByQueryWithPrice(sql, null, minPrice, maxPrice, offset, pageSize);
+    }
+
+    // 4. Đếm tổng theo subcategory và khoảng giá
+    public int getTotalProductsCountBySubCategoryAndPrice(int subCategoryId, Double minPrice, Double maxPrice) {
+        StringBuilder sqlBuilder = new StringBuilder();
+        sqlBuilder.append("SELECT COUNT(DISTINCT p.product_id) FROM product p ")
+                .append("LEFT JOIN product_variation pv ON pv.product_id = p.product_id ")
+                .append("WHERE p.sub_product_category_id = ?");
+
+        List<Object> params = new ArrayList<>();
+        params.add(subCategoryId);
+
+        if (minPrice != null) {
+            sqlBuilder.append(" AND (pv.sell_price >= ? OR pv.sell_price IS NULL)");
+            params.add(minPrice);
+        }
+        if (maxPrice != null) {
+            sqlBuilder.append(" AND (pv.sell_price <= ? OR pv.sell_price IS NULL)");
+            params.add(maxPrice);
+        }
+
+        try {
+            stm = connection.prepareStatement(sqlBuilder.toString());
+            for (int i = 0; i < params.size(); i++) {
+                stm.setObject(i + 1, params.get(i));
+            }
+            rs = stm.executeQuery();
+            if (rs.next()) return rs.getInt(1);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    // 5. Đếm tổng theo category và khoảng giá
+    public int getTotalProductsCountByCategoryAndPrice(int categoryId, Double minPrice, Double maxPrice) {
+        StringBuilder sqlBuilder = new StringBuilder();
+        sqlBuilder.append("SELECT COUNT(DISTINCT p.product_id) FROM product p ")
+                .append("JOIN sub_product_category spc ON p.sub_product_category_id = spc.sub_product_category_id ")
+                .append("JOIN product_category pc ON spc.product_category_id = pc.product_category_id ")
+                .append("LEFT JOIN product_variation pv ON pv.product_id = p.product_id ")
+                .append("WHERE pc.product_category_id = ?");
+
+        List<Object> params = new ArrayList<>();
+        params.add(categoryId);
+
+        if (minPrice != null) {
+            sqlBuilder.append(" AND (pv.sell_price >= ? OR pv.sell_price IS NULL)");
+            params.add(minPrice);
+        }
+
+        if (maxPrice != null) {
+            sqlBuilder.append(" AND (pv.sell_price <= ? OR pv.sell_price IS NULL)");
+            params.add(maxPrice);
+        }
+
+        try {
+            stm = connection.prepareStatement(sqlBuilder.toString());
+            for (int i = 0; i < params.size(); i++) {
+                stm.setObject(i + 1, params.get(i));
+            }
+            rs = stm.executeQuery();
+            if (rs.next()) return rs.getInt(1);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    // 6. Đếm tổng không lọc danh mục
+    public int countTotalProductsByPrice(Double minPrice, Double maxPrice) {
+        StringBuilder sqlBuilder = new StringBuilder();
+        sqlBuilder.append("SELECT COUNT(*) FROM ( ")
+                .append("SELECT p.product_id, MIN(pv.sell_price) AS min_price ")
+                .append("FROM product p ")
+                .append("LEFT JOIN product_variation pv ON pv.product_id = p.product_id ")
+                .append("GROUP BY p.product_id ")
+                .append(") AS subquery WHERE 1=1");
+
+        List<Object> params = new ArrayList<>();
+        if (minPrice != null) {
+            sqlBuilder.append(" AND (min_price >= ? OR min_price IS NULL)");
+            params.add(minPrice);
+        }
+        if (maxPrice != null) {
+            sqlBuilder.append(" AND (min_price <= ? OR min_price IS NULL)");
+            params.add(maxPrice);
+        }
+
+        try {
+            stm = connection.prepareStatement(sqlBuilder.toString());
+            for (int i = 0; i < params.size(); i++) {
+                stm.setObject(i + 1, params.get(i));
+            }
+            rs = stm.executeQuery();
+            if (rs.next()) return rs.getInt(1);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    // Helper dùng chung
+    private List<Product> fetchProductsByQueryWithPrice(String sql, Integer id, Double minPrice, Double maxPrice, int offset, int limit) {
+        List<Product> list = new ArrayList<>();
+        try {
+            stm = connection.prepareStatement(sql);
+            int i = 1;
+
+            if (id != null) {
+                stm.setInt(i++, id);
+            }
+
+            double effectiveMin = (minPrice != null) ? minPrice : 0.0;
+            double effectiveMax = (maxPrice != null) ? maxPrice : Double.MAX_VALUE;
+
+            stm.setDouble(i++, effectiveMin);
+            stm.setDouble(i++, effectiveMax);
+
+            stm.setInt(i++, offset);
+            stm.setInt(i, limit);
+
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                Product p = new Product(
+                        rs.getInt("product_id"),
+                        rs.getString("product_name"),
+                        rs.getString("product_short_description"),
+                        rs.getString("product_information"),
+                        rs.getString("product_guideline"),
+                        null,
+                        rs.getInt("sub_product_category_id"),
+                        rs.getInt("min_price")  // nếu NULL sẽ thành 0
+                );
+                String imageUrl = rs.getString("product_image");
+                if (imageUrl != null) p.addImageUrl(imageUrl);
+                list.add(p);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
 }

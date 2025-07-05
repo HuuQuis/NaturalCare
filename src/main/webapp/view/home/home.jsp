@@ -105,6 +105,11 @@
         <div class="row">
             <div class="col-sm-12">
                 <div class="recommended_items"><!--arrive_items-->
+                    <div class="text-center">
+                        <img src="${pageContext.request.contextPath}/images/home/home-banner2.png"
+                             alt="Top Selling Banner"
+                             style="max-width: 100%; height: auto; margin-bottom: 10px;" />
+                    </div>
                     <h2 class="title text-center">New Arrive Products</h2>
                     <div id="recommended-item-carousel" class="carousel slide" data-ride="carousel" data-interval="5000" data-pause="hover">
                         <div class="carousel-inner">
@@ -180,12 +185,12 @@
                                                         <c:when test="${not empty product.imageUrls}">
                                                             <img src="${pageContext.request.contextPath}/${product.imageUrls[0]}"
                                                                  alt=""
-                                                                 style="width: 200px !important; height: 200px !important;"/>
+                                                                 style="width: 250px !important; height: 250px !important;"/>
                                                         </c:when>
                                                         <c:otherwise>
                                                             <img src="${pageContext.request.contextPath}/images/product/default-image.jpg"
                                                                  alt=""
-                                                                 style="width: 200px !important; height: 200px !important;"/>
+                                                                 style="width: 250px !important; height: 250px !important;"/>
                                                         </c:otherwise>
                                                     </c:choose>
                                                 </a>
@@ -233,11 +238,11 @@
                                                         <c:choose>
                                                             <c:when test="${not empty product.imageUrls}">
                                                                 <img src="${pageContext.request.contextPath}/${product.imageUrls[0]}"
-                                                                     alt="${product.name}" style="width: 200px; height: 200px;" />
+                                                                     alt="${product.name}" style="width: 250px !important; height: 250px !important;" />
                                                             </c:when>
                                                             <c:otherwise>
                                                                 <img src="${pageContext.request.contextPath}/images/product/default-image.jpg"
-                                                                     alt="Default" style="width: 200px; height: 200px;" />
+                                                                     alt="Default" style="width: 250px !important; height: 250px !important;" />
                                                             </c:otherwise>
                                                         </c:choose>
                                                     </a>

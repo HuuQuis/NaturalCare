@@ -15,6 +15,8 @@
     <link href="${pageContext.request.contextPath}/css/animate.css" rel="stylesheet">
     <link href="${pageContext.request.contextPath}/css/main.css" rel="stylesheet">
     <link href="${pageContext.request.contextPath}/css/responsive.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/nouislider@15.6.0/dist/nouislider.min.css" rel="stylesheet">
+
     <!--[if lt IE 9]>
     <script src="${pageContext.request.contextPath}/js/html5shiv.js"></script>
     <![endif]-->
@@ -47,6 +49,40 @@
             <div class="col-sm-3">
                 <div class="left-sidebar">
                     <jsp:include page="/view/category/category-sidebar.jsp" />
+                </div>
+
+                <!-- Price Range Filter -->
+                <div style="margin-top: 30px;">
+                    <form id="priceFilterForm" method="get">
+                        <!-- Giữ các filter khác -->
+                        <c:if test="${not empty param.category}">
+                            <input type="hidden" name="category" value="${param.category}" />
+                        </c:if>
+                        <c:if test="${not empty param.subcategory}">
+                            <input type="hidden" name="subcategory" value="${param.subcategory}" />
+                        </c:if>
+                        <c:if test="${not empty param.sort}">
+                            <input type="hidden" name="sort" value="${param.sort}" />
+                        </c:if>
+
+                        <!-- Hidden inputs để gửi giá trị -->
+                        <input type="hidden" id="minPrice" name="minPrice" value="${param.minPrice != null ? param.minPrice : 0}">
+                        <input type="hidden" id="maxPrice" name="maxPrice" value="${param.maxPrice != null ? param.maxPrice : 9999999}">
+
+                        <h4>Filter by Price</h4>
+
+                        <!-- Slider -->
+                        <div id="slider-range" style="margin: 15px 0;"></div>
+
+                        <!-- ✅ Min/Max cố định -->
+                        <div style="display: flex; justify-content: space-between; font-size: 13px;">
+                            <span>0 VND</span>
+                            <span>9.999.999 VND</span>
+                        </div>
+
+                        <!-- Giá đang chọn -->
+                        <p id="priceDisplay" style="font-weight: bold; margin-top: 10px;"></p>
+                    </form>
                 </div>
             </div>
 
@@ -204,5 +240,43 @@
     const contextPath = "${pageContext.request.contextPath}";
 </script>
 <script src="${pageContext.request.contextPath}/js/search.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/nouislider@15.6.0/dist/nouislider.min.js"></script>
+
+<script>
+    const slider = document.getElementById('slider-range');
+    const minInput = document.getElementById('minPrice');
+    const maxInput = document.getElementById('maxPrice');
+    const display = document.getElementById('priceDisplay');
+    const form = document.getElementById('priceFilterForm');
+
+    const startMin = parseInt(minInput.value || "0");
+    const startMax = parseInt(maxInput.value || "9999999");
+
+    noUiSlider.create(slider, {
+        start: [startMin, startMax],
+        connect: true,
+        range: {
+            'min': 0,
+            'max': 9999999
+        },
+        step: 10000,
+        format: {
+            to: value => Math.round(value),
+            from: value => Number(value)
+        }
+    });
+
+    slider.noUiSlider.on('update', function (values) {
+        const min = parseInt(values[0]);
+        const max = parseInt(values[1]);
+        display.innerText = `${min.toLocaleString()} VND - ${max.toLocaleString()} VND`;
+        minInput.value = min;
+        maxInput.value = max;
+    });
+
+    slider.noUiSlider.on('change', function () {
+        form.submit();
+    });
+</script>
 </body>
 </html>

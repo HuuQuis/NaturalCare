@@ -23,17 +23,6 @@
                                         <a href="${pageContext.request.contextPath}/products?category=${category.id}">
                                                 ${category.name}
                                         </a>
-                                        <ul class="sub-menu">
-                                            <c:forEach items="${subCategories}" var="subcategory">
-                                                <c:if test="${subcategory.productCategoryId == category.id}">
-                                                    <li>
-                                                        <a href="${pageContext.request.contextPath}/products?subcategory=${subcategory.id}">
-                                                                ${subcategory.name}
-                                                        </a>
-                                                    </li>
-                                                </c:if>
-                                            </c:forEach>
-                                        </ul>
                                     </li>
                                 </c:forEach>
                             </ul>
