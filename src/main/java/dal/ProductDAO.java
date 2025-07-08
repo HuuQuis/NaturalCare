@@ -3,36 +3,13 @@ package dal;
 import model.Product;
 import model.ProductVariation;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ProductDAO extends DBContext {
-
-    public List<Product> getProductsByCategoryId(int categoryId, int pageIndex, int pageSize) {
-        int offset = (pageIndex - 1) * pageSize;
-        sql = "SELECT p.*, MIN(pv.product_image) AS product_image, COALESCE(MIN(pv.sell_price), 0) AS min_price " +
-                "FROM product p " +
-                "INNER JOIN sub_product_category s ON p.sub_product_category_id = s.sub_product_category_id " +
-                "INNER JOIN product_category pc ON s.product_category_id = pc.product_category_id " +
-                "LEFT JOIN product_variation pv ON pv.product_id = p.product_id " +
-                "WHERE pc.product_category_id = ? " +
-                "GROUP BY p.product_id " +
-                "ORDER BY p.product_id " +
-                "LIMIT ?, ?";
-        return fetchProductsByQuery(sql, categoryId, offset, pageSize);
-    }
-
-    public List<Product> getProductsBySubCategoryId(int subCategoryId, int pageIndex, int pageSize) {
-        int offset = (pageIndex - 1) * pageSize;
-        sql = "SELECT p.*, MIN(pv.product_image) AS product_image, COALESCE(MIN(pv.sell_price), 0) AS min_price " +
-                "FROM product p " +
-                "LEFT JOIN product_variation pv ON pv.product_id = p.product_id " +
-                "WHERE p.sub_product_category_id = ? " +
-                "GROUP BY p.product_id " +
-                "ORDER BY p.product_id " +
-                "LIMIT ?, ?";
-        return fetchProductsByQuery(sql, subCategoryId, offset, pageSize);
-    }
 
     public Product getProductById(int productId) {
         sql = "SELECT p.*, pv.variation_id, pv.product_image, pv.color_id, pv.size_id, pv.price, pv.sell_price, pv.qty_in_stock, pv.sold, " +
@@ -570,51 +547,6 @@ public class ProductDAO extends DBContext {
         return products;
     }
 
-    public List<Product> getAllProductsSorted(int pageIndex, int pageSize, String sort) {
-        int offset = (pageIndex - 1) * pageSize;
-        String orderBy = getOrderByClause(sort);
-
-        String sql = "SELECT p.*, " +
-                "       (SELECT MIN(pv1.product_image) FROM product_variation pv1 WHERE pv1.product_id = p.product_id) AS product_image, " +
-                "       COALESCE((SELECT MIN(pv2.sell_price) FROM product_variation pv2 WHERE pv2.product_id = p.product_id), 0) AS min_price " +
-                "FROM product p " +
-                orderBy + " LIMIT ?, ?";
-
-        List<Product> productList = new ArrayList<>();
-        try {
-            stm = connection.prepareStatement(sql);
-            stm.setInt(1, offset);
-            stm.setInt(2, pageSize);
-            rs = stm.executeQuery();
-
-            while (rs.next()) {
-                int productId = rs.getInt("product_id");
-                String imageUrl = rs.getString("product_image");
-                int minPrice = rs.getInt("min_price");
-
-                Product product = new Product(
-                        productId,
-                        rs.getString("product_name"),
-                        rs.getString("product_short_description"),
-                        rs.getString("product_information"),
-                        rs.getString("product_guideline"),
-                        null,
-                        rs.getInt("sub_product_category_id"),
-                        minPrice
-                );
-
-                if (imageUrl != null) {
-                    product.addImageUrl(imageUrl);
-                }
-
-                productList.add(product);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return productList;
-    }
-
     public Map<String, List<Product>> getAllProductsGroupedByCategory() {
         Map<String, List<Product>> result = new LinkedHashMap<>();
 
@@ -687,197 +619,380 @@ public class ProductDAO extends DBContext {
         return 0;
     }
 
-    public List<Product> getProductsBySubCategoryIdSorted(int subCategoryId, int pageIndex, int pageSize, String sort, Double minPrice, Double maxPrice) {
-        int offset = (pageIndex - 1) * pageSize;
-        String orderBy = getOrderByClause(sort);
+    public List<Product> getProductsWithFilters(int pageIndex, int pageSize, String sort,
+                                                Double minPrice, Double maxPrice,
+                                                Integer categoryId, Integer subCategoryId,
+                                                List<Integer> colorIds, List<Integer> sizeIds) {
 
-        sql = "SELECT p.*, " +
-                "       (SELECT MIN(pv1.product_image) FROM product_variation pv1 WHERE pv1.product_id = p.product_id) AS product_image, " +
-                "       (SELECT MIN(pv2.sell_price) FROM product_variation pv2 WHERE pv2.product_id = p.product_id) AS min_price " +
-                "FROM product p " +
-                "LEFT JOIN product_variation pv ON pv.product_id = p.product_id " +
-                "WHERE p.sub_product_category_id = ? " +
-                "GROUP BY p.product_id HAVING " +
-                "      (min_price IS NULL OR (min_price >= ? AND min_price <= ?)) " +
-                orderBy + " LIMIT ?, ?";
-
-        return fetchProductsByQueryWithPrice(sql, subCategoryId, minPrice, maxPrice, offset, pageSize);
-    }
-
-    // 2. Product by Category + Price Range
-    public List<Product> getProductsByCategoryIdSorted(int categoryId, int pageIndex, int pageSize, String sort, Double minPrice, Double maxPrice) {
-        int offset = (pageIndex - 1) * pageSize;
-        String orderBy = getOrderByClause(sort);
-
-        sql = "SELECT p.*, " +
-                "       (SELECT MIN(pv1.product_image) FROM product_variation pv1 WHERE pv1.product_id = p.product_id) AS product_image, " +
-                "       (SELECT MIN(pv2.sell_price) FROM product_variation pv2 WHERE pv2.product_id = p.product_id) AS min_price " +
-                "FROM product p " +
-                "JOIN sub_product_category spc ON p.sub_product_category_id = spc.sub_product_category_id " +
-                "JOIN product_category pc ON spc.product_category_id = pc.product_category_id " +
-                "LEFT JOIN product_variation pv ON pv.product_id = p.product_id " +
-                "WHERE pc.product_category_id = ? " +
-                "GROUP BY p.product_id HAVING (min_price IS NULL OR (min_price >= ? AND min_price <= ?)) " +
-                orderBy + " LIMIT ?, ?";
-
-        return fetchProductsByQueryWithPrice(sql, categoryId, minPrice, maxPrice, offset, pageSize);
-    }
-
-    // 3. All Products + Price Filter
-    public List<Product> getProductsByPage(int pageIndex, int pageSize, String sort, Double minPrice, Double maxPrice) {
-        int offset = (pageIndex - 1) * pageSize;
-        String orderBy = getOrderByClause(sort);
-
-        sql = "SELECT p.*, " +
-                "       (SELECT MIN(pv1.product_image) FROM product_variation pv1 WHERE pv1.product_id = p.product_id) AS product_image, " +
-                "       (SELECT MIN(pv2.sell_price) FROM product_variation pv2 WHERE pv2.product_id = p.product_id) AS min_price " +
-                "FROM product p " +
-                "LEFT JOIN product_variation pv ON pv.product_id = p.product_id " +
-                "GROUP BY p.product_id HAVING (min_price IS NULL OR (min_price >= ? AND min_price <= ?)) " +
-                orderBy + " LIMIT ?, ?";
-
-        return fetchProductsByQueryWithPrice(sql, null, minPrice, maxPrice, offset, pageSize);
-    }
-
-    // 4. Đếm tổng theo subcategory và khoảng giá
-    public int getTotalProductsCountBySubCategoryAndPrice(int subCategoryId, Double minPrice, Double maxPrice) {
-        StringBuilder sqlBuilder = new StringBuilder();
-        sqlBuilder.append("SELECT COUNT(DISTINCT p.product_id) FROM product p ")
-                .append("LEFT JOIN product_variation pv ON pv.product_id = p.product_id ")
-                .append("WHERE p.sub_product_category_id = ?");
-
-        List<Object> params = new ArrayList<>();
-        params.add(subCategoryId);
-
-        if (minPrice != null) {
-            sqlBuilder.append(" AND (pv.sell_price >= ? OR pv.sell_price IS NULL)");
-            params.add(minPrice);
-        }
-        if (maxPrice != null) {
-            sqlBuilder.append(" AND (pv.sell_price <= ? OR pv.sell_price IS NULL)");
-            params.add(maxPrice);
-        }
+        List<Product> products = new ArrayList<>();
 
         try {
-            stm = connection.prepareStatement(sqlBuilder.toString());
-            for (int i = 0; i < params.size(); i++) {
-                stm.setObject(i + 1, params.get(i));
-            }
-            rs = stm.executeQuery();
-            if (rs.next()) return rs.getInt(1);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return 0;
-    }
+            int offset = (pageIndex - 1) * pageSize;
 
-    // 5. Đếm tổng theo category và khoảng giá
-    public int getTotalProductsCountByCategoryAndPrice(int categoryId, Double minPrice, Double maxPrice) {
-        StringBuilder sqlBuilder = new StringBuilder();
-        sqlBuilder.append("SELECT COUNT(DISTINCT p.product_id) FROM product p ")
-                .append("JOIN sub_product_category spc ON p.sub_product_category_id = spc.sub_product_category_id ")
-                .append("JOIN product_category pc ON spc.product_category_id = pc.product_category_id ")
-                .append("LEFT JOIN product_variation pv ON pv.product_id = p.product_id ")
-                .append("WHERE pc.product_category_id = ?");
+            // Step 1: Get list of product_ids
+            StringBuilder idSql = new StringBuilder();
+            List<Object> idParams = new ArrayList<>();
 
-        List<Object> params = new ArrayList<>();
-        params.add(categoryId);
+            idSql.append("SELECT DISTINCT p.product_id ");
+            idSql.append("FROM product p ");
+            idSql.append("LEFT JOIN product_variation pv ON p.product_id = pv.product_id ");
+            idSql.append("WHERE 1=1 ");
 
-        if (minPrice != null) {
-            sqlBuilder.append(" AND (pv.sell_price >= ? OR pv.sell_price IS NULL)");
-            params.add(minPrice);
-        }
-
-        if (maxPrice != null) {
-            sqlBuilder.append(" AND (pv.sell_price <= ? OR pv.sell_price IS NULL)");
-            params.add(maxPrice);
-        }
-
-        try {
-            stm = connection.prepareStatement(sqlBuilder.toString());
-            for (int i = 0; i < params.size(); i++) {
-                stm.setObject(i + 1, params.get(i));
-            }
-            rs = stm.executeQuery();
-            if (rs.next()) return rs.getInt(1);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return 0;
-    }
-
-    // 6. Đếm tổng không lọc danh mục
-    public int countTotalProductsByPrice(Double minPrice, Double maxPrice) {
-        StringBuilder sqlBuilder = new StringBuilder();
-        sqlBuilder.append("SELECT COUNT(*) FROM ( ")
-                .append("SELECT p.product_id, MIN(pv.sell_price) AS min_price ")
-                .append("FROM product p ")
-                .append("LEFT JOIN product_variation pv ON pv.product_id = p.product_id ")
-                .append("GROUP BY p.product_id ")
-                .append(") AS subquery WHERE 1=1");
-
-        List<Object> params = new ArrayList<>();
-        if (minPrice != null) {
-            sqlBuilder.append(" AND (min_price >= ? OR min_price IS NULL)");
-            params.add(minPrice);
-        }
-        if (maxPrice != null) {
-            sqlBuilder.append(" AND (min_price <= ? OR min_price IS NULL)");
-            params.add(maxPrice);
-        }
-
-        try {
-            stm = connection.prepareStatement(sqlBuilder.toString());
-            for (int i = 0; i < params.size(); i++) {
-                stm.setObject(i + 1, params.get(i));
-            }
-            rs = stm.executeQuery();
-            if (rs.next()) return rs.getInt(1);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return 0;
-    }
-
-    // Helper dùng chung
-    private List<Product> fetchProductsByQueryWithPrice(String sql, Integer id, Double minPrice, Double maxPrice, int offset, int limit) {
-        List<Product> list = new ArrayList<>();
-        try {
-            stm = connection.prepareStatement(sql);
-            int i = 1;
-
-            if (id != null) {
-                stm.setInt(i++, id);
+            if (subCategoryId != null) {
+                idSql.append("AND p.sub_product_category_id = ? ");
+                idParams.add(subCategoryId);
+            } else if (categoryId != null) {
+                idSql.append("AND p.sub_product_category_id IN ");
+                idSql.append("(SELECT sub_product_category_id FROM sub_product_category WHERE product_category_id = ?) ");
+                idParams.add(categoryId);
             }
 
-            double effectiveMin = (minPrice != null) ? minPrice : 0.0;
-            double effectiveMax = (maxPrice != null) ? maxPrice : Double.MAX_VALUE;
+            if (minPrice != null) {
+                idSql.append("AND pv.sell_price >= ? ");
+                idParams.add(minPrice);
+            }
+            if (maxPrice != null) {
+                idSql.append("AND pv.sell_price <= ? ");
+                idParams.add(maxPrice);
+            }
 
-            stm.setDouble(i++, effectiveMin);
-            stm.setDouble(i++, effectiveMax);
+            if (colorIds != null && !colorIds.isEmpty()) {
+                idSql.append("AND pv.color_id IN (");
+                idSql.append("?,".repeat(colorIds.size()));
+                idSql.setLength(idSql.length() - 1);
+                idSql.append(") ");
+                idParams.addAll(colorIds);
+            }
 
-            stm.setInt(i++, offset);
-            stm.setInt(i, limit);
+            if (sizeIds != null && !sizeIds.isEmpty()) {
+                idSql.append("AND pv.size_id IN (");
+                idSql.append("?,".repeat(sizeIds.size()));
+                idSql.setLength(idSql.length() - 1);
+                idSql.append(") ");
+                idParams.addAll(sizeIds);
+            }
 
-            rs = stm.executeQuery();
+            // Sorting
+            if (sort != null) {
+                switch (sort) {
+                    case "name-asc":
+                        idSql.append("ORDER BY p.name ASC ");
+                        break;
+                    case "name-desc":
+                        idSql.append("ORDER BY p.name DESC ");
+                        break;
+                    case "price-asc":
+                        idSql.append("ORDER BY (SELECT MIN(sell_price) FROM product_variation WHERE product_id = p.product_id) ASC ");
+                        break;
+                    case "price-desc":
+                        idSql.append("ORDER BY (SELECT MIN(sell_price) FROM product_variation WHERE product_id = p.product_id) DESC ");
+                        break;
+                    default:
+                        idSql.append("ORDER BY p.product_id ASC ");
+                }
+            } else {
+                idSql.append("ORDER BY p.product_id ASC ");
+            }
+
+            idSql.append("LIMIT ? OFFSET ? ");
+            idParams.add(pageSize);
+            idParams.add(offset);
+
+            PreparedStatement idStm = connection.prepareStatement(idSql.toString());
+
+            int idx = 1;
+            for (Object param : idParams) {
+                if (param instanceof Integer) {
+                    idStm.setInt(idx++, (Integer) param);
+                } else if (param instanceof Double) {
+                    idStm.setDouble(idx++, (Double) param);
+                }
+            }
+
+            ResultSet idRs = idStm.executeQuery();
+            List<Integer> productIds = new ArrayList<>();
+            while (idRs.next()) {
+                productIds.add(idRs.getInt("product_id"));
+            }
+
+            if (productIds.isEmpty()) return products;
+
+            // Step 2: Query full product info
+            StringBuilder mainSql = new StringBuilder();
+            mainSql.append("SELECT p.*, pv.*, pi.image_url ");
+            mainSql.append("FROM product p ");
+            mainSql.append("LEFT JOIN product_variation pv ON p.product_id = pv.product_id ");
+            mainSql.append("LEFT JOIN product_image pi ON p.product_id = pi.product_id ");
+            mainSql.append("WHERE p.product_id IN (");
+            mainSql.append("?,".repeat(productIds.size()));
+            mainSql.setLength(mainSql.length() - 1);
+            mainSql.append(") ");
+            mainSql.append("ORDER BY p.product_id DESC ");
+
+            PreparedStatement mainStm = connection.prepareStatement(mainSql.toString());
+            for (int i = 0; i < productIds.size(); i++) {
+                mainStm.setInt(i + 1, productIds.get(i));
+            }
+
+            ResultSet rs = mainStm.executeQuery();
+
+            // Step 3: Build list of Products
+            int lastProductId = -1;
+            Product currentProduct = null;
+
             while (rs.next()) {
-                Product p = new Product(
-                        rs.getInt("product_id"),
-                        rs.getString("product_name"),
-                        rs.getString("product_short_description"),
-                        rs.getString("product_information"),
-                        rs.getString("product_guideline"),
-                        null,
-                        rs.getInt("sub_product_category_id"),
-                        rs.getInt("min_price")  // nếu NULL sẽ thành 0
-                );
-                String imageUrl = rs.getString("product_image");
-                if (imageUrl != null) p.addImageUrl(imageUrl);
-                list.add(p);
+                int productId = rs.getInt("product_id");
+
+                if (productId != lastProductId) {
+                    currentProduct = new Product();
+                    currentProduct.setId(productId);
+                    currentProduct.setName(rs.getString("name"));
+                    currentProduct.setDescription(rs.getString("description"));
+                    currentProduct.setInformation(rs.getString("information"));
+                    currentProduct.setGuideline(rs.getString("guideline"));
+                    currentProduct.setSubProductCategoryId(rs.getInt("sub_product_category_id"));
+                    currentProduct.setCreatedAt(rs.getTimestamp("created_at"));
+                    currentProduct.setUpdatedAt(rs.getTimestamp("updated_at"));
+                    currentProduct.setMinPrice(0); // temporary
+                    products.add(currentProduct);
+                    lastProductId = productId;
+                }
+
+                // Image
+                String imageUrl = rs.getString("image_url");
+                if (imageUrl != null) {
+                    currentProduct.addImageUrl(imageUrl);
+                }
+
+                // Variation
+                int variationId = rs.getInt("variation_id");
+                if (!rs.wasNull()) {
+                    ProductVariation variation = new ProductVariation();
+                    variation.setVariationId(variationId);
+                    variation.setProductId(productId);
+                    variation.setColorId(rs.getInt("color_id"));
+                    variation.setSizeId(rs.getInt("size_id"));
+                    variation.setSell_price(rs.getInt("sell_price"));
+                    variation.setQtyInStock(rs.getInt("quantity"));
+                    currentProduct.addVariation(variation);
+
+                    if (variation.getSell_price() < currentProduct.getMinPrice()) {
+                        currentProduct.setMinPrice(variation.getSell_price());
+                    }
+                }
+            }
+
+            // Handle products with no variation
+            for (Product p : products) {
+                if (p.getMinPrice() == Integer.MAX_VALUE) {
+                    p.setMinPrice(0);
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return products;
+    }
+
+
+    public int countProductsWithFilters(Double minPrice, Double maxPrice,
+                                        String categoryId, String subCategoryId,
+                                        List<Integer> colorIds, List<Integer> sizeIds) {
+        int count = 0;
+        List<Object> params = new ArrayList<>();
+
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT COUNT(DISTINCT p.product_id) as total ");
+        sql.append("FROM product p ");
+        sql.append("LEFT JOIN product_variation pv ON p.product_id = pv.product_id ");
+        sql.append("WHERE 1=1 ");
+
+        if (subCategoryId != null && !subCategoryId.isEmpty()) {
+            sql.append("AND p.sub_product_category_id = ? ");
+            params.add(Integer.parseInt(subCategoryId));
+        } else if (categoryId != null && !categoryId.isEmpty()) {
+            sql.append("AND p.sub_product_category_id IN (");
+            sql.append("SELECT sub_product_category_id FROM sub_product_category WHERE product_category_id = ?) ");
+            params.add(Integer.parseInt(categoryId));
+        }
+
+        if (minPrice != null) {
+            sql.append("AND pv.sell_price >= ? ");
+            params.add(minPrice);
+        }
+        if (maxPrice != null) {
+            sql.append("AND pv.sell_price <= ? ");
+            params.add(maxPrice);
+        }
+
+        if (colorIds != null && !colorIds.isEmpty()) {
+            sql.append("AND pv.color_id IN (");
+            sql.append("?,".repeat(colorIds.size()));
+            sql.setLength(sql.length() - 1); // remove last comma
+            sql.append(") ");
+            params.addAll(colorIds);
+        }
+
+        if (sizeIds != null && !sizeIds.isEmpty()) {
+            sql.append("AND pv.size_id IN (");
+            sql.append("?,".repeat(sizeIds.size()));
+            sql.setLength(sql.length() - 1);
+            sql.append(") ");
+            params.addAll(sizeIds);
+        }
+
+        try (PreparedStatement stm = connection.prepareStatement(sql.toString())) {
+            int i = 1;
+            for (Object param : params) {
+                if (param instanceof Integer) {
+                    stm.setInt(i++, (Integer) param);
+                } else if (param instanceof Double) {
+                    stm.setDouble(i++, (Double) param);
+                }
+            }
+
+            ResultSet rs = stm.executeQuery();
+            if (rs.next()) {
+                count = rs.getInt("total");
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return list;
+
+        return count;
     }
+
+    public List<Product> getAllProducts(int page, int pageSize, String sort, Integer categoryId, Integer subCategoryId) {
+        List<Product> products = new ArrayList<>();
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT p.*, MIN(pv.sell_price) as min_price ")
+                .append("FROM product p ")
+                .append("LEFT JOIN product_variation pv ON p.product_id = pv.product_id ")
+                .append("WHERE 1=1 ");
+
+        List<Object> params = new ArrayList<>();
+
+        if (subCategoryId != null) {
+            sql.append("AND p.sub_product_category_id = ? ");
+            params.add(subCategoryId);
+        } else if (categoryId != null) {
+            sql.append("AND p.sub_product_category_id IN (")
+                    .append("SELECT sub_product_category_id FROM sub_product_category WHERE product_category_id = ?")
+                    .append(") ");
+            params.add(categoryId);
+        }
+
+        sql.append("GROUP BY p.product_id ");
+
+        if (sort != null) {
+            switch (sort) {
+                case "price_asc":
+                    sql.append("ORDER BY min_price ASC ");
+                    break;
+                case "price_desc":
+                    sql.append("ORDER BY min_price DESC ");
+                    break;
+                case "name_asc":
+                    sql.append("ORDER BY p.product_name ASC ");
+                    break;
+                case "name_desc":
+                    sql.append("ORDER BY p.product_name DESC ");
+                    break;
+                case "newest":
+                    sql.append("ORDER BY p.created_at DESC ");
+                    break;
+                default:
+                    sql.append("ORDER BY p.product_id ASC ");
+            }
+        } else {
+            sql.append("ORDER BY p.product_id ASC ");
+        }
+
+        sql.append("LIMIT ? OFFSET ? ");
+        params.add(pageSize);
+        params.add((page - 1) * pageSize);
+
+        try (PreparedStatement stm = connection.prepareStatement(sql.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                stm.setObject(i + 1, params.get(i));
+            }
+
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    Product product = new Product();
+                    product.setId(rs.getInt("product_id"));
+                    product.setName(rs.getString("product_name"));
+                    product.setDescription(rs.getString("product_short_description"));
+                    product.setInformation(rs.getString("product_information"));
+                    product.setGuideline(rs.getString("product_guideline"));
+                    product.setSubProductCategoryId(rs.getInt("sub_product_category_id"));
+                    product.setCreatedAt(rs.getTimestamp("created_at"));
+                    product.setUpdatedAt(rs.getTimestamp("updated_at"));
+                    product.setMinPrice(rs.getObject("min_price") != null ? rs.getInt("min_price") : 0);
+
+                    // Load image URLs
+                    product.setImageUrls(getProductImages(product.getId()));
+
+                    products.add(product);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return products;
+    }
+
+    public int countAllProducts(Integer categoryId, Integer subCategoryId) {
+        int count = 0;
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT COUNT(*) FROM product p WHERE 1=1 ");
+        List<Object> params = new ArrayList<>();
+
+        if (subCategoryId != null) {
+            sql.append("AND p.sub_product_category_id = ? ");
+            params.add(subCategoryId);
+        } else if (categoryId != null) {
+            sql.append("AND p.sub_product_category_id IN (")
+                    .append("SELECT sub_product_category_id FROM sub_product_category WHERE product_category_id = ?")
+                    .append(") ");
+            params.add(categoryId);
+        }
+
+        try (PreparedStatement stm = connection.prepareStatement(sql.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                stm.setObject(i + 1, params.get(i));
+            }
+
+            try (ResultSet rs = stm.executeQuery()) {
+                if (rs.next()) {
+                    count = rs.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return count;
+    }
+
+    private List<String> getProductImages(int productId) {
+        List<String> images = new ArrayList<>();
+        String sql = "SELECT DISTINCT product_image FROM product_variation WHERE product_id = ? AND product_image IS NOT NULL";
+        try (PreparedStatement stm = connection.prepareStatement(sql)) {
+            stm.setInt(1, productId);
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    images.add(rs.getString("product_image"));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return images;
+    }
+
+
 }

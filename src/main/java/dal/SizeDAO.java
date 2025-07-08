@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SizeDAO extends DBContext{
-    public List<Size> getAllSize() {
+    public List<Size> getAllSizes() {
         sql = "SELECT * FROM size";
         List<Size> sizes = new ArrayList<>();
         try {

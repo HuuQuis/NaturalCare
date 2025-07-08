@@ -1,282 +1,381 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <title>Shop | Nature-Care</title>
-    <link href="${pageContext.request.contextPath}/css/bootstrap.min.css" rel="stylesheet">
-    <link href="${pageContext.request.contextPath}/css/font-awesome.min.css" rel="stylesheet">
-    <link href="${pageContext.request.contextPath}/css/prettyPhoto.css" rel="stylesheet">
-    <link href="${pageContext.request.contextPath}/css/price-range.css" rel="stylesheet">
-    <link href="${pageContext.request.contextPath}/css/animate.css" rel="stylesheet">
-    <link href="${pageContext.request.contextPath}/css/main.css" rel="stylesheet">
-    <link href="${pageContext.request.contextPath}/css/responsive.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/nouislider@15.6.0/dist/nouislider.min.css" rel="stylesheet">
+    <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+    <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+    <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <title>Shop | Nature-Care</title>
+        <link href="${pageContext.request.contextPath}/css/bootstrap.min.css" rel="stylesheet">
+        <link href="${pageContext.request.contextPath}/css/font-awesome.min.css" rel="stylesheet">
+        <link href="${pageContext.request.contextPath}/css/prettyPhoto.css" rel="stylesheet">
+        <link href="${pageContext.request.contextPath}/css/price-range.css" rel="stylesheet">
+        <link href="${pageContext.request.contextPath}/css/animate.css" rel="stylesheet">
+        <link href="${pageContext.request.contextPath}/css/main.css" rel="stylesheet">
+        <link href="${pageContext.request.contextPath}/css/responsive.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/nouislider@15.6.0/dist/nouislider.min.css" rel="stylesheet">
 
-    <!--[if lt IE 9]>
-    <script src="${pageContext.request.contextPath}/js/html5shiv.js"></script>
-    <![endif]-->
-</head><!--/head-->
+        <!--[if lt IE 9]>
+        <script src="${pageContext.request.contextPath}/js/html5shiv.js"></script>
+        <![endif]-->
+    </head><!--/head-->
 
-<body>
-<header id="header"><!--header-->
-    <!--header_top-->
-    <jsp:include page="/view/common/header-top.jsp"></jsp:include>
-    <!--/header_top-->
+    <body>
+    <header id="header"><!--header-->
+        <!--header_top-->
+        <jsp:include page="/view/common/header-top.jsp"></jsp:include>
+        <!--/header_top-->
 
-    <!--header-middle-->
-    <jsp:include page="/view/common/header-middle.jsp"></jsp:include>
-    <!--/header-middle-->
+        <!--header-middle-->
+        <jsp:include page="/view/common/header-middle.jsp"></jsp:include>
+        <!--/header-middle-->
 
-    <!--header-bottom-->
-    <jsp:include page="/view/common/header-bottom.jsp"></jsp:include>
-    <!--/header-bottom-->
-</header><!--/header-->
+        <!--header-bottom-->
+        <jsp:include page="/view/common/header-bottom.jsp"></jsp:include>
+        <!--/header-bottom-->
+    </header><!--/header-->
 
-<section id="advertisement">
-    <div class="container">
-        <img src="images/shop/advertisement.jpg" alt="" />
-    </div>
-</section>
+    <section id="advertisement">
+        <div class="container">
+            <img src="images/shop/advertisement.jpg" alt="" />
+        </div>
+    </section>
 
-<section>
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-3">
-                <div class="left-sidebar">
-                    <jsp:include page="/view/category/category-sidebar.jsp" />
+    <section>
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-3">
+                    <div class="left-sidebar">
+                        <jsp:include page="/view/category/category-sidebar.jsp" />
+                    </div>
+
+                    <!-- Price Range Filter -->
+                    <div class="price-filter-box" style="margin-top: 30px;">
+                        <form id="priceFilterForm" method="get">
+                            <!-- Giữ các filter khác -->
+                            <c:if test="${not empty param.category}">
+                                <input type="hidden" name="category" value="${param.category}" />
+                            </c:if>
+                            <c:if test="${not empty param.subcategory}">
+                                <input type="hidden" name="subcategory" value="${param.subcategory}" />
+                            </c:if>
+                            <c:if test="${not empty param.sort}">
+                                <input type="hidden" name="sort" value="${param.sort}" />
+                            </c:if>
+
+                            <!-- Hidden inputs để gửi giá trị -->
+                            <input type="hidden" id="minPrice" name="minPrice"
+                                   value="${fn:trim(param.minPrice != null && param.minPrice != '' ? param.minPrice : '0')}"/>
+                            <input type="hidden" id="maxPrice" name="maxPrice"
+                                   value="${fn:trim(param.maxPrice != null && param.maxPrice != '' ? param.maxPrice : '9999999')}"/>
+                            <h5 style="display: flex; justify-content: center; padding-bottom: 35px">Filter by Price
+                                Range</h5>
+
+                            <!-- Slider -->
+                            <div id="slider-range" style="margin: 15px 0; padding-right: 15px"></div>
+
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                                <label for="minInput"></label><input type="number" id="minInput" min="0" step="10000"
+                                                                     class="form-control"/>
+                                <span style="white-space: nowrap;">–</span>
+                                <label for="maxInput"></label><input type="number" id="maxInput" min="0" step="10000"
+                                                                     class="form-control"/>
+                            </div>
+
+                            <div style="margin-top: 10px; text-align: center;">
+                                <button style="margin-top:0 !important;border-radius: 30px !important;" type="button"
+                                        id="applyPriceBtn" class="btn btn-primary btn-sm">Apply
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- Filter by Color -->
+                    <div class="filter-box" style="margin-top: 30px;">
+                        <h5 style="text-align:center;">Filter by Color</h5>
+                        <c:forEach var="color" items="${colorList}">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="color"
+                                       value="${color.id}"
+                                       id="color${color.id}"
+                                       <c:if test="${fn:contains(paramValues['color'], color.id)}">checked</c:if>>
+                                <label class="form-check-label" for="color${color.id}">${color.name}</label>
+                            </div>
+                        </c:forEach>
+                    </div>
+
+                    <!-- Filter by Size -->
+                    <div class="filter-box" style="margin-top: 20px;">
+                        <h5 style="text-align:center;">Filter by Size</h5>
+                        <c:forEach var="size" items="${sizeList}">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="size"
+                                       value="${size.id}"
+                                       id="size${size.id}"
+                                       <c:if test="${fn:contains(paramValues['size'], size.id)}">checked</c:if>>
+                                <label class="form-check-label" for="size${size.id}">${size.name}</label>
+                            </div>
+                        </c:forEach>
+                    </div>
                 </div>
 
-                <!-- Price Range Filter -->
-                <div style="margin-top: 30px;">
-                    <form id="priceFilterForm" method="get">
-                        <!-- Giữ các filter khác -->
-                        <c:if test="${not empty param.category}">
-                            <input type="hidden" name="category" value="${param.category}" />
-                        </c:if>
-                        <c:if test="${not empty param.subcategory}">
-                            <input type="hidden" name="subcategory" value="${param.subcategory}" />
-                        </c:if>
-                        <c:if test="${not empty param.sort}">
-                            <input type="hidden" name="sort" value="${param.sort}" />
-                        </c:if>
+                <div class="col-sm-9 padding-right">
+                    <!-- Sort Dropdown -->
+                    <div style="margin-bottom: 15px;">
+                        <form id="sortForm" method="get" style="display:inline;">
+                            <c:if test="${not empty param.category}">
+                                <input type="hidden" name="category" value="${fn:trim(param.category)}"/>
+                            </c:if>
+                            <c:if test="${not empty param.subcategory}">
+                                <input type="hidden" name="subcategory" value="${fn:trim(param.subcategory)}"/>
+                            </c:if>
+                            <c:if test="${not empty param.minPrice}">
+                                <input type="hidden" name="minPrice" value="${fn:trim(param.minPrice)}"/>
+                            </c:if>
+                            <c:if test="${not empty param.maxPrice}">
+                                <input type="hidden" name="maxPrice" value="${fn:trim(param.maxPrice)}"/>
+                            </c:if>
+                            <input type="hidden" name="index" value="1"/>
+                            <label for="sort" style="font-weight:bold;">Sort by:</label>
+                            <select id="sort" name="sort" class="form-control" style="width:auto;display:inline-block;">
+                                <option value="">Default</option>
+                                <option value="name-asc" ${sort == 'name-asc' ? 'selected' : ''}>Sort Product Name From A to Z</option>
+                                <option value="name-desc" ${sort == 'name-desc' ? 'selected' : ''}>Sort Product Name From Z to A</option>
+                                <option value="price-asc" ${sort == 'price-asc' ? 'selected' : ''}>Sort Product by Price ascending</option>
+                                <option value="price-desc" ${sort == 'price-desc' ? 'selected' : ''}>Sort Product by Price descending</option>
+                            </select>
+                        </form>
 
-                        <!-- Hidden inputs để gửi giá trị -->
-                        <input type="hidden" id="minPrice" name="minPrice" value="${param.minPrice != null ? param.minPrice : 0}">
-                        <input type="hidden" id="maxPrice" name="maxPrice" value="${param.maxPrice != null ? param.maxPrice : 9999999}">
+                    </div>
+                    <script>
+                        document.getElementById('sort').addEventListener('change', function() {
+                            document.getElementById('sortForm').submit();
+                        });
+                    </script>
+                    <!-- End Sort Dropdown -->
 
-                        <h4>Filter by Price</h4>
-
-                        <!-- Slider -->
-                        <div id="slider-range" style="margin: 15px 0;"></div>
-
-                        <!-- ✅ Min/Max cố định -->
-                        <div style="display: flex; justify-content: space-between; font-size: 13px;">
-                            <span>0 VND</span>
-                            <span>9.999.999 VND</span>
-                        </div>
-
-                        <!-- Giá đang chọn -->
-                        <p id="priceDisplay" style="font-weight: bold; margin-top: 10px;"></p>
-                    </form>
-                </div>
-            </div>
-
-            <div class="col-sm-9 padding-right">
-                <!-- Sort Dropdown -->
-                <div style="margin-bottom: 15px;">
-                    <form id="sortForm" method="get" style="display:inline;">
-                        <c:if test="${not empty param.category}">
-                            <input type="hidden" name="category" value="${param.category}">
-                        </c:if>
-                        <c:if test="${not empty param.subcategory}">
-                            <input type="hidden" name="subcategory" value="${param.subcategory}">
-                        </c:if>
-                        <input type="hidden" name="index" value="${param.index}">
-                        <label for="sort" style="font-weight:bold;">Sort by:</label>
-                        <select id="sort" name="sort" class="form-control" style="width:auto;display:inline-block;">
-                            <option value="">Default</option>
-                            <option value="name-asc" ${sort == 'name-asc' ? 'selected' : ''}>Sort Product Name From A to Z</option>
-                            <option value="name-desc" ${sort == 'name-desc' ? 'selected' : ''}>Sort Product Name From Z to A</option>
-                            <option value="price-asc" ${sort == 'price-asc' ? 'selected' : ''}>Sort Product by Price ascending</option>
-                            <option value="price-desc" ${sort == 'price-desc' ? 'selected' : ''}>Sort Product by Price descending</option>
-                        </select>
-                    </form>
-                </div>
-                <script>
-                    document.getElementById('sort').addEventListener('change', function() {
-                        document.getElementById('sortForm').submit();
-                    });
-                </script>
-                <!-- End Sort Dropdown -->
-
-                <div class="features_items"><!--features_items-->
-                    <h2 class="title text-center">Features Items</h2>
-                    <c:forEach items="${products}" var="product">
-                        <div class="col-sm-4">
-                            <div class="product-image-wrapper">
-                                <div class="single-products">
-                                    <div class="productinfo text-center">
-                                        <!-- Carousel for product images -->
-                                        <div id="carousel-${product.id}" class="carousel slide" data-ride="carousel">
-                                            <div class="carousel-inner">
-                                                <c:choose>
-                                                    <c:when test="${not empty product.imageUrls}">
-                                                        <c:forEach items="${product.imageUrls}" var="imageUrl" varStatus="status">
-                                                            <div class="item ${status.index == 0 ? 'active' : ''}">
-                                                                <img src="${pageContext.request.contextPath}/${imageUrl}" alt="${product.name}" />
+                    <div class="features_items"><!--features_items-->
+                        <h2 class="title text-center">Features Items</h2>
+                        <c:forEach items="${products}" var="product">
+                            <div class="col-sm-4">
+                                <div class="product-image-wrapper">
+                                    <div class="single-products">
+                                        <div class="productinfo text-center">
+                                            <!-- Carousel for product images -->
+                                            <div id="carousel-${product.id}" class="carousel slide" data-ride="carousel">
+                                                <div class="carousel-inner">
+                                                    <c:choose>
+                                                        <c:when test="${not empty product.imageUrls}">
+                                                            <c:forEach items="${product.imageUrls}" var="imageUrl" varStatus="status">
+                                                                <div class="item ${status.index == 0 ? 'active' : ''}">
+                                                                    <img src="${pageContext.request.contextPath}/${imageUrl}" alt="${product.name}" />
+                                                                </div>
+                                                            </c:forEach>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <div class="item active">
+                                                                <img src="${pageContext.request.contextPath}/images/product/default-image.jpg" alt="No Image Available" />
                                                             </div>
-                                                        </c:forEach>
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <div class="item active">
-                                                            <img src="${pageContext.request.contextPath}/images/product/default-image.jpg" alt="No Image Available" />
-                                                        </div>
-                                                    </c:otherwise>
-                                                </c:choose>
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </div>
+                                            </div>
+                                            <p>${product.name}</p>
+                                            <c:if test="${product.minPrice > 0}">
+                                                <p>Start from: <span class="price">${product.minPrice}</span></p>
+                                            </c:if>
+                                        </div>
+                                        <div class="product-overlay">
+                                            <div class="overlay-content">
+
+                                                <a href="productDetail?product_id=${product.id}" class="btn btn-default product-details">
+                                                    <i class="fa fa-info"></i>Product details
+                                                </a>
                                             </div>
                                         </div>
-                                        <p>${product.name}</p>
-                                        <c:if test="${product.minPrice > 0}">
-                                            <p>Start from: <span class="price">${product.minPrice}</span></p>
-                                        </c:if>
                                     </div>
-                                    <div class="product-overlay">
-                                        <div class="overlay-content">
-
-                                            <a href="productDetail?product_id=${product.id}" class="btn btn-default product-details">
-                                                <i class="fa fa-info"></i>Product details
-                                            </a>
-                                        </div>
+                                    <div class="choose">
+                                        <ul class="nav nav-pills nav-justified">
+                                            <li><a href="#"><i class="fa fa-plus-square"></i>Add to compare</a></li>
+                                        </ul>
                                     </div>
-                                </div>
-                                <div class="choose">
-                                    <ul class="nav nav-pills nav-justified">
-                                        <li><a href="#"><i class="fa fa-plus-square"></i>Add to compare</a></li>
-                                    </ul>
                                 </div>
                             </div>
-                        </div>
-                    </c:forEach>
-                </div><!--features_items-->
-
-                <div class="col-sm-12 text-center">
-                    <ul class="pagination">
-                        <c:if test="${endPage > 1}">
-                            <!-- First page button -->
-                            <li class="${empty param.index || param.index == 1 ? 'disabled' : ''}">
-                                <c:choose>
-                                    <c:when test="${not empty selectedSubCategoryId}">
-                                        <a href="products?index=1&subcategory=${selectedSubCategoryId}<c:if test='${not empty sort}'>&sort=${sort}</c:if>">&laquo;</a>
-                                    </c:when>
-                                    <c:when test="${not empty selectedCategoryId}">
-                                        <a href="products?index=1&category=${selectedCategoryId}<c:if test='${not empty sort}'>&sort=${sort}</c:if>">&laquo;</a>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <a href="products?index=1<c:if test='${not empty sort}'>&sort=${sort}</c:if>">&laquo;</a>
-                                    </c:otherwise>
-                                </c:choose>
-                            </li>
-                        </c:if>
-
-                        <!-- Page numbers -->
-                        <c:forEach begin="1" end="${endPage}" var="page">
-                            <c:choose>
-                                <c:when test="${not empty selectedSubCategoryId}">
-                                    <li class="${empty param.index && page == 1 || param.index == page ? 'active' : ''}">
-                                        <a href="products?index=${page}&subcategory=${selectedSubCategoryId}<c:if test='${not empty sort}'>&sort=${sort}</c:if>">${page}</a>
-                                    </li>
-                                </c:when>
-                                <c:when test="${not empty selectedCategoryId}">
-                                    <li class="${empty param.index && page == 1 || param.index == page ? 'active' : ''}">
-                                        <a href="products?index=${page}&category=${selectedCategoryId}<c:if test='${not empty sort}'>&sort=${sort}</c:if>">${page}</a>
-                                    </li>
-                                </c:when>
-                                <c:otherwise>
-                                    <li class="${empty param.index && page == 1 || param.index == page ? 'active' : ''}">
-                                        <a href="products?index=${page}<c:if test='${not empty sort}'>&sort=${sort}</c:if>">${page}</a>
-                                    </li>
-                                </c:otherwise>
-                            </c:choose>
                         </c:forEach>
+                    </div><!--features_items-->
 
-                        <c:if test="${endPage > 1}">
-                            <!-- Last page button -->
-                            <li class="${param.index == endPage ? 'disabled' : ''}">
-                                <c:choose>
-                                    <c:when test="${not empty selectedSubCategoryId}">
-                                        <a href="products?index=${endPage}&subcategory=${selectedSubCategoryId}<c:if test='${not empty sort}'>&sort=${sort}</c:if>">&raquo;</a>
-                                    </c:when>
-                                    <c:when test="${not empty selectedCategoryId}">
-                                        <a href="products?index=${endPage}&category=${selectedCategoryId}<c:if test='${not empty sort}'>&sort=${sort}</c:if>">&raquo;</a>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <a href="products?index=${endPage}<c:if test='${not empty sort}'>&sort=${sort}</c:if>">&raquo;</a>
-                                    </c:otherwise>
-                                </c:choose>
-                            </li>
-                        </c:if>
-                    </ul>
-                </div><!--/pagination-->
+                    <!-- Tạo queryString để dùng lại -->
+                    <c:set var="queryString" value=""/>
+                    <c:if test="${not empty selectedCategoryId}">
+                        <c:set var="queryString" value="${queryString}&category=${fn:trim(selectedCategoryId)}"/>
+                    </c:if>
+                    <c:if test="${not empty selectedSubCategoryId}">
+                        <c:set var="queryString" value="${queryString}&subcategory=${fn:trim(selectedSubCategoryId)}"/>
+                    </c:if>
+                    <c:if test="${not empty sort}">
+                        <c:set var="queryString" value="${queryString}&sort=${fn:trim(sort)}"/>
+                    </c:if>
+                    <c:if test="${not empty param.minPrice}">
+                        <c:set var="queryString" value="${queryString}&minPrice=${fn:trim(param.minPrice)}"/>
+                    </c:if>
+                    <c:if test="${not empty param.maxPrice}">
+                        <c:set var="queryString" value="${queryString}&maxPrice=${fn:trim(param.maxPrice)}"/>
+                    </c:if>
+
+                    <div class="col-sm-12 text-center">
+                        <ul class="pagination">
+                            <c:if test="${endPage > 1}">
+                                <!-- First page -->
+                                <li class="${empty param.index || param.index == 1 ? 'disabled' : ''}">
+                                    <a href="products?index=1${queryString}">&laquo;</a>
+                                </li>
+                            </c:if>
+
+                            <!-- Page numbers -->
+                            <c:forEach begin="1" end="${endPage}" var="page">
+                                <c:set var="curIndex" value="${param.index != null ? fn:trim(param.index) : '1'}" />
+                                <li class="${curIndex == page ? 'active' : ''}">
+                                    <a href="products?index=${page}${queryString}">${page}</a>
+                                </li>
+                            </c:forEach>
+
+                            <c:if test="${endPage > 1}">
+                                <!-- Last page -->
+                                <li class="${param.index == endPage ? 'disabled' : ''}">
+                                    <a href="products?index=${endPage}${queryString}">&raquo;</a>
+                                </li>
+                            </c:if>
+                        </ul>
+                    </div>
+
+                </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<!--Footer-->
-<jsp:include page="/view/common/footer.jsp"></jsp:include>
-<!--/Footer-->
+    <!--Footer-->
+    <jsp:include page="/view/common/footer.jsp"></jsp:include>
+    <!--/Footer-->
 
-<script src="${pageContext.request.contextPath}/js/jquery.js"></script>
-<script src="${pageContext.request.contextPath}/js/jquery.scrollUp.min.js"></script>
-<script src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>
-<script src="${pageContext.request.contextPath}/js/jquery.prettyPhoto.js"></script>
-<script src="${pageContext.request.contextPath}/js/main.js"></script>
-<script>
-    const contextPath = "${pageContext.request.contextPath}";
-</script>
-<script src="${pageContext.request.contextPath}/js/search.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/nouislider@15.6.0/dist/nouislider.min.js"></script>
+    <script src="${pageContext.request.contextPath}/js/jquery.js"></script>
+    <script src="${pageContext.request.contextPath}/js/jquery.scrollUp.min.js"></script>
+    <script src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>
+    <script src="${pageContext.request.contextPath}/js/jquery.prettyPhoto.js"></script>
+    <script src="${pageContext.request.contextPath}/js/main.js"></script>
+    <script>
+        const contextPath = "${pageContext.request.contextPath}";
+    </script>
+    <script src="${pageContext.request.contextPath}/js/search.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/nouislider@15.6.0/dist/nouislider.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/wnumb@1.2.0/wNumb.min.js"></script>
 
-<script>
-    const slider = document.getElementById('slider-range');
-    const minInput = document.getElementById('minPrice');
-    const maxInput = document.getElementById('maxPrice');
-    const display = document.getElementById('priceDisplay');
-    const form = document.getElementById('priceFilterForm');
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const slider = document.getElementById('slider-range');
+            const form = document.getElementById('priceFilterForm');
 
-    const startMin = parseInt(minInput.value || "0");
-    const startMax = parseInt(maxInput.value || "9999999");
+            const hiddenMin = document.getElementById('minPrice');
+            const hiddenMax = document.getElementById('maxPrice');
+            const inputMin = document.getElementById('minInput');
+            const inputMax = document.getElementById('maxInput');
+            const applyBtn = document.getElementById('applyPriceBtn');
 
-    noUiSlider.create(slider, {
-        start: [startMin, startMax],
-        connect: true,
-        range: {
-            'min': 0,
-            'max': 9999999
-        },
-        step: 10000,
-        format: {
-            to: value => Math.round(value),
-            from: value => Number(value)
-        }
-    });
+            const step = 10000;
+            const startMin = parseInt(hiddenMin.value) || 0;
+            const startMax = parseInt(hiddenMax.value) || 9999999;
 
-    slider.noUiSlider.on('update', function (values) {
-        const min = parseInt(values[0]);
-        const max = parseInt(values[1]);
-        display.innerText = `${min.toLocaleString()} VND - ${max.toLocaleString()} VND`;
-        minInput.value = min;
-        maxInput.value = max;
-    });
+            noUiSlider.create(slider, {
+                start: [startMin, startMax],
+                connect: true,
+                range: {
+                    min: 0,
+                    max: 9999999
+                },
+                step: step,
+                tooltips: [
+                    wNumb({decimals: 0, thousand: '.', suffix: ' ₫'}),
+                    wNumb({decimals: 0, thousand: '.', suffix: ' ₫'})
+                ]
+            });
 
-    slider.noUiSlider.on('change', function () {
-        form.submit();
-    });
-</script>
-</body>
-</html>
+            // Đồng bộ khi kéo slider
+            slider.noUiSlider.on('update', function (values) {
+                const min = Math.round(values[0]);
+                const max = Math.round(values[1]);
+
+                hiddenMin.value = min;
+                hiddenMax.value = max;
+
+                inputMin.value = min;
+                inputMax.value = max;
+            });
+
+            // Khi thả chuột slider
+            slider.noUiSlider.on('change', function (values) {
+                let min = Math.round(values[0]);
+                let max = Math.round(values[1]);
+
+                if (min >= max) {
+                    if (min === max) {
+                        if (min === 0) {
+                            max = step;
+                        } else {
+                            min = Math.max(0, min - step);
+                        }
+                    }
+                    slider.noUiSlider.set([min, max]);
+                    return;
+                }
+
+                form.submit();
+            });
+
+            // Cập nhật từ input tay
+            function updateSliderFromInputs(submitAfter = false) {
+                let minVal = parseInt(inputMin.value) || 0;
+                let maxVal = parseInt(inputMax.value) || 9999999;
+
+                if (minVal >= maxVal) {
+                    if (minVal === maxVal) {
+                        if (minVal === 0) {
+                            maxVal = step;
+                        } else {
+                            minVal = Math.max(0, minVal - step);
+                        }
+                    } else {
+                        alert("⚠️ Giá tối thiểu phải nhỏ hơn giá tối đa!");
+                    }
+                }
+
+                // Đồng bộ
+                inputMin.value = minVal;
+                inputMax.value = maxVal;
+                hiddenMin.value = minVal;
+                hiddenMax.value = maxVal;
+
+                slider.noUiSlider.set([minVal, maxVal]);
+
+                if (submitAfter) {
+                    setTimeout(() => form.submit(), 50);
+                }
+            }
+
+            // Enter key
+            function handleEnter(event) {
+                if (event.key === "Enter") {
+                    event.preventDefault();
+                    updateSliderFromInputs(true);
+                }
+            }
+
+            // Gắn sự kiện
+            inputMin.addEventListener('keydown', handleEnter);
+            inputMax.addEventListener('keydown', handleEnter);
+            applyBtn.addEventListener('click', () => updateSliderFromInputs(true));
+        });
+    </script>
+
+    </body>
+    </html>

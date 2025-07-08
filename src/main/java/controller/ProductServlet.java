@@ -1,8 +1,8 @@
 package controller;
 
 import dal.BlogCategoryDAO;
-import dal.ProductDAO;
 import dal.ProductCategoryDAO;
+import dal.ProductDAO;
 import dal.SubProductCategoryDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -32,9 +32,11 @@ public class ProductServlet extends HttpServlet {
         blogCategoryDAO = new BlogCategoryDAO();
         subProductCategoryDAO = new SubProductCategoryDAO();
     }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
         int pageSize = 6;
         String indexPage = request.getParameter("index");
         int index = (indexPage == null || indexPage.isEmpty()) ? 1 : Integer.parseInt(indexPage);
@@ -43,61 +45,75 @@ public class ProductServlet extends HttpServlet {
         String subCategoryId = request.getParameter("subcategory");
         String sort = request.getParameter("sort");
 
-        // ✅ Thêm lọc theo khoảng giá
         String minPriceStr = request.getParameter("minPrice");
         String maxPriceStr = request.getParameter("maxPrice");
         Double minPrice = (minPriceStr != null && !minPriceStr.isEmpty()) ? Double.parseDouble(minPriceStr) : null;
         Double maxPrice = (maxPriceStr != null && !maxPriceStr.isEmpty()) ? Double.parseDouble(maxPriceStr) : null;
 
-        // Lưu để hiển thị lại slider
+        String[] colorFilter = request.getParameterValues("color");
+        String[] sizeFilter = request.getParameterValues("size");
+        List<Integer> colorIds = convertToIntList(colorFilter);
+        List<Integer> sizeIds = convertToIntList(sizeFilter);
+
         request.setAttribute("minPrice", minPriceStr);
         request.setAttribute("maxPrice", maxPriceStr);
+        request.setAttribute("selectedColors", colorIds);
+        request.setAttribute("selectedSizes", sizeIds);
 
-        List<Product> products = new ArrayList<>();
         boolean hasCategory = categoryId != null && !categoryId.isEmpty();
         boolean hasSubCategory = subCategoryId != null && !subCategoryId.isEmpty();
 
-        // ✅ Gọi DAO hỗ trợ lọc giá
+        boolean filteringVariation = isFilteringByVariation(minPrice, maxPrice, colorIds, sizeIds);
+        List<Product> products;
+
         if (hasSubCategory) {
             int subId = Integer.parseInt(subCategoryId);
-            products = productDAO.getProductsBySubCategoryIdSorted(subId, index, pageSize, sort, minPrice, maxPrice);
+            if (filteringVariation) {
+                products = productDAO.getProductsWithFilters(index, pageSize, sort, minPrice, maxPrice, null, subId, colorIds, sizeIds);
+            } else {
+                products = productDAO.getAllProducts(index, pageSize, sort, null, subId);
+            }
             request.setAttribute("selectedSubCategoryId", subCategoryId);
 
             SubProductCategory sub = subProductCategoryDAO.getSubCategoryById(subId);
             if (sub != null) {
                 request.setAttribute("selectedCategoryId", sub.getProductCategoryId());
             }
+
         } else if (hasCategory) {
             int catId = Integer.parseInt(categoryId);
-            products = productDAO.getProductsByCategoryIdSorted(catId, index, pageSize, sort, minPrice, maxPrice);
+            if (filteringVariation) {
+                products = productDAO.getProductsWithFilters(index, pageSize, sort, minPrice, maxPrice, catId, null, colorIds, sizeIds);
+            } else {
+                products = productDAO.getAllProducts(index, pageSize, sort, catId, null);
+            }
             request.setAttribute("selectedCategoryId", categoryId);
+
         } else {
-            products = productDAO.getProductsByPage(index, pageSize, sort, minPrice, maxPrice);
+            if (filteringVariation) {
+                products = productDAO.getProductsWithFilters(index, pageSize, sort, minPrice, maxPrice, null, null, colorIds, sizeIds);
+            } else {
+                products = productDAO.getAllProducts(index, pageSize, sort, null, null);
+            }
         }
 
         request.setAttribute("products", products);
 
-        // Load categories/subcategories/blog categories
         List<ProductCategory> categories = categoryDAO.getAllProductCategories();
         List<BlogCategory> blogCategories = blogCategoryDAO.getAllBlogCategories();
         List<SubProductCategory> subCategories = new ArrayList<>();
         for (ProductCategory category : categories) {
             subCategories.addAll(subProductCategoryDAO.getSubCategoriesByCategoryId(category.getId()));
         }
+        Integer catId = (categoryId != null && !categoryId.isEmpty()) ? Integer.parseInt(categoryId) : null;
+        Integer subCatId = (subCategoryId != null && !subCategoryId.isEmpty()) ? Integer.parseInt(subCategoryId) : null;
 
-        // ✅ Đếm tổng sản phẩm theo khoảng giá
-        int count;
-        if (hasSubCategory) {
-            count = productDAO.getTotalProductsCountBySubCategoryAndPrice(Integer.parseInt(subCategoryId), minPrice, maxPrice);
-        } else if (hasCategory) {
-            count = productDAO.getTotalProductsCountByCategoryAndPrice(Integer.parseInt(categoryId), minPrice, maxPrice);
-        } else {
-            count = productDAO.countTotalProductsByPrice(minPrice, maxPrice);
-        }
+        int totalCount = filteringVariation
+                ? productDAO.countProductsWithFilters(minPrice, maxPrice, categoryId, subCategoryId, colorIds, sizeIds)
+                : productDAO.countAllProducts(catId, subCatId);
+        int endPage = totalCount / pageSize + (totalCount % pageSize == 0 ? 0 : 1);
 
-        int endPage = count / pageSize + (count % pageSize == 0 ? 0 : 1);
-
-        // Set attribute
+        System.out.println("Total products: " + totalCount);
         request.setAttribute("endPage", endPage);
         request.setAttribute("categories", categories);
         request.setAttribute("blogCategories", blogCategories);
@@ -107,4 +123,22 @@ public class ProductServlet extends HttpServlet {
         request.getRequestDispatcher("/view/product/product.jsp").forward(request, response);
     }
 
+    private List<Integer> convertToIntList(String[] arr) {
+        List<Integer> list = new ArrayList<>();
+        if (arr != null) {
+            for (String val : arr) {
+                try {
+                    list.add(Integer.parseInt(val));
+                } catch (NumberFormatException ignored) {}
+            }
+        }
+        return list;
+    }
+
+    private boolean isFilteringByVariation(Double minPrice, Double maxPrice,
+                                           List<Integer> colorIds, List<Integer> sizeIds) {
+        return (minPrice != null || maxPrice != null) ||
+                (colorIds != null && !colorIds.isEmpty()) ||
+                (sizeIds != null && !sizeIds.isEmpty());
+    }
 }
