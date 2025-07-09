@@ -623,120 +623,97 @@ public class ProductDAO extends DBContext {
                                                 Double minPrice, Double maxPrice,
                                                 Integer categoryId, Integer subCategoryId,
                                                 List<Integer> colorIds, List<Integer> sizeIds) {
-
         List<Product> products = new ArrayList<>();
 
         try {
             int offset = (pageIndex - 1) * pageSize;
 
-            // Step 1: Get list of product_ids
-            StringBuilder idSql = new StringBuilder();
-            List<Object> idParams = new ArrayList<>();
+            StringBuilder sql = new StringBuilder();
+            List<Object> params = new ArrayList<>();
 
-            idSql.append("SELECT DISTINCT p.product_id ");
-            idSql.append("FROM product p ");
-            idSql.append("LEFT JOIN product_variation pv ON p.product_id = pv.product_id ");
-            idSql.append("WHERE 1=1 ");
+            sql.append("SELECT p.*, pv.* ");
+            sql.append("FROM product p ");
+            sql.append("LEFT JOIN product_variation pv ON p.product_id = pv.product_id ");
+            sql.append("WHERE 1=1 ");
 
             if (subCategoryId != null) {
-                idSql.append("AND p.sub_product_category_id = ? ");
-                idParams.add(subCategoryId);
+                sql.append("AND p.sub_product_category_id = ? ");
+                params.add(subCategoryId);
             } else if (categoryId != null) {
-                idSql.append("AND p.sub_product_category_id IN ");
-                idSql.append("(SELECT sub_product_category_id FROM sub_product_category WHERE product_category_id = ?) ");
-                idParams.add(categoryId);
+                sql.append("AND p.sub_product_category_id IN ");
+                sql.append("(SELECT sub_product_category_id FROM sub_product_category WHERE product_category_id = ?) ");
+                params.add(categoryId);
             }
 
             if (minPrice != null) {
-                idSql.append("AND pv.sell_price >= ? ");
-                idParams.add(minPrice);
+                sql.append("AND pv.sell_price >= ? ");
+                params.add(minPrice);
             }
+
             if (maxPrice != null) {
-                idSql.append("AND pv.sell_price <= ? ");
-                idParams.add(maxPrice);
+                sql.append("AND pv.sell_price <= ? ");
+                params.add(maxPrice);
             }
 
             if (colorIds != null && !colorIds.isEmpty()) {
-                idSql.append("AND pv.color_id IN (");
-                idSql.append("?,".repeat(colorIds.size()));
-                idSql.setLength(idSql.length() - 1);
-                idSql.append(") ");
-                idParams.addAll(colorIds);
+                sql.append("AND pv.color_id IN (");
+                sql.append("?,".repeat(colorIds.size()));
+                sql.setLength(sql.length() - 1);
+                sql.append(") ");
+                params.addAll(colorIds);
             }
 
             if (sizeIds != null && !sizeIds.isEmpty()) {
-                idSql.append("AND pv.size_id IN (");
-                idSql.append("?,".repeat(sizeIds.size()));
-                idSql.setLength(idSql.length() - 1);
-                idSql.append(") ");
-                idParams.addAll(sizeIds);
+                sql.append("AND pv.size_id IN (");
+                sql.append("?,".repeat(sizeIds.size()));
+                sql.setLength(sql.length() - 1);
+                sql.append(") ");
+                params.addAll(sizeIds);
             }
+
+            // GROUP BY để gom sản phẩm lại
+            sql.append("GROUP BY p.product_id, pv.variation_id ");
 
             // Sorting
             if (sort != null) {
                 switch (sort) {
                     case "name-asc":
-                        idSql.append("ORDER BY p.name ASC ");
+                        sql.append("ORDER BY p.product_name ASC ");
                         break;
                     case "name-desc":
-                        idSql.append("ORDER BY p.name DESC ");
+                        sql.append("ORDER BY p.product_name DESC ");
                         break;
                     case "price-asc":
-                        idSql.append("ORDER BY (SELECT MIN(sell_price) FROM product_variation WHERE product_id = p.product_id) ASC ");
+                        sql.append("ORDER BY MIN(pv.sell_price) ASC ");
                         break;
                     case "price-desc":
-                        idSql.append("ORDER BY (SELECT MIN(sell_price) FROM product_variation WHERE product_id = p.product_id) DESC ");
+                        sql.append("ORDER BY MIN(pv.sell_price) DESC ");
                         break;
                     default:
-                        idSql.append("ORDER BY p.product_id ASC ");
+                        sql.append("ORDER BY p.product_id ASC ");
                 }
             } else {
-                idSql.append("ORDER BY p.product_id ASC ");
+                sql.append("ORDER BY p.product_id ASC ");
             }
 
-            idSql.append("LIMIT ? OFFSET ? ");
-            idParams.add(pageSize);
-            idParams.add(offset);
+            sql.append("LIMIT ? OFFSET ? ");
+            params.add(pageSize);
+            params.add(offset);
 
-            PreparedStatement idStm = connection.prepareStatement(idSql.toString());
+            PreparedStatement stm = connection.prepareStatement(sql.toString());
 
+            // Set all parameters
             int idx = 1;
-            for (Object param : idParams) {
+            for (Object param : params) {
                 if (param instanceof Integer) {
-                    idStm.setInt(idx++, (Integer) param);
+                    stm.setInt(idx++, (Integer) param);
                 } else if (param instanceof Double) {
-                    idStm.setDouble(idx++, (Double) param);
+                    stm.setDouble(idx++, (Double) param);
                 }
             }
 
-            ResultSet idRs = idStm.executeQuery();
-            List<Integer> productIds = new ArrayList<>();
-            while (idRs.next()) {
-                productIds.add(idRs.getInt("product_id"));
-            }
+            ResultSet rs = stm.executeQuery();
 
-            if (productIds.isEmpty()) return products;
-
-            // Step 2: Query full product info
-            StringBuilder mainSql = new StringBuilder();
-            mainSql.append("SELECT p.*, pv.*, pi.image_url ");
-            mainSql.append("FROM product p ");
-            mainSql.append("LEFT JOIN product_variation pv ON p.product_id = pv.product_id ");
-            mainSql.append("LEFT JOIN product_image pi ON p.product_id = pi.product_id ");
-            mainSql.append("WHERE p.product_id IN (");
-            mainSql.append("?,".repeat(productIds.size()));
-            mainSql.setLength(mainSql.length() - 1);
-            mainSql.append(") ");
-            mainSql.append("ORDER BY p.product_id DESC ");
-
-            PreparedStatement mainStm = connection.prepareStatement(mainSql.toString());
-            for (int i = 0; i < productIds.size(); i++) {
-                mainStm.setInt(i + 1, productIds.get(i));
-            }
-
-            ResultSet rs = mainStm.executeQuery();
-
-            // Step 3: Build list of Products
             int lastProductId = -1;
             Product currentProduct = null;
 
@@ -746,25 +723,26 @@ public class ProductDAO extends DBContext {
                 if (productId != lastProductId) {
                     currentProduct = new Product();
                     currentProduct.setId(productId);
-                    currentProduct.setName(rs.getString("name"));
-                    currentProduct.setDescription(rs.getString("description"));
-                    currentProduct.setInformation(rs.getString("information"));
-                    currentProduct.setGuideline(rs.getString("guideline"));
+                    currentProduct.setName(rs.getString("product_name"));
+                    currentProduct.setDescription(rs.getString("product_short_description"));
+                    currentProduct.setInformation(rs.getString("product_information"));
+                    currentProduct.setGuideline(rs.getString("product_guideline"));
                     currentProduct.setSubProductCategoryId(rs.getInt("sub_product_category_id"));
                     currentProduct.setCreatedAt(rs.getTimestamp("created_at"));
                     currentProduct.setUpdatedAt(rs.getTimestamp("updated_at"));
-                    currentProduct.setMinPrice(0); // temporary
+                    currentProduct.setMinPrice(Integer.MAX_VALUE); // default
+
                     products.add(currentProduct);
                     lastProductId = productId;
                 }
 
-                // Image
-                String imageUrl = rs.getString("image_url");
-                if (imageUrl != null) {
+                // Add image
+                String imageUrl = rs.getString("product_image");
+                if (imageUrl != null && !imageUrl.isEmpty()) {
                     currentProduct.addImageUrl(imageUrl);
                 }
 
-                // Variation
+                // Add variation
                 int variationId = rs.getInt("variation_id");
                 if (!rs.wasNull()) {
                     ProductVariation variation = new ProductVariation();
@@ -773,7 +751,7 @@ public class ProductDAO extends DBContext {
                     variation.setColorId(rs.getInt("color_id"));
                     variation.setSizeId(rs.getInt("size_id"));
                     variation.setSell_price(rs.getInt("sell_price"));
-                    variation.setQtyInStock(rs.getInt("quantity"));
+                    variation.setQtyInStock(rs.getInt("qty_in_stock"));
                     currentProduct.addVariation(variation);
 
                     if (variation.getSell_price() < currentProduct.getMinPrice()) {
@@ -782,7 +760,7 @@ public class ProductDAO extends DBContext {
                 }
             }
 
-            // Handle products with no variation
+            // Nếu không có giá nào, set minPrice = 0
             for (Product p : products) {
                 if (p.getMinPrice() == Integer.MAX_VALUE) {
                     p.setMinPrice(0);
@@ -888,20 +866,17 @@ public class ProductDAO extends DBContext {
 
         if (sort != null) {
             switch (sort) {
-                case "price_asc":
-                    sql.append("ORDER BY min_price ASC ");
-                    break;
-                case "price_desc":
-                    sql.append("ORDER BY min_price DESC ");
-                    break;
-                case "name_asc":
+                case "name-asc":
                     sql.append("ORDER BY p.product_name ASC ");
                     break;
-                case "name_desc":
+                case "name-desc":
                     sql.append("ORDER BY p.product_name DESC ");
                     break;
-                case "newest":
-                    sql.append("ORDER BY p.created_at DESC ");
+                case "price-asc":
+                    sql.append("ORDER BY MIN(pv.sell_price) ASC ");
+                    break;
+                case "price-desc":
+                    sql.append("ORDER BY MIN(pv.sell_price) DESC ");
                     break;
                 default:
                     sql.append("ORDER BY p.product_id ASC ");
@@ -909,6 +884,7 @@ public class ProductDAO extends DBContext {
         } else {
             sql.append("ORDER BY p.product_id ASC ");
         }
+        // --- END FIX ---
 
         sql.append("LIMIT ? OFFSET ? ");
         params.add(pageSize);

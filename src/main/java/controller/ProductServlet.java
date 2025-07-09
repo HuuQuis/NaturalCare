@@ -1,22 +1,18 @@
 package controller;
 
-import dal.BlogCategoryDAO;
-import dal.ProductCategoryDAO;
-import dal.ProductDAO;
-import dal.SubProductCategoryDAO;
+import dal.*;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import model.BlogCategory;
-import model.Product;
-import model.ProductCategory;
-import model.SubProductCategory;
+import model.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @WebServlet(name = "ProductServlet", value = "/products")
 public class ProductServlet extends HttpServlet {
@@ -24,6 +20,8 @@ public class ProductServlet extends HttpServlet {
     private ProductCategoryDAO categoryDAO;
     private BlogCategoryDAO blogCategoryDAO;
     private SubProductCategoryDAO subProductCategoryDAO;
+    private ColorDAO ColorDAO;
+    private SizeDAO SizeDAO;
 
     @Override
     public void init() {
@@ -31,13 +29,15 @@ public class ProductServlet extends HttpServlet {
         categoryDAO = new ProductCategoryDAO();
         blogCategoryDAO = new BlogCategoryDAO();
         subProductCategoryDAO = new SubProductCategoryDAO();
+        ColorDAO = new ColorDAO();
+        SizeDAO = new SizeDAO();
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        int pageSize = 6;
+        int pageSize = 9;
         String indexPage = request.getParameter("index");
         int index = (indexPage == null || indexPage.isEmpty()) ? 1 : Integer.parseInt(indexPage);
 
@@ -50,15 +50,19 @@ public class ProductServlet extends HttpServlet {
         Double minPrice = (minPriceStr != null && !minPriceStr.isEmpty()) ? Double.parseDouble(minPriceStr) : null;
         Double maxPrice = (maxPriceStr != null && !maxPriceStr.isEmpty()) ? Double.parseDouble(maxPriceStr) : null;
 
-        String[] colorFilter = request.getParameterValues("color");
-        String[] sizeFilter = request.getParameterValues("size");
-        List<Integer> colorIds = convertToIntList(colorFilter);
-        List<Integer> sizeIds = convertToIntList(sizeFilter);
+        // Lấy tên color và size từ URL
+        String[] colorNames = request.getParameterValues("color");
+        String[] sizeNames = request.getParameterValues("size");
 
+        // Chuyển đổi name → id bằng DAO
+        List<Integer> colorIds = ColorDAO.getIdsByNames(colorNames);
+        List<Integer> sizeIds = SizeDAO.getIdsByNames(sizeNames);
+
+        // Truyền lại để giữ trạng thái đã chọn
         request.setAttribute("minPrice", minPriceStr);
         request.setAttribute("maxPrice", maxPriceStr);
-        request.setAttribute("selectedColors", colorIds);
-        request.setAttribute("selectedSizes", sizeIds);
+        request.setAttribute("selectedColors", colorNames);  // giữ name
+        request.setAttribute("selectedSizes", sizeNames);    // giữ name
 
         boolean hasCategory = categoryId != null && !categoryId.isEmpty();
         boolean hasSubCategory = subCategoryId != null && !subCategoryId.isEmpty();
@@ -105,6 +109,7 @@ public class ProductServlet extends HttpServlet {
         for (ProductCategory category : categories) {
             subCategories.addAll(subProductCategoryDAO.getSubCategoriesByCategoryId(category.getId()));
         }
+
         Integer catId = (categoryId != null && !categoryId.isEmpty()) ? Integer.parseInt(categoryId) : null;
         Integer subCatId = (subCategoryId != null && !subCategoryId.isEmpty()) ? Integer.parseInt(subCategoryId) : null;
 
@@ -113,27 +118,20 @@ public class ProductServlet extends HttpServlet {
                 : productDAO.countAllProducts(catId, subCatId);
         int endPage = totalCount / pageSize + (totalCount % pageSize == 0 ? 0 : 1);
 
-        System.out.println("Total products: " + totalCount);
         request.setAttribute("endPage", endPage);
         request.setAttribute("categories", categories);
         request.setAttribute("blogCategories", blogCategories);
         request.setAttribute("subCategories", subCategories);
         request.setAttribute("sort", sort);
 
+        List<Color> colorList = ColorDAO.getAllColors();
+        List<Size> sizeList = SizeDAO.getAllSizes();
+        request.setAttribute("colorList", colorList);
+        request.setAttribute("sizeList", sizeList);
+
         request.getRequestDispatcher("/view/product/product.jsp").forward(request, response);
     }
 
-    private List<Integer> convertToIntList(String[] arr) {
-        List<Integer> list = new ArrayList<>();
-        if (arr != null) {
-            for (String val : arr) {
-                try {
-                    list.add(Integer.parseInt(val));
-                } catch (NumberFormatException ignored) {}
-            }
-        }
-        return list;
-    }
 
     private boolean isFilteringByVariation(Double minPrice, Double maxPrice,
                                            List<Integer> colorIds, List<Integer> sizeIds) {

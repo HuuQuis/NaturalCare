@@ -25,4 +25,26 @@ public class SizeDAO extends DBContext{
         }
         return sizes;
     }
+
+    public List<Integer> getIdsByNames(String[] names) {
+        List<Integer> ids = new ArrayList<>();
+        if (names != null) {
+            sql = "SELECT size_id FROM size WHERE size_name = ?";
+            try {
+                stm = connection.prepareStatement(sql);
+                for (String name : names) {
+                    stm.setString(1, name);
+                    rs = stm.executeQuery();
+                    if (rs.next()) {
+                        ids.add(rs.getInt("size_id"));
+                    }
+                    rs.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return ids;
+    }
+
 }
