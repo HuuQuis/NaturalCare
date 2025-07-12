@@ -155,6 +155,10 @@ public class AddressServlet extends HttpServlet {
             addressJson.put("wardCode", address.getWardCode());
             addressJson.put("wardName", address.getWard() != null ? address.getWard().getName() : "");
             addressJson.put("detail", address.getDetail());
+            addressJson.put("firstName", address.getFirstName());
+            addressJson.put("lastName", address.getLastName());
+            addressJson.put("email", address.getEmail());
+            addressJson.put("phoneNumber", address.getPhoneNumber());
             addressJson.put("distanceKm", address.getDistanceKm());
 
             JSONObject responseJson = new JSONObject();
@@ -176,11 +180,16 @@ public class AddressServlet extends HttpServlet {
         String districtCode = request.getParameter("districtCode");
         String wardCode = request.getParameter("wardCode");
         String detail = request.getParameter("detail");
+        String firstName = request.getParameter("firstName");
+        String lastName = request.getParameter("lastName");
+        String email = request.getParameter("email");
+        String phoneNumber = request.getParameter("phoneNumber");
 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
-        String validationError = validateDetail(detail);
+        // Validation toàn bộ các field
+        String validationError = validateInput(firstName, lastName, email, phoneNumber, detail);
         if (validationError != null) {
             response.getWriter().write("{\"success\":false,\"message\":\"" + escapeJson(validationError) + "\"}");
             return;
@@ -191,6 +200,10 @@ public class AddressServlet extends HttpServlet {
         newAddress.setDistrictCode(districtCode);
         newAddress.setWardCode(wardCode);
         newAddress.setDetail(detail.trim());
+        newAddress.setFirstName(firstName.trim());
+        newAddress.setLastName(lastName.trim());
+        newAddress.setEmail(email.trim());
+        newAddress.setPhoneNumber(phoneNumber.trim());
 
         boolean success = addressDAO.addAddress(newAddress, userId);
 
@@ -209,6 +222,10 @@ public class AddressServlet extends HttpServlet {
         String districtCode = request.getParameter("districtCode");
         String wardCode = request.getParameter("wardCode");
         String detail = request.getParameter("detail");
+        String firstName = request.getParameter("firstName");
+        String lastName = request.getParameter("lastName");
+        String email = request.getParameter("email");
+        String phoneNumber = request.getParameter("phoneNumber");
 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
@@ -218,7 +235,7 @@ public class AddressServlet extends HttpServlet {
             return;
         }
 
-        String validationError = validateDetail(detail);
+        String validationError = validateInput(firstName, lastName, email, phoneNumber, detail);
         if (validationError != null) {
             response.getWriter().write("{\"success\":false,\"message\":\"" + escapeJson(validationError) + "\"}");
             return;
@@ -233,6 +250,10 @@ public class AddressServlet extends HttpServlet {
             address.setDistrictCode(districtCode);
             address.setWardCode(wardCode);
             address.setDetail(detail.trim());
+            address.setFirstName(firstName.trim());
+            address.setLastName(lastName.trim());
+            address.setEmail(email.trim());
+            address.setPhoneNumber(phoneNumber.trim());
 
             boolean updated = addressDAO.updateAddress(address, userId);
 
@@ -307,4 +328,28 @@ public class AddressServlet extends HttpServlet {
                 .replace("\r", "\\r")
                 .replace("\t", "\\t");
     }
+
+    private String validateInput(String firstName, String lastName, String email, String phoneNumber, String detail) {
+        if (isBlank(firstName)) return "First name must not be empty.";
+        if (!firstName.matches("^[A-Za-zÀ-ỹ]+( [A-Za-zÀ-ỹ]+)*$")) return "First name must contain only letters and single spaces between words.";
+
+        if (isBlank(lastName)) return "Last name must not be empty.";
+        if (!lastName.matches("^[A-Za-zÀ-ỹ]+( [A-Za-zÀ-ỹ]+)*$")) return "Last name must contain only letters and single spaces between words.";
+
+        if (isBlank(email)) return "Email must not be empty.";
+        if (!email.matches("^[\\w.-]+@[\\w.-]+\\.com$")) return "Email must be in a valid format (e.g. name@example.com).";
+
+        if (isBlank(phoneNumber)) return "Phone number must not be empty.";
+        if (!phoneNumber.matches("^0\\d{9}$")) return "Phone number must be exactly 10 digits and start with 0.";
+
+        String detailError = validateDetail(detail);
+        if (detailError != null) return detailError;
+
+        return null; // OK
+    }
+
+    private boolean isBlank(String s) {
+        return s == null || s.trim().isEmpty();
+    }
+
 }

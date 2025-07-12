@@ -11,6 +11,26 @@
       <form id="addAddressForm" method="post" action="address?action=update">
         <input type="hidden" name="addressId" id="addressId"/>
 
+        <div class="form-group user_info">
+          <label for="firstName">First Name</label>
+          <input type="text" name="firstName" id="firstName" class="form-control" placeholder="e.g. John" required />
+        </div>
+
+        <div class="form-group user_info">
+          <label for="lastName">Last Name</label>
+          <input type="text" name="lastName" id="lastName" class="form-control" placeholder="e.g. Doe" required />
+        </div>
+
+        <div class="form-group user_info">
+          <label for="email">Email</label>
+          <input type="email" name="email" id="email" class="form-control" placeholder="e.g. john@example.com" required />
+        </div>
+
+        <div class="form-group user_info">
+          <label for="phoneNumber">Phone Number</label>
+          <input type="text" name="phoneNumber" id="phoneNumber" class="form-control" placeholder="10-digit number" maxlength="10" required />
+        </div>
+
         <div class="form-group">
           <label for="provinceSelect">Province</label>
           <select name="provinceCode" id="provinceSelect" class="form-control" required></select>
