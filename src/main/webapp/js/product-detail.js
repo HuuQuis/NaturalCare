@@ -202,3 +202,24 @@ document.addEventListener('DOMContentLoaded', function () {
             .catch(err => alert("Failed to add to cart. Please try again later."));
     });
 });
+
+document.querySelectorAll('.variation-item').forEach(item => {
+    const qty = parseInt(item.querySelector('.stock-data').textContent);
+    if (qty === 0) {
+        const colorId = item.dataset.color;
+        const sizeId = item.dataset.size;
+
+        // Disable color buttons
+        document.querySelectorAll(`[data-color="${colorId}"]`).forEach(btn => {
+            btn.disabled = true;
+            btn.classList.add('out-of-stock');
+        });
+
+        // Disable size buttons
+        document.querySelectorAll(`[data-size="${sizeId}"]`).forEach(btn => {
+            btn.disabled = true;
+            btn.classList.add('out-of-stock');
+        });
+    }
+});
+
