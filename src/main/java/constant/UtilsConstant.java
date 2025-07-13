@@ -12,4 +12,6 @@ public class UtilsConstant {
 
     public static final int MAX_OTP_ATTEMPTS = 3;
 
+    public static final long RESEND_COOLDOWN = 60 * 1000; // 60 giây cooldown
+
 }
