@@ -14,7 +14,6 @@ import jakarta.servlet.annotation.MultipartConfig;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 @MultipartConfig
@@ -119,6 +118,10 @@ public class AddressServlet extends HttpServlet {
                     .append("\"wardCode\":\"").append(addr.getWardCode()).append("\",")
                     .append("\"wardName\":\"").append(escapeJson(wardName)).append("\",")
                     .append("\"detail\":\"").append(escapeJson(addr.getDetail())).append("\",")
+                    .append("\"firstName\":\"").append(escapeJson(addr.getFirstName())).append("\",")
+                    .append("\"lastName\":\"").append(escapeJson(addr.getLastName())).append("\",")
+                    .append("\"email\":\"").append(escapeJson(addr.getEmail())).append("\",")
+                    .append("\"phoneNumber\":\"").append(escapeJson(addr.getPhoneNumber())).append("\",")
                     .append("\"distanceKm\":").append(addr.getDistanceKm()).append(",")
                     .append("\"isDefault\":").append(addr.isDefaultAddress())
                     .append("}");
@@ -146,20 +149,7 @@ public class AddressServlet extends HttpServlet {
                 return;
             }
 
-            JSONObject addressJson = new JSONObject();
-            addressJson.put("addressId", address.getAddressId());
-            addressJson.put("provinceCode", address.getProvinceCode());
-            addressJson.put("provinceName", address.getProvince() != null ? address.getProvince().getName() : "");
-            addressJson.put("districtCode", address.getDistrictCode());
-            addressJson.put("districtName", address.getDistrict() != null ? address.getDistrict().getName() : "");
-            addressJson.put("wardCode", address.getWardCode());
-            addressJson.put("wardName", address.getWard() != null ? address.getWard().getName() : "");
-            addressJson.put("detail", address.getDetail());
-            addressJson.put("firstName", address.getFirstName());
-            addressJson.put("lastName", address.getLastName());
-            addressJson.put("email", address.getEmail());
-            addressJson.put("phoneNumber", address.getPhoneNumber());
-            addressJson.put("distanceKm", address.getDistanceKm());
+            JSONObject addressJson = getJsonObject(address);
 
             JSONObject responseJson = new JSONObject();
             responseJson.put("success", true);
@@ -173,99 +163,74 @@ public class AddressServlet extends HttpServlet {
         }
     }
 
-    private void handleAddAddress(HttpServletRequest request, HttpServletResponse response,
-                                  AddressDAO addressDAO, int userId) throws IOException {
+    private static JSONObject getJsonObject(Address address) {
+        JSONObject addressJson = new JSONObject();
+        addressJson.put("addressId", address.getAddressId());
+        addressJson.put("provinceCode", address.getProvinceCode());
+        addressJson.put("provinceName", address.getProvince() != null ? address.getProvince().getName() : "");
+        addressJson.put("districtCode", address.getDistrictCode());
+        addressJson.put("districtName", address.getDistrict() != null ? address.getDistrict().getName() : "");
+        addressJson.put("wardCode", address.getWardCode());
+        addressJson.put("wardName", address.getWard() != null ? address.getWard().getName() : "");
+        addressJson.put("detail", address.getDetail());
+        addressJson.put("firstName", address.getFirstName());
+        addressJson.put("lastName", address.getLastName());
+        addressJson.put("email", address.getEmail());
+        addressJson.put("phoneNumber", address.getPhoneNumber());
+        addressJson.put("distanceKm", address.getDistanceKm());
+        return addressJson;
+    }
 
-        String provinceCode = request.getParameter("provinceCode");
-        String districtCode = request.getParameter("districtCode");
-        String wardCode = request.getParameter("wardCode");
-        String detail = request.getParameter("detail");
-        String firstName = request.getParameter("firstName");
-        String lastName = request.getParameter("lastName");
-        String email = request.getParameter("email");
-        String phoneNumber = request.getParameter("phoneNumber");
+    private void handleAddAddress(HttpServletRequest request, HttpServletResponse response,
+                                  AddressDAO dao, int userId) throws IOException {
 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
-        // Validation toàn bộ các field
-        String validationError = validateInput(firstName, lastName, email, phoneNumber, detail);
-        if (validationError != null) {
-            response.getWriter().write("{\"success\":false,\"message\":\"" + escapeJson(validationError) + "\"}");
+        Address address = new Address();
+        String error = readAndValidateAddress(request, address, dao, null);
+        if (error != null) {
+            response.getWriter().write("{\"success\":false,\"message\":\"" + escapeJson(error) + "\"}");
             return;
         }
 
-        Address newAddress = new Address();
-        newAddress.setProvinceCode(provinceCode);
-        newAddress.setDistrictCode(districtCode);
-        newAddress.setWardCode(wardCode);
-        newAddress.setDetail(detail.trim());
-        newAddress.setFirstName(firstName.trim());
-        newAddress.setLastName(lastName.trim());
-        newAddress.setEmail(email.trim());
-        newAddress.setPhoneNumber(phoneNumber.trim());
-
-        boolean success = addressDAO.addAddress(newAddress, userId);
-
-        if (success) {
-            response.getWriter().write("{\"success\":true,\"message\":\"Address added successfully\"}");
-        } else {
-            response.getWriter().write("{\"success\":false,\"message\":\"Failed to add address\"}");
-        }
+        boolean success = dao.addAddress(address, userId);
+        response.getWriter().write("{\"success\":" + success + ",\"message\":\"" +
+                (success ? "Address added successfully" : "Failed to add address") + "\"}");
     }
 
     private void handleUpdateAddress(HttpServletRequest request, HttpServletResponse response,
-                                     AddressDAO addressDAO, int userId) throws IOException {
-
-        String addressIdStr = request.getParameter("addressId");
-        String provinceCode = request.getParameter("provinceCode");
-        String districtCode = request.getParameter("districtCode");
-        String wardCode = request.getParameter("wardCode");
-        String detail = request.getParameter("detail");
-        String firstName = request.getParameter("firstName");
-        String lastName = request.getParameter("lastName");
-        String email = request.getParameter("email");
-        String phoneNumber = request.getParameter("phoneNumber");
+                                     AddressDAO dao, int userId) throws IOException {
 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
+        String addressIdStr = request.getParameter("addressId");
         if (addressIdStr == null) {
             response.getWriter().write("{\"success\":false,\"message\":\"Missing address ID\"}");
             return;
         }
 
-        String validationError = validateInput(firstName, lastName, email, phoneNumber, detail);
-        if (validationError != null) {
-            response.getWriter().write("{\"success\":false,\"message\":\"" + escapeJson(validationError) + "\"}");
-            return;
-        }
-
         try {
             int addressId = Integer.parseInt(addressIdStr);
-
             Address address = new Address();
             address.setAddressId(addressId);
-            address.setProvinceCode(provinceCode);
-            address.setDistrictCode(districtCode);
-            address.setWardCode(wardCode);
-            address.setDetail(detail.trim());
-            address.setFirstName(firstName.trim());
-            address.setLastName(lastName.trim());
-            address.setEmail(email.trim());
-            address.setPhoneNumber(phoneNumber.trim());
 
-            boolean updated = addressDAO.updateAddress(address, userId);
-
-            if (updated) {
-                response.getWriter().write("{\"success\":true,\"message\":\"Address updated successfully\"}");
-            } else {
-                response.getWriter().write("{\"success\":false,\"message\":\"Failed to update address\"}");
+            String error = readAndValidateAddress(request, address, dao, addressId);
+            if (error != null) {
+                response.getWriter().write("{\"success\":false,\"message\":\"" + escapeJson(error) + "\"}");
+                return;
             }
 
+            boolean updated = dao.updateAddress(address, userId);
+            response.getWriter().write("{\"success\":" + updated + ",\"message\":\"" +
+                    (updated ? "Address updated successfully" : "Failed to update address") + "\"}");
+
+        } catch (NumberFormatException e) {
+            response.getWriter().write("{\"success\":false,\"message\":\"Invalid address ID\"}");
         } catch (Exception e) {
             e.printStackTrace();
-            response.getWriter().write("{\"success\":false,\"message\":\"Invalid input or internal error\"}");
+            response.getWriter().write("{\"success\":false,\"message\":\"Internal error\"}");
         }
     }
 
@@ -350,6 +315,37 @@ public class AddressServlet extends HttpServlet {
 
     private boolean isBlank(String s) {
         return s == null || s.trim().isEmpty();
+    }
+
+    private String readAndValidateAddress(HttpServletRequest request, Address address, AddressDAO dao, Integer excludeAddressId) {
+        String provinceCode = request.getParameter("provinceCode");
+        String districtCode = request.getParameter("districtCode");
+        String wardCode = request.getParameter("wardCode");
+        String detail = request.getParameter("detail");
+        String firstName = request.getParameter("firstName");
+        String lastName = request.getParameter("lastName");
+        String email = request.getParameter("email");
+        String phoneNumber = request.getParameter("phoneNumber");
+
+        // Gán vào object
+        address.setProvinceCode(provinceCode);
+        address.setDistrictCode(districtCode);
+        address.setWardCode(wardCode);
+        address.setDetail(detail != null ? detail.trim() : "");
+        address.setFirstName(firstName != null ? firstName.trim() : "");
+        address.setLastName(lastName != null ? lastName.trim() : "");
+        address.setEmail(email != null ? email.trim() : "");
+        address.setPhoneNumber(phoneNumber != null ? phoneNumber.trim() : "");
+
+        // Validate format
+        String validationError = validateInput(firstName, lastName, email, phoneNumber, detail);
+        if (validationError != null) return validationError;
+
+        // Validate uniqueness
+        if (dao.isEmailUsed(email.trim(), excludeAddressId)) return "Email is already in use.";
+        if (dao.isPhoneUsed(phoneNumber.trim(), excludeAddressId)) return "Phone number is already in use.";
+
+        return null;
     }
 
 }

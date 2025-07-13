@@ -26,36 +26,54 @@
     <div class="row">
         <div class="col-md-7">
             <form class="checkout-form" method="post" action="checkout">
-            <h4 class="mb-3 fw-bold">Shipping Information</h4>
+                <h4 class="mb-3 fw-bold">Shipping Information</h4>
 
+                <!-- ✅ checkout.jsp - Hiển thị thông tin người nhận từ defaultAddress -->
                 <div class="row mb-3">
-                    <div class="col-md-6 mb-3">
-                        <input type="text" class="form-control" placeholder="First name" name="firstName"
-                               value="${user.firstName}" disabled>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <input type="text" class="form-control" placeholder="Last name" name="lastName"
-                               value="${user.lastName}" disabled>
-                    </div>
-                    <div class="col-md-12 mb-3">
-                        <input type="text" class="form-control" placeholder="Phone number" name="phone"
-                               value="${user.phone}" disabled>
-                    </div>
-                    <div class="col-md-12 mb-3">
-                        <input type="email" class="form-control" placeholder="Email address" name="email"
-                               value="${user.email}" disabled>
-                    </div>
+                    <c:choose>
+                        <c:when test="${not empty defaultAddress}">
+                            <div class="col-md-6 mb-3">
+                                <input type="text" class="form-control" placeholder="First name"
+                                       data-field="firstName" value="${defaultAddress.firstName}" readonly>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <input type="text" class="form-control" placeholder="Last name"
+                                       data-field="lastName" value="${defaultAddress.lastName}" readonly>
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <input type="text" class="form-control" placeholder="Phone number"
+                                       data-field="phoneNumber" value="${defaultAddress.phoneNumber}" readonly>
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <input type="email" class="form-control" placeholder="Email address"
+                                       data-field="email" value="${defaultAddress.email}" readonly>
+                            </div>
+                        </c:when>
+                        <c:otherwise>
+                            <div class="col-md-12">
+                                <div class="alert alert-warning">No default address selected. Please choose one below.</div>
+                            </div>
+                        </c:otherwise>
+                    </c:choose>
+
                     <div class="col-md-12">
                         <textarea class="form-control" placeholder="Note (e.g. Preferred delivery time)" name="note" rows="3"></textarea>
                     </div>
                 </div>
                 <div class="address-section mb-4">
                     <h3>Select a shipping address</h3>
-                    <a href="#" class="add-new-address">+ Add new address</a>
+                    <div class="add-address-btn" onclick="addNewAddress()">
+                        <i class="fa fa-plus"></i> Add New Address
+                    </div>
                     <c:forEach var="addr" items="${addressList}">
                         <label class="address-div ${addr.defaultAddress ? 'selected' : ''}">
                             <input type="radio" name="addressId"
-                                   value="${addr.addressId}" ${addr.defaultAddress ? 'checked' : ''} />
+                                   value="${addr.addressId}"
+                                   data-firstname="${addr.firstName}"
+                                   data-lastname="${addr.lastName}"
+                                   data-email="${addr.email}"
+                                   data-phone="${addr.phoneNumber}"
+                                ${addr.defaultAddress ? 'checked' : ''} />
                             <div>
                                     ${addr.detail}, ${addr.ward.name}, ${addr.district.name}, ${addr.province.name}
                                 <c:if test="${addr.defaultAddress}">
@@ -69,7 +87,7 @@
                     <h4 class="fw-bold mb-2">Choose Payment Method</h4>
                     <div class="payment-option">
                         <label>
-                            <input type="radio" name="paymentMethod" value="zalopay" checked/>
+                            <input type="radio" name="paymentMethod" value="cod" checked/>
                             <img src="${pageContext.request.contextPath}/images/payment/shipcod-logo.jpg" alt="ZaloPay" />
                             Thanh toán khi nhận hàng (COD)
                         </label>
@@ -117,8 +135,8 @@
                                 <span class="unit-price">
                                     <fmt:formatNumber value="${item.variation.sell_price}" type="number" groupingUsed="true" />
                                 </span> đ ×
-                                                    <span>${item.quantity}</span> =
-                                                    <span class="line-total">
+                                <span>${item.quantity}</span> =
+                                <span class="line-total">
                                     <fmt:formatNumber value="${item.quantity * item.variation.sell_price}" type="number" groupingUsed="true" />
                                 </span> đ
                             </div>
@@ -156,5 +174,47 @@
     const contextPath = "${pageContext.request.contextPath}";
 </script>
 <script src="${pageContext.request.contextPath}/js/search.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const radios = document.querySelectorAll('input[name="addressId"]');
+        const overlay = document.getElementById("loadingOverlay");
+
+        radios.forEach(radio => {
+            radio.addEventListener('change', function () {
+                // Hiện overlay
+                overlay.style.display = "flex";
+
+                // Lấy dữ liệu từ data-* attributes
+                const firstName = this.dataset.firstname;
+                const lastName = this.dataset.lastname;
+                const email = this.dataset.email;
+                const phone = this.dataset.phone;
+
+                // Cập nhật các ô input (readonly vẫn cho phép JS thay đổi)
+                document.querySelector('input[data-field="firstName"]').value = firstName;
+                document.querySelector('input[data-field="lastName"]').value = lastName;
+                document.querySelector('input[data-field="email"]').value = email;
+                document.querySelector('input[data-field="phoneNumber"]').value = phone;
+
+                // Bỏ class selected khỏi tất cả
+                document.querySelectorAll('.address-div').forEach(label => {
+                    label.classList.remove('selected');
+                });
+
+                // Gán lại selected cho label hiện tại
+                this.closest('.address-div').classList.add('selected');
+
+                // Tắt overlay sau delay nhẹ
+                setTimeout(() => {
+                    overlay.style.display = "none";
+                }, 1000);
+            });
+        });
+    });
+</script>
+
+<div id="loadingOverlay">
+    <div class="spinner"></div>
+</div>
 </body>
 </html>

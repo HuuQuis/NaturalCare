@@ -96,6 +96,14 @@ CREATE TABLE skill
     skill_name VARCHAR(255)
 );
 
+create table contract
+(
+	contract_id int not null,
+    contract_name varchar(255) not null,
+    start_date date not null,
+    end_date date not null
+);
+
 CREATE TABLE user
 (
     user_id            INT          NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -109,6 +117,10 @@ CREATE TABLE user
     user_image         TEXT,
     reset_token        VARCHAR(255),
     reset_token_expiry DATETIME,
+    assign_staff_id INT NULL,
+    contract_id int null,
+    foreign key (assign_staff_id) references user(user_id),
+    foreign key (contract_id) references contract(contract_id),
     FOREIGN KEY (role_id)
         REFERENCES role (role_id)
 );

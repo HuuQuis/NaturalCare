@@ -128,10 +128,7 @@ public class AddressDAO extends DBContext {
 
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            close();
         }
-
         return null;
     }
 
@@ -218,13 +215,6 @@ public class AddressDAO extends DBContext {
             }
             e.printStackTrace();
             return false;
-        } finally {
-            try {
-                connection.setAutoCommit(true);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            close();
         }
     }
 
@@ -251,13 +241,11 @@ public class AddressDAO extends DBContext {
             Ward ward = new WardDAO().getWardByCode(address.getWardCode());
 
             if (ward == null) {
-                System.out.println("Ward not found for code: " + address.getWardCode());
             } else {
                 Double lat = ward.getLatitude();
                 Double lng = ward.getLongitude();
 
                 if (lat == null || lng == null || lat == 0.0 || lng == 0.0) {
-                    System.out.println("Invalid lat/lng for ward code: " + address.getWardCode());
                     distanceKm = 0;
                 } else {
                     distanceKm = calculateDistance(FPT_LAT, FPT_LNG, lat, lng);
@@ -295,13 +283,6 @@ public class AddressDAO extends DBContext {
             }
             e.printStackTrace();
             return false;
-        } finally {
-            try {
-                connection.setAutoCommit(true);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            close();
         }
     }
 
@@ -330,10 +311,7 @@ public class AddressDAO extends DBContext {
                 se.printStackTrace();
             }
             e.printStackTrace();
-        } finally {
-            close();
         }
-
         return false;
     }
 
@@ -422,8 +400,6 @@ public class AddressDAO extends DBContext {
 
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            close();
         }
 
         return list;
@@ -463,9 +439,39 @@ public class AddressDAO extends DBContext {
         return R * c;
     }
 
-    private void close() {
-        try { if (rs != null) rs.close(); } catch (Exception ignored) {}
-        try { if (stm != null) stm.close(); } catch (Exception ignored) {}
-        try { if (connection != null) connection.close(); } catch (Exception ignored) {}
+    public boolean isEmailUsed(String email, Integer excludeAddressId) {
+        sql = "SELECT COUNT(*) FROM address WHERE email = ?";
+        if (excludeAddressId != null) {
+            sql += " AND address_id <> ?";
+        }
+
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setString(1, email);
+            if (excludeAddressId != null) stm.setInt(2, excludeAddressId);
+            rs = stm.executeQuery();
+            if (rs.next()) return rs.getInt(1) > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return true; // fallback an toàn
+    }
+
+    public boolean isPhoneUsed(String phone, Integer excludeAddressId) {
+        sql = "SELECT COUNT(*) FROM address WHERE phone_number = ?";
+        if (excludeAddressId != null) {
+            sql += " AND address_id <> ?";
+        }
+
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setString(1, phone);
+            if (excludeAddressId != null) stm.setInt(2, excludeAddressId);
+            rs = stm.executeQuery();
+            if (rs.next()) return rs.getInt(1) > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return true; // fallback an toàn
     }
 }

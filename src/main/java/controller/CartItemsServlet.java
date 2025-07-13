@@ -20,6 +20,7 @@ public class CartItemsServlet extends HttpServlet {
 
         List<Cart> cartItems = new ArrayList<>();
         int cartTotal = 0;
+        int totalQuantity = 0;
 
         // Danh sách các ID sản phẩm đã hết hàng cần xóa
         List<Integer> toRemove = new ArrayList<>();
@@ -32,6 +33,7 @@ public class CartItemsServlet extends HttpServlet {
             if (variation != null && variation.getQtyInStock() > 0) {
                 cartItems.add(new Cart(variation, quantity));
                 cartTotal += variation.getSell_price() * quantity;
+                totalQuantity += quantity;
             } else {
                 toRemove.add(variationId);
             }
@@ -47,6 +49,7 @@ public class CartItemsServlet extends HttpServlet {
 
         request.setAttribute("cartItems", cartItems);
         request.setAttribute("cartTotal", cartTotal);
+        request.setAttribute("totalQuantity", totalQuantity);
         request.getRequestDispatcher("/view/checkout/cart-modal.jsp").forward(request, response);
     }
 

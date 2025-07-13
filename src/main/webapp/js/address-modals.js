@@ -92,9 +92,13 @@ function createAddressCard(address) {
         <div class="address-details">
             <div class="address-header">
                 <div class="address-text">
-                    ${address.detail}<br>
-                    <span class="ward-district-province">
-                        ${address.wardName}, ${address.districtName}, ${address.provinceName}
+                    <strong>${address.firstName} ${address.lastName}</strong>
+                    <span class="contact-info">
+                        📧 ${address.email}<br>
+                        ☎️ ${address.phoneNumber}
+                    </span><br>
+                    <span class="address-line">
+                        ${address.detail}, ${address.wardName}, ${address.districtName}, ${address.provinceName}
                     </span>
                 </div>
                 ${leafIconHtml}
@@ -156,12 +160,19 @@ function editAddress(id) {
             const address = data.address;
             editingId = address.addressId;
 
+            // Mở modal chỉnh sửa
             document.getElementById('addressModal').style.display = 'none';
             document.getElementById('addAddressModal').style.display = 'block';
             document.body.classList.add('modal-open');
 
-            document.getElementById('detail').value = address.detail;
+            // Gán giá trị các input
+            document.getElementById('firstName').value = address.firstName || "";
+            document.getElementById('lastName').value = address.lastName || "";
+            document.getElementById('email').value = address.email || "";
+            document.getElementById('phoneNumber').value = address.phoneNumber || "";
+            document.getElementById('detail').value = address.detail || "";
 
+            // Load provinces, districts, wards
             fetch('https://provinces.open-api.vn/api/p/')
                 .then(res => res.json())
                 .then(provinces => {

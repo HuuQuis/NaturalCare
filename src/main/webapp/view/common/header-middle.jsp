@@ -49,6 +49,9 @@
                             <a href="checkout" id="cart-icon" aria-label="Shopping Cart">
                                 <i class="fa fa-shopping-cart"></i> Cart
                             </a>
+                            <c:if test="${totalQuantity > 0}">
+                                <span class="cart-badge">${totalQuantity}</span>
+                            </c:if>
                             <div id="cart-overlay" class="cart-overlay"></div>
                             <div id="cart-loading"></div>
                             <div id="cart-modal">
