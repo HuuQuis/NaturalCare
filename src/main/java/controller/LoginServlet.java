@@ -56,6 +56,9 @@ public class LoginServlet extends HttpServlet {
                 case 4: // Manager
                     request.getRequestDispatcher("view/home/manage.jsp").forward(request, response);
                     break;
+                case 5: // Marketer
+                    request.getRequestDispatcher("view/home/marketer.jsp").forward(request, response);
+                    break;
                 default:
                     request.setAttribute("error", "");
                     response.sendRedirect("home");

@@ -261,4 +261,95 @@ public class BlogDAO extends DBContext {
 
         return 0;
     }
+
+    public List<Blog> searchBlogsAdvanced(int categoryId, String keyword, String sort, String status, int pageIndex, int pageSize) {
+        List<Blog> list = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("SELECT b.*, i.blog_image FROM blog b LEFT JOIN blog_image i ON b.blog_id = i.blog_id WHERE 1=1");
+
+        List<Object> params = new ArrayList<>();
+
+        if (categoryId != -1) {
+            sql.append(" AND b.blog_category_id = ?");
+            params.add(categoryId);
+        }
+
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql.append(" AND LOWER(b.blog_title) LIKE ?");
+            params.add("%" + keyword.toLowerCase() + "%");
+        }
+
+        if ("true".equalsIgnoreCase(status) || "false".equalsIgnoreCase(status)) {
+            sql.append(" AND b.status = ?");
+            params.add(Boolean.parseBoolean(status));
+        }
+
+        if ("asc".equalsIgnoreCase(sort)) {
+            sql.append(" ORDER BY b.blog_title ASC");
+        } else if ("desc".equalsIgnoreCase(sort)) {
+            sql.append(" ORDER BY b.blog_title DESC");
+        } else {
+            sql.append(" ORDER BY b.date_published DESC");
+        }
+
+        sql.append(" LIMIT ? OFFSET ?");
+        params.add(pageSize);
+        params.add((pageIndex - 1) * pageSize);
+
+        try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                ps.setObject(i + 1, params.get(i));
+            }
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                BlogCategory category = categoryDAO.getCategoryById(rs.getInt("blog_category_id"));
+                Blog blog = new Blog(
+                        rs.getInt("blog_id"),
+                        rs.getString("blog_title"),
+                        rs.getString("blog_description"),
+                        rs.getTimestamp("date_published"),
+                        category
+                );
+                blog.setImageUrl(rs.getString("blog_image"));
+                list.add(blog);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    public int countSearchBlogsAdvanced(int categoryId, String keyword, String status) {
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM blog WHERE 1=1");
+        List<Object> params = new ArrayList<>();
+
+        if (categoryId != -1) {
+            sql.append(" AND blog_category_id = ?");
+            params.add(categoryId);
+        }
+
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql.append(" AND LOWER(blog_title) LIKE ?");
+            params.add("%" + keyword.toLowerCase() + "%");
+        }
+
+        if ("true".equalsIgnoreCase(status) || "false".equalsIgnoreCase(status)) {
+            sql.append(" AND status = ?");
+            params.add(Boolean.parseBoolean(status));
+        }
+
+        try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                ps.setObject(i + 1, params.get(i));
+            }
+
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) return rs.getInt(1);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
 }

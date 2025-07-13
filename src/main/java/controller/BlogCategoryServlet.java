@@ -44,7 +44,7 @@ public class BlogCategoryServlet extends HttpServlet {
         req.setAttribute("sort", sort);
         req.setAttribute("view", "blog-category");
 
-        req.getRequestDispatcher("/view/home/manager.jsp").forward(req, resp);
+        req.getRequestDispatcher("/view/home/marketer.jsp").forward(req, resp);
     }
 
     @Override
