@@ -60,33 +60,6 @@
                 <span class="menu-title">Skill Management</span>
             </a>
         </li>
-
-        <c:set var="isBlogPage" value="${fn:contains(pageContext.request.requestURI, '/blog')}" />
-        <c:set var="isBlogCatPage" value="${fn:contains(pageContext.request.requestURI, '/blog-category')}" />
-        <c:set var="isBlogMenuActive" value="${isBlogPage or isBlogCatPage}" />
-
-        <li class="nav-item">
-            <a class="nav-link ${isBlogMenuActive ? '' : 'collapsed'}" data-bs-toggle="collapse" href="#blogMenu"
-               aria-expanded="${isBlogMenuActive}" aria-controls="blogMenu">
-                <i class="mdi mdi-note-text menu-icon"></i>
-                <span class="menu-title">Blog Management</span>
-                <i class="menu-arrow"></i>
-            </a>
-            <div class="collapse ${isBlogMenuActive ? 'show' : ''}" id="blogMenu">
-                <ul class="nav flex-column sub-menu">
-                    <li class="nav-item">
-                        <a class="nav-link ${isBlogPage ? 'active' : ''}" href="${pageContext.request.contextPath}/blog-manage">
-                            Blog List
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link ${isBlogCatPage ? 'active' : ''}" href="${pageContext.request.contextPath}/blog-category">
-                            Blog Category
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </li>
         
         <li class="nav-item">
             <a class="nav-link" href="${pageContext.request.contextPath}/expertListManage">
