@@ -247,7 +247,7 @@ CREATE TABLE product_order (
     shipper_id         INT NULL,
     address_id         INT NOT NULL,
     coupon_id          INT,
-    payment_method ENUM('vnpay', 'momo', 'zalopay') NOT NULL,
+    payment_method ENUM('cod', 'vnpay') NOT NULL,
     payment_gateway_txn_ref VARCHAR(100),            -- Mã đơn hàng gửi sang cổng
     payment_gateway_transaction_no VARCHAR(100),     -- Mã giao dịch trả về từ cổng
     payment_time TIMESTAMP NULL,                    -- Thời điểm thanh toán
