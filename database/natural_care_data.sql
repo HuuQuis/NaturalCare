@@ -95,8 +95,8 @@ VALUES ('admin', 'admin', 'test', 'admin', 'test@gmail.com', '0123456789', 3);
 INSERT INTO user (username, password, first_name, last_name, email, phone_number, role_id)
 VALUES ('manager', 'manager', 'test', 'manager', 'test@gmail.com', '0123456789', 4);
 
-INSERT INTO user (username, password, first_name, last_name, email, phone_number, role_id)
-VALUES ('lamtung', 'lamtung', 'lamtung', 'test', 'kojkon02@gmail.com', '0989785184', 1);
+INSERT INTO user (username, password, first_name, last_name, email, phone_number, role_id, assigned_staff_id)
+VALUES ('lamtung', 'lamtung', 'lamtung', 'test', 'kojkon02@gmail.com', '0989785184', 1, 1);
 
 INSERT INTO product (product_name, product_short_description, product_information, product_guideline,
                      sub_product_category_id)
@@ -341,28 +341,6 @@ VALUES ('shipper1', 'passship1', 'Shipper', 'One', 'shipper1@example.com', '0333
 INSERT INTO userAddress (user_id, address_id, is_default)
 VALUES (1, 1, TRUE);
 
-INSERT INTO user (username, password, first_name, last_name, email, phone_number, role_id)
-VALUES ('customer1', 'pass1', 'John', 'Doe', 'john1@example.com', '0123456789', 1),
-       ('customer2', 'pass2', 'Jane', 'Doe', 'jane2@example.com', '0987654321', 1),
-       ('customer3', 'pass3', 'Jim', 'Beam', 'jim3@example.com', '0112233445', 1),
-       ('customer4', 'pass4', 'Jack', 'Daniels', 'jack4@example.com', '0998877665', 1),
-       ('customer5', 'pass5', 'Jill', 'Valentine', 'jill5@example.com', '0223344556', 1),
-       ('customer6', 'pass6', 'Alice', 'Smith', 'alice6@example.com', '0334455667', 1),
-       ('customer7', 'pass7', 'Bob', 'Johnson', 'bob7@example.com', '0445566778', 1),
-       ('customer8', 'pass8', 'Emma', 'Brown', 'emma8@example.com', '0556677889', 1),
-       ('customer9', 'pass9', 'Liam', 'Wilson', 'liam9@example.com', '0667788990', 1),
-       ('customer10', 'pass10', 'Olivia', 'Davis', 'olivia10@example.com', '0778899001', 1),
-       ('customer11', 'pass11', 'Noah', 'Clark', 'noah11@example.com', '0889900112', 1),
-       ('customer12', 'pass12', 'Sophia', 'Lewis', 'sophia12@example.com', '0990011223', 1),
-       ('customer13', 'pass13', 'James', 'Walker', 'james13@example.com', '0112233445', 1),
-       ('customer14', 'pass14', 'Ava', 'Hall', 'ava14@example.com', '0223344556', 1),
-       ('customer15', 'pass15', 'William', 'Allen', 'william15@example.com', '0334455667', 1),
-       ('customer16', 'pass16', 'Mia', 'Young', 'mia16@example.com', '0445566778', 1),
-       ('customer17', 'pass17', 'Henry', 'King', 'henry17@example.com', '0556677889', 1),
-       ('customer18', 'pass18', 'Charlotte', 'Scott', 'charlotte18@example.com', '0667788990', 1),
-       ('customer19', 'pass19', 'Elijah', 'Green', 'elijah19@example.com', '0778899001', 1),
-       ('customer20', 'pass20', 'Harper', 'Adams', 'harper20@example.com', '0889900112', 1);
-
 INSERT INTO userAddress (user_id, address_id, is_default)
 VALUES (2, 1, TRUE),
        (3, 2, TRUE),
@@ -385,3 +363,54 @@ VALUES (2, 'Order note 1 - pending', 1, NULL, 1, NULL),
 
        (6, 'Order note 9 - pending', 1, NULL, 5, NULL),
        (6, 'Order note 10 - processing', 2, NULL, 5, NULL);
+
+-- add customer to test staff assign
+INSERT INTO user (username, password, first_name, last_name, email, phone_number, role_id, assigned_staff_id)
+VALUES ('customer1', 'customer1', 'Nguyen', 'Van A', 'customer1@gmail.com', '0123456001', 1, 1),
+       ('customer2', 'customer2', 'Tran', 'Thi B', 'customer2@gmail.com', '0123456002', 1, 1),
+       ('customer3', 'customer3', 'Le', 'Van C', 'customer3@gmail.com', '0123456003', 1, 1),
+       ('customer4', 'customer4', 'Pham', 'Thi D', 'customer4@gmail.com', '0123456004', 1, 1);
+
+-- add more staff data
+INSERT INTO user (username, password, first_name, last_name, email, phone_number, role_id)
+VALUES ('staff2', 'staff2', 'Nguyen', 'Van Staff', 'staff2@gmail.com', '0123456010', 2),
+       ('staff3', 'staff3', 'Tran', 'Thi Staff', 'staff3@gmail.com', '0123456011', 2);
+
+-- add some contract data
+INSERT INTO contract (user_id, contract_type, salary, start_date, end_date, contract_status, contract_terms, signed_by)
+VALUES 
+-- staff contracts
+(1, 'full_time', 15000000, '2024-01-01', '2024-12-31', 'active', 'Hợp đồng nhân viên full-time, làm việc 8h/ngày, 6 ngày/tuần. Hỗ trợ khách hàng qua chat và email.', 4),
+(31, 'full_time', 16000000, '2024-02-01', '2024-12-31', 'active', 'Hợp đồng nhân viên full-time, chuyên viên tư vấn cấp cao. Hỗ trợ khách hàng VIP.', 4),
+(32, 'part_time', 12000000, '2024-03-01', '2024-12-31', 'active', 'Hợp đồng nhân viên part-time, làm việc 4h/ngày. Hỗ trợ khách hàng ca chiều.', 4),
+
+-- shipper contracts
+(2, 'full_time', 12000000, '2024-01-15', '2024-12-31', 'active', 'Hợp đồng shipper full-time, giao hàng trong nội thành. Có xe máy riêng.', 3),
+
+-- admin contract
+(3, 'full_time', 25000000, '2024-01-01', NULL, 'active', 'Hợp đồng quản trị viên hệ thống. Quản lý toàn bộ hệ thống và dữ liệu.', 4),
+
+-- manager contract
+(4, 'full_time', 30000000, '2024-01-01', NULL, 'active', 'Hợp đồng quản lý, điều hành toàn bộ hoạt động kinh doanh. Có quyền ký duyệt hợp đồng.', 3);
+
+--
+INSERT INTO user (username, password, first_name, last_name, email, phone_number, role_id, assigned_staff_id)
+VALUES ('customer5', 'pass5', 'Jill', 'Valentine', 'jill5@example.com', '0223344556', 1, 31),
+       ('customer6', 'pass6', 'Alice', 'Smith', 'alice6@example.com', '0334455667', 1, 31),
+       ('customer7', 'pass7', 'Bob', 'Johnson', 'bob7@example.com', '0445566778', 1, 31),
+       ('customer8', 'pass8', 'Emma', 'Brown', 'emma8@example.com', '0556677889', 1, 32),
+       ('customer9', 'pass9', 'Liam', 'Wilson', 'liam9@example.com', '0667788990', 1, 32),
+       ('customer10', 'pass10', 'Olivia', 'Davis', 'olivia10@example.com', '0778899001', 1, 32),
+       ('customer11', 'pass11', 'Noah', 'Clark', 'noah11@example.com', '0889900112', 1, 31),
+       ('customer12', 'pass12', 'Sophia', 'Lewis', 'sophia12@example.com', '0990011223', 1, 1);
+
+-- Staff Assignment Summary:
+-- Staff 1 (staff): 6 customers assigned (lamtung, customer1, customer2, customer3, customer4, customer12)
+-- Staff 31 (staff2): 4 customers assigned (customer5, customer6, customer7, customer11)
+-- Staff 32 (staff3): 3 customers assigned (customer8, customer9, customer10)
+-- 
+-- Contract Summary:
+-- Staff: 15-16M VND/month (full-time), 12M VND/month (part-time)
+-- Shipper: 12M VND/month (full-time)
+-- Admin: 25M VND/month (full-time, no end date)
+-- Manager: 30M VND/month (full-time, no end date)

@@ -105,8 +105,11 @@ CREATE TABLE user
     user_image         TEXT,
     reset_token        VARCHAR(255),
     reset_token_expiry DATETIME,
+    assigned_staff_id  INT          NULL,
     FOREIGN KEY (role_id)
-        REFERENCES role (role_id)
+        REFERENCES role (role_id),
+    FOREIGN KEY (assigned_staff_id)
+        REFERENCES user (user_id)
 );
 
 CREATE TABLE userAddress
@@ -306,4 +309,22 @@ CREATE TABLE return_request (
         REFERENCES user (user_id),
     FOREIGN KEY (approved_by)
         REFERENCES user (user_id)
+);
+
+CREATE TABLE contract
+(
+    contract_id     INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    user_id         INT NOT NULL,
+    contract_type   ENUM('full_time', 'part_time', 'freelance', 'internship') NOT NULL,
+    salary          BIGINT NOT NULL,
+    start_date      DATE NOT NULL,
+    end_date        DATE NULL,
+    contract_status ENUM('active', 'expired', 'terminated') DEFAULT 'active',
+    created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    contract_terms  TEXT,
+    signed_by       INT NULL,
+    
+    FOREIGN KEY (user_id) REFERENCES user (user_id),
+    FOREIGN KEY (signed_by) REFERENCES user (user_id)
 );

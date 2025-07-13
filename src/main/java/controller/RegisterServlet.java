@@ -8,12 +8,14 @@ import dal.UserDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
-import utils.EmailUtils;
+import utils.UserAuthUtils;
+
+import static utils.UserAuthUtils.generateOtp;
+import static utils.UserAuthUtils.isValidOtp;
 
 @WebServlet(name = "RegisterServlet", urlPatterns = {"/register"})
 public class RegisterServlet extends HttpServlet {
     private final UserDAO userDAO = new UserDAO();
-    private final SecureRandom secureRandom = new SecureRandom();
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
@@ -132,7 +134,7 @@ public class RegisterServlet extends HttpServlet {
             // async send OTP email
             new Thread(() -> {
                 try {
-                    EmailUtils.sendOTPEmail(email, otp);
+                    UserAuthUtils.sendOTPEmail(email, otp);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -154,19 +156,6 @@ public class RegisterServlet extends HttpServlet {
         session.setAttribute("otp", otp);
         session.setAttribute("otpTime", System.currentTimeMillis());
         request.getRequestDispatcher("view/login/otp.jsp").forward(request, response);
-    }
-
-    private boolean isValidOtp(String sessionOtp, Long otpTime) {
-        if (sessionOtp == null || otpTime == null) {
-            return false;
-        }
-        long now = System.currentTimeMillis();
-        return now - otpTime <= UtilsConstant.OTP_EXPIRY_TIME;
-    }
-
-    private String generateOtp() {
-        int otp = 100000 + secureRandom.nextInt(900000); //6-digit
-        return String.valueOf(otp);
     }
 
     @Override
