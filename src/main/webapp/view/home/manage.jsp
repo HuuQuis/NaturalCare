@@ -58,16 +58,6 @@
                     <% if ("productCategory".equals(view)) { %>
                     <jsp:include page="../category/category-list.jsp" />
                     <% } %>
-
-                    <% if ("blog-category".equals(view)) { %>
-                    <jsp:include page="../blog/blog-category.jsp" />
-                    <% } %>
-                    <% if ("blog-manage".equals(view)) { %>
-                    <jsp:include page="../blog/blog-manage.jsp" />
-                    <% } %>
-                    <% if ("blog-form".equals(view)) { %>
-                    <jsp:include page="../blog/blog-form.jsp" />
-                    <% } %>
                     
                     <% if ("expert-skill".equals(view)) { %>
                         <jsp:include page="../manage/expert-management.jsp" />
