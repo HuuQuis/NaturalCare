@@ -52,7 +52,7 @@ public class BlogManageServlet extends HttpServlet {
             req.setAttribute("categories", categories);
             req.setAttribute("page", page);
             req.setAttribute("view", "blog-form");
-            req.getRequestDispatcher("/view/home/manage.jsp").forward(req, resp);
+            req.getRequestDispatcher("/view/home/marketer.jsp").forward(req, resp);
             return;
         }
 
@@ -74,7 +74,7 @@ public class BlogManageServlet extends HttpServlet {
         req.setAttribute("totalPage", totalPage);
         req.setAttribute("startIndex", startIndex);
         req.setAttribute("view", "blog-manage");
-        req.getRequestDispatcher("/view/home/manage.jsp").forward(req, resp);
+        req.getRequestDispatcher("/view/home/marketer.jsp").forward(req, resp);
     }
 
     @Override
