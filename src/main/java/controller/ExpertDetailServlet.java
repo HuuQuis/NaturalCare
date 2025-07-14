@@ -82,7 +82,7 @@ public class ExpertDetailServlet extends HttpServlet {
             error = "Last name is required.";
         } else if (error == null && !lastName.matches("^[A-Z][a-zA-Z ]*$")) {
             error = "Last name must start with uppercase and contain only letters.";
-        }
+        } 
 
         if (error == null && (email == null || email.trim().isEmpty())) {
             error = "Email is required.";
