@@ -25,4 +25,26 @@ public class ColorDAO extends DBContext{
         }
         return colors;
     }
+
+    public List<Integer> getIdsByNames(String[] names) {
+        List<Integer> ids = new ArrayList<>();
+        if (names != null) {
+            sql = "SELECT color_id FROM color WHERE color_name = ?";
+            try {
+                stm = connection.prepareStatement(sql);
+                for (String name : names) {
+                    stm.setString(1, name);
+                    rs = stm.executeQuery();
+                    if (rs.next()) {
+                        ids.add(rs.getInt("color_id"));
+                    }
+                    rs.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return ids;
+    }
+
 }

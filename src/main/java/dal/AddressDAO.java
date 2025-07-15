@@ -42,6 +42,11 @@ public class AddressDAO extends DBContext {
                 address.setWardCode(rs.getString("ward_code"));
                 address.setDetail(rs.getString("detail"));
                 address.setDistanceKm(rs.getDouble("distance_km"));
+                address.setFirstName(rs.getString("first_name"));
+                address.setLastName(rs.getString("last_name"));
+                address.setEmail(rs.getString("email"));
+                address.setPhoneNumber(rs.getString("phone_number"));
+
                 address.setDefaultAddress(rs.getBoolean("is_default"));
 
                 // Gán tên tỉnh/huyện/xã nếu dùng object
@@ -92,6 +97,11 @@ public class AddressDAO extends DBContext {
                 a.setAddressId(rs.getInt("address_id"));
                 a.setDetail(rs.getString("detail"));
                 a.setDistanceKm(rs.getDouble("distance_km"));
+                a.setFirstName(rs.getString("first_name"));
+                a.setLastName(rs.getString("last_name"));
+                a.setEmail(rs.getString("email"));
+                a.setPhoneNumber(rs.getString("phone_number"));
+
 
                 Province province = new Province();
                 province.setCode(rs.getString("province_code"));
@@ -118,17 +128,14 @@ public class AddressDAO extends DBContext {
 
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            close();
         }
-
         return null;
     }
 
     public boolean addAddress(Address address, int userId) {
         String checkUserSQL = "SELECT user_id FROM user WHERE user_id = ?";
         String countUserAddressesSQL = "SELECT COUNT(*) FROM userAddress WHERE user_id = ?";
-        String insertAddressSQL = "INSERT INTO address (province_code, district_code, ward_code, detail, distance_km) VALUES (?, ?, ?, ?, ?)";
+        String insertAddressSQL = "INSERT INTO address (province_code, district_code, ward_code, detail, distance_km, first_name, last_name, email, phone_number) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         String insertUserAddressSQL = "INSERT INTO userAddress (user_id, address_id, is_default) VALUES (?, ?, ?)";
 
         try {
@@ -158,6 +165,11 @@ public class AddressDAO extends DBContext {
             insertAddress.setString(3, address.getWardCode());
             insertAddress.setString(4, address.getDetail());
             insertAddress.setDouble(5, distanceKm);
+            insertAddress.setString(6, address.getFirstName());
+            insertAddress.setString(7, address.getLastName());
+            insertAddress.setString(8, address.getEmail());
+            insertAddress.setString(9, address.getPhoneNumber());
+
             int affectedRows = insertAddress.executeUpdate();
             if (affectedRows == 0) {
                 connection.rollback();
@@ -203,19 +215,12 @@ public class AddressDAO extends DBContext {
             }
             e.printStackTrace();
             return false;
-        } finally {
-            try {
-                connection.setAutoCommit(true);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            close();
         }
     }
 
     public boolean updateAddress(Address address, int userId) {
         String checkOwnershipSQL = "SELECT * FROM userAddress WHERE user_id = ? AND address_id = ?";
-        String updateSQL = "UPDATE address SET province_code = ?, district_code = ?, ward_code = ?, detail = ?, distance_km = ? WHERE address_id = ?";
+        String updateSQL = "UPDATE address SET province_code = ?, district_code = ?, ward_code = ?, detail = ?, distance_km = ?, first_name = ?, last_name = ?, email = ?, phone_number = ? WHERE address_id = ?";
 
         try {
             connection.setAutoCommit(false);
@@ -236,13 +241,11 @@ public class AddressDAO extends DBContext {
             Ward ward = new WardDAO().getWardByCode(address.getWardCode());
 
             if (ward == null) {
-                System.out.println("Ward not found for code: " + address.getWardCode());
             } else {
                 Double lat = ward.getLatitude();
                 Double lng = ward.getLongitude();
 
                 if (lat == null || lng == null || lat == 0.0 || lng == 0.0) {
-                    System.out.println("Invalid lat/lng for ward code: " + address.getWardCode());
                     distanceKm = 0;
                 } else {
                     distanceKm = calculateDistance(FPT_LAT, FPT_LNG, lat, lng);
@@ -255,7 +258,12 @@ public class AddressDAO extends DBContext {
             updateStmt.setString(3, address.getWardCode());
             updateStmt.setString(4, address.getDetail());
             updateStmt.setDouble(5, distanceKm);
-            updateStmt.setInt(6, address.getAddressId());
+            updateStmt.setString(6, address.getFirstName());
+            updateStmt.setString(7, address.getLastName());
+            updateStmt.setString(8, address.getEmail());
+            updateStmt.setString(9, address.getPhoneNumber());
+            updateStmt.setInt(10, address.getAddressId());
+
 
             int updatedRows = updateStmt.executeUpdate();
 
@@ -275,13 +283,6 @@ public class AddressDAO extends DBContext {
             }
             e.printStackTrace();
             return false;
-        } finally {
-            try {
-                connection.setAutoCommit(true);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            close();
         }
     }
 
@@ -310,10 +311,7 @@ public class AddressDAO extends DBContext {
                 se.printStackTrace();
             }
             e.printStackTrace();
-        } finally {
-            close();
         }
-
         return false;
     }
 
@@ -376,6 +374,11 @@ public class AddressDAO extends DBContext {
                 address.setWardCode(rs.getString("ward_code"));
                 address.setDetail(rs.getString("detail"));
                 address.setDistanceKm(rs.getDouble("distance_km"));
+                address.setFirstName(rs.getString("first_name"));
+                address.setLastName(rs.getString("last_name"));
+                address.setEmail(rs.getString("email"));
+                address.setPhoneNumber(rs.getString("phone_number"));
+
 
                 Province province = new Province();
                 province.setCode(rs.getString("province_code"));
@@ -397,8 +400,6 @@ public class AddressDAO extends DBContext {
 
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            close();
         }
 
         return list;
@@ -427,9 +428,6 @@ public class AddressDAO extends DBContext {
         return "";
     }
 
-
-
-
     private double calculateDistance(double lat1, double lng1, double lat2, double lng2) {
         final int R = 6371; // Earth radius in km
         double dLat = Math.toRadians(lat2 - lat1);
@@ -441,9 +439,39 @@ public class AddressDAO extends DBContext {
         return R * c;
     }
 
-    private void close() {
-        try { if (rs != null) rs.close(); } catch (Exception ignored) {}
-        try { if (stm != null) stm.close(); } catch (Exception ignored) {}
-        try { if (connection != null) connection.close(); } catch (Exception ignored) {}
+    public boolean isEmailUsed(String email, Integer excludeAddressId) {
+        sql = "SELECT COUNT(*) FROM address WHERE email = ?";
+        if (excludeAddressId != null) {
+            sql += " AND address_id <> ?";
+        }
+
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setString(1, email);
+            if (excludeAddressId != null) stm.setInt(2, excludeAddressId);
+            rs = stm.executeQuery();
+            if (rs.next()) return rs.getInt(1) > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return true; // fallback an toàn
+    }
+
+    public boolean isPhoneUsed(String phone, Integer excludeAddressId) {
+        sql = "SELECT COUNT(*) FROM address WHERE phone_number = ?";
+        if (excludeAddressId != null) {
+            sql += " AND address_id <> ?";
+        }
+
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setString(1, phone);
+            if (excludeAddressId != null) stm.setInt(2, excludeAddressId);
+            rs = stm.executeQuery();
+            if (rs.next()) return rs.getInt(1) > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return true; // fallback an toàn
     }
 }

@@ -44,7 +44,7 @@ public class ProductVariantManageServlet extends HttpServlet {
         request.setAttribute("products", products);
         List<Color> colors = colorDao.getAllColors();
         request.setAttribute("colors", colors);
-        List<Size> sizes = sizeDao.getAllSize();
+        List<Size> sizes = sizeDao.getAllSizes();
         request.setAttribute("sizes", sizes);
         if ("add".equals(action)) {
             String productId = request.getParameter("productId");
@@ -466,7 +466,7 @@ public class ProductVariantManageServlet extends HttpServlet {
         request.setAttribute("products", productDao.getAllProducts());
         request.setAttribute("productId", request.getParameter("productId"));
         request.setAttribute("colors", colorDao.getAllColors());
-        request.setAttribute("sizes", sizeDao.getAllSize());
+        request.setAttribute("sizes", sizeDao.getAllSizes());
 
         if (tempProductVariation.getImageUrl() != null) {
             request.setAttribute("previousImageUrl", tempProductVariation.getImageUrl());

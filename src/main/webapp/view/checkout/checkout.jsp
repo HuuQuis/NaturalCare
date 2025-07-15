@@ -13,59 +13,8 @@
     <link href="${pageContext.request.contextPath}/css/animate.css" rel="stylesheet">
     <link href="${pageContext.request.contextPath}/css/main.css" rel="stylesheet">
     <link href="${pageContext.request.contextPath}/css/responsive.css" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/css/checkout.css" rel="stylesheet">
 </head>
-<style>
-    .checkout-form {
-        margin-bottom: 30px;
-    }
-    .address-section h3 {
-        font-size: 1.2rem;
-        margin-bottom: 10px;
-    }
-    .address-div {
-        display: flex;
-        width: fit-content;
-        align-items: flex-start;
-        gap: 12px;
-        padding: 12px 16px;
-        margin-bottom: 12px;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        background-color: #fff;
-        transition: border 0.3s;
-    }
-    .address-div.selected {
-        border-color: #28a745;
-        background-color: #f6fff7;
-    }
-    .address-div input[type="radio"] {
-        margin-top: 5px;
-    }
-    .address-div .badge {
-        background-color: #28a745;
-        color: white;
-        font-size: 0.75rem;
-        padding: 2px 6px;
-        border-radius: 4px;
-        margin-left: 10px;
-    }
-    .add-new-address {
-        display: inline-block;
-        margin-top: 10px;
-        color: #007bff;
-        text-decoration: none;
-        font-size: 0.9rem;
-    }
-    .add-new-address:hover {
-        text-decoration: underline;
-    }
-
-    .checkout-form .form-control{
-        margin-bottom: 16px !important;
-        height: 40px !important;
-    }
-
-</style>
 <body>
 <header id="header">
     <jsp:include page="/view/common/header-top.jsp"/>
@@ -77,36 +26,54 @@
     <div class="row">
         <div class="col-md-7">
             <form class="checkout-form" method="post" action="checkout">
-            <h4 class="mb-3 fw-bold">Shipping Information</h4>
+                <h4 class="mb-3 fw-bold">Shipping Information</h4>
 
+                <!-- ✅ checkout.jsp - Hiển thị thông tin người nhận từ defaultAddress -->
                 <div class="row mb-3">
-                    <div class="col-md-6 mb-3">
-                        <input type="text" class="form-control" placeholder="First name" name="firstName"
-                               value="${user.firstName}" disabled>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <input type="text" class="form-control" placeholder="Last name" name="lastName"
-                               value="${user.lastName}" disabled>
-                    </div>
-                    <div class="col-md-12 mb-3">
-                        <input type="text" class="form-control" placeholder="Phone number" name="phone"
-                               value="${user.phone}" disabled>
-                    </div>
-                    <div class="col-md-12 mb-3">
-                        <input type="email" class="form-control" placeholder="Email address" name="email"
-                               value="${user.email}" disabled>
-                    </div>
+                    <c:choose>
+                        <c:when test="${not empty defaultAddress}">
+                            <div class="col-md-6 mb-3">
+                                <input type="text" class="form-control" placeholder="First name"
+                                       data-field="firstName" value="${defaultAddress.firstName}" readonly>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <input type="text" class="form-control" placeholder="Last name"
+                                       data-field="lastName" value="${defaultAddress.lastName}" readonly>
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <input type="text" class="form-control" placeholder="Phone number"
+                                       data-field="phoneNumber" value="${defaultAddress.phoneNumber}" readonly>
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <input type="email" class="form-control" placeholder="Email address"
+                                       data-field="email" value="${defaultAddress.email}" readonly>
+                            </div>
+                        </c:when>
+                        <c:otherwise>
+                            <div class="col-md-12">
+                                <div class="alert alert-warning">No default address selected. Please choose one below.</div>
+                            </div>
+                        </c:otherwise>
+                    </c:choose>
+
                     <div class="col-md-12">
                         <textarea class="form-control" placeholder="Note (e.g. Preferred delivery time)" name="note" rows="3"></textarea>
                     </div>
                 </div>
                 <div class="address-section mb-4">
                     <h3>Select a shipping address</h3>
-                    <a href="#" class="add-new-address">+ Add new address</a>
+                    <div class="add-address-btn" onclick="addNewAddress()">
+                        <i class="fa fa-plus"></i> Add New Address
+                    </div>
                     <c:forEach var="addr" items="${addressList}">
                         <label class="address-div ${addr.defaultAddress ? 'selected' : ''}">
                             <input type="radio" name="addressId"
-                                   value="${addr.addressId}" ${addr.defaultAddress ? 'checked' : ''} />
+                                   value="${addr.addressId}"
+                                   data-firstname="${addr.firstName}"
+                                   data-lastname="${addr.lastName}"
+                                   data-email="${addr.email}"
+                                   data-phone="${addr.phoneNumber}"
+                                ${addr.defaultAddress ? 'checked' : ''} />
                             <div>
                                     ${addr.detail}, ${addr.ward.name}, ${addr.district.name}, ${addr.province.name}
                                 <c:if test="${addr.defaultAddress}">
@@ -116,9 +83,27 @@
                         </label>
                     </c:forEach>
                 </div>
+                <div class="payment-methods mb-4">
+                    <h4 class="fw-bold mb-2">Choose Payment Method</h4>
+                    <div class="payment-option">
+                        <label>
+                            <input type="radio" name="paymentMethod" value="cod" checked/>
+                            <img src="${pageContext.request.contextPath}/images/payment/shipcod-logo.jpg" alt="ZaloPay" />
+                            Thanh toán khi nhận hàng (COD)
+                        </label>
+                    </div>
+                    <div class="payment-option">
+                        <label>
+                            <input type="radio" name="paymentMethod" value="vnpay"/>
+                            <img src="${pageContext.request.contextPath}/images/payment/vnpay-logo.jpg" alt="VNPAY" />
+                            Thẻ ATM / Thẻ tín dụng / Thẻ ghi nợ (qua VNPAY)
+                        </label>
+                    </div>
+                </div>
                 <div class="text-end mt-4">
                     <button type="submit"
                             class="btn btn-success px-4 py-2"
+                            style="margin-top: 10px;"
                             <c:if test="${empty cartItems}">disabled</c:if>>
                         <i class="fa fa-shopping-cart"></i> Place Order
                     </button>
@@ -150,8 +135,8 @@
                                 <span class="unit-price">
                                     <fmt:formatNumber value="${item.variation.sell_price}" type="number" groupingUsed="true" />
                                 </span> đ ×
-                                                    <span>${item.quantity}</span> =
-                                                    <span class="line-total">
+                                <span>${item.quantity}</span> =
+                                <span class="line-total">
                                     <fmt:formatNumber value="${item.quantity * item.variation.sell_price}" type="number" groupingUsed="true" />
                                 </span> đ
                             </div>
@@ -189,5 +174,47 @@
     const contextPath = "${pageContext.request.contextPath}";
 </script>
 <script src="${pageContext.request.contextPath}/js/search.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const radios = document.querySelectorAll('input[name="addressId"]');
+        const overlay = document.getElementById("loadingOverlay");
+
+        radios.forEach(radio => {
+            radio.addEventListener('change', function () {
+                // Hiện overlay
+                overlay.style.display = "flex";
+
+                // Lấy dữ liệu từ data-* attributes
+                const firstName = this.dataset.firstname;
+                const lastName = this.dataset.lastname;
+                const email = this.dataset.email;
+                const phone = this.dataset.phone;
+
+                // Cập nhật các ô input (readonly vẫn cho phép JS thay đổi)
+                document.querySelector('input[data-field="firstName"]').value = firstName;
+                document.querySelector('input[data-field="lastName"]').value = lastName;
+                document.querySelector('input[data-field="email"]').value = email;
+                document.querySelector('input[data-field="phoneNumber"]').value = phone;
+
+                // Bỏ class selected khỏi tất cả
+                document.querySelectorAll('.address-div').forEach(label => {
+                    label.classList.remove('selected');
+                });
+
+                // Gán lại selected cho label hiện tại
+                this.closest('.address-div').classList.add('selected');
+
+                // Tắt overlay sau delay nhẹ
+                setTimeout(() => {
+                    overlay.style.display = "none";
+                }, 1000);
+            });
+        });
+    });
+</script>
+
+<div id="loadingOverlay">
+    <div class="spinner"></div>
+</div>
 </body>
 </html>

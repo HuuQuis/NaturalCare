@@ -65,7 +65,8 @@ public class AddToCartServlet extends HttpServlet {
         cartMap.put(variationId, newQty);
         writeCartToCookie(response, cartMap);
 
-        response.getWriter().write("success");
+        int totalQty = getTotalQuantity(cartMap);
+        response.getWriter().write("success|" + totalQty);
     }
 
     private Map<Integer, Integer> readCartFromCookie(HttpServletRequest request) {
@@ -103,4 +104,13 @@ public class AddToCartServlet extends HttpServlet {
         newCookie.setMaxAge(60 * 60 * 24 * 7);
         response.addCookie(newCookie);
     }
+
+    private int getTotalQuantity(Map<Integer, Integer> cartMap) {
+        int total = 0;
+        for (int qty : cartMap.values()) {
+            total += qty;
+        }
+        return total;
+    }
+
 }

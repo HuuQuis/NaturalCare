@@ -315,6 +315,54 @@ public class ProductOrderDAO extends DBContext {
         return list;
     }
 
+    public void markOrderAsPaid(String txnRef, String method, String transactionNo) {
+        sql = "UPDATE product_order " +
+                "SET payment_status_id = 2, payment_method = ?, payment_gateway_transaction_no = ?, payment_time = NOW() " +
+                "WHERE payment_gateway_txn_ref = ?";
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setString(1, method);                  // vnpay | momo | zalopay
+            stm.setString(2, transactionNo);           // mã giao dịch trả về từ cổng
+            stm.setString(3, txnRef);                  // mã đơn hàng bạn đã gửi sang cổng
+            stm.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
+    public int createOrderWithPayment(ProductOrder order) {
+        sql = "INSERT INTO product_order (user_id, order_note, status_id, create_at, shipper_id, address_id, coupon_id, " +
+                "payment_method, payment_gateway_txn_ref, payment_status_id) " +
+                "VALUES (?, ?, ?, NOW(), ?, ?, ?, ?, ?, ?)";
 
+        try {
+            stm = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            stm.setInt(1, order.getUserId());
+            stm.setString(2, order.getNote());
+            stm.setInt(3, order.getStatusId());
+
+            if (order.getShipperId() != null) stm.setInt(4, order.getShipperId());
+            else stm.setNull(4, Types.INTEGER);
+
+            stm.setInt(5, order.getAddressId());
+
+            if (order.getCouponId() != null) stm.setInt(6, order.getCouponId());
+            else stm.setNull(6, Types.INTEGER);
+
+            stm.setString(7, order.getPaymentMethod());
+            stm.setString(8, order.getPaymentGatewayTxnRef());
+            stm.setInt(9, 1); // payment_status_id = 1 (chờ thanh toán)
+
+            int affectedRows = stm.executeUpdate();
+            if (affectedRows > 0) {
+                rs = stm.getGeneratedKeys();
+                if (rs.next()) {
+                    return rs.getInt(1); // Trả về order_id vừa tạo
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
 }

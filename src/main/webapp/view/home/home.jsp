@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,7 +12,6 @@
     <link href="${pageContext.request.contextPath}/css/bootstrap.min.css" rel="stylesheet">
     <link href="${pageContext.request.contextPath}/css/font-awesome.min.css" rel="stylesheet">
     <link href="${pageContext.request.contextPath}/css/prettyPhoto.css" rel="stylesheet">
-    <link href="${pageContext.request.contextPath}/css/price-range.css" rel="stylesheet">
     <link href="${pageContext.request.contextPath}/css/animate.css" rel="stylesheet">
     <link href="${pageContext.request.contextPath}/css/main.css" rel="stylesheet">
     <link href="${pageContext.request.contextPath}/css/responsive.css" rel="stylesheet">
@@ -103,16 +103,53 @@
     <div class="container">
         <div class="row">
             <div class="col-sm-12">
-                <div class="features_items"><!--features_items-->
-                    <h2 class="title text-center">New Arrival</h2>
-                    <div id="feature-item-carousel" class="carousel slide" data-ride="carousel">
+                <div class="recommended_items"><!--arrive_items-->
+                    <div class="text-center">
+                        <img src="${pageContext.request.contextPath}/images/home/home-banner2.png"
+                             alt="Top Selling Banner"
+                             style="max-width: 100%; height: auto; margin-bottom: 10px;" />
+                    </div>
+                    <h2 class="title text-center">New Arrive Products</h2>
+                    <div id="recommended-item-carousel" class="carousel slide" data-ride="carousel" data-interval="5000" data-pause="hover">
                         <div class="carousel-inner">
-                            <div class="item active">
+                            <c:forEach var="product" items="${newProducts}" varStatus="loop">
+                                <c:if test="${loop.index % 4 == 0}">
+                                    <div class="item ${loop.index == 0 ? 'active' : ''}">
+                                </c:if>
 
-                            </div>
-                            <div class="item">
+                                <div class="col-sm-3">
+                                    <!-- Product block -->
+                                    <div class="product-image-wrapper">
+                                        <div class="single-products">
+                                            <div class="productinfo text-center">
+                                                <a href="${pageContext.request.contextPath}/productDetail?product_id=${product.id}">
+                                                    <c:choose>
+                                                        <c:when test="${not empty product.imageUrls}">
+                                                            <img src="${pageContext.request.contextPath}/${product.imageUrls[0]}"
+                                                                 alt=""
+                                                                 style="width: 200px !important; height: 200px !important;"/>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <img src="${pageContext.request.contextPath}/images/product/default-image.jpg"
+                                                                 alt=""
+                                                                 style="width: 200px !important; height: 200px !important;"/>
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </a>
+                                                <h2>${product.minPrice}₫</h2>
+                                                <a href="${pageContext.request.contextPath}/productDetail?product_id=${product.id}"
+                                                   style="text-decoration: none;">
+                                                    <p style="color: #333;">${product.name}</p>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
 
-                            </div>
+                                <c:if test="${loop.index % 4 == 3 || loop.last}">
+                                    </div> <!-- close .item -->
+                                </c:if>
+                            </c:forEach>
                         </div>
                         <a class="left recommended-item-control" href="#recommended-item-carousel" data-slide="prev">
                             <i class="fa fa-angle-left"></i>
@@ -121,14 +158,77 @@
                             <i class="fa fa-angle-right"></i>
                         </a>
                     </div>
-                </div><!--features_items-->
+                </div><!--/new_arrive-->
 
                 <div class="recommended_items"><!--recommended_items-->
+                    <div class="text-center">
+                        <img src="${pageContext.request.contextPath}/images/home/home-banner1.png"
+                             alt="Top Selling Banner"
+                             style="max-width: 100%; height: auto; margin-bottom: 10px;" />
+                    </div>
                     <h2 class="title text-center">Top Selling Products</h2>
-                    <div id="recommended-item-carousel" class="carousel slide" data-ride="carousel" data-interval="2000" data-pause="hover">
+                    <div id="recommended-item-carousel" class="carousel slide" data-ride="carousel" data-interval="5000" data-pause="hover">
                         <div class="carousel-inner">
-                            <div class="item active">
-                                <c:forEach var="product" items="${topProducts}" varStatus="loop">
+                            <c:forEach var="product" items="${topProducts}" varStatus="loop">
+                                <c:if test="${loop.index % 4 == 0}">
+                                    <div class="item ${loop.index == 0 ? 'active' : ''}">
+                                </c:if>
+
+                                <div class="col-sm-3">
+                                    <!-- Product block -->
+                                    <div class="product-image-wrapper">
+                                        <div class="single-products">
+                                            <div class="productinfo text-center">
+                                                <a href="${pageContext.request.contextPath}/productDetail?product_id=${product.id}">
+                                                    <c:choose>
+                                                        <c:when test="${not empty product.imageUrls}">
+                                                            <img src="${pageContext.request.contextPath}/${product.imageUrls[0]}"
+                                                                 alt=""
+                                                                 style="width: 250px !important; height: 250px !important;"/>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <img src="${pageContext.request.contextPath}/images/product/default-image.jpg"
+                                                                 alt=""
+                                                                 style="width: 250px !important; height: 250px !important;"/>
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </a>
+                                                <h2>${product.minPrice}₫</h2>
+                                                <a href="${pageContext.request.contextPath}/productDetail?product_id=${product.id}"
+                                                   style="text-decoration: none;">
+                                                    <p style="color: #333;">${product.name}</p>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <c:if test="${loop.index % 4 == 3 || loop.last}">
+                                    </div> <!-- close .item -->
+                                </c:if>
+                            </c:forEach>
+                        </div>
+                        <a class="left recommended-item-control" href="#recommended-item-carousel" data-slide="prev">
+                            <i class="fa fa-angle-left"></i>
+                        </a>
+                        <a class="right recommended-item-control" href="#recommended-item-carousel" data-slide="next">
+                            <i class="fa fa-angle-right"></i>
+                        </a>
+                    </div>
+                </div><!--/recommended_items-->
+
+                <c:forEach var="entry" items="${productsByCategory}" varStatus="catStatus">
+                    <div class="recommended_items"><!-- category block -->
+                        <!-- Category Title -->
+                        <h2 class="title text-center">${entry.key}</h2>
+                        <!-- Product Carousel -->
+                        <div id="category-carousel-${catStatus.index}" class="carousel slide" data-ride="carousel" data-interval="5000" data-pause="hover">
+                            <div class="carousel-inner">
+                                <c:forEach var="product" items="${entry.value}" varStatus="loop">
+                                    <c:if test="${loop.index % 4 == 0}">
+                                        <div class="item ${loop.index == 0 ? 'active' : ''}">
+                                    </c:if>
+
                                     <div class="col-sm-3">
                                         <div class="product-image-wrapper">
                                             <div class="single-products">
@@ -136,10 +236,12 @@
                                                     <a href="${pageContext.request.contextPath}/productDetail?product_id=${product.id}">
                                                         <c:choose>
                                                             <c:when test="${not empty product.imageUrls}">
-                                                                <img src="${pageContext.request.contextPath}/${product.imageUrls[0]}" alt="" style="width: 200px !important; height: 200px !important;" />
+                                                                <img src="${pageContext.request.contextPath}/${product.imageUrls[0]}"
+                                                                     alt="${product.name}" style="width: 250px !important; height: 250px !important;" />
                                                             </c:when>
                                                             <c:otherwise>
-                                                                <img src="${pageContext.request.contextPath}/images/product/default.jpg" alt="" style="width: 200px !important; height: 200px !important;" />
+                                                                <img src="${pageContext.request.contextPath}/images/product/default-image.jpg"
+                                                                     alt="Default" style="width: 250px !important; height: 250px !important;" />
                                                             </c:otherwise>
                                                         </c:choose>
                                                     </a>
@@ -151,17 +253,23 @@
                                             </div>
                                         </div>
                                     </div>
+
+                                    <c:if test="${loop.index % 4 == 3 || loop.last}">
+                                        </div> <!-- close .item -->
+                                    </c:if>
                                 </c:forEach>
                             </div>
+
+                            <!-- Carousel Controls -->
+                            <a class="left recommended-item-control" href="#category-carousel-${catStatus.index}" data-slide="prev">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a class="right recommended-item-control" href="#category-carousel-${catStatus.index}" data-slide="next">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
                         </div>
-                        <a class="left recommended-item-control" href="#recommended-item-carousel" data-slide="prev">
-                            <i class="fa fa-angle-left"></i>
-                        </a>
-                        <a class="right recommended-item-control" href="#recommended-item-carousel" data-slide="next">
-                            <i class="fa fa-angle-right"></i>
-                        </a>
-                    </div>
-                </div><!--/recommended_items-->
+                    </div><!--/category block-->
+                </c:forEach>
 
             </div>
         </div>

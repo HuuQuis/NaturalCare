@@ -12,6 +12,12 @@ public class ProductOrder {
     private int addressId;
     private Integer couponId;
 
+    // Các trường mới để hỗ trợ thanh toán online
+    private String paymentMethod;                   // vnpay, momo, zalopay
+    private String paymentGatewayTxnRef;            // mã gửi sang cổng
+    private String paymentGatewayTransactionNo;     // mã trả về từ cổng
+    private Timestamp paymentTime;                  // thời gian thanh toán
+
     public ProductOrder() {
     }
 
@@ -30,6 +36,38 @@ public class ProductOrder {
     private String shipperName;
     private String addressDisplay;
     private String couponCode;
+
+    public String getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
+    public String getPaymentGatewayTxnRef() {
+        return paymentGatewayTxnRef;
+    }
+
+    public void setPaymentGatewayTxnRef(String paymentGatewayTxnRef) {
+        this.paymentGatewayTxnRef = paymentGatewayTxnRef;
+    }
+
+    public String getPaymentGatewayTransactionNo() {
+        return paymentGatewayTransactionNo;
+    }
+
+    public void setPaymentGatewayTransactionNo(String paymentGatewayTransactionNo) {
+        this.paymentGatewayTransactionNo = paymentGatewayTransactionNo;
+    }
+
+    public Timestamp getPaymentTime() {
+        return paymentTime;
+    }
+
+    public void setPaymentTime(Timestamp paymentTime) {
+        this.paymentTime = paymentTime;
+    }
 
     public String getCustomerName() {
         return customerName;

@@ -9,6 +9,22 @@
     <div id="messageContainer"></div>
     <div class="modal-body">
       <form id="addAddressForm">
+        <div class="form-group user_info">
+          <label for="firstName">First Name</label>
+          <input type="text" id="firstName" name="firstName" placeholder="e.g. John" required>
+        </div>
+        <div class="form-group user_info">
+          <label for="lastName">Last Name</label>
+          <input type="text" id="lastName" name="lastName" placeholder="e.g. Doe" required />
+        </div>
+        <div class="form-group user_info">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" placeholder="e.g. john.doe@example.com" required />
+        </div>
+        <div class="form-group user_info">
+          <label for="phoneNumber">Phone Number</label>
+          <input type="text" id="phoneNumber" name="phoneNumber" placeholder="e.g. 0123456789" required maxlength="10" />
+        </div>
         <div class="form-group">
           <label for="provinceSelect">Province</label>
           <select id="provinceSelect" name="provinceCode" required></select>

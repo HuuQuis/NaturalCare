@@ -45,7 +45,7 @@ public class ProductManageServlet extends HttpServlet {
             String sort = request.getParameter("sort");
 
             int page = (pageRaw == null || pageRaw.isEmpty()) ? 1 : Integer.parseInt(pageRaw);
-            int pageSize = 10;
+            int pageSize = 5;
 
             String categoryIdRaw = request.getParameter("categoryId");
             String subCategoryIdRaw = request.getParameter("subCategoryId");
@@ -75,7 +75,7 @@ public class ProductManageServlet extends HttpServlet {
             int totalPage = (int) Math.ceil((double) total / pageSize);
 
             // --- Variant paging ---
-            int variantPageSize = 5;
+            int variantPageSize = 3;
             Map<Integer, Integer> variantPageMap = new HashMap<>();
             Map<Integer, Integer> variantTotalMap = new HashMap<>();
             Map<Integer, Integer> variantTotalPageMap = new HashMap<>();

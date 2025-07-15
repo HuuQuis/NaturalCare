@@ -9,19 +9,20 @@ import dal.ProductCategoryDAO;
 import dal.SubProductCategoryDAO;
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebFilter;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import model.BlogCategory;
 import model.ProductCategory;
 import model.SubProductCategory;
 
-@WebFilter("/*") // Apply to all URLs
+@WebFilter("/*")
 public class NavigationDataFilter implements Filter {
     private ProductCategoryDAO categoryDAO;
     private BlogCategoryDAO blogCategoryDAO;
     private SubProductCategoryDAO subProductCategoryDAO;
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
+    public void init(FilterConfig filterConfig) {
         categoryDAO = new ProductCategoryDAO();
         blogCategoryDAO = new BlogCategoryDAO();
         subProductCategoryDAO = new SubProductCategoryDAO();
@@ -33,18 +34,18 @@ public class NavigationDataFilter implements Filter {
 
         HttpServletRequest httpRequest = (HttpServletRequest) request;
 
-        // Skip for static resources (CSS, JS, images)
-        String requestURI = httpRequest.getRequestURI();
-        if (requestURI.endsWith(".css") || requestURI.endsWith(".js") ||
-                requestURI.endsWith(".png") || requestURI.endsWith(".jpg") ||
-                requestURI.endsWith(".jpeg") || requestURI.endsWith(".gif") ||
-                requestURI.endsWith(".ico")) {
+        // Skip static resources
+        String uri = httpRequest.getRequestURI();
+        if (uri.endsWith(".css") || uri.endsWith(".js") ||
+                uri.endsWith(".png") || uri.endsWith(".jpg") ||
+                uri.endsWith(".jpeg") || uri.endsWith(".gif") ||
+                uri.endsWith(".ico")) {
             chain.doFilter(request, response);
             return;
         }
 
-        // Load navigation data
         try {
+            // --- 1. Load navigation data ---
             List<ProductCategory> categories = categoryDAO.getAllProductCategories();
             List<BlogCategory> blogCategories = blogCategoryDAO.getAllBlogCategories();
             List<SubProductCategory> subCategories = new ArrayList<>();
@@ -53,22 +54,43 @@ public class NavigationDataFilter implements Filter {
                 subCategories.addAll(subProductCategoryDAO.getSubCategoriesByCategoryId(category.getId()));
             }
 
-            // Set attributes for all requests
             request.setAttribute("categories", categories);
             request.setAttribute("blogCategories", blogCategories);
             request.setAttribute("subCategories", subCategories);
 
+            // --- 2. Load cart quantity from cookie ---
+            int totalQuantity = getCartQuantityFromCookie(httpRequest);
+            request.setAttribute("totalQuantity", totalQuantity);
+
         } catch (Exception e) {
-            // Log error but don't break the request
-            e.printStackTrace();
+            e.printStackTrace(); // Log lỗi nếu có
         }
 
-        // Continue with the request
         chain.doFilter(request, response);
     }
 
-    @Override
-    public void destroy() {
-        // Cleanup if needed
+    private int getCartQuantityFromCookie(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        int total = 0;
+
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("cart".equals(cookie.getName())) {
+                    String[] items = cookie.getValue().split("\\|");
+                    for (String item : items) {
+                        String[] parts = item.split(":");
+                        if (parts.length == 2) {
+                            try {
+                                int qty = Integer.parseInt(parts[1]);
+                                total += qty;
+                            } catch (NumberFormatException ignored) {}
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+
+        return total;
     }
 }

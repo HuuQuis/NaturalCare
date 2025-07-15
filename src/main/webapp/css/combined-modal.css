@@ -59,7 +59,6 @@ body.modal-open .modal-address {
 }
 
 .modal-address .close {
-    color: white;
     position: absolute;
     right: 20px;
     top: 15px;
@@ -319,6 +318,20 @@ body.modal-open .modal-address {
     overflow: hidden;
 }
 
+.cart-badge {
+    position: absolute !important;
+    top: 3px !important;
+    right: 40px !important;
+    background-color: #d87d28 !important; /* màu cam */
+    color: white !important;
+    border-radius: 50% !important;
+    padding: 2px 6px !important;
+    font-size: 12px !important;
+    font-weight: bold !important;
+    line-height: 1 !important;
+    z-index: 999 !important;
+}
+
 #cart-scroll-content {
     flex: 1;
     overflow-y: auto;
@@ -438,9 +451,7 @@ body.modal-open .modal-address {
     width: 25px;
     height: 25px;
     text-align: center;
-    border: 1px solid #ccc;
-    border-left: none;
-    border-right: none;
+    border: none;
     font-size: 16px;
     outline: none;
 }

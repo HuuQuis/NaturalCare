@@ -34,11 +34,18 @@ public class CheckoutServlet extends HttpServlet {
             return;
         }
 
-        // 1. Lấy danh sách địa chỉ
         List<Address> addressList = addressDAO.getAddressesByUserId(currentUser.getId());
         request.setAttribute("addressList", addressList);
 
-        // 2. Lấy danh sách sản phẩm trong giỏ từ cookie
+        Address defaultAddress = null;
+        for (Address addr : addressList) {
+            if (addr.isDefaultAddress()) {
+                defaultAddress = addr;
+                break;
+            }
+        }
+        request.setAttribute("defaultAddress", defaultAddress);
+
         Map<Integer, Integer> cartMap = readCartFromCookie(request);
         List<Cart> cartItems = new ArrayList<>();
         int cartTotal = 0;
@@ -54,10 +61,8 @@ public class CheckoutServlet extends HttpServlet {
             }
         }
 
-        // 3. Gửi sang JSP
         request.setAttribute("cartItems", cartItems);
         request.setAttribute("cartTotal", cartTotal);
-        request.setAttribute("currentUser", currentUser);
         request.getRequestDispatcher("/view/checkout/checkout.jsp").forward(request, response);
     }
 
