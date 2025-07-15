@@ -101,7 +101,7 @@
                                                 <div class="input-group col-xs-12">
                                                     <input type="text" class="form-control file-upload-info" disabled
                                                            placeholder="Upload Image"
-                                                           value="${not empty previousImageUrl ? imageFileName : ''}" />
+                                                           value="${not empty originalImageName ? originalImageName : ''}" />
 
                                                     <span class="input-group-append">
                                                         <button class="file-upload-browse btn btn-primary" type="button">
@@ -142,16 +142,17 @@
 
                                             <div class="form-group">
                                                 <label>Product Variant Price</label>
-                                                <input type="number" class="form-control" name="price"
+                                                <input type="number" id="price" class="form-control" name="price"
                                                        value="${tempProductVariation.price}"
                                                        placeholder="Enter Product Variant Price">
                                             </div>
 
                                             <div class="form-group">
+                                                <h6 style="color: red">(*)This price include 10% VAT, 15% expense salary and 15% revenue</h6>
                                                 <label>Product Variant Sell Price</label>
-                                                <input type="number" class="form-control" name="sell_price"
+                                                <input type="number" id="sell_price" class="form-control" name="sell_price"
                                                        value="${tempProductVariation.sell_price}"
-                                                       placeholder="Enter Product Variant Sell Price">
+                                                       placeholder="Enter Product Variant Sell Price" disabled>
                                             </div>
 
                                             <div class="form-group">
@@ -260,8 +261,22 @@
         }
     };
 
-
+    document.addEventListener("DOMContentLoaded", function () {
+        var priceInput = document.getElementById("price");
+        var sellPriceInput = document.getElementById("sell_price");
+        function updateSellPrice() {
+            var price = parseFloat(priceInput.value);
+            if (!isNaN(price)) {
+                sellPriceInput.value = Math.round(price * 1.4);
+            } else {
+                sellPriceInput.value = "";
+            }
+        }
+        priceInput.addEventListener("input", updateSellPrice);
+        updateSellPrice();
+    });
 </script>
 </body>
 
 </html>
+

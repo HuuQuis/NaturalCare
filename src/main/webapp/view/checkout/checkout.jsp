@@ -83,28 +83,11 @@
                         </label>
                     </c:forEach>
                 </div>
-                <div class="payment-methods mb-4">
-                    <h4 class="fw-bold mb-2">Choose Payment Method</h4>
-                    <div class="payment-option">
-                        <label>
-                            <input type="radio" name="paymentMethod" value="cod" checked/>
-                            <img src="${pageContext.request.contextPath}/images/payment/shipcod-logo.jpg" alt="ZaloPay" />
-                            Thanh toán khi nhận hàng (COD)
-                        </label>
-                    </div>
-                    <div class="payment-option">
-                        <label>
-                            <input type="radio" name="paymentMethod" value="vnpay"/>
-                            <img src="${pageContext.request.contextPath}/images/payment/vnpay-logo.jpg" alt="VNPAY" />
-                            Thẻ ATM / Thẻ tín dụng / Thẻ ghi nợ (qua VNPAY)
-                        </label>
-                    </div>
-                </div>
                 <div class="text-end mt-4">
                     <button type="submit"
                             class="btn btn-success px-4 py-2"
                             style="margin-top: 10px;"
-                            <c:if test="${empty cartItems}">disabled</c:if>>
+                            <c:if test="${empty cartItems or empty addressList}">disabled</c:if>>
                         <i class="fa fa-shopping-cart"></i> Place Order
                     </button>
                 </div>
@@ -142,7 +125,6 @@
                             </div>
                         </div>
                     </div>
-
                 </c:forEach>
             </div>
 
@@ -159,6 +141,21 @@
                     <p>Empty Cart</p>
                 </div>
             </c:if>
+            <h4 class="fw-bold mb-2">Choose Payment Method</h4>
+            <div class="payment-option">
+                <label>
+                    <input type="radio" name="paymentMethod" value="cod" checked/>
+                    <img src="${pageContext.request.contextPath}/images/payment/shipcod-logo.jpg" alt="ZaloPay" />
+                    Thanh toán khi nhận hàng (COD)
+                </label>
+            </div>
+            <div class="payment-option">
+                <label>
+                    <input type="radio" name="paymentMethod" value="vnpay"/>
+                    <img src="${pageContext.request.contextPath}/images/payment/vnpay-logo.jpg" alt="VNPAY" />
+                    Thẻ ATM / Thẻ tín dụng / Thẻ ghi nợ (qua VNPAY)
+                </label>
+            </div>
         </div>
     </div>
 </div>

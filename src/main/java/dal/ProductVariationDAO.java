@@ -60,11 +60,12 @@ public class ProductVariationDAO extends DBContext{
         }
     }
 
-    public void deleteProductVariation(int variationId) {
-        sql = "DELETE FROM product_variation WHERE variation_id = ?";
+    public void toggleProductVariationActive(int variationId, boolean active) {
+        sql = "UPDATE product_variation SET is_active = ? WHERE variation_id = ?";
         try {
             stm = connection.prepareStatement(sql);
-            stm.setInt(1, variationId);
+            stm.setInt(1, active ? 1 : 0);
+            stm.setInt(2, variationId);
             stm.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -96,6 +97,7 @@ public class ProductVariationDAO extends DBContext{
                 pv.setColorName(rs.getString("color_name"));
                 pv.setSizeName(rs.getString("size_name"));
                 pv.setProductName(rs.getString("product_name"));
+                pv.setActive(rs.getInt("is_active") == 1); // Set isActive
                 return pv;
             }
         } catch (SQLException e) {

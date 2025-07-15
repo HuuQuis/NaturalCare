@@ -9,6 +9,7 @@ public class ProductVariation {
     private int sell_price;
     private int qtyInStock;
     private int sold;
+    private boolean isActive;
     private int productId;
     private String colorName;
     private String sizeName;
@@ -57,6 +58,12 @@ public class ProductVariation {
     public void setSold(int sold) { this.sold = sold; }
     public int getProductId() { return productId; }
     public void setProductId(int productId) { this.productId = productId; }
+    public boolean isActive() {
+        return isActive;
+    }
+    public void setActive(boolean active) {
+        isActive = active;
+    }
     public String getColorName() {
         return colorName;
     }

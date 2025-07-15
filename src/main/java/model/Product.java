@@ -1,6 +1,7 @@
 package model;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +17,7 @@ public class Product {
     private int totalSold;
     private Timestamp createdAt;
     private Timestamp updatedAt;
+    private boolean isActive = true;
 
     private List<String> imageUrls;
     private List<ProductVariation> variations;
@@ -149,6 +151,16 @@ public class Product {
     public Timestamp getUpdatedAt() {
         return updatedAt;
     }
+
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean isActive) {
+        this.isActive = isActive;
+    }
+
     public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
     }
@@ -173,4 +185,15 @@ public class Product {
         }
         this.variations.add(variation);
     }
+
+    public String getCreatedAtFormatted() {
+        if (createdAt == null) return "";
+        return new SimpleDateFormat("HH.mm dd/MM/yyyy").format(createdAt);
+    }
+
+    public String getUpdatedAtFormatted() {
+        if (updatedAt == null) return "";
+        return new SimpleDateFormat("HH.mm dd/MM/yyyy").format(updatedAt);
+    }
+
 }

@@ -48,6 +48,11 @@ function attachCartEventListeners() {
 
                 updateCartTotal();
 
+                // Update cart badge immediately
+                fetch('cart-total-quantity')
+                    .then(res => res.text())
+                    .then(totalQty => updateCartBadge(parseInt(totalQty)));
+
                 if (typeof updateVariationInfo === "function") {
                     updateVariationInfo(); // update stock if needed
                 }
@@ -148,6 +153,26 @@ function closeCartModal() {
     document.body.classList.remove("modal-open");
 }
 
+function updateCartBadge(quantity) {
+    const cartIcon = document.getElementById('cart-icon');
+    let badge = cartIcon.querySelector('.cart-badge');
+
+    if (quantity > 0) {
+        if (!badge) {
+            badge = document.createElement('span');
+            badge.className = 'cart-badge';
+            cartIcon.appendChild(badge);
+        }
+        badge.textContent = quantity;
+        badge.style.display = '';
+    } else if (badge) {
+        badge.style.display = 'none';
+    }
+}
+
+// Expose updateCartBadge globally
+window.updateCartBadge = updateCartBadge;
+
 document.addEventListener("DOMContentLoaded", function () {
     const cartIcon = document.getElementById("cart-icon");
     const cartModal = document.getElementById("cart-modal");
@@ -172,4 +197,9 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     closeBtn.addEventListener("click", closeCartModal);
+
+    // Update cart badge on page load
+    fetch('cart-total-quantity')
+        .then(res => res.text())
+        .then(totalQty => updateCartBadge(parseInt(totalQty)));
 });

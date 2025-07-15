@@ -15,10 +15,10 @@ public class ProductDAO extends DBContext {
         sql = "SELECT p.*, pv.variation_id, pv.product_image, pv.color_id, pv.size_id, pv.price, pv.sell_price, pv.qty_in_stock, pv.sold, " +
                 "c.color_name, s.size_name " +
                 "FROM product p " +
-                "LEFT JOIN product_variation pv ON pv.product_id = p.product_id " +
+                "LEFT JOIN product_variation pv ON pv.product_id = p.product_id AND pv.is_active = 1 " +
                 "LEFT JOIN color c ON pv.color_id = c.color_id " +
                 "LEFT JOIN size s ON pv.size_id = s.size_id " +
-                "WHERE p.product_id = ?";
+                "WHERE p.product_id = ? AND p.is_active = 1";
 
         Product product = null;
         try {
@@ -36,6 +36,8 @@ public class ProductDAO extends DBContext {
                             rs.getString("product_guideline"),
                             rs.getInt("sub_product_category_id")
                     );
+                    product.setCreatedAt(rs.getTimestamp("created_at"));
+                    product.setUpdatedAt(rs.getTimestamp("updated_at"));
                 }
 
                 // Handle variations
@@ -72,7 +74,7 @@ public class ProductDAO extends DBContext {
 
 
     public List<Product> getAllProducts() {
-        sql = "SELECT * FROM product";
+        sql = "SELECT * FROM product WHERE is_active = 1";
         List<Product> products = new ArrayList<>();
         try {
             stm = connection.prepareStatement(sql);
@@ -88,7 +90,7 @@ public class ProductDAO extends DBContext {
     //get products by page
     public List<Product> getProductsByPage(int pageIndex, int pageSize) {
         List<Product> products = new ArrayList<>();
-        sql = "SELECT * FROM product ORDER BY product_id LIMIT ? OFFSET ?";
+        sql = "SELECT * FROM product WHERE is_active = 1 ORDER BY product_id LIMIT ? OFFSET ?";
 
         try {
             stm = connection.prepareStatement(sql);
@@ -110,7 +112,7 @@ public class ProductDAO extends DBContext {
                      "FROM product_variation pv " +
                      "LEFT JOIN color c ON pv.color_id = c.color_id " +
                      "LEFT JOIN size s ON pv.size_id = s.size_id " +
-                     "WHERE pv.product_id = ?";
+                     "WHERE pv.product_id = ?"; // <-- removed AND pv.is_active = 1
 
         List<ProductVariation> variations = new ArrayList<>();
         try {
@@ -131,6 +133,7 @@ public class ProductDAO extends DBContext {
                 );
                 variation.setColorName(rs.getString("color_name"));
                 variation.setSizeName(rs.getString("size_name"));
+                variation.setActive(rs.getInt("is_active") == 1);
                 variations.add(variation);
             }
         } catch (SQLException e) {
@@ -145,7 +148,7 @@ public class ProductDAO extends DBContext {
                      "FROM product_variation pv " +
                      "LEFT JOIN color c ON pv.color_id = c.color_id " +
                      "LEFT JOIN size s ON pv.size_id = s.size_id " +
-                     "WHERE pv.product_id = ? " +
+                     "WHERE pv.product_id = ? " + // <-- removed AND pv.is_active = 1
                      "ORDER BY pv.variation_id " +
                      "LIMIT ? OFFSET ?";
         List<ProductVariation> variations = new ArrayList<>();
@@ -169,6 +172,7 @@ public class ProductDAO extends DBContext {
                 );
                 variation.setColorName(rs.getString("color_name"));
                 variation.setSizeName(rs.getString("size_name"));
+                variation.setActive(rs.getInt("is_active") == 1);
                 variations.add(variation);
             }
         } catch (SQLException e) {
@@ -179,7 +183,7 @@ public class ProductDAO extends DBContext {
 
     // get total number of variants for a product
     public int countProductVariants(int productId) {
-        String sql = "SELECT COUNT(*) FROM product_variation WHERE product_id = ?";
+        String sql = "SELECT COUNT(*) FROM product_variation WHERE product_id = ? AND is_active = 1";
         try {
             stm = connection.prepareStatement(sql);
             stm.setInt(1, productId);
@@ -192,7 +196,7 @@ public class ProductDAO extends DBContext {
     }
 
     public void addProduct(Product product) {
-        sql = "INSERT INTO product (product_name, product_short_description, product_information, product_guideline, sub_product_category_id) VALUES (?, ?, ?, ?, ?)";
+        sql = "INSERT INTO product (product_name, product_short_description, product_information, product_guideline, sub_product_category_id, created_at) VALUES (?, ?, ?, ?, ?, ?)";
         try {
             stm = connection.prepareStatement(sql);
             stm.setString(1, product.getName());
@@ -200,6 +204,7 @@ public class ProductDAO extends DBContext {
             stm.setString(3, product.getInformation());
             stm.setString(4, product.getGuideline());
             stm.setInt(5, product.getSubProductCategoryId());
+            stm.setTimestamp(6, new java.sql.Timestamp(System.currentTimeMillis()));
             stm.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -207,7 +212,8 @@ public class ProductDAO extends DBContext {
     }
 
     public void deleteProduct(int id) {
-        sql = "DELETE FROM product WHERE product_id = ?";
+        // Soft delete: set is_active = 0 instead of deleting
+        sql = "UPDATE product SET is_active = 0 WHERE product_id = ?";
         try {
             stm = connection.prepareStatement(sql);
             stm.setInt(1, id);
@@ -218,7 +224,7 @@ public class ProductDAO extends DBContext {
     }
 
     public void updateProduct(Product product) {
-        sql = "UPDATE product SET product_name = ?, product_short_description = ?, product_information = ?, product_guideline = ?, sub_product_category_id = ? WHERE product_id = ?";
+        sql = "UPDATE product SET product_name = ?, product_short_description = ?, product_information = ?, product_guideline = ?, sub_product_category_id = ?, updated_at = ? WHERE product_id = ?";
         try {
             stm = connection.prepareStatement(sql);
             stm.setString(1, product.getName());
@@ -226,7 +232,8 @@ public class ProductDAO extends DBContext {
             stm.setString(3, product.getInformation());
             stm.setString(4, product.getGuideline());
             stm.setInt(5, product.getSubProductCategoryId());
-            stm.setInt(6, product.getId());
+            stm.setTimestamp(6, new java.sql.Timestamp(System.currentTimeMillis()));
+            stm.setInt(7, product.getId());
             stm.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -235,7 +242,7 @@ public class ProductDAO extends DBContext {
 
     // Get total number of products by category and subcategory
     public int countTotalProducts() {
-        sql = "SELECT COUNT(*) FROM product";
+        sql = "SELECT COUNT(*) FROM product where is_active = 1";
         try {
             stm = connection.prepareStatement(sql);
             rs = stm.executeQuery();
@@ -300,12 +307,12 @@ public class ProductDAO extends DBContext {
         String orderBy = getOrderByClause(sort);
 
         sql = "SELECT p.*, " +
-                "       (SELECT MIN(pv1.product_image) FROM product_variation pv1 WHERE pv1.product_id = p.product_id) AS product_image, " +
-                "       COALESCE((SELECT MIN(pv2.sell_price) FROM product_variation pv2 WHERE pv2.product_id = p.product_id), 0) AS min_price " +
+                "       (SELECT MIN(pv1.product_image) FROM product_variation pv1 WHERE pv1.product_id = p.product_id AND pv1.is_active = 1) AS product_image, " +
+                "       COALESCE((SELECT MIN(pv2.sell_price) FROM product_variation pv2 WHERE pv2.product_id = p.product_id AND pv2.is_active = 1), 0) AS min_price " +
                 "FROM product p " +
                 "INNER JOIN sub_product_category s ON p.sub_product_category_id = s.sub_product_category_id " +
                 "INNER JOIN product_category pc ON s.product_category_id = pc.product_category_id " +
-                "WHERE pc.product_category_id = ? " +
+                "WHERE pc.product_category_id = ? AND p.is_active = 1 " +
                 orderBy + " LIMIT ?, ?";
 
         return fetchProductsByQuery(sql, categoryId, offset, pageSize);
@@ -316,10 +323,10 @@ public class ProductDAO extends DBContext {
         String orderBy = getOrderByClause(sort);
 
         sql = "SELECT p.*, " +
-                "       (SELECT MIN(pv1.product_image) FROM product_variation pv1 WHERE pv1.product_id = p.product_id) AS product_image, " +
-                "       COALESCE((SELECT MIN(pv2.sell_price) FROM product_variation pv2 WHERE pv2.product_id = p.product_id), 0) AS min_price " +
+                "       (SELECT MIN(pv1.product_image) FROM product_variation pv1 WHERE pv1.product_id = p.product_id AND pv1.is_active = 1) AS product_image, " +
+                "       COALESCE((SELECT MIN(pv2.sell_price) FROM product_variation pv2 WHERE pv2.product_id = p.product_id AND pv2.is_active = 1), 0) AS min_price " +
                 "FROM product p " +
-                "WHERE p.sub_product_category_id = ? " +
+                "WHERE p.sub_product_category_id = ? AND p.is_active = 1 " +
                 orderBy + " LIMIT ?, ?";
 
         return fetchProductsByQuery(sql, subCategoryId, offset, pageSize);
@@ -366,6 +373,8 @@ public class ProductDAO extends DBContext {
                         rs.getInt("sub_product_category_id"),
                         minPrice
                 );
+                product.setCreatedAt(rs.getTimestamp("created_at"));
+                product.setUpdatedAt(rs.getTimestamp("updated_at"));
 
                 if (imageUrl != null) {
                     product.addImageUrl(imageUrl);
@@ -386,7 +395,8 @@ public class ProductDAO extends DBContext {
                 "       MIN(pv.product_image) AS product_image, " +
                 "       MIN(pv.sell_price) AS min_price " +
                 "FROM product p " +
-                "JOIN product_variation pv ON p.product_id = pv.product_id " +
+                "JOIN product_variation pv ON p.product_id = pv.product_id AND pv.is_active = 1 " +
+                "WHERE p.is_active = 1 " +
                 "GROUP BY p.product_id, p.product_name " +
                 "ORDER BY total_sold DESC " +
                 "LIMIT 10";
@@ -423,7 +433,8 @@ public class ProductDAO extends DBContext {
                 "       MIN(pv.product_image) AS product_image, " +
                 "       MIN(pv.sell_price) AS min_price " +
                 "FROM product p " +
-                "JOIN product_variation pv ON p.product_id = pv.product_id " +
+                "JOIN product_variation pv ON p.product_id = pv.product_id AND pv.is_active = 1 " +
+                "WHERE p.is_active = 1 " +
                 "GROUP BY p.product_id, p.product_name, p.created_at " +
                 "ORDER BY p.created_at DESC " +
                 "LIMIT 10";
@@ -457,7 +468,7 @@ public class ProductDAO extends DBContext {
 
     public List<Product> searchProductsByText(String keyword) {
         List<Product> products = new ArrayList<>();
-        sql = "SELECT * FROM product WHERE product_name LIKE ?";
+        sql = "SELECT * FROM product WHERE product_name LIKE ? AND is_active = 1";
 
         try {
             stm = connection.prepareStatement(sql);
@@ -475,14 +486,17 @@ public class ProductDAO extends DBContext {
     private List<Product> extractProductsFromResultSet(java.sql.ResultSet rs) throws SQLException {
         List<Product> products = new ArrayList<>();
         while (rs.next()) {
-            products.add(new Product(
+            Product p = new Product(
                     rs.getInt("product_id"),
                     rs.getString("product_name"),
                     rs.getString("product_short_description"),
                     rs.getString("product_information"),
                     rs.getString("product_guideline"),
                     rs.getInt("sub_product_category_id")
-            ));
+            );
+            p.setCreatedAt(rs.getTimestamp("created_at"));
+            p.setUpdatedAt(rs.getTimestamp("updated_at"));
+            products.add(p);
         }
         return products;
     }
@@ -494,12 +508,12 @@ public class ProductDAO extends DBContext {
 
         StringBuilder sqlBuilder = new StringBuilder();
         sqlBuilder.append("SELECT p.*, ")
-                .append("(SELECT MIN(pv.product_image) FROM product_variation pv WHERE pv.product_id = p.product_id) AS product_image, ")
-                .append("COALESCE((SELECT MIN(pv.sell_price) FROM product_variation pv WHERE pv.product_id = p.product_id), 0) AS min_price ")
+                .append("(SELECT MIN(pv.product_image) FROM product_variation pv WHERE pv.product_id = p.product_id AND pv.is_active = 1) AS product_image, ")
+                .append("COALESCE((SELECT MIN(pv.sell_price) FROM product_variation pv WHERE pv.product_id = p.product_id AND pv.is_active = 1), 0) AS min_price ")
                 .append("FROM product p ")
                 .append("JOIN sub_product_category spc ON p.sub_product_category_id = spc.sub_product_category_id ")
                 .append("JOIN product_category pc ON spc.product_category_id = pc.product_category_id ")
-                .append("WHERE p.product_name LIKE ? ");
+                .append("WHERE p.product_name LIKE ? AND p.is_active = 1 ");
 
         List<Object> params = new ArrayList<>();
         params.add("%" + keyword + "%");
@@ -536,6 +550,8 @@ public class ProductDAO extends DBContext {
                         rs.getInt("sub_product_category_id"),
                         rs.getInt("min_price")
                 );
+                p.setCreatedAt(rs.getTimestamp("created_at"));
+                p.setUpdatedAt(rs.getTimestamp("updated_at"));
                 String imageUrl = rs.getString("product_image");
                 if (imageUrl != null) p.addImageUrl(imageUrl);
                 products.add(p);
@@ -555,8 +571,8 @@ public class ProductDAO extends DBContext {
                 "COALESCE(MIN(pv.sell_price), 0) AS min_price " +
                 "FROM product_category pc " +
                 "JOIN sub_product_category spc ON pc.product_category_id = spc.product_category_id " +
-                "JOIN product p ON p.sub_product_category_id = spc.sub_product_category_id " +
-                "LEFT JOIN product_variation pv ON p.product_id = pv.product_id " +
+                "JOIN product p ON p.sub_product_category_id = spc.sub_product_category_id AND p.is_active = 1 " +
+                "LEFT JOIN product_variation pv ON p.product_id = pv.product_id AND pv.is_active = 1 " +
                 "GROUP BY pc.product_category_name, p.product_id, p.product_name " +
                 "ORDER BY pc.product_category_name, p.product_id";
 
@@ -591,7 +607,7 @@ public class ProductDAO extends DBContext {
         sqlBuilder.append("SELECT COUNT(*) FROM product p ")
                 .append("JOIN sub_product_category spc ON p.sub_product_category_id = spc.sub_product_category_id ")
                 .append("JOIN product_category pc ON spc.product_category_id = pc.product_category_id ")
-                .append("WHERE p.product_name LIKE ? ");
+                .append("WHERE p.product_name LIKE ? AND p.is_active = 1 ");
 
         List<Object> params = new ArrayList<>();
         params.add("%" + keyword + "%");
@@ -634,7 +650,7 @@ public class ProductDAO extends DBContext {
             sql.append("SELECT p.*, pv.* ");
             sql.append("FROM product p ");
             sql.append("LEFT JOIN product_variation pv ON p.product_id = pv.product_id ");
-            sql.append("WHERE 1=1 ");
+            sql.append("WHERE 1=1 AND p.is_active = 1 ");
 
             if (subCategoryId != null) {
                 sql.append("AND p.sub_product_category_id = ? ");
@@ -785,7 +801,7 @@ public class ProductDAO extends DBContext {
         sql.append("SELECT COUNT(DISTINCT p.product_id) as total ");
         sql.append("FROM product p ");
         sql.append("LEFT JOIN product_variation pv ON p.product_id = pv.product_id ");
-        sql.append("WHERE 1=1 ");
+        sql.append("WHERE 1=1 AND p.is_active = 1 ");
 
         if (subCategoryId != null && !subCategoryId.isEmpty()) {
             sql.append("AND p.sub_product_category_id = ? ");
@@ -847,8 +863,8 @@ public class ProductDAO extends DBContext {
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT p.*, MIN(pv.sell_price) as min_price ")
                 .append("FROM product p ")
-                .append("LEFT JOIN product_variation pv ON p.product_id = pv.product_id ")
-                .append("WHERE 1=1 ");
+                .append("LEFT JOIN product_variation pv ON p.product_id = pv.product_id AND pv.is_active = 1 ")
+                .append("WHERE p.is_active = 1 ");
 
         List<Object> params = new ArrayList<>();
 
@@ -956,7 +972,7 @@ public class ProductDAO extends DBContext {
 
     private List<String> getProductImages(int productId) {
         List<String> images = new ArrayList<>();
-        String sql = "SELECT DISTINCT product_image FROM product_variation WHERE product_id = ? AND product_image IS NOT NULL";
+        String sql = "SELECT DISTINCT product_image FROM product_variation WHERE product_id = ? AND product_image IS NOT NULL AND is_active = 1";
         try (PreparedStatement stm = connection.prepareStatement(sql)) {
             stm.setInt(1, productId);
             try (ResultSet rs = stm.executeQuery()) {

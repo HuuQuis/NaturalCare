@@ -79,6 +79,10 @@ CREATE TABLE address (
     province_code  VARCHAR(10),
     district_code  VARCHAR(10),
     ward_code      VARCHAR(10),
+    first_name     VARCHAR(255) NOT NULL,
+    last_name      VARCHAR(255) NOT NULL,
+    email          VARCHAR(255) NOT NULL,
+    phone_number   VARCHAR(20)  NOT NULL,
     detail         TEXT,
     distance_km DOUBLE,
     FOREIGN KEY (province_code) REFERENCES province(code),
@@ -175,6 +179,9 @@ CREATE TABLE product
     product_short_description VARCHAR(255),
     product_information       MEDIUMTEXT,
     product_guideline         TEXT,
+	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    is_active boolean default true,
     sub_product_category_id   INT          NOT NULL,
     FOREIGN KEY (sub_product_category_id)
         REFERENCES sub_product_category (sub_product_category_id)
@@ -201,6 +208,7 @@ CREATE TABLE product_variation
     sell_price BIGINT NOT NULL,
     qty_in_stock  INT    NOT NULL,
     sold          INT DEFAULT 0,
+    is_active boolean default true,
     FOREIGN KEY (product_id) REFERENCES product (product_id),
     foreign key (color_id) references color(color_id),
     foreign key (size_id) references size(size_id)
@@ -244,7 +252,7 @@ CREATE TABLE product_order (
     shipper_id         INT NULL,
     address_id         INT NOT NULL,
     coupon_id          INT,
-    payment_method ENUM('vnpay', 'momo', 'zalopay') NOT NULL,
+    payment_method ENUM('cod', 'vnpay') NOT NULL,
     payment_gateway_txn_ref VARCHAR(100),            -- Mã đơn hàng gửi sang cổng
     payment_gateway_transaction_no VARCHAR(100),     -- Mã giao dịch trả về từ cổng
     payment_time TIMESTAMP NULL,                    -- Thời điểm thanh toán

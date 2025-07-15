@@ -30,7 +30,8 @@ public class CartItemsServlet extends HttpServlet {
             int quantity = entry.getValue();
 
             ProductVariation variation = dao.getProductVariationById(variationId);
-            if (variation != null && variation.getQtyInStock() > 0) {
+            // Remove from cart if variant is null, out of stock, or inactive
+            if (variation != null && variation.getQtyInStock() > 0 && variation.isActive()) {
                 cartItems.add(new Cart(variation, quantity));
                 cartTotal += variation.getSell_price() * quantity;
                 totalQuantity += quantity;
@@ -89,4 +90,3 @@ public class CartItemsServlet extends HttpServlet {
         response.addCookie(updatedCookie);
     }
 }
-

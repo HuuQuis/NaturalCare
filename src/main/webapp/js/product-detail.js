@@ -196,8 +196,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 return res.text();
             })
             .then(text => {
-                alert("Added to cart successfully!");
-                updateVariationInfo();
             })
             .catch(err => alert("Failed to add to cart. Please try again later."));
     });

@@ -137,6 +137,14 @@ public class ProductManageServlet extends HttpServlet {
             productDAO.updateProduct(tempProduct);
         } else if ("delete".equals(action)) {
             int productId = Integer.parseInt(request.getParameter("id"));
+            // Check if product has any active variations
+            int activeVariantCount = productDAO.countProductVariants(productId);
+            if (activeVariantCount > 0) {
+                // Set notification and reload manage page
+                request.setAttribute("notification", "Cannot deactivate product: it still has active variations.");
+                doGet(request, response);
+                return;
+            }
             productDAO.deleteProduct(productId);
         }
         response.sendRedirect(request.getContextPath() + "/productManage");

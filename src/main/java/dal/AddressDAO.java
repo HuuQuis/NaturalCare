@@ -135,7 +135,7 @@ public class AddressDAO extends DBContext {
     public boolean addAddress(Address address, int userId) {
         String checkUserSQL = "SELECT user_id FROM user WHERE user_id = ?";
         String countUserAddressesSQL = "SELECT COUNT(*) FROM userAddress WHERE user_id = ?";
-        String insertAddressSQL = "INSERT INTO address (province_code, district_code, ward_code, detail, distance_km, first_name, last_name, email, phone_number) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String insertAddressSQL = "INSERT INTO address (province_code, district_code, ward_code, detail, distance_km, first_name, last_name, email, phone_number) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)na";
         String insertUserAddressSQL = "INSERT INTO userAddress (user_id, address_id, is_default) VALUES (?, ?, ?)";
 
         try {

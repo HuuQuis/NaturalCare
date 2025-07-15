@@ -319,9 +319,6 @@ body.modal-open .modal-address {
 }
 
 .cart-badge {
-    position: absolute !important;
-    top: 3px !important;
-    right: 40px !important;
     background-color: #d87d28 !important; /* màu cam */
     color: white !important;
     border-radius: 50% !important;

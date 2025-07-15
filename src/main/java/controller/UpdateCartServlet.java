@@ -9,12 +9,16 @@ import java.util.*;
 import dal.ProductVariationDAO;
 import model.ProductVariation;
 
-@WebServlet("/update-cart")
+@WebServlet(urlPatterns = {"/update-cart", "/cart-total-quantity"})
 public class UpdateCartServlet extends HttpServlet {
     private final ProductVariationDAO productVariationDAO = new ProductVariationDAO();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        if ("/cart-total-quantity".equals(request.getServletPath())) {
+            handleCartTotalQuantity(request, response);
+            return;
+        }
         request.setCharacterEncoding("UTF-8");
         response.setContentType("text/plain");
 
@@ -59,6 +63,23 @@ public class UpdateCartServlet extends HttpServlet {
 
         writeCartToCookie(response, cartMap);
         response.getWriter().write(action + "|" + variationId + "|" + quantity);
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        if ("/cart-total-quantity".equals(request.getServletPath())) {
+            handleCartTotalQuantity(request, response);
+        } else {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        }
+    }
+
+    private void handleCartTotalQuantity(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        Map<Integer, Integer> cartMap = readCartFromCookie(request);
+        int total = 0;
+        for (int qty : cartMap.values()) total += qty;
+        response.setContentType("text/plain");
+        response.getWriter().write(String.valueOf(total));
     }
 
     private Map<Integer, Integer> readCartFromCookie(HttpServletRequest request) {

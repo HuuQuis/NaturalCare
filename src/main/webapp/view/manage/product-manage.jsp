@@ -29,7 +29,7 @@
         <div class="content">
             <div class="page-header">
                 <div class="page-title">
-                    <h4>Product List</h4>
+                    <h4>Product Line List</h4>
                 </div>
                 <div class="page-btn" >
                     <button type="button" class="btn btn-info d-inline-flex align-items-center" onclick="location.href='${pageContext.request.contextPath}/productManage?action=add';" style="gap: 6px;">
@@ -41,6 +41,11 @@
 
             <div class="card">
                 <div class="card-body">
+                    <c:if test="${not empty notification}">
+                        <div class="alert alert-warning" role="alert">
+                            ${notification}
+                        </div>
+                    </c:if>
                     <div class="table-top">
                         <div class="search-set d-flex align-items-center flex-wrap" style="gap: 15px;">
                             <form id="filterForm" method="get" action="productManage"
@@ -78,7 +83,8 @@
                                 <th>Product Name</th>
                                 <th>Description</th>
                                 <th>Information</th>
-                                <th>Guideline</th>
+                                <th>Created At</th>
+                                <th>Updated At</th>
                                 <th>Actions</th>
                             </tr>
                             </thead>
@@ -96,12 +102,20 @@
                                                style="cursor: pointer;font-size: 20px;"></i>
                                         </button>
                                     </td>
-                                    <td>${c.description.length() > 10 ? c.description.substring(0,10).concat('...') : c.description}</td>
-                                    <td>${c.information.length() > 10 ? c.information.substring(0,10).concat('...') : c.information}</td>
-                                    <td>${c.guideline.length() > 10 ? c.guideline.substring(0,10).concat('...') : c.guideline}</td>
+                                    <td data-bs-toggle="tooltip" title="${c.description}">
+                                            ${c.description.length() > 20 ? c.description.substring(0,20).concat('...') : c.description}
+                                    </td>
+                                    <td data-bs-toggle="tooltip" title="${c.information}">
+                                            ${c.information.length() > 20 ? c.information.substring(0,20).concat('...') : c.information}
+                                    </td>
+                                    <td>${c.createdAtFormatted}</td>
+                                    <td>${c.updatedAtFormatted}</td>
                                     <td>
                                         <a class="me-3" href="productManage?action=edit&id=${c.id}">
                                             <i class="mdi mdi-table-edit"
+                                               data-bs-toggle="tooltip"
+                                               data-bs-placement="top"
+                                               title="Edit product"
                                                style="display: inline-block;
                                                   font-size: 20px;
                                                   width: 40px;
@@ -109,23 +123,27 @@
                                                   color: #3f50f6;"></i>
                                         </a>
                                         <form action="productManage" method="post" style="display:inline;"
-                                              onsubmit="return confirm('Are you sure to delete this product?');">
+                                              onsubmit="return confirm('${c.active ? 'Are you sure to deactivate this product?' : 'Are you sure to restore this product?'}');">
                                             <input type="hidden" name="action" value="delete"/>
                                             <input type="hidden" name="id" value="${c.id}"/>
 
-                                            <button type="submit" id="submit-product-${c.id}" style="display:none;"></button>
+                                            <button type="submit" id="submit-product-${c.id}" style="display:none;"
+                                                <c:if test="${productVariantsMap[c.id].size() > 0}">disabled</c:if>></button>
 
-                                            <i class="mdi mdi-delete"
+                                            <i class="mdi ${c.active ? 'mdi-toggle-switch-off' : 'mdi-toggle-switch'}"
                                                role="button"
                                                tabindex="0"
-                                               onclick="document.getElementById('submit-product-${c.id}').click();"
-                                               style="cursor: pointer;
-                                                  display: inline-block;
-                                                  font-size: 20px;
-                                                  width: 40px;
-                                                  text-align: center;
-                                                  color: #3f50f6;">
-                                            </i>
+                                               data-bs-toggle="tooltip"
+                                               data-bs-placement="top"
+                                               title="${c.active ? (productVariantsMap[c.id].size() > 0 ? 'Cannot deactivate: product has active variants' : 'Switch to inactive') : 'Switch to active'}"
+                                               <c:if test="${productVariantsMap[c.id].size() > 0}">
+                                                   style="cursor: not-allowed; opacity:0.5; display: inline-block; font-size: 20px; width: 40px; text-align: center; color: #3f50f6;"
+                                               </c:if>
+                                               <c:if test="${productVariantsMap[c.id].size() == 0}">
+                                                   style="cursor: pointer; display: inline-block; font-size: 20px; width: 40px; text-align: center; color: #3f50f6;"
+                                                   onclick="document.getElementById('submit-product-${c.id}').click();"
+                                               </c:if>
+                                            ></i>
                                         </form>
                                     </td>
                                 </tr>
@@ -182,7 +200,10 @@
                                                         <td>${variation.sold}</td>
                                                         <td>
                                                             <a class="me-3" href="productVariantManage?action=edit&variantId=${variation.variationId}">
-                                                            <i class="mdi mdi-table-edit"
+                                                                <i class="mdi mdi-table-edit"
+                                                                   data-bs-toggle="tooltip"
+                                                                   data-bs-placement="top"
+                                                                   title="Edit variant"
                                                                    style="display: inline-block;
                                                                       font-size: 20px;
                                                                       width: 40px;
@@ -191,15 +212,19 @@
                                                                 </i>
                                                             </a>
                                                             <form action="productVariantManage" method="post" style="display:inline;"
-                                                                  onsubmit="return confirm('Are you sure to delete this product variant?');">
+                                                                  onsubmit="return confirm('${variation.active ? 'Are you sure to deactivate this product variant?' : 'Are you sure to restore this product variant?'}');">
                                                                 <input type="hidden" name="action" value="delete"/>
                                                                 <input type="hidden" name="variantId" value="${variation.variationId}"/>
+                                                                <input type="hidden" name="active" value="${variation.active}"/>
 
                                                                 <button type="submit" id="submit-variant-${variation.variationId}" style="display:none;"></button>
 
-                                                                <i class="mdi mdi-delete"
+                                                                <i class="mdi ${variation.active ? 'mdi-toggle-switch-off' : 'mdi-toggle-switch'}"
                                                                    role="button"
                                                                    tabindex="0"
+                                                                   data-bs-toggle="tooltip"
+                                                                   data-bs-placement="top"
+                                                                   title="${variation.active ? 'Switch to inactive' : 'Switch to active'}"
                                                                    onclick="document.getElementById('submit-variant-${variation.variationId}').click();"
                                                                    style="cursor: pointer;
                                                                       display: inline-block;
@@ -486,5 +511,18 @@
         subCategorySelect.addEventListener('change', updateFilterButtonState);
         searchInput.addEventListener('input', updateFilterButtonState);
     });
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+            new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    });
+</script>
+<script>
+    function notifyCannotDeactivate() {
+        alert('Cannot deactivate product: it still has active variations.');
+    }
 </script>
 </html>
