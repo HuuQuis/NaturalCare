@@ -79,10 +79,6 @@ CREATE TABLE address (
     province_code  VARCHAR(10),
     district_code  VARCHAR(10),
     ward_code      VARCHAR(10),
-    first_name     VARCHAR(255) NOT NULL,
-    last_name      VARCHAR(255) NOT NULL,
-    email          VARCHAR(255) NOT NULL,
-    phone_number   VARCHAR(20)  NOT NULL,
     detail         TEXT,
     distance_km DOUBLE,
     FOREIGN KEY (province_code) REFERENCES province(code),
@@ -94,14 +90,6 @@ CREATE TABLE skill
 (
     skill_id   INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     skill_name VARCHAR(255)
-);
-
-create table contract
-(
-	contract_id int not null,
-    contract_name varchar(255) not null,
-    start_date date not null,
-    end_date date not null
 );
 
 CREATE TABLE user
@@ -117,12 +105,11 @@ CREATE TABLE user
     user_image         TEXT,
     reset_token        VARCHAR(255),
     reset_token_expiry DATETIME,
-    assign_staff_id INT NULL,
-    contract_id int null,
-    foreign key (assign_staff_id) references user(user_id),
-    foreign key (contract_id) references contract(contract_id),
+    assigned_staff_id  INT          NULL,
     FOREIGN KEY (role_id)
-        REFERENCES role (role_id)
+        REFERENCES role (role_id),
+    FOREIGN KEY (assigned_staff_id)
+        REFERENCES user (user_id)
 );
 
 CREATE TABLE userAddress
@@ -188,8 +175,6 @@ CREATE TABLE product
     product_short_description VARCHAR(255),
     product_information       MEDIUMTEXT,
     product_guideline         TEXT,
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     sub_product_category_id   INT          NOT NULL,
     FOREIGN KEY (sub_product_category_id)
         REFERENCES sub_product_category (sub_product_category_id)
@@ -259,7 +244,7 @@ CREATE TABLE product_order (
     shipper_id         INT NULL,
     address_id         INT NOT NULL,
     coupon_id          INT,
-    payment_method ENUM('cod', 'vnpay') NOT NULL,
+    payment_method ENUM('vnpay', 'momo', 'zalopay') NOT NULL,
     payment_gateway_txn_ref VARCHAR(100),            -- Mã đơn hàng gửi sang cổng
     payment_gateway_transaction_no VARCHAR(100),     -- Mã giao dịch trả về từ cổng
     payment_time TIMESTAMP NULL,                    -- Thời điểm thanh toán
@@ -324,4 +309,22 @@ CREATE TABLE return_request (
         REFERENCES user (user_id),
     FOREIGN KEY (approved_by)
         REFERENCES user (user_id)
+);
+
+CREATE TABLE contract
+(
+    contract_id     INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    user_id         INT NOT NULL,
+    contract_type   ENUM('full_time', 'part_time', 'freelance', 'internship') NOT NULL,
+    salary          BIGINT NOT NULL,
+    start_date      DATE NOT NULL,
+    end_date        DATE NULL,
+    contract_status ENUM('active', 'expired', 'terminated') DEFAULT 'active',
+    created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    contract_terms  TEXT,
+    signed_by       INT NULL,
+    
+    FOREIGN KEY (user_id) REFERENCES user (user_id),
+    FOREIGN KEY (signed_by) REFERENCES user (user_id)
 );
