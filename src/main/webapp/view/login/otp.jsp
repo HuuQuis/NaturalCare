@@ -43,16 +43,40 @@
     <div class="col-sm-offset-3 col-sm-6">
         <div class="login-form">
             <h2>Enter OTP</h2>
+            <p style="color: #696763; margin-bottom: 20px;">We've sent a verification code to your email address.</p>
+            
             <form action="register" method="POST">
                 <input type="text" name="otp" placeholder="Enter OTP" required class="form-control"
-                       style="margin-bottom: 10px;"/>
+                       style="margin-bottom: 10px;" maxlength="6" pattern="[0-9]{6}"
+                       title="Please enter a 6-digit OTP"/>
                 <div style="display: flex; gap: 10px; margin-bottom: 10px;">
                     <button type="submit" class="btn btn-default">Verify</button>
                 </div>
-                <c:if test="${not empty error}">
-                    <div class="alert alert-danger" style="margin-top:10px">${error}</div>
-                </c:if>
             </form>
+            
+            <!-- Resend OTP Form -->
+            <form action="${pageContext.request.contextPath}/resend-otp" method="POST" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #F0F0E9;">
+                <p style="color: #696763; margin-bottom: 10px; text-align: center;">
+                    Didn't receive email? 
+                    <button type="submit" class="btn btn-link" style="padding: 0; color: #FE980F; text-decoration: underline;">
+                        Resend OTP
+                    </button>
+                </p>
+            </form>
+            
+            <!-- Success Message -->
+            <c:if test="${not empty message}">
+                <span style="color: #155724; background-color: #d4edda; border: 1px solid #c3e6cb; padding: 8px 15px; border-radius: 4px; display: table; margin-top: 10px;">
+                    <strong>${message}</strong>
+                </span>
+            </c:if>
+            
+            <!-- Error Message -->
+            <c:if test="${not empty error}">
+                <span style="color: #a94442; background-color: #f2dede; border: 1px solid #ebccd1; padding: 8px 15px; border-radius: 4px; display: table; margin-top: 10px;">
+                    <strong>${error}</strong>
+                </span>
+            </c:if>
         </div>
     </div>
 </div>
@@ -65,5 +89,20 @@
 <script src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>
 <script src="${pageContext.request.contextPath}/js/jquery.prettyPhoto.js"></script>
 <script src="${pageContext.request.contextPath}/js/main.js"></script>
+
+<script>
+// Simple enhancement - auto focus on OTP input and number-only validation
+document.addEventListener('DOMContentLoaded', function() {
+    const otpInput = document.querySelector('input[name="otp"]');
+    if (otpInput) {
+        otpInput.focus();
+        
+        // Only allow numbers in OTP input
+        otpInput.addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+    }
+});
+</script>
 </body>
 </html>

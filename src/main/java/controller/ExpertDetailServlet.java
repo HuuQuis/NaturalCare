@@ -23,7 +23,6 @@ public class ExpertDetailServlet extends HttpServlet {
             response.sendRedirect("expertListManage");
             return;
         }
-
         int userId = Integer.parseInt(userIdStr);
 
         ExpertDAO expertDAO = new ExpertDAO();
@@ -74,13 +73,13 @@ public class ExpertDetailServlet extends HttpServlet {
 
         if (error == null && (firstName == null || firstName.trim().isEmpty())) {
             error = "First name is required.";
-        } else if (error == null && !firstName.matches("^[A-Z][a-zA-Z ]*$")) {
+        } else if (error == null && !firstName.matches("^[A-Z][a-zA-Z0-9]*$")) {
             error = "First name must start with uppercase and contain only letters.";
         }
 
         if (error == null && (lastName == null || lastName.trim().isEmpty())) {
             error = "Last name is required.";
-        } else if (error == null && !lastName.matches("^[A-Z][a-zA-Z ]*$")) {
+        } else if (error == null && !lastName.matches("^[A-Z][a-zA-Z0-9]*$")) {
             error = "Last name must start with uppercase and contain only letters.";
         }
 

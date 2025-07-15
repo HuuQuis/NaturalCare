@@ -31,19 +31,19 @@ public class BlogManageServlet extends HttpServlet {
         int id = parseIntOrDefault(req.getParameter("id"), -1);
         int page = parseIntOrDefault(req.getParameter("page"), 1);
         String rawCategoryId = req.getParameter("categoryId");
-        int categoryId = (rawCategoryId == null || rawCategoryId.trim().isEmpty())
-                ? -1 : parseIntOrDefault(rawCategoryId, -1);
+        int categoryId = (rawCategoryId == null || rawCategoryId.trim().isEmpty()) ? -1 : parseIntOrDefault(rawCategoryId, -1);
         String keyword = req.getParameter("keyword");
-        if (keyword == null) keyword = ""; // fix NULL
+        if (keyword == null) keyword = "";
+        String sort = req.getParameter("sort");
+        String statusFilter = req.getParameter("status");
 
         int pageSize = 10;
 
-        // Xử lý form (add hoặc edit)
         if ("form".equals(action)) {
             if (id != -1) {
                 Blog blog = blogDAO.getBlogById(id);
                 if (blog != null) {
-                    blog.setImageUrl(blogDAO.getImagePathByBlogId(id)); // Load ảnh cũ
+                    blog.setImageUrl(blogDAO.getImagePathByBlogId(id));
                     req.setAttribute("editBlog", blog);
                 }
             }
@@ -52,28 +52,20 @@ public class BlogManageServlet extends HttpServlet {
             req.setAttribute("categories", categories);
             req.setAttribute("page", page);
             req.setAttribute("view", "blog-form");
-            req.getRequestDispatcher("/view/home/manage.jsp").forward(req, resp);
+            req.getRequestDispatcher("/view/home/marketer.jsp").forward(req, resp);
             return;
         }
 
-        // Trường hợp mặc định: hiển thị danh sách
         List<BlogCategory> categories = categoryDAO.getAllBlogCategories();
         req.setAttribute("categories", categories);
         req.setAttribute("page", page);
         req.setAttribute("selectedCategory", categoryId);
-        req.setAttribute("keyword", keyword); // Giữ lại keyword để hiển thị lại trên form
+        req.setAttribute("keyword", keyword);
+        req.setAttribute("sort", sort);
+        req.setAttribute("statusFilter", statusFilter);
 
-        List<Blog> list;
-        int totalCount;
-
-        // Có lọc theo category hoặc keyword
-        if ((keyword != null && !keyword.trim().isEmpty()) || categoryId != -1) {
-            list = blogDAO.searchBlogs(categoryId, keyword, page, pageSize);
-            totalCount = blogDAO.countSearchBlogs(categoryId, keyword);
-        } else {
-            list = blogDAO.getBlogsByPage(page, pageSize);
-            totalCount = blogDAO.getTotalBlogCount();
-        }
+        List<Blog> list = blogDAO.searchBlogsAdvanced(categoryId, keyword, sort, statusFilter, page, pageSize);
+        int totalCount = blogDAO.countSearchBlogsAdvanced(categoryId, keyword, statusFilter);
 
         int totalPage = (int) Math.ceil((double) totalCount / pageSize);
         int startIndex = (page - 1) * pageSize;
@@ -82,9 +74,8 @@ public class BlogManageServlet extends HttpServlet {
         req.setAttribute("totalPage", totalPage);
         req.setAttribute("startIndex", startIndex);
         req.setAttribute("view", "blog-manage");
-        req.getRequestDispatcher("/view/home/manage.jsp").forward(req, resp);
+        req.getRequestDispatcher("/view/home/marketer.jsp").forward(req, resp);
     }
-
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
@@ -93,14 +84,12 @@ public class BlogManageServlet extends HttpServlet {
         String description = req.getParameter("description");
         int id = parseIntOrDefault(req.getParameter("id"), -1);
         String rawCategoryId = req.getParameter("categoryId");
-        int categoryId = (rawCategoryId == null || rawCategoryId.trim().isEmpty())
-                ? -1 : parseIntOrDefault(rawCategoryId, -1);
+        int categoryId = (rawCategoryId == null || rawCategoryId.trim().isEmpty()) ? -1 : parseIntOrDefault(rawCategoryId, -1);
         int page = parseIntOrDefault(req.getParameter("page"), 1);
 
         BlogCategory category = categoryDAO.getCategoryById(categoryId);
         String imagePath = null;
 
-        //  Chỉ xử lý ảnh nếu là add/update
         if ("add".equals(action) || "update".equals(action)) {
             try {
                 Part filePart = req.getPart("image");
@@ -111,7 +100,6 @@ public class BlogManageServlet extends HttpServlet {
                     File uploadDir = new File(uploadPath);
                     if (!uploadDir.exists()) uploadDir.mkdirs();
 
-                    //  Xoá ảnh cũ nếu update
                     if ("update".equals(action)) {
                         if (oldImagePath != null && !oldImagePath.isEmpty()) {
                             File oldFile = new File(getServletContext().getRealPath("/" + oldImagePath));
@@ -122,13 +110,12 @@ public class BlogManageServlet extends HttpServlet {
                     filePart.write(uploadPath + File.separator + fileName);
                     imagePath = "image/blog/" + fileName;
                 } else {
-                    // nếu không upload ảnh mới khi update → giữ lại ảnh cũ
                     if ("update".equals(action)) {
                         imagePath = oldImagePath;
                     }
                 }
             } catch (Exception ex) {
-                ex.printStackTrace(); // Hoặc log lỗi
+                ex.printStackTrace();
                 req.getSession().setAttribute("message", "Image upload failed.");
                 req.getSession().setAttribute("messageType", "danger");
                 resp.sendRedirect("blog-manage?page=" + page);
@@ -136,7 +123,6 @@ public class BlogManageServlet extends HttpServlet {
             }
         }
 
-        //  Xử lý theo action
         switch (action) {
             case "add":
                 int newId = blogDAO.addBlog(new Blog(0, title, description, null, category));
@@ -162,7 +148,6 @@ public class BlogManageServlet extends HttpServlet {
                 return;
         }
 
-        // Nếu không khớp action
         resp.sendRedirect("blog-manage");
     }
 
@@ -174,4 +159,3 @@ public class BlogManageServlet extends HttpServlet {
         }
     }
 }
-
