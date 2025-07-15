@@ -78,10 +78,7 @@
                     <% if ("user-management".equals(view)) { %>
                     <jsp:include page="../manage/user-manage.jsp" />
                     <% } %>
-                    
-                    <% if ("admin-manager-management".equals(view)) { %>
-                    <jsp:include page="../manage/manager-manage.jsp" />
-                    <% } %>
+
             </div>
         </div>
 
