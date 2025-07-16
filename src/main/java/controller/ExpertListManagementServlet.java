@@ -14,7 +14,7 @@ import model.*;
 public class ExpertListManagementServlet extends HttpServlet {
     private static final int PAGE_SIZE = 10;
 
-    @Override
+    @Override                            
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
@@ -31,7 +31,7 @@ public class ExpertListManagementServlet extends HttpServlet {
         List<ExpertSkill> orders = expertDAO.getExpertsWithPagination(search, skill, page, PAGE_SIZE);
 
         System.out.println(orders);
-
+                          
         request.setAttribute("experts", orders);
         request.setAttribute("totalPages", totalPages);
         request.setAttribute("currentPage", page);
