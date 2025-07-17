@@ -9,7 +9,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
 import model.*;
-
+               
 
 @WebServlet(name = "ExpertDetailServlet", value = "/expertDetail")
 public class ExpertDetailServlet extends HttpServlet {
@@ -81,7 +81,7 @@ public class ExpertDetailServlet extends HttpServlet {
             error = "Last name is required.";
         } else if (error == null && !lastName.matches("^[A-Z][a-zA-Z0-9]*$")) {
             error = "Last name must start with uppercase and contain only letters.";
-        }
+        } 
 
         if (error == null && (email == null || email.trim().isEmpty())) {
             error = "Email is required.";
