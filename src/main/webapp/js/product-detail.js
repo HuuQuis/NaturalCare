@@ -63,6 +63,12 @@ function updateVariationInfo() {
 
             document.getElementById('cart-quantity').value = 1;
             found = true;
+            const imageUrl = item.dataset.image;
+            const imageEl = document.getElementById('product-image');
+            if (imageEl && imageUrl) {
+                imageEl.src = contextPath + '/' + imageUrl;
+            }
+
         }
     });
 
@@ -95,6 +101,7 @@ function getSelectedVariationId() {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
+    updateCartBadgeFromCookie();
     // Toggle view more
     document.querySelectorAll('.view-toggle').forEach(toggle => {
         toggle.addEventListener('click', function () {
@@ -196,6 +203,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 return res.text();
             })
             .then(text => {
+                const [status, message] = text.split('|');
+                if (status === 'success') {
+                    alert("Added to cart successfully!");
+                    updateVariationInfo();
+                    updateCartBadgeFromCookie(); // ✅ Cập nhật chính xác từ cookie
+                } else {
+                    alert("Add to cart failed: " + message);
+                }
             })
             .catch(err => alert("Failed to add to cart. Please try again later."));
     });
@@ -220,4 +235,18 @@ document.querySelectorAll('.variation-item').forEach(item => {
         });
     }
 });
+
+function updateCartBadgeFromCookie() {
+    const cartMap = getCartMapFromCookie();
+    let total = 0;
+    for (let qty of cartMap.values()) {
+        total += qty;
+    }
+
+    const cartCount = document.getElementById('cart-count');
+    if (cartCount) {
+        cartCount.textContent = total;
+    }
+}
+
 

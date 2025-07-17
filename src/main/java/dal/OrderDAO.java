@@ -9,13 +9,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OrderDAO extends DBContext{
-    public int insertOrder(int userId, String note, int addressId) {
-        sql = "INSERT INTO product_order (user_id, order_note, address_id) VALUES (?, ?, ?)";
+    public int insertOrder(int userId, String note, int addressId, String paymentMethod) {
+        sql = "INSERT INTO product_order (user_id, order_note, address_id, payment_method) VALUES (?, ?, ?, ?)";
         try {
             stm = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
             stm.setInt(1, userId);
             stm.setString(2, note);
             stm.setInt(3, addressId);
+            stm.setString(4, paymentMethod);
             stm.executeUpdate();
 
             rs = stm.getGeneratedKeys();
@@ -27,6 +28,7 @@ public class OrderDAO extends DBContext{
         }
         return -1;
     }
+
 
 
     public void insertOrderDetail(int orderId, int variationId, int quantity, long price) {

@@ -50,7 +50,7 @@
 
             <div class="col-sm-9 padding-right">
                 <div class="product-details"><!--product-details-->
-                    <div class="col-sm-5" style="padding-top: 70px">
+                    <div class="col-sm-5">
                         <div class="view-product">
                             <div class="productinfo text-center">
                                 <!-- Carousel for product images -->
@@ -59,7 +59,7 @@
                                         <!-- Display first variation image as default -->
                                         <c:if test="${not empty product.variations}">
                                             <div class="item active">
-                                                <img src="${pageContext.request.contextPath}/${product.variations[0].imageUrl}" alt="${product.name}" />
+                                                <img id="product-image" src="${pageContext.request.contextPath}/${product.variations[0].imageUrl}" alt="${product.name}" />
                                             </div>
                                         </c:if>
                                     </div>

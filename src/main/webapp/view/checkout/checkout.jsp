@@ -139,6 +139,10 @@
             <c:if test="${empty cartItems}">
                 <div class="cart-footer" style="border-top: 1px solid #ddd; padding: 10px;">
                     <p>Empty Cart</p>
+                    <a href="${pageContext.request.contextPath}/products" class="btn btn-primary mt-2 d-flex align-items-center justify-content-center" style="gap: 8px; font-size: 1.1rem; padding: 10px 20px; border-radius: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); transition: background 0.2s;">
+                        <i class="fa fa-arrow-left" aria-hidden="true"></i>
+                        Continue Shopping
+                    </a>
                 </div>
             </c:if>
             <h4 class="fw-bold mb-2">Choose Payment Method</h4>

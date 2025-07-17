@@ -97,6 +97,7 @@ public class CheckoutServlet extends HttpServlet {
             return;
         }
 
+
         // 1. Lấy thông tin form
         String addressIdStr = request.getParameter("addressId");
         String note = request.getParameter("note");
@@ -108,6 +109,11 @@ public class CheckoutServlet extends HttpServlet {
         }
 
         int addressId = Integer.parseInt(addressIdStr);
+
+        String paymentMethod = request.getParameter("paymentMethod");
+        if (paymentMethod == null || (!paymentMethod.equals("cod") && !paymentMethod.equals("vnpay"))) {
+            paymentMethod = "cod"; // fallback mặc định nếu dữ liệu không hợp lệ
+        }
 
         // 2. Đọc giỏ hàng từ cookie
         Map<Integer, Integer> cartMap = readCartFromCookie(request);
@@ -135,7 +141,7 @@ public class CheckoutServlet extends HttpServlet {
         }
 
         // 4. Lưu order
-        int orderId = orderDAO.insertOrder(currentUser.getId(), note, addressId);
+        int orderId = orderDAO.insertOrder(currentUser.getId(), note, addressId, paymentMethod);
 
         // 5. Lưu order detail
         for (Cart item : cartItems) {
