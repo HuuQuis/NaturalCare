@@ -82,6 +82,10 @@
                     <% if ("admin-manager-management".equals(view)) { %>
                     <jsp:include page="../manage/manager-manage.jsp" />
                     <% } %>
+
+                    <% if ("shipper".equals(view)) { %>
+                    <jsp:include page="../manage/shipper-manage.jsp" />
+                    <% } %>
             </div>
         </div>
 

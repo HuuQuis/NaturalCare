@@ -55,6 +55,13 @@
         </li>
 
         <li class="nav-item">
+            <a class="nav-link" href="${pageContext.request.contextPath}/shipper">
+                <i class="mdi mdi-format-list-bulleted menu-icon"></i>
+                <span class="menu-title">Shipper Management</span>
+            </a>
+        </li>
+
+        <li class="nav-item">
             <a class="nav-link" href="${pageContext.request.contextPath}/skill">
                 <i class="mdi mdi-school menu-icon"></i>
                 <span class="menu-title">Skill Management</span>
