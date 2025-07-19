@@ -5,7 +5,11 @@ import model.OrderDetail;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class OrderDAO extends DBContext{
@@ -133,9 +137,14 @@ public class OrderDAO extends DBContext{
                 order.setUserId(rs.getInt("user_id"));
                 order.setNote(rs.getString("order_note"));
                 order.setStatusId(rs.getInt("status_id"));
-                order.setCreateAt(rs.getTimestamp("create_at"));
+
+                // ✅ CHUYỂN create_at về múi giờ GMT+7
+                Timestamp ts = rs.getTimestamp("create_at");
+                ZonedDateTime vnTime = ts.toInstant().atZone(ZoneId.of("Asia/Ho_Chi_Minh"));
+                order.setCreateAt(Timestamp.from(vnTime.toInstant()));  // <-- sửa chỗ này
+
                 order.setAddressId(rs.getInt("address_id"));
-                order.setStatusName(rs.getString("status_name")); // <-- thêm dòng này
+                order.setStatusName(rs.getString("status_name"));
                 return order;
             }
         } catch (SQLException e) {
@@ -143,6 +152,7 @@ public class OrderDAO extends DBContext{
         }
         return null;
     }
+
 
 
     public List<OrderDetail> getOrderDetails(int orderId) {

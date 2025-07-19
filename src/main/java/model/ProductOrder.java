@@ -13,7 +13,7 @@ public class ProductOrder {
     private Integer couponId;
 
     // Các trường mới để hỗ trợ thanh toán online
-    private String paymentMethod;                   // vnpay, momo, zalopay
+    private String paymentMethod;                   // vnpay,cod
     private String paymentGatewayTxnRef;            // mã gửi sang cổng
     private String paymentGatewayTransactionNo;     // mã trả về từ cổng
     private Timestamp paymentTime;                  // thời gian thanh toán

@@ -17,6 +17,11 @@ public class Config {
     public static final String vnp_TmnCode = PropertiesUtils.get("vnpay.vnp_TmnCode");
     public static final String secretKey = PropertiesUtils.get("vnpay.vnp_HashSecret");
 
+    static {
+        System.out.println("vnp_TmnCode = " + vnp_TmnCode);
+        System.out.println("secretKey = " + secretKey);
+    }
+
     public static String md5(String message) {
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
@@ -47,19 +52,26 @@ public class Config {
 
     public static String hashAllFields(Map<String, String> fields) {
         List<String> fieldNames = new ArrayList<>(fields.keySet());
-        Collections.sort(fieldNames);
+        Collections.sort(fieldNames); // Sắp xếp tên tham số
 
         StringBuilder sb = new StringBuilder();
         for (Iterator<String> itr = fieldNames.iterator(); itr.hasNext();) {
             String fieldName = itr.next();
             String fieldValue = fields.get(fieldName);
             if (fieldValue != null && !fieldValue.isEmpty()) {
-                sb.append(fieldName).append("=").append(fieldValue);
+                try {
+                    sb.append(fieldName)
+                            .append("=")
+                            .append(java.net.URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));
+                } catch (Exception e) {
+                    throw new RuntimeException("Encoding error", e);
+                }
             }
             if (itr.hasNext()) {
                 sb.append("&");
             }
         }
+
         return hmacSHA512(secretKey, sb.toString());
     }
 

@@ -40,6 +40,7 @@ public class VnpayReturnServlet extends HttpServlet {
         boolean isValidSignature = vnp_SecureHash != null && vnp_SecureHash.equalsIgnoreCase(signValue);
         System.out.println("isValidSignature: " + isValidSignature);
 
+
         // 3. Lấy các tham số cần thiết
         String vnp_TxnRef = fields.get("vnp_TxnRef"); // mã đơn hàng của bạn
         String vnp_TransactionNo = fields.get("vnp_TransactionNo"); // mã giao dịch VNPAY
@@ -87,4 +88,5 @@ public class VnpayReturnServlet extends HttpServlet {
             request.getRequestDispatcher("/view/checkout/order-canceled.jsp").forward(request, response);
         }
     }
+
 }
