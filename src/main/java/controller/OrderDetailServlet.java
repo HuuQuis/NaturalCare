@@ -100,7 +100,7 @@ public class OrderDetailServlet extends HttpServlet {
         productOrderDAO.updateOrder(orderId, note, statusId, shipperId, addressId, couponId);
 
         response.sendRedirect("OrderDetail?orderId=" + orderId);
-    }
+    } 
 
     /** 
      * Returns a short description of the servlet.
