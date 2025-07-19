@@ -171,45 +171,85 @@
 <script src="${pageContext.request.contextPath}/js/jquery.scrollUp.min.js"></script>
 <script src="${pageContext.request.contextPath}/js/jquery.prettyPhoto.js"></script>
 <script src="${pageContext.request.contextPath}/js/main.js"></script>
+<script src="${pageContext.request.contextPath}/js/search.js"></script>
+
 <script>
     const contextPath = "${pageContext.request.contextPath}";
-</script>
-<script src="${pageContext.request.contextPath}/js/search.js"></script>
-<script>
+    const cartTotal = ${cartTotal};
+
     document.addEventListener("DOMContentLoaded", function () {
-        const radios = document.querySelectorAll('input[name="addressId"]');
+        const form = document.querySelector('form.checkout-form');
         const overlay = document.getElementById("loadingOverlay");
 
-        radios.forEach(radio => {
+        // Thay đổi địa chỉ
+        document.querySelectorAll('input[name="addressId"]').forEach(radio => {
             radio.addEventListener('change', function () {
-                // Hiện overlay
                 overlay.style.display = "flex";
 
-                // Lấy dữ liệu từ data-* attributes
-                const firstName = this.dataset.firstname;
-                const lastName = this.dataset.lastname;
-                const email = this.dataset.email;
-                const phone = this.dataset.phone;
+                document.querySelector('input[data-field="firstName"]').value = this.dataset.firstname;
+                document.querySelector('input[data-field="lastName"]').value = this.dataset.lastname;
+                document.querySelector('input[data-field="email"]').value = this.dataset.email;
+                document.querySelector('input[data-field="phoneNumber"]').value = this.dataset.phone;
 
-                // Cập nhật các ô input (readonly vẫn cho phép JS thay đổi)
-                document.querySelector('input[data-field="firstName"]').value = firstName;
-                document.querySelector('input[data-field="lastName"]').value = lastName;
-                document.querySelector('input[data-field="email"]').value = email;
-                document.querySelector('input[data-field="phoneNumber"]').value = phone;
-
-                // Bỏ class selected khỏi tất cả
                 document.querySelectorAll('.address-div').forEach(label => {
                     label.classList.remove('selected');
                 });
-
-                // Gán lại selected cho label hiện tại
                 this.closest('.address-div').classList.add('selected');
 
-                // Tắt overlay sau delay nhẹ
                 setTimeout(() => {
                     overlay.style.display = "none";
-                }, 1000);
+                }, 600);
             });
+        });
+
+        // Submit form
+        form.addEventListener('submit', function (e) {
+            const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value;
+            const addressId = document.querySelector('input[name="addressId"]:checked')?.value;
+            const note = form.querySelector('textarea[name="note"]').value;
+
+            if (!addressId) {
+                e.preventDefault();
+                alert("Please select a shipping address.");
+                return;
+            }
+
+            if (paymentMethod === "vnpay") {
+                e.preventDefault();
+                overlay.style.display = "flex";
+
+                const data = new URLSearchParams({
+                    amount: cartTotal,
+                    bankCode: "",
+                    language: "vn",
+                    addressId: addressId,
+                    note: note,
+                    paymentMethod: paymentMethod
+                });
+
+                fetch(contextPath + "/payment", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    body: data
+                })
+                    .then(res => res.json())
+                    .then(json => {
+                        if (json.code === "00") {
+                            window.location.href = json.data;
+                        } else {
+                            alert("VNPAY payment failed: " + json.message);
+                        }
+                    })
+                    .catch(err => {
+                        console.error("AJAX error:", err);
+                        alert("Lỗi khi gửi yêu cầu thanh toán VNPAY.");
+                    })
+                    .finally(() => {
+                        overlay.style.display = "none";
+                    });
+            }
         });
     });
 </script>

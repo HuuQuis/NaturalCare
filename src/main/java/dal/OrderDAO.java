@@ -29,7 +29,83 @@ public class OrderDAO extends DBContext{
         return -1;
     }
 
+    public int insertOrderVNPAY(int userId, String note, int addressId, String txnRef) {
+        sql = "INSERT INTO product_order " +
+                "(user_id, order_note, address_id, payment_method, payment_gateway_txn_ref, payment_status_id) " +
+                "VALUES (?, ?, ?, 'vnpay', ?, 1)";  // 1 = pending
 
+        try {
+            stm = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+            stm.setInt(1, userId);
+            stm.setString(2, note);
+            stm.setInt(3, addressId);
+            stm.setString(4, txnRef);
+
+            stm.executeUpdate();
+            rs = stm.getGeneratedKeys();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    public boolean updatePaymentStatus(String txnRef, String txnNo, boolean success) {
+        String selectSql = "SELECT status_id FROM product_order WHERE payment_gateway_txn_ref = ?";
+        String updateSql = "UPDATE product_order SET " +
+                "payment_status_id = ?, " +
+                "status_id = ?, " +
+                "payment_gateway_transaction_no = ?, " +
+                "payment_time = CURRENT_TIMESTAMP " +
+                "WHERE payment_gateway_txn_ref = ?";
+        try {
+            // Kiểm tra trạng thái đơn hiện tại
+            PreparedStatement selectStm = connection.prepareStatement(selectSql);
+            selectStm.setString(1, txnRef);
+            rs = selectStm.executeQuery();
+
+            if (rs.next()) {
+                int currentStatusId = rs.getInt("status_id");
+
+                // Nếu đơn đã bị xử lý hoặc hủy bởi staff, không cập nhật nữa
+                if (!success && currentStatusId != 1) {
+                    return false;
+                }
+
+                int newStatusId = success ? 2 : 5; // processing : cancelled_by_user
+                int newPaymentStatusId = success ? 2 : 3; // paid : failed
+
+                PreparedStatement updateStm = connection.prepareStatement(updateSql);
+                updateStm.setInt(1, newPaymentStatusId);
+                updateStm.setInt(2, newStatusId);
+                updateStm.setString(3, txnNo);
+                updateStm.setString(4, txnRef);
+
+                return updateStm.executeUpdate() > 0;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+
+    public Integer getOrderIdByTxnRef(String txnRef) {
+        sql = "SELECT order_id FROM product_order WHERE payment_gateway_txn_ref = ?";
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setString(1, txnRef);
+            rs = stm.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("order_id");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     public void insertOrderDetail(int orderId, int variationId, int quantity, long price) {
         sql = "INSERT INTO order_detail (order_id, variation_id, quantity, price) VALUES (?, ?, ?, ?)";

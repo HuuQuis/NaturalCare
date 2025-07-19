@@ -10,6 +10,7 @@
         <entry key="file://$PROJECT_DIR$/src/main/webapp/view/home/home.jsp" value="file://$PROJECT_DIR$/src/main/webapp/view/home" />
         <entry key="file://$PROJECT_DIR$/src/main/webapp/view/manage/product-manage.jsp" value="file://$PROJECT_DIR$/src/main/webapp/view/manage" />
         <entry key="file://$PROJECT_DIR$/src/main/webapp/view/product/product-detail.jsp" value="file://$PROJECT_DIR$/src/main/webapp/view/product" />
+        <entry key="file://$PROJECT_DIR$/src/main/webapp/view/vnpay/vnpay_return.jsp" value="file://$PROJECT_DIR$/src/main/webapp/view/vnpay" />
       </map>
     </option>
   </component>
